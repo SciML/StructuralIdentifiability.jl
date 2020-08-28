@@ -1,6 +1,12 @@
+include("util.jl")
+
+#------------------------------------------------------------------------------
+
 function truncate_matrix(M, prec)
     return map(e -> truncate(e, prec), M)
 end
+
+#------------------------------------------------------------------------------
 
 function fake_truncate_matrix(M, prec)
     prec = precision(M[1, 1])
@@ -9,28 +15,50 @@ function fake_truncate_matrix(M, prec)
     return truncation
 end
 
+#------------------------------------------------------------------------------
+
+function matrix_set_prec!(M, prec)
+    map(e -> set_prec!(e, prec), M)
+end
+
+#------------------------------------------------------------------------------
+
 function ps_matrix_const_term(M)
     return map(e -> coeff(e, 0), M)
 end
 
-function ps_matrix_inv(M)
+#------------------------------------------------------------------------------
+
+function _matrix_inv_newton_iteration(M, Minv)
+    """
+    Performs a single step of Newton iteration for inverting M with 
+    Minv being a partial result
+    """
+    return 2 * Minv - Minv * M * Minv
+end
+
+#--------------------------------------
+
+function ps_matrix_inv(M, prec=nothing)
     """
     Input:
         - M - a square matrix with entries in a univariate power series ring
           it is assumed that M(0) is invertible and all entries having the same precision
-    Output: the inverse of M computed up to the precision of the matrix
+    Output: the inverse of M computed up to prec (the precision of the matrix if nothing)
     """
     const_term = ps_matrix_const_term(M)
-    prec = precision(M[1, 1])
+    prec = (prec == nothing) ? precision(M[1, 1]) : prec
     power_series_ring = base_ring(parent(M))
     result = map(a -> power_series_ring(a), Base.inv(const_term))
     cur_prec = 1
     while cur_prec < prec
-        result = 2 * result - result * M * result
+        result = _matrix_inv_newton_iteration(M, result)
         cur_prec *= 2
     end
     return result
 end
+
+#------------------------------------------------------------------------------
 
 function ps_diff(ps)
     """
@@ -45,6 +73,8 @@ function ps_diff(ps)
     return result
 end
 
+#------------------------------------------------------------------------------
+
 function ps_integrate(ps)
     """
     Input: ps - (absolute capped) unvariate power series
@@ -57,6 +87,8 @@ function ps_integrate(ps)
     end
     return result
 end
+
+#------------------------------------------------------------------------------
 
 function ps_matrix_log(M)
     """
@@ -76,38 +108,123 @@ function ps_matrix_log(M)
     )
 end
 
-function ps_matrix_homlinear_de(A, Y0)
+#------------------------------------------------------------------------------
+
+function _matrix_homlinear_de_newton_iteration(A, Y, Z, cur_prec)
+    Yprime = map(ps_diff, Y)
+    Z = Z + truncate_matrix(Z * (one(parent(A)) - Y * Z), cur_prec)
+    Y = Y - truncate_matrix(Y * map(ps_integrate, Z * (Yprime - truncate_matrix(A, 2 * cur_prec - 1) * Y)), 2 * cur_prec)
+    return (Y, Z)
+end
+
+#--------------------------------------
+
+function ps_matrix_homlinear_de(A, Y0, prec=nothing)
     """
     Input:
         - A - a square matrix with entries in a univariate power series ring
         - Y0 - a square invertible matrix over the base field
     Output: matrix Y such that Y' = AY up to precision of A - 1 and Y(0) = Y0
     """
-    prec = precision(A[1, 1])
-    identity = one(parent(A))
+    prec = (prec == nothing) ? precision(A[1, 1]) : prec
     ps_ring = base_ring(parent(A))
-    Y = (identity + gen(ps_ring) * fake_truncate_matrix(A, 1)) * map(e -> truncate(ps_ring(e), prec), Y0)
-    Z = map(e -> truncate(ps_ring(e), prec), Base.inv(Y0))
     cur_prec = 1
-    while cur_prec <= (prec + 1) // 2
-        Yprime = map(ps_diff, Y)
-        Z = Z + fake_truncate_matrix(Z * (identity - Y * Z), cur_prec)
-        Y = Y - fake_truncate_matrix(Y * map(ps_integrate, Z * (Yprime - fake_truncate_matrix(A, 2 * cur_prec - 1) * Y)), 2 * cur_prec)
+    Y = (one(parent(A)) + gen(ps_ring) * truncate_matrix(A, cur_prec)) * map(e -> truncate(ps_ring(e), cur_prec), Y0)
+    Z = map(e -> truncate(ps_ring(e), cur_prec), Base.inv(Y0))
+    while cur_prec < prec
+        matrix_set_prec!(Y, 2 * cur_prec)
+        matrix_set_prec!(Z, cur_prec)
+        Y, Z = _matrix_homlinear_de_newton_iteration(A, Y, Z, cur_prec)
         cur_prec *= 2
     end
     return Y, Z
 end
 
-function ps_matrix_linear_de(A, B, Y0)
+#------------------------------------------------------------------------------
+
+function _variation_of_constants(A, B, Yh, Zh, Y0, prec)
+    Zh += truncate_matrix(Zh * (one(parent(A)) - Yh * Zh), prec)
+    Y_particular = truncate_matrix(Yh * map(ps_integrate, Zh * B), prec)
+    return Y_particular + Yh * map(e -> parent(A[1, 1])(e), Y0)
+end
+
+#--------------------------------------
+
+function ps_matrix_linear_de(A, B, Y0, prec=nothing)
     """
     Input:
         - A, B - square matrices with entries in a univariate power series ring
-        - Y0 - a square invertible matrix over the base field
+        - Y0 - a matrix over the base field with the rows number the same as A
     Output: matrix Y such that Y' = AY + B up to precision of A - 1 and Y(0) = Y0
     """
-    prec = precision(A[1, 1])
-    Yh, Zh = ps_matrix_homlinear_de(A, Y0)
-    Zh += fake_truncate_matrix(Zh * (one(parent(A)) - Yh * Zh), prec)
-    Y = fake_truncate_matrix(Yh * map(ps_integrate, Zh * B), prec)
-    return Y + Yh
+    prec = (prec == nothing) ? precision(A[1, 1]) : prec
+    n = nrows(A)
+    identity = one(MatrixSpace(base_ring(parent(Y0)), n, n))
+    Yh, Zh = ps_matrix_homlinear_de(A, identity, prec)
+    matrix_set_prec!(Zh, prec)
+    return _variation_of_constants(A, B, Yh, Zh, Y0, prec)
+end
+
+#------------------------------------------------------------------------------
+
+function ps_ode_solution(equations, ic, inputs, prec)
+    """
+    Input
+        - equations - a system of the form A(x, u, mu)x' - B(x, u, mu) = 0,
+                      where A is a generically nonsingular square matrix
+        - ic - initial conditions for x's (dictionary)
+        - inputs - power series for inputs represented as arrays (dictionary)
+        - prec - precision of the solution
+        Assumption: A is nonzero at zero
+    Output: power series solution of the system
+    """
+    n = length(equations)
+    ring = parent(equations[1])
+    S = MatrixSpace(ring, n, n)
+    Sv = MatrixSpace(ring, n, 1)
+    Svconst = MatrixSpace(base_ring(ring), n, 1)
+    eqs = Sv(equations)
+    
+    x_vars = filter(v -> ("$(v)_dot" in map(string, gens(ring))), gens(ring))
+    x_vars = [x for x in x_vars]
+    x_dot_vars = [str_to_var("$(x)_dot", ring) for x in x_vars]
+
+    Jac_dots = S([derivative(p, xd) for p in equations, xd in x_dot_vars])
+    Jac_xs = S([derivative(p, x) for p in equations, x in x_vars])
+
+    ps_ring, t = PowerSeriesRing(base_ring(ring), prec, "t"; model=:capped_absolute)
+    solution = Dict()
+    for (u, coeffs) in inputs
+        solution[u] = sum([coeffs[i] * t^(i - 1) for i in 1:length(coeffs)])
+    end
+    for x in x_vars
+        solution[x] = ps_ring(ic[x])
+    end
+    for xd in x_dot_vars
+        solution[xd] = ps_ring(0)
+        set_prec!(solution[xd], 1)
+    end
+
+    cur_prec = 1
+    while cur_prec < prec
+        for i in 1:length(x_vars)
+            set_prec!(solution[x_vars[i]], 2 * cur_prec)
+            set_prec!(solution[x_dot_vars[i]], 2 * cur_prec)
+        end
+        eval_point = [solution[v] for v in gens(ring)]
+        map(ps -> set_prec!(ps, 2 * cur_prec), eval_point)
+        eqs_eval = map(p -> evaluate(p, eval_point), eqs)
+        J_eval = map(p -> evaluate(p, eval_point), Jac_xs)
+        Jd_eval = map(p -> evaluate(p, eval_point), Jac_dots)
+        Jd_inv = ps_matrix_inv(Jd_eval, cur_prec)
+
+        X_err = ps_matrix_linear_de(-Jd_inv * J_eval, -Jd_inv * eqs_eval, zero(Svconst))
+        for i in 1:length(x_vars)
+            solution[x_vars[i]] = solution[x_vars[i]] + X_err[i]
+            solution[x_dot_vars[i]] = ps_diff(solution[x_vars[i]])
+        end
+        cur_prec *= 2
+    end
+
+    return solution
 end

@@ -8,7 +8,7 @@
             A = random_ps_matrix(T, S)
             Sconst = MatrixSpace(GF(2^31 - 1), d, d)
             Y0 = Sconst([rand(Int) % 100 for i = 1:d, j = 1:d])
-            sol, sol_inv = ps_matrix_homlinear_de(A, Y0)
+            @time sol, sol_inv = ps_matrix_homlinear_de(A, Y0)
             to_be_zero = map(ps_diff, sol) - A * sol
             @test truncate_matrix(to_be_zero, 299) == truncate_matrix(zero(S), 299)
         end
