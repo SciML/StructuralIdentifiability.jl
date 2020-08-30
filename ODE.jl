@@ -11,11 +11,12 @@ struct ODE
     parameters
     equations
     
-    function ODE(eqs, inputs, field = QQ)
+    function ODE(eqs, inputs)
         #Initialize ODE
         #equations is a dictionary x_i => f_i(x, u, params)
 
-        poly_ring = parent(collect(values(eqs))[1])
+        num, den = unpack_fraction(collect(values(eqs))[1])
+        poly_ring = parent(num)
         x_vars = collect(keys(eqs))
         u_vars = inputs
         parameters = filter(v -> (!(v in x_vars) && !(v in u_vars)), gens(poly_ring))
@@ -41,5 +42,5 @@ function power_series_solution(ode::ODE, param_values, initial_conditions, input
     new_inputs = Dict(str_to_var(string(k), new_ring) => v for (k, v) in input_values)
     new_ic = Dict(str_to_var(string(k), new_ring) => v for (k, v) in initial_conditions)
     result = ps_ode_solution(equations, new_ic, new_inputs, prec)
-    return Dict(v => result[str_to_var(string(v), new_ring)] for v in ode.x_vars)
+    return Dict(v => result[str_to_var(string(v), new_ring)] for v in vcat(ode.x_vars, ode.u_vars))
 end
