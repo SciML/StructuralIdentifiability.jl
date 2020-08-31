@@ -1,36 +1,29 @@
 import GroebnerBasis
 
+#------------------------------------------------------------------------------
+
 function eval_at_dict(poly, d)
+    """
+    Evaluates a polynomial on a dict var => val
+    missing values are replaced with zeroes
+    """
     point = [get(d, v, base_ring(parent(poly))(0)) for v in gens(parent(poly))]
     return evaluate(poly, point)
 end
 
+#------------------------------------------------------------------------------
+
 function unpack_fraction(f)
+    """
+    Maps polynomial/rational function to a pair denominator/numerator
+    """
     if applicable(numerator, f)
         return (numerator(f), denominator(f))
     end
     return (f, parent(f)(1))
 end
 
-function read_matrix(name, base_ring)
-    io = open(name, "r");
-    dim = parse(Int, readline(io));
-    S = MatrixSpace(base_ring, dim, dim);
-    result = zero(S)
-    #rows_order = [2, 3, 1, 4]
-    for i = 1:dim
-        for j = 1:dim
-            poly_str = readline(io);
-            p = base_ring(0);
-            for m_str = split(poly_str, '+')
-                p += base_ring(eval(Meta.parse(m_str)));
-            end
-            result[i, j] = p;
-        end
-    end
-    close(io);
-    return result;
-end
+#------------------------------------------------------------------------------
 
 function simplify_frac(numer, denom)
     gcd_sub = gcd(numer, denom)
@@ -38,6 +31,8 @@ function simplify_frac(numer, denom)
     sub_denom = divexact(denom, gcd_sub)
     return sub_numer, sub_denom
 end
+
+#------------------------------------------------------------------------------
 
 function make_substitution(f, var_sub, val_numer, val_denom)
     """
@@ -55,11 +50,15 @@ function make_substitution(f, var_sub, val_numer, val_denom)
     return f_subs
 end
 
+#------------------------------------------------------------------------------
+
 function evaluate_frac(f, var_sub, val_numer, val_denom)
     f_numer = make_substitution(numerator(f), var_sub, val_numer, val_denom) // val_denom^(degree(numerator(f), var_sub))
     f_denom = make_substitution(denominator(f), var_sub, val_numer, val_denom) // val_denom^(degree(denominator(f), var_sub))
     return f_numer // f_denom
 end
+
+#------------------------------------------------------------------------------
 
 function parent_ring_change(poly, new_ring)
     """
@@ -97,16 +96,7 @@ function parent_ring_change(poly, new_ring)
     return finish(builder)
 end
 
-function to_base_ring(f)
-    """
-    Convert constant Polynomial to element in base ring
-    """
-    poly_ring = parent(f)
-    BR = base_ring(poly_ring)
-    all_zeros = zeros(BR, length(gens(poly_ring)))
-    f_elem = evaluate(f, all_zeros)
-    return f_elem
-end
+#------------------------------------------------------------------------------
 
 function check_factors(f)
     """
@@ -138,6 +128,8 @@ function check_factors(f)
     return (is_irr, gcd_coef)
 end
 
+#------------------------------------------------------------------------------
+
 function dict_to_poly(dict_monom, poly_ring)
     builder = MPolyBuildCtx(poly_ring)
     for (monom, coef) in pairs(dict_monom)
@@ -145,6 +137,8 @@ function dict_to_poly(dict_monom, poly_ring)
     end
     return finish(builder)
 end
+
+#------------------------------------------------------------------------------
 
 function extract_coefficients(poly, variables)
     """
@@ -180,15 +174,7 @@ function extract_coefficients(poly, variables)
     return Dict([(k, dict_to_poly(v, new_ring)) for (k, v) in pairs(result)])
 end
 
-function is_constant(f)
-    is_const = true
-    for v in gens(parent(f))
-        if degree(f, v) > 0
-            is_const = false
-        end
-    end
-    return is_const
-end
+#------------------------------------------------------------------------------
 
 function check_injectivity(polys; method="Singular")
     """
@@ -236,7 +222,14 @@ function check_injectivity(polys; method="Singular")
     return result
 end
 
+#------------------------------------------------------------------------------
+
 function check_identifiability(io_equation, parameters; method="Singular")
+    """
+    For the io_equation and the list of all parameter variables, returns a dictionary
+    var => whether_globally_identifiable
+    method can be "Singular" or "GroebnerBasis" yielding using Singular.jl or GroebnerBasis.jl
+    """
     @debug "Extracting coefficients"
     flush(stdout)
     nonparameters = filter(v -> !(string(v) in map(string, parameters)), gens(parent(io_equation)))
@@ -245,6 +238,10 @@ function check_identifiability(io_equation, parameters; method="Singular")
     return check_injectivity(collect(values(coeffs)); method=method)
 end
 
+#------------------------------------------------------------------------------
+
 function str_to_var(s, ring)
     return gens(ring)[findfirst(v -> (string(v) == s), gens(ring))]
 end
+
+#------------------------------------------------------------------------------

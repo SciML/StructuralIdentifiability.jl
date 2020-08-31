@@ -12,7 +12,7 @@ function rand_poly(deg, vars)
     end
 
     for subs in monomials
-        monom = rand(-5:5)
+        monom = rand(-50:50)
         for v_ind in subs
             monom *= vars[v_ind]
         end
