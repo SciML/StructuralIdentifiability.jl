@@ -1,4 +1,4 @@
-@testset "IO-equation of predator-prey model" begin
+@testset "IO-equation of 2-compartiment model" begin
     # 2-compartiment model
     var_names = [
         "x_0", "x_1", "u",
