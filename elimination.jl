@@ -192,6 +192,83 @@ end
 
 #------------------------------------------------------------------------------
 
+mutable struct ODEPointGenerator
+    ode
+    outputs
+    big_ring
+    precision
+    cached_points
+    function ODEPointGenerator(ode, outputs, big_ring)
+        prec = 0
+        while findfirst(x -> string(x) == "y1_$prec", gens(big_ring)) != nothing
+            prec += 1
+        end
+        return new(ode, outputs, big_ring, prec, [])
+    end
+end
+
+#------------------------------------------------------------------------------
+
+function Base.iterate(gpg::ODEPointGenerator, i::Int=1)
+    if i > length(gpg.cached_points)
+        @debug "Generating new point on the variety"
+        sample_max = i * 50
+        result = undef
+        while true
+            @debug "Preparing initial condition"
+            flush(stdout)
+            base_field = base_ring(gpg.big_ring)
+            param_values = Dict(p => base_field(rand(1:sample_max)) for p in gpg.ode.parameters)
+            initial_conditions = Dict(x => base_field(rand(1:sample_max)) for x in gpg.ode.x_vars)
+            input_values = Dict(u => [base_field(rand(1:sample_max)) for _ in 1:gpg.precision] for u in gpg.ode.u_vars)
+            @debug "Computing a power series solution"
+            flush(stdout)
+            ps_solution = undef
+            try
+                ps_solution = power_series_solution(gpg.ode, param_values, initial_conditions, input_values, gpg.precision)
+            catch e
+                print(e, "\n")
+                continue
+            end
+            @debug "Evaluating outputs"
+            flush(stdout)
+            ps_ring = parent(first(values(ps_solution)))
+            for p in gpg.ode.parameters
+                ps_solution[p] = ps_ring(param_values[p])
+            end
+            eval_outputs = []
+            for g in gpg.outputs
+                push!(eval_outputs, eval_at_dict(g, ps_solution))
+            end
+
+            @debug "Constructing the point"
+            flush(stdout)
+            result = Dict(str_to_var("$p", gpg.big_ring) => c for (p, c) in param_values)
+            for u in gpg.ode.u_vars
+                result[str_to_var(string(u), gpg.big_ring)] = coeff(ps_solution[u], 0)
+                for i in 1:(gpg.precision - 1)
+                    result[str_to_var("$(u)_$i", gpg.big_ring)] = coeff(ps_solution[u], i) * factorial(i)
+                end
+            end
+            for i in 1:length(gpg.outputs)
+                for j in 0:(gpg.precision - 1)
+                    result[str_to_var("y$(i)_$j", gpg.big_ring)] = coeff(eval_outputs[i], j) * factorial(j)
+                end
+            end
+            for x in gpg.ode.x_vars
+                result[str_to_var("$x", gpg.big_ring)] = coeff(ps_solution[x], 0)
+                result[str_to_var("$(x)_dot", gpg.big_ring)] = coeff(ps_solution[x], 1)
+            end
+            break
+        end
+        push!(gpg.cached_points, result)
+    end
+    return (gpg.cached_points[i], i + 1)
+end
+
+
+#------------------------------------------------------------------------------
+
 function choose(polys, generic_point_generator)
     """
     Input:
@@ -323,6 +400,7 @@ function eliminate_var(f, g, var_elim, generic_point_generator)
             if res == res_pre
                 if gcd_coef != 1
                     @debug "\t \t Size of extra factor: $(length(gcd_coef)); $(Dates.now())"
+                    @debug "\t \t It is $gcd_coef"
                     flush(stdout)
                 end
                 return res

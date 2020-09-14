@@ -57,7 +57,7 @@ function generate_io_equation_problem(ode::ODE, outputs)
     for u in ode.u_vars
         derivation[str_to_var(string(u), ring)] = str_to_var("$(u)_1", ring)
         for i in 1:(dim_x - 1)
-            derivation[str_to_var("$(u)_i", ring)] = str_to_var("$(u)_$(i + 1)", ring)
+            derivation[str_to_var("$(u)_$i", ring)] = str_to_var("$(u)_$(i + 1)", ring)
         end
     end
 
@@ -75,27 +75,28 @@ function generate_io_equation_problem(ode::ODE, outputs)
     end
 
     # Construct generic point generator
-    Lie_derivation = copy(derivation)
-    for (x, f) in ode.equations
-        f_num, f_den = map(p -> parent_ring_change(ode.poly_ring(p), ring), unpack_fraction(f))
-        Lie_derivation[str_to_var("$x", ring)] = f_num // f_den
-    end
-    @debug "\t Computing Lie derivatives $(Dates.now())"
-    flush(stdout)
-    Lie_derivatives = []
-    for eq in y_equations
-        push!(Lie_derivatives, eq)
-        for i in 1:dim_x
-            push!(
-                Lie_derivatives,
-                unpack_fraction(diff_poly(Lie_derivatives[end], Lie_derivation))[1]
-            )
-        end
-    end
-    generic_point_generator = RationalVarietyPointGenerator(
-        vcat(collect(values(x_equations)), Lie_derivatives),
-        map(s -> str_to_var(s, ring), vcat(old_vars, ["$(u)_$i" for i in 1:dim_x for u in ode.u_vars]))
-    )
+    #Lie_derivation = copy(derivation)
+    #for (x, f) in ode.equations
+    #    f_num, f_den = map(p -> parent_ring_change(ode.poly_ring(p), ring), unpack_fraction(f))
+    #    Lie_derivation[str_to_var("$x", ring)] = f_num // f_den
+    #end
+    #@debug "\t Computing Lie derivatives $(Dates.now())"
+    #flush(stdout)
+    #Lie_derivatives = []
+    #for eq in y_equations
+    #    push!(Lie_derivatives, eq)
+    #    for i in 1:dim_x
+    #        push!(
+    #            Lie_derivatives,
+    #            unpack_fraction(diff_poly(Lie_derivatives[end], Lie_derivation))[1]
+    #        )
+    #    end
+    #end
+    #generic_point_generator = RationalVarietyPointGenerator(
+    #    vcat(collect(values(x_equations)), Lie_derivatives),
+    #    map(s -> str_to_var(s, ring), vcat(old_vars, ["$(u)_$i" for i in 1:dim_x for u in ode.u_vars]))
+    #)
+    generic_point_generator = ODEPointGenerator(ode, outputs, ring)
 
     return (ring, derivation, x_equations, y_equations, generic_point_generator)
 end
