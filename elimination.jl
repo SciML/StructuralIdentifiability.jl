@@ -410,7 +410,7 @@ function eliminate_var(f, g, var_elim, generic_point_generator)
         flush(stdout)
         var_names = [string(v) for v in gens(parent(f))]
         ring_sing, var_sing = Singular.PolynomialRing(Singular.QQ, var_names) 
-        poly_sing = mpoly_conversion(R, ring_sing)        
+        poly_sing = parent_ring_change(R, ring_sing)        
         R_factors = Singular.factor(poly_sing)
         @debug "\t Size and multiplicity of factors; $(Dates.now()) "
         flush(stdout)
