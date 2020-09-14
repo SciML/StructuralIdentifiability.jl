@@ -1,4 +1,4 @@
-@testset "IO-equation of predator-prey model" begin
+@testset "IO-equation of Chen-Lee model" begin
     # Chen-Lee model
     var_names = [
         "x_0", "x_1", "x_2",
