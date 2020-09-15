@@ -69,6 +69,38 @@ end
 
 #------------------------------------------------------------------------------
 
+function Sylvester_matrix(f, g, var_elim)
+    """
+    Compute the Bezout matrix of two polynomials f, g with respect to var_elim
+    Inputs:
+        - f::AbstractAlgebra.MPolyElem, first polynomial
+        - g::AbstractAlgebra.MPolyElem, second polynomial
+        - var_elim::AbstractAlgebra.MPolyElem, variable, of which f and g are considered as polynomials
+    Output:
+        - M::MatrixElem, The Sylvester matrix
+    """
+    parent_ring = parent(f)
+    deg_f = degree(f, var_elim)
+    deg_g = degree(g, var_elim)
+    n = deg_f + deg_g
+    GL = MatrixSpace(parent_ring, n, n)
+    M = zero(GL)
+    for i in 1:deg_f
+        for j in 0:deg_g
+            M[i, j + i] = coeff(g, [var_elim], [j])
+        end
+    end
+    for i in 1:deg_g
+        for j in 0:deg_f
+            M[i + deg_f, j + i] = coeff(f, [var_elim], [j])
+        end
+    end
+
+    return M
+end
+
+#------------------------------------------------------------------------------
+
 function simplify_matrix(M)
     """
     Eliminate GCD of entries of every row and column
@@ -298,46 +330,40 @@ function eliminate_var(f, g, var_elim, generic_point_generator)
     #Step 3: Compute resultant
     if degree(f, var_elim) == 0
         R = f
-    elseif degree(f, var_elim) == 1
-        coef_1 = coeff(f, [var_elim], [1])
-        coef_0 = coeff(f, [var_elim], [0])
-        R = make_substitution(g, var_elim, -coef_0, coef_1)
     else
-        @debug "Calculating Bezout Matrix $(Dates.now())"
-        flush(stdout)
-        M = Bezout_matrix(f, g, var_elim)
-        if generic_point_generator != nothing
-            @debug "Simplifying Bezout Matrix $(Dates.now())"
+        if degree(f, var_elim) > 1
+            @debug "Calculating Bezout Matrix $(Dates.now())"
             flush(stdout)
-            M_simp, extra_factors = simplify_matrix(M)
+            M = Bezout_matrix(f, g, var_elim)
         else
-            M_simp = M
+            @debug "Calculating Sylvester matrix"
+            flush(stdout)
+            M = Sylvester_matrix(f, g, var_elim)
         end
+        @debug "Simplifying the matrix $(Dates.now())"
+        flush(stdout)
+        M_simp, extra_factors = simplify_matrix(M)
+        @debug "Removed factors $(map(length, extra_factors))"
         M_size = zero(MatrixSpace(ZZ, ncols(M_simp), ncols(M_simp)))
         for i in 1:ncols(M_simp)
             for j in 1:ncols(M_simp)
                 M_size[i,j] = length(M_simp[i,j])
             end
         end
-        @debug "\t Bezout matrix size: \n $M_size"
+        @debug "\t Matrix size: \n $M_size"
         @debug "\t Computing determinant $(Dates.now())"
         flush(stdout)
         R = det_minor_expansion(M_simp)
     end
     #Step 4: Eliminate extra factors
-    if generic_point_generator != nothing
-        factors = fast_factor(R)
-        res = choose(factors, generic_point_generator)
-        for f in factors
-            if f != res
-                @debug "\t \t Size of extra factor: $(length(f)); $(Dates.now())"
-                @debug "\t \t It is $f"
-                flush(stdout)
-            end
+    factors = fast_factor(R)
+    res = choose(factors, generic_point_generator)
+    for f in factors
+        if f != res
+            @debug "\t \t Size of extra factor: $(length(f)); $(Dates.now())"
+            @debug "\t \t It is $f"
+            flush(stdout)
         end
-        return res
-    else
-        res = R
     end
     return res
 end
