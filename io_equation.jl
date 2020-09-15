@@ -107,7 +107,7 @@ function find_ioequation(ode::ODE, output, auto_var_change = true)
         outputs_with_scores = [
             (
                 min(d[2]...),
-                -count(x -> x == min(d[2]...), d[2]),
+                -count(x -> x == min(d[2]...), d[2]) + length(y_equations[d[1]]) // 100,
                 length(y_equations[d[1]]),
                 d[1]
             ) for d in var_degs               
@@ -120,9 +120,11 @@ function find_ioequation(ode::ODE, output, auto_var_change = true)
 
         #Calculate the Lie derivative of the io_relation
         @debug "Prolonging"
+        flush(stdout)
         next_y_equation = diff_poly(y_equations[y_ind], derivation)
         for x in x_left
             @debug "Eliminating the derivative of $x"
+            flush(stdout)
             next_y_equation = eliminate_var(x_equations[x], next_y_equation, derivation[x], point_generator)
         end
         
@@ -158,25 +160,33 @@ function find_ioequation(ode::ODE, output, auto_var_change = true)
 
                         #Change current system
                         @debug "Change in the system"
+                        flush(stdout)
                         x_equations[x] = make_substitution(x_equations[x], derivation[x], denom_d * derivation[x] - numer_d, denom_d)
                         for xx in x_left
                             @debug "\t Change in the equation for $xx"
+                            flush(stdout)
                             x_equations[xx] = make_substitution(x_equations[xx], x, A * x - B, A)
                         end
                         @debug "Change in the outputs"
+                        flush(stdout)
                         for i in 1:length(y_equations)
                             @debug "\t Change in the $i th output"
+                            flush(stdout)
                             y_equations[i] = make_substitution(y_equations[i], x, A * x - B, A)
                         end
                         @debug "\t Change in the prolonged equation"
+                        flush(stdout)
                         next_y_equation = make_substitution(next_y_equation, x, A * x - B, A)
                         #recalibrate system
                         @debug "Unmixing the derivatives"
+                        flush(stdout)
                         for xx in setdiff(x_left, [x])
                             @debug "\t Unmixing $xx"
+                            flush(stdout)
                             x_equations[x] = eliminate_var(x_equations[x], x_equations[xx], derivation[xx], point_generator)
                         end
                         @debug "Change of variables performed"
+                        flush(stdout)
                         break
                     end
                 end
@@ -187,18 +197,23 @@ function find_ioequation(ode::ODE, output, auto_var_change = true)
         delete!(x_equations, var_elim)
         delete!(x_left, var_elim)
         @debug "Elimination in states"
+        flush(stdout)
         for x in x_left
             @debug "\t Elimination in the equation for $x"
+            flush(stdout)
             x_equations[x] = eliminate_var(x_equations[x], y_equations[y_ind], var_elim, point_generator)
         end
         @debug "Elimination in y_equations"
+        flush(stdout)
         for i in 1:length(y_equations)
             if i != y_ind
                 @debug "Elimination in the $i th output"
+                flush(stdout)
                 y_equations[i] = eliminate_var(y_equations[i], y_equations[y_ind], var_elim, point_generator)
             end
         end
         @debug "\t Elimination in the prolonged equation"
+        flush(stdout)
         y_equations[y_ind] = eliminate_var(y_equations[y_ind], next_y_equation, var_elim, point_generator)
     end
 end
