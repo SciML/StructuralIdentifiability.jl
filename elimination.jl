@@ -388,37 +388,35 @@ function eliminate_var(f, g, var_elim, generic_point_generator)
     #Step 4: Eliminate extra factors
     if generic_point_generator != nothing
         #Preliminary factorization
-        #TODO: Theoretical justification
-        is_irr, gcd_coef = check_factors(R)
-        if is_irr
+        divs, certainty = uncertain_factorization(R)
+        if certainty
             @debug "\t Using GCD to eliminate extra factors $(Dates.now())" 
             flush(stdout)
-            res_pre = divexact(R, gcd_coef)
-            push!(extra_factors, gcd_coef)
-            push!(extra_factors, res_pre)
-            res = choose(extra_factors, generic_point_generator)
-            if res == res_pre
-                if gcd_coef != 1
-                    @debug "\t \t Size of extra factor: $(length(gcd_coef)); $(Dates.now())"
-                    @debug "\t \t It is $gcd_coef"
+            res = choose(divs, generic_point_generator)
+            for div in divs
+                if div != res
+                    @debug "\t \t Size of extra factor: $(length(div)); $(Dates.now())"
+                    @debug "\t \t It is $div"
                     flush(stdout)
                 end
-                return res
             end
+            return res
         end
         @debug "\t Preliminary factorization failed, using Singular; $(Dates.now()) "
         flush(stdout)
         var_names = [string(v) for v in gens(parent(f))]
-        ring_sing, var_sing = Singular.PolynomialRing(Singular.QQ, var_names) 
-        poly_sing = parent_ring_change(R, ring_sing)        
-        R_factors = Singular.factor(poly_sing)
-        @debug "\t Size and multiplicity of factors; $(Dates.now()) "
-        flush(stdout)
-        for fac in R_factors
-            fac_Nemo = mpoly_conversion(fac[1], parent(f))
-            @debug "Size $(length(fac_Nemo)) -- $(fac[2]) times; $(Dates.now())"
+        ring_sing, var_sing = Singular.PolynomialRing(Singular.QQ, var_names)
+        for div in divs
+            poly_sing = parent_ring_change(div, ring_sing)
+            div_factors = Singular.factor(poly_sing)
+            @debug "\t Size and multiplicity of factors; $(Dates.now()) "
             flush(stdout)
-            push!(extra_factors, fac_Nemo)
+            for fac in div_factors
+                fac_Nemo = parent_ring_change(fac[1], parent(div))
+                @debug "Size $(length(fac_Nemo)) -- $(fac[2]) times; $(Dates.now())"
+                flush(stdout)
+                push!(extra_factors, fac_Nemo)
+            end
         end
         res = choose(extra_factors, generic_point_generator)
     else

@@ -98,34 +98,45 @@ end
 
 #------------------------------------------------------------------------------
 
-function check_factors(f)
+function uncertain_factorization(f)
     """
-    !!! gens(parent(f))[end] must be y_order (highest order of y)!
-    If return (true, 1), f must be irreducible.
-    If return (true, gcd_coef), gcd_coef is an extra factor of f, and f//gcd_coef is irreducible.
-    If return (false, 1), f may or may not be irredicible.
-    If return (false, gcd_coef), gcd_coef is an extra factor of f, f//gcd_coef may or may not be irredicible.
+    Input: polynomial f with rational coefficients
+    Output: pair (divs, certainty) where
+      - divs is a list of divisors f such that f is their product with certain powers
+      - if certainty is true, all members of divs are Q-irreducible
     """
     vars_f = vars(f)
-    var_test = vars_f[end]
-    d = degree(f, var_test)
-    lc = coeff(f, [var_test], [d])
-    is_irr = true
+    if isempty(vars_f)
+        return ([], true)
+    end
+    main_var = vars_f[end]
+    d = degree(f, main_var)
+    lc_f = coeff(f, [main_var], [d])
+    gcd_coef = lc_f
+    for i in  (d - 1):-1:0
+        gcd_coef = gcd(gcd_coef, coeff(f, [main_var], [i]))
+    end
+    f = divexact(f, gcd_coef)
+    lc_f = coeff(f, [main_var], [d])
+
+    is_irr = undef
     while true
         plugin = rand(5:10, length(vars_f) - 1)
-        if evaluate(lc, vars_f[1 : end - 1], plugin) != 0    
+        if evaluate(lc_f, vars_f[1 : end - 1], plugin) != 0
             f_sub = evaluate(f, vars_f[1 : end - 1], plugin)
-            uni_ring, var_uni = PolynomialRing(base_ring(f), "v")
+            uni_ring, var_uni = PolynomialRing(base_ring(f), string(main_var))
             f_uni = to_univariate(uni_ring, f_sub)
+            if !issquarefree(f_uni)
+                f = divexact(f, gcd(f, derivative(f, main_var)))
+            end
             is_irr = isirreducible(f_uni)
             break
         end
     end
-    gcd_coef = lc
-    for i in  (d - 1):-1:0
-        gcd_coef = gcd(gcd_coef, coeff(f, [var_test], [i]))
-    end
-    return (is_irr, gcd_coef)
+
+    coeff_div, coeff_cert = uncertain_factorization(gcd_coef)
+    push!(coeff_div, f)
+    return (coeff_div, coeff_cert && is_irr)
 end
 
 #------------------------------------------------------------------------------
