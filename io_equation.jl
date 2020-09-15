@@ -74,28 +74,6 @@ function generate_io_equation_problem(ode::ODE, outputs)
         push!(y_equations, g_den * str_to_var("y$(i)_0", ring) - g_num)
     end
 
-    # Construct generic point generator
-    #Lie_derivation = copy(derivation)
-    #for (x, f) in ode.equations
-    #    f_num, f_den = map(p -> parent_ring_change(ode.poly_ring(p), ring), unpack_fraction(f))
-    #    Lie_derivation[str_to_var("$x", ring)] = f_num // f_den
-    #end
-    #@debug "\t Computing Lie derivatives $(Dates.now())"
-    #flush(stdout)
-    #Lie_derivatives = []
-    #for eq in y_equations
-    #    push!(Lie_derivatives, eq)
-    #    for i in 1:dim_x
-    #        push!(
-    #            Lie_derivatives,
-    #            unpack_fraction(diff_poly(Lie_derivatives[end], Lie_derivation))[1]
-    #        )
-    #    end
-    #end
-    #generic_point_generator = RationalVarietyPointGenerator(
-    #    vcat(collect(values(x_equations)), Lie_derivatives),
-    #    map(s -> str_to_var(s, ring), vcat(old_vars, ["$(u)_$i" for i in 1:dim_x for u in ode.u_vars]))
-    #)
     generic_point_generator = ODEPointGenerator(ode, outputs, ring)
 
     return (ring, derivation, x_equations, y_equations, generic_point_generator)
@@ -141,8 +119,10 @@ function find_ioequation(ode::ODE, output, auto_var_change = true)
         flush(stdout)
 
         #Calculate the Lie derivative of the io_relation
+        @debug "Prolonging"
         next_y_equation = diff_poly(y_equations[y_ind], derivation)
         for x in x_left
+            @debug "Eliminating the derivative of $x"
             next_y_equation = eliminate_var(x_equations[x], next_y_equation, derivation[x], point_generator)
         end
         
@@ -151,7 +131,7 @@ function find_ioequation(ode::ODE, output, auto_var_change = true)
         our_choice = sort(var_degs_next)[1]
         var_elim_deg, var_elim = our_choice[1], our_choice[3]
         
-        @debug "Elimination of $var_elim, $(length(x_left)) left; $(Dates.now())"
+        @debug "Elimination of $var_elim, $(length(x_left) - 1) left; $(Dates.now())"
         flush(stdout)
         
         #Possible variable change for Axy + Bx + p(y) (x = var_elim)
@@ -177,18 +157,26 @@ function find_ioequation(ode::ODE, output, auto_var_change = true)
                         point_generator = generator_var_change(point_generator, x, A * x + B, A)
 
                         #Change current system
+                        @debug "Change in the system"
                         x_equations[x] = make_substitution(x_equations[x], derivation[x], denom_d * derivation[x] - numer_d, denom_d)
                         for xx in x_left
+                            @debug "\t Change in the equation for $xx"
                             x_equations[xx] = make_substitution(x_equations[xx], x, A * x - B, A)
                         end
+                        @debug "Change in the outputs"
                         for i in 1:length(y_equations)
+                            @debug "\t Change in the $i th output"
                             y_equations[i] = make_substitution(y_equations[i], x, A * x - B, A)
                         end
+                        @debug "\t Change in the prolonged equation"
                         next_y_equation = make_substitution(next_y_equation, x, A * x - B, A)
                         #recalibrate system
+                        @debug "Unmixing the derivatives"
                         for xx in setdiff(x_left, [x])
+                            @debug "\t Unmixing $xx"
                             x_equations[x] = eliminate_var(x_equations[x], x_equations[xx], derivation[xx], point_generator)
-                        end                        
+                        end
+                        @debug "Change of variables performed"
                         break
                     end
                 end
@@ -198,15 +186,19 @@ function find_ioequation(ode::ODE, output, auto_var_change = true)
         #Eliminate var_elim from the system
         delete!(x_equations, var_elim)
         delete!(x_left, var_elim)
+        @debug "Elimination in states"
         for x in x_left
+            @debug "\t Elimination in the equation for $x"
             x_equations[x] = eliminate_var(x_equations[x], y_equations[y_ind], var_elim, point_generator)
         end
-        #Updating y_equations
+        @debug "Elimination in y_equations"
         for i in 1:length(y_equations)
             if i != y_ind
+                @debug "Elimination in the $i th output"
                 y_equations[i] = eliminate_var(y_equations[i], y_equations[y_ind], var_elim, point_generator)
             end
         end
+        @debug "\t Elimination in the prolonged equation"
         y_equations[y_ind] = eliminate_var(y_equations[y_ind], next_y_equation, var_elim, point_generator)
     end
 end
