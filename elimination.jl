@@ -131,67 +131,6 @@ end
 
 #------------------------------------------------------------------------------
 
-mutable struct RationalVarietyPointGenerator
-    ring
-    equations
-    parametric_vars
-    ind_to_nonparam
-    linear_system_A
-    linear_system_b
-    cached_points
-    function RationalVarietyPointGenerator(equations, parametric_vars)
-        ring = parent(equations[1])
-        nonparametric_vars = filter(v -> !(v in parametric_vars), gens(ring))
-        ind_to_nonparam = Dict(i => nonparametric_vars[i] for i in 1:length(nonparametric_vars))
-        codim = length(nonparametric_vars)
-        S = MatrixSpace(ring, codim, codim)
-        Sv = MatrixSpace(ring, codim, 1)
-
-        linear_system_A = zero(S)
-        linear_system_b = zero(Sv)
-
-        for i in 1:codim
-            reminder = equations[i]
-            for j in 1:codim
-                linear_system_A[i, j] = derivative(equations[i], nonparametric_vars[j])
-                reminder = reminder - linear_system_A[i, j] * nonparametric_vars[j]
-            end
-            linear_system_b[i, 1] = -reminder
-        end
-
-        return new(ring, equations, parametric_vars, ind_to_nonparam, linear_system_A, linear_system_b, [])
-    end
-end
-
-#------------------------------------------------------------------------------
-
-function Base.iterate(p::RationalVarietyPointGenerator, i::Int=1)
-    if i > length(p.cached_points)
-        @debug "Generating new point on the variety"
-        sample_max = i * 50
-        result = undef
-        while true
-            result = Dict(v => base_ring(p.ring)(rand(1:sample_max)) for v in p.parametric_vars)
-            A = map(poly -> eval_at_dict(poly, result), p.linear_system_A)
-            b = map(poly -> eval_at_dict(poly, result), p.linear_system_b)
-            x = undef
-            try
-                x = solve(A, b)
-            catch e
-                continue
-            end
-            for i in 1:length(x)
-                result[p.ind_to_nonparam[i]] = x[i]
-            end
-            break
-        end
-        push!(p.cached_points, result)
-    end
-    return (p.cached_points[i], i + 1)
-end
-
-#------------------------------------------------------------------------------
-
 mutable struct ODEPointGenerator
     ode
     outputs
@@ -387,38 +326,16 @@ function eliminate_var(f, g, var_elim, generic_point_generator)
     end
     #Step 4: Eliminate extra factors
     if generic_point_generator != nothing
-        #Preliminary factorization
-        divs, certainty = uncertain_factorization(R)
-        if certainty
-            @debug "\t Using GCD to eliminate extra factors $(Dates.now())" 
-            flush(stdout)
-            res = choose(divs, generic_point_generator)
-            for div in divs
-                if div != res
-                    @debug "\t \t Size of extra factor: $(length(div)); $(Dates.now())"
-                    @debug "\t \t It is $div"
-                    flush(stdout)
-                end
-            end
-            return res
-        end
-        @debug "\t Preliminary factorization failed, using Singular; $(Dates.now()) "
-        flush(stdout)
-        var_names = [string(v) for v in gens(parent(f))]
-        ring_sing, var_sing = Singular.PolynomialRing(Singular.QQ, var_names)
-        for div in divs
-            poly_sing = parent_ring_change(div, ring_sing)
-            div_factors = Singular.factor(poly_sing)
-            @debug "\t Size and multiplicity of factors; $(Dates.now()) "
-            flush(stdout)
-            for fac in div_factors
-                fac_Nemo = parent_ring_change(fac[1], parent(div))
-                @debug "Size $(length(fac_Nemo)) -- $(fac[2]) times; $(Dates.now())"
+        factors = fast_factor(R)
+        res = choose(factors, generic_point_generator)
+        for f in factors
+            if f != res
+                @debug "\t \t Size of extra factor: $(length(f)); $(Dates.now())"
+                @debug "\t \t It is $f"
                 flush(stdout)
-                push!(extra_factors, fac_Nemo)
             end
         end
-        res = choose(extra_factors, generic_point_generator)
+        return res
     else
         res = R
     end

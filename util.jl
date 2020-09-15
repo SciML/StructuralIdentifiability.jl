@@ -101,13 +101,13 @@ end
 function uncertain_factorization(f)
     """
     Input: polynomial f with rational coefficients
-    Output: pair (divs, certainty) where
-      - divs is a list of divisors f such that f is their product with certain powers
-      - if certainty is true, all members of divs are Q-irreducible
+    Output: list of pairs (div, certainty) where
+      - div's are divisors f such that f is their product with certain powers
+      - if certainty is true, div is Q-irreducible
     """
     vars_f = vars(f)
     if isempty(vars_f)
-        return ([], true)
+        return []
     end
     main_var = vars_f[end]
     d = degree(f, main_var)
@@ -134,9 +134,37 @@ function uncertain_factorization(f)
         end
     end
 
-    coeff_div, coeff_cert = uncertain_factorization(gcd_coef)
-    push!(coeff_div, f)
-    return (coeff_div, coeff_cert && is_irr)
+    coeff_factors = uncertain_factorization(gcd_coef)
+    push!(coeff_factors, (f, is_irr))
+end
+
+#------------------------------------------------------------------------------
+
+function factor_via_singular(polys)
+    if isempty(polys)
+        return []
+    end
+    original_ring = parent(polys[1])
+    R_sing, var_sing = Singular.PolynomialRing(Singular.QQ, map(string, gens(original_ring)))
+    result = []
+    for p in polys
+        @debug "\t Factoring with Singular a polynomial of size $(length(p))"
+        p_sing = parent_ring_change(p, R_sing)
+        for f in Singular.factor(p_sing)
+            push!(result, parent_ring_change(f[1], original_ring))
+        end
+    end
+    return result
+end
+
+#------------------------------------------------------------------------------
+
+function fast_factor(poly)
+    prelim_factors = uncertain_factorization(poly)
+    cert_factors = map(pair -> pair[1], filter(f -> f[2], prelim_factors))
+    uncert_factors = map(pair -> pair[1], filter(f -> !f[2], prelim_factors))
+    append!(cert_factors, factor_via_singular(uncert_factors))
+    return cert_factors
 end
 
 #------------------------------------------------------------------------------
