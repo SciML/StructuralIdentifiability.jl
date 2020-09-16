@@ -107,7 +107,7 @@ function find_ioequation(ode::ODE, output, auto_var_change = true)
         outputs_with_scores = [
             (
                 min(d[2]...),
-                -count(x -> x == min(d[2]...), d[2]) + length(y_equations[d[1]]) // 100,
+                -count(x -> x == min(d[2]...), d[2]) + length(y_equations[d[1]]) // 30,
                 length(y_equations[d[1]]),
                 d[1]
             ) for d in var_degs               
