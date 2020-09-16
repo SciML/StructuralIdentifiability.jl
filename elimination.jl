@@ -30,6 +30,7 @@ function det_minor_expansion_inner(m, discarded, cache)
     end
     if length(discarded[1]) < 3
         @debug "Discarded: $discarded; $(Dates.now())"
+        flush(stdout)
     end
     return result;
 end
