@@ -199,7 +199,6 @@ function Base.iterate(gpg::ODEPointGenerator, i::Int=1)
             try
                 ps_solution = power_series_solution(gpg.ode, param_values, initial_conditions, input_values, gpg.precision)
             catch e
-                print(e, "\n")
                 continue
             end
             @debug "Evaluating outputs"
@@ -255,7 +254,7 @@ function choose(polys, generic_point_generator)
             break
         end
         point = [p[v] for v in vars]
-        filter!(e -> (evaluate(e, point) == 0), polys)
+        polys = filter(e -> (evaluate(e, point) == 0), polys)
     end
     return polys[1]
 end
@@ -273,7 +272,6 @@ function eliminate_var(f, g, var_elim, generic_point_generator)
     Output:
         polynomial, the desired factor of the resultant of f and g
     """
-    #Step 1: Possible simplification for (f,g)
     #Linear comb
     while f != 0 && g != 0
         if degree(f, var_elim) > degree(g, var_elim)
@@ -325,12 +323,10 @@ function eliminate_var(f, g, var_elim, generic_point_generator)
         g = sum([coeff(g, [var_elim], [gcd_deg * i]) * (var_elim ^ i) for i in 0:(degree(g, var_elim) ÷ gcd_deg)])
     end
 
-    #Step 2: Initialization
-    extra_factors = []
-
-    #Step 3: Compute resultant
+    resultant = undef
+    matrix_factors = []
     if degree(f, var_elim) == 0
-        R = f
+        resultant = f
     else
         if degree(f, var_elim) > 1
             @debug "Calculating Bezout Matrix $(Dates.now())"
@@ -343,8 +339,8 @@ function eliminate_var(f, g, var_elim, generic_point_generator)
         end
         @debug "Simplifying the matrix $(Dates.now())"
         flush(stdout)
-        M_simp, extra_factors = simplify_matrix(M)
-        @debug "Removed factors $(map(length, extra_factors))"
+        M_simp, matrix_factors = simplify_matrix(M)
+        @debug "Removed factors $(map(length, matrix_factors))"
         M_size = zero(MatrixSpace(ZZ, ncols(M_simp), ncols(M_simp)))
         for i in 1:ncols(M_simp)
             for j in 1:ncols(M_simp)
@@ -354,10 +350,17 @@ function eliminate_var(f, g, var_elim, generic_point_generator)
         @debug "\t Matrix size: \n $M_size"
         @debug "\t Computing determinant $(Dates.now())"
         flush(stdout)
-        R = det_minor_expansion(M_simp)
+        resultant = det_minor_expansion(M_simp)
     end
     #Step 4: Eliminate extra factors
-    factors = fast_factor(R)
+    factors = fast_factor(resultant)
+    for mfac in matrix_factors
+        for fac in fast_factor(mfac)
+            if !(fac in factors)
+                push!(factors, fac)
+            end
+        end
+    end
     res = choose(factors, generic_point_generator)
     for f in factors
         if f != res

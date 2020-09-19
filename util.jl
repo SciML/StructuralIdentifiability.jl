@@ -46,8 +46,17 @@ function make_substitution(f, var_sub, val_numer, val_denom)
         polynomial, result of substitution
     """
     d = degree(f, var_sub)
-    f_subs = sum(coeff(f, [var_sub], [i]) * (val_numer ^ i) * (val_denom ^ (d - i)) for i in 0:d)
-    return f_subs
+
+    result = 0
+    @debug "Substitution in a polynomial of degree $d"
+    flush(stdout)
+    for i in 0:d
+        @debug "\t Degree $i"
+        flush(stdout)
+        result += coeff(f, [var_sub], [i]) * (val_numer ^ i) * (val_denom ^ (d - i))
+        @debug "\t Intermediate result of size $(length(result))"
+    end
+    return result
 end
 
 #------------------------------------------------------------------------------
