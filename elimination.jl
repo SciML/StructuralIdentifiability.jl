@@ -3,10 +3,17 @@ using Logging
 using Oscar
 
 include("util.jl")
+include("ODE.jl")
 
 #------------------------------------------------------------------------------
 
-function det_minor_expansion_inner(m, discarded, cache)
+PairIntTuples = Tuple{Tuple{Vararg{Int}}, Tuple{Vararg{Int}}}
+
+function det_minor_expansion_inner(
+        m::MatElem{<: T}, 
+        discarded::PairIntTuples, 
+        cache::Dict{PairIntTuples, T}
+    ) where T <: RingElem
     n = size(m, 1);
     if length(discarded[1]) == n
         return 1;
@@ -35,14 +42,14 @@ function det_minor_expansion_inner(m, discarded, cache)
     return result;
 end
 
-function det_minor_expansion(m)
-    cache = Dict();
+function det_minor_expansion(m::MatElem{T}) where T <: RingElem
+    cache = Dict{PairIntTuples, T}();
     return det_minor_expansion_inner(m, (Tuple{}(), Tuple{}()), cache);
 end
 
 #------------------------------------------------------------------------------
 
-function Bezout_matrix(f, g, var_elim)
+function Bezout_matrix(f::P, g::P, var_elim::P) where P <: MPolyElem
     """
     Compute the Bezout matrix of two polynomials f, g with respect to var_elim
     Inputs:
@@ -70,7 +77,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function Sylvester_matrix(f, g, var_elim)
+function Sylvester_matrix(f::P, g::P, var_elim::P) where P <: MPolyElem
     """
     Compute the Bezout matrix of two polynomials f, g with respect to var_elim
     Inputs:
@@ -102,7 +109,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function simplify_matrix(M)
+function simplify_matrix(M::MatElem{P}) where P <: MPolyElem
     """
     Eliminate GCD of entries of every row and column
     Input:
@@ -112,7 +119,7 @@ function simplify_matrix(M)
         - extra_factors::Vector{AbstractAlgebra.MPolyElem}, array of GCDs eliminated from M.
     """
 
-    function _simplify_range(coords)
+    function _simplify_range(coords::Array{Tuple{Int, Int}, 1})
         """
         An auxiliary function taking a list of coordinates of cells
         and dividing them by their gcd.
@@ -130,8 +137,8 @@ function simplify_matrix(M)
         return gcd_temp
     end
 
-    extra_factors = []
-    rows_cols = []
+    extra_factors = Array{P, 1}()
+    rows_cols = Array{Array{Tuple{Int, Int}, 1}, 1}()
     # adding all rows
     for i in 1:nrows(M)
         push!(rows_cols, [(i, j) for j in 1:ncols(M)])
@@ -164,24 +171,27 @@ end
 
 #------------------------------------------------------------------------------
 
-mutable struct ODEPointGenerator
-    ode
-    outputs
-    big_ring
-    precision
-    cached_points
-    function ODEPointGenerator(ode, outputs, big_ring)
+abstract type PointGenerator{P} end
+
+mutable struct ODEPointGenerator{P} <: PointGenerator{P}
+    ode::ODE{P}
+    outputs::Array{P, 1}
+    big_ring::MPolyRing
+    precision::Int
+    cached_points::Array{Dict{P, <: FieldElem}, 1}
+    function ODEPointGenerator{P}(ode::ODE{P}, outputs::Array{P, 1}, big_ring::MPolyRing) where P <: MPolyElem{<: FieldElem}
         prec = 0
         while findfirst(x -> string(x) == "y1_$prec", gens(big_ring)) != nothing
             prec += 1
         end
-        return new(ode, outputs, big_ring, prec, [])
+        number_type = typeof(one(base_ring(big_ring)))
+        return new(ode, outputs, big_ring, prec, Array{Dict{P, number_type}}[])
     end
 end
 
 #------------------------------------------------------------------------------
 
-function Base.iterate(gpg::ODEPointGenerator, i::Int=1)
+function Base.iterate(gpg::ODEPointGenerator{P}, i::Int=1) where P <: MPolyElem{<: FieldElem}
     if i > length(gpg.cached_points)
         @debug "Generating new point on the variety"
         sample_max = i * 50
@@ -190,15 +200,17 @@ function Base.iterate(gpg::ODEPointGenerator, i::Int=1)
             @debug "Preparing initial condition"
             flush(stdout)
             base_field = base_ring(gpg.big_ring)
-            param_values = Dict(p => base_field(rand(1:sample_max)) for p in gpg.ode.parameters)
-            initial_conditions = Dict(x => base_field(rand(1:sample_max)) for x in gpg.ode.x_vars)
-            input_values = Dict(u => [base_field(rand(1:sample_max)) for _ in 1:gpg.precision] for u in gpg.ode.u_vars)
+            param_values = Dict{P, Int}(p => rand(1:sample_max) for p in gpg.ode.parameters)
+            initial_conditions = Dict{P, Int}(x => rand(1:sample_max) for x in gpg.ode.x_vars)
+            input_values = Dict{P, Array{Int, 1}}(u => [rand(1:sample_max) for _ in 1:gpg.precision] for u in gpg.ode.u_vars)
             @debug "Computing a power series solution"
             flush(stdout)
             ps_solution = undef
             try
                 ps_solution = power_series_solution(gpg.ode, param_values, initial_conditions, input_values, gpg.precision)
             catch e
+                @debug "$e"
+                flush(stdout)
                 continue
             end
             @debug "Evaluating outputs"
@@ -214,7 +226,7 @@ function Base.iterate(gpg::ODEPointGenerator, i::Int=1)
 
             @debug "Constructing the point"
             flush(stdout)
-            result = Dict(str_to_var("$p", gpg.big_ring) => c for (p, c) in param_values)
+            result = Dict(str_to_var("$p", gpg.big_ring) => base_field(c) for (p, c) in param_values)
             for u in gpg.ode.u_vars
                 result[str_to_var(string(u), gpg.big_ring)] = coeff(ps_solution[u], 0)
                 for i in 1:(gpg.precision - 1)
@@ -240,7 +252,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function choose(polys, generic_point_generator)
+function choose(polys::Array{P, 1}, generic_point_generator::PointGenerator{P}) where P <: MPolyElem{<: FieldElem}
     """
     Input:
         - array_f, an array of distinct irreducible polynomials in the same ring
@@ -255,13 +267,14 @@ function choose(polys, generic_point_generator)
         end
         point = [p[v] for v in vars]
         polys = filter(e -> (evaluate(e, point) == 0), polys)
+        flush(stdout)
     end
     return polys[1]
 end
 
 #------------------------------------------------------------------------------
 
-function eliminate_var(f, g, var_elim, generic_point_generator)
+function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator::PointGenerator{P}) where P <: MPolyElem{<: FieldElem}
     """
     Eliminate variable from a pair of polynomials
     Input:

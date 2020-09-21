@@ -2,7 +2,7 @@ import GroebnerBasis
 
 #------------------------------------------------------------------------------
 
-function eval_at_dict(poly, d)
+function eval_at_dict(poly::P, d::Dict{P, <: RingElem}) where P <: MPolyElem
     """
     Evaluates a polynomial on a dict var => val
     missing values are replaced with zeroes
@@ -13,19 +13,17 @@ end
 
 #------------------------------------------------------------------------------
 
-function unpack_fraction(f)
-    """
-    Maps polynomial/rational function to a pair denominator/numerator
-    """
-    if applicable(numerator, f)
-        return (numerator(f), denominator(f))
-    end
-    return (f, parent(f)(1))
+function unpack_fraction(f::MPolyElem)
+    return (f, one(parent(f)))
+end
+
+function unpack_fraction(f::Generic.Frac{<: MPolyElem})
+    return (numerator(f), denominator(f))
 end
 
 #------------------------------------------------------------------------------
 
-function simplify_frac(numer, denom)
+function simplify_frac(numer::P, denom::P) where P <: MPolyElem
     gcd_sub = gcd(numer, denom)
     sub_numer = divexact(numer, gcd_sub)
     sub_denom = divexact(denom, gcd_sub)
@@ -34,7 +32,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function make_substitution(f, var_sub, val_numer, val_denom)
+function make_substitution(f::P, var_sub::P, val_numer::P, val_denom::P) where P <: MPolyElem
     """
     Substitute a variable in a polynomial with an expression
     Input:
@@ -61,15 +59,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function evaluate_frac(f, var_sub, val_numer, val_denom)
-    f_numer = make_substitution(numerator(f), var_sub, val_numer, val_denom) // val_denom^(degree(numerator(f), var_sub))
-    f_denom = make_substitution(denominator(f), var_sub, val_numer, val_denom) // val_denom^(degree(denominator(f), var_sub))
-    return f_numer // f_denom
-end
-
-#------------------------------------------------------------------------------
-
-function parent_ring_change(poly, new_ring)
+function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing)
     """
     Converts a polynomial to a different polynomial ring
     Input
@@ -80,7 +70,7 @@ function parent_ring_change(poly, new_ring)
     """
     old_ring = parent(poly)
     # construct a mapping for the variable indices
-    var_mapping = []
+    var_mapping = Array{Int, 1}()
     for u in gens(old_ring)
         push!(
             var_mapping,
@@ -107,7 +97,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function uncertain_factorization(f)
+function uncertain_factorization(f::MPolyElem{fmpq})
     """
     Input: polynomial f with rational coefficients
     Output: list of pairs (div, certainty) where
@@ -116,7 +106,7 @@ function uncertain_factorization(f)
     """
     vars_f = vars(f)
     if isempty(vars_f)
-        return []
+        return Array{Tuple{typeof(f), Bool}, 1}()
     end
     main_var = vars_f[end]
     d = degree(f, main_var)
@@ -149,13 +139,13 @@ end
 
 #------------------------------------------------------------------------------
 
-function factor_via_singular(polys)
+function factor_via_singular(polys::Array{<: MPolyElem{fmpq}, 1})
     if isempty(polys)
         return []
     end
     original_ring = parent(polys[1])
     R_sing, var_sing = Singular.PolynomialRing(Singular.QQ, map(string, gens(original_ring)))
-    result = []
+    result = Array{typeof(polys[1]), 1}()
     for p in polys
         @debug "\t Factoring with Singular a polynomial of size $(length(p))"
         p_sing = parent_ring_change(p, R_sing)
@@ -168,7 +158,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function fast_factor(poly)
+function fast_factor(poly::MPolyElem{fmpq})
     prelim_factors = uncertain_factorization(poly)
     cert_factors = map(pair -> pair[1], filter(f -> f[2], prelim_factors))
     uncert_factors = map(pair -> pair[1], filter(f -> !f[2], prelim_factors))
@@ -178,7 +168,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function dict_to_poly(dict_monom, poly_ring)
+function dict_to_poly(dict_monom::Dict{<: MPolyElem, <: RingElem}, poly_ring::MPolyRing)
     builder = MPolyBuildCtx(poly_ring)
     for (monom, coef) in pairs(dict_monom)
         push_term!(builder, poly_ring.base_ring(coef), monom)
@@ -188,7 +178,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function extract_coefficients(poly, variables)
+function extract_coefficients(poly::P, variables::Array{P, 1}) where P <: MPolyElem
     """
     Intput:
         poly - multivariate polynomial
@@ -224,7 +214,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function check_injectivity(polys; method="Singular")
+function check_injectivity(polys::Array{<: MPolyElem, 1}; method="Singular")
     """
     Checks a generic injectivity of the *projective* map defined by polys
     Inputs:
@@ -272,7 +262,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function check_identifiability(io_equation, parameters; method="Singular")
+function check_identifiability(io_equation::P, parameters::Array{P, 1}; method="Singular") where P <: MPolyElem{fmpq}
     """
     For the io_equation and the list of all parameter variables, returns a dictionary
     var => whether_globally_identifiable
@@ -288,7 +278,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function str_to_var(s, ring)
+function str_to_var(s::String, ring::MPolyRing)
     return gens(ring)[findfirst(v -> (string(v) == s), gens(ring))]
 end
 

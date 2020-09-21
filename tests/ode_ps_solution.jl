@@ -25,7 +25,7 @@ end
 @testset "Power series solution for an ODE system" begin
 
     R, (x, x_dot) = PolynomialRing(QQ, ["x", "x_dot"])
-    exp_t = ps_ode_solution([x_dot - x], Dict(x => 1), Dict(), 20)[x]
+    exp_t = ps_ode_solution([x_dot - x], Dict{fmpq_mpoly, fmpq}(x => 1), Dict{fmpq_mpoly, Array{fmpq, 1}}(), 20)[x]
     @test valuation(ps_diff(exp_t) - exp_t) == 19
 
     R, (x, y, x_dot, y_dot, u) = PolynomialRing(QQ, ["x", "y", "x_dot", "y_dot", "u"])
@@ -67,7 +67,7 @@ end
         )
         R, vars = PolynomialRing(GF(2^31 - 1), varnames)
         eqs = Dict(vars[i] => rand_poly(2, vars) // rand_poly(1, vars) for i in 1:3)
-        ode = ODE(eqs, vars[(end - 1):end])
+        ode = ODE{Generic.MPoly{Nemo.gfp_elem}}(eqs, vars[(end - 1):end])
         ic = Dict(vars[i] => rand(-5:5) for i in 1:3)
         param_vals = Dict(vars[i + 3] => rand(-5:5) for i in 1:3)
         inputs = Dict(u => [rand(-3:3) for i in 1:prec] for u in vars[7:end])

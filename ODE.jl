@@ -4,14 +4,15 @@ using Oscar
 
 include("power_series_utils.jl")
 
-struct ODE
-    poly_ring
-    x_vars
-    u_vars
-    parameters
-    equations
+# P is the type of polynomials in the rhs of the ODE system
+struct ODE{P}
+    poly_ring::MPolyRing
+    x_vars::Array{P, 1}
+    u_vars::Array{P, 1}
+    parameters::Array{P, 1}
+    equations::Dict{P, <: Union{P, Generic.Frac{P}}}
     
-    function ODE(eqs, inputs)
+    function ODE{P}(eqs::Dict{P, <: Union{P, Generic.Frac{P}}}, inputs::Array{P, 1}) where {P <: MPolyElem{<: FieldElem}}
         #Initialize ODE
         #equations is a dictionary x_i => f_i(x, u, params)
 
@@ -26,7 +27,13 @@ end
 
 #------------------------------------------------------------------------------
 
-function power_series_solution(ode::ODE, param_values, initial_conditions, input_values, prec)
+function power_series_solution(
+        ode::ODE{P},
+        param_values::Dict{P, T},
+        initial_conditions::Dict{P, T},
+        input_values::Dict{P, Array{T, 1}},
+        prec::Int
+    ) where {T <: FieldElem, P <: MPolyElem{T}}
     """
     Input:
         - ode, an ode to solve
@@ -41,7 +48,7 @@ function power_series_solution(ode::ODE, param_values, initial_conditions, input
     new_varnames = map(string, vcat(ode.x_vars, map(v -> "$(v)_dot", ode.x_vars), ode.u_vars))
 
     new_ring, new_vars = PolynomialRing(base_ring(ode.poly_ring), new_varnames)
-    equations = Array{RingElem, 1}()
+    equations = Array{P, 1}()
     evaluation = Dict(k => new_ring(v) for (k, v) in param_values)
     for v in vcat(ode.x_vars, ode.u_vars)
         evaluation[v] = str_to_var(string(v), new_ring)
@@ -58,7 +65,25 @@ end
 
 #------------------------------------------------------------------------------
 
-function _reduce_poly_mod_p(poly, p)
+function power_series_solution(
+        ode::ODE{P},
+        param_values::Dict{P, Int},
+        initial_conditions::Dict{P, Int},
+        input_values::Dict{P, Array{Int, 1}},
+        prec::Int
+    ) where P <: MPolyElem{<: FieldElem}
+    bring = base_ring(ode.poly_ring)
+    return power_series_solution(
+        ode,
+        Dict(p => bring(v) for (p, v) in param_values),
+        Dict(x => bring(v) for (x, v) in initial_conditions),
+        Dict(u => map(v -> bring(v), vv) for (u, vv) in input_values),
+        prec
+    )
+end
+#------------------------------------------------------------------------------
+
+function _reduce_poly_mod_p(poly::MPolyElem{Nemo.fmpq}, p::Int)
     """
     Reduces a polynomial over Q modulo p
     """
@@ -72,14 +97,15 @@ end
 
 #--------------------------------------
 
-function reduce_ode_mod_p(ode::ODE, p)
+function reduce_ode_mod_p(ode::ODE{<: MPolyElem{Nemo.fmpq}}, p::Int)
     """
     Input: ode is an ODE over QQ, p is a prime number
     Output: the reduction mod p, throws an exception if p divides one of the denominators
     """
     new_ring, new_vars = PolynomialRing(GF(p), map(string, gens(ode.poly_ring)))
+    new_type = typeof(new_vars[1])
     new_inputs = map(u -> str_to_var(string(u), new_ring), ode.u_vars)
-    new_eqs = Dict()
+    new_eqs = Dict{new_type, Union{new_type, Generic.Frac{new_type}}}()
     for (v, f) in ode.equations
         new_v = str_to_var(string(v), new_ring)
         if applicable(numerator, f)
@@ -93,12 +119,12 @@ function reduce_ode_mod_p(ode::ODE, p)
             new_eqs[new_v] = _reduce_poly_mod_p(f, p)
         end
     end
-    return ODE(new_eqs, new_inputs)
+    return ODE{new_type}(new_eqs, new_inputs)
 end
 
 #------------------------------------------------------------------------------
 
-function print_for_SIAN(ode::ODE, outputs)
+function print_for_SIAN(ode::ODE{P}, outputs::Array{P, 1}) where P <: MPolyElem{<: FieldElem}
     """
     Prints the ODE in the format accepted by SIAN (https://github.com/pogudingleb/SIAN)
     """
