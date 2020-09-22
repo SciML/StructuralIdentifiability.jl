@@ -168,7 +168,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function dict_to_poly(dict_monom::Dict{<: MPolyElem, <: RingElem}, poly_ring::MPolyRing)
+function dict_to_poly(dict_monom::Dict{Array{Int, 1}, <: RingElem}, poly_ring::MPolyRing)
     builder = MPolyBuildCtx(poly_ring)
     for (monom, coef) in pairs(dict_monom)
         push_term!(builder, poly_ring.base_ring(coef), monom)
@@ -194,13 +194,14 @@ function extract_coefficients(poly::P, variables::Array{P, 1}) where P <: MPolyE
     coeff_vars = filter(v -> !(string(v) in map(string, variables)), gens(parent(poly)))
     new_ring, new_vars = PolynomialRing(base_ring(parent(poly)), map(string, coeff_vars))
     coeff_var_to_ind = Dict([(v, findfirst(e -> (e == v), gens(parent(poly)))) for v in coeff_vars])
+    FieldType = typeof(one(base_ring(new_ring)))
 
-    result = Dict()
+    result = Dict{Array{Int, 1}, Dict{Array{Int, 1}, FieldType}}()
 
     for (monom, coef) in zip(exponent_vectors(poly), coeffs(poly))
         var_slice = [monom[i] for i in indices]
         if !haskey(result, var_slice)
-            result[var_slice] = Dict()
+            result[var_slice] = Dict{Array{Int, 1}, FieldType}()
         end
         new_monom = [0 for _ in 1:length(coeff_vars)]
         for i in 1:length(new_monom)
@@ -209,7 +210,7 @@ function extract_coefficients(poly::P, variables::Array{P, 1}) where P <: MPolyE
         result[var_slice][new_monom] = coef
     end
 
-    return Dict([(k, dict_to_poly(v, new_ring)) for (k, v) in pairs(result)])
+    return Dict(k => dict_to_poly(v, new_ring) for (k, v) in result)
 end
 
 #------------------------------------------------------------------------------

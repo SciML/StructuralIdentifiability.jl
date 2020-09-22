@@ -252,7 +252,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function choose(polys::Array{P, 1}, generic_point_generator::PointGenerator{P}) where P <: MPolyElem{<: FieldElem}
+function choose(polys::Array{P, 1}, generic_point_generator) where P <: MPolyElem{<: FieldElem}
     """
     Input:
         - array_f, an array of distinct irreducible polynomials in the same ring
@@ -274,7 +274,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator::PointGenerator{P}) where P <: MPolyElem{<: FieldElem}
+function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P <: MPolyElem{<: FieldElem}
     """
     Eliminate variable from a pair of polynomials
     Input:

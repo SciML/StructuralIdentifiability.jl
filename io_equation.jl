@@ -9,7 +9,7 @@ include("ODE.jl")
 
 #------------------------------------------------------------------------------
 
-function generator_var_change(generator, var, numer, denom)
+function generator_var_change(generator, var::P, numer::P, denom::P) where P <: MPolyElem
     return IterTools.imap(
         point -> begin
             result = copy(point)
@@ -22,17 +22,17 @@ end
 
 #------------------------------------------------------------------------------
 
-function diff_poly(poly, derivation)
+function diff_poly(poly::P, derivation::Dict{P, P}) where P <: MPolyElem
     return sum([derivative(poly, x) * xd for (x, xd) in derivation])
 end
 
 #------------------------------------------------------------------------------
 
-function generate_io_equation_problem(ode::ODE, outputs)
+function generate_io_equation_problem(
+        ode::ODE{P}, 
+        outputs::Array{<: Union{P, Generic.Frac{P}}, 1}
+    ) where P <: MPolyElem{<: FieldElem}
     dim_x = length(ode.x_vars)
-    if !isa(outputs, Array)
-        outputs = [outputs]
-    end
 
     # Creating a ring
     old_vars = map(string, gens(ode.poly_ring))
@@ -45,7 +45,7 @@ function generate_io_equation_problem(ode::ODE, outputs)
     ring, ring_vars = PolynomialRing(base_ring(ode.poly_ring), var_names)
 
     # Definiting a (partial) derivation on it
-    derivation = Dict()
+    derivation = Dict{P, P}()
     for x in ode.x_vars
         derivation[str_to_var(string(x), ring)] = str_to_var(string(x) * "_dot", ring)
     end
@@ -62,34 +62,39 @@ function generate_io_equation_problem(ode::ODE, outputs)
     end
 
     # Generate equations
-    x_equations = Dict()
+    x_equations = Dict{P, P}()
     for x in ode.x_vars
         x_lifted = parent_ring_change(x, ring)
         num, den = map(p -> parent_ring_change(ode.poly_ring(p), ring), unpack_fraction(ode.equations[x]))
         x_equations[x_lifted] = den * derivation[x_lifted] - num
     end
-    y_equations = []
+    y_equations = Array{P, 1}()
     for (i, g) in enumerate(outputs)
         g_num, g_den = map(p -> parent_ring_change(ode.poly_ring(p), ring), unpack_fraction(g))
         push!(y_equations, g_den * str_to_var("y$(i)_0", ring) - g_num)
     end
 
-    generic_point_generator = ODEPointGenerator(ode, outputs, ring)
+    generic_point_generator = ODEPointGenerator{P}(ode, outputs, ring)
 
     return (ring, derivation, x_equations, y_equations, generic_point_generator)
 end
 
 #------------------------------------------------------------------------------
 
-function find_ioequation(ode::ODE, output, auto_var_change = true)
+function find_ioequation(
+        ode::ODE{P}, 
+        outputs::Array{<: Union{P, Generic.Frac{P}}, 1}, 
+        auto_var_change::Bool=true
+    ) where P <: MPolyElem{<: FieldElem}
     """
     Find the io_equation of an ODE system
     Input:
         - ode, the ODE system
-        - auto_var_change::Bool, whether or not to perform automatic variable change
+        - outputs, array of the output quantities
+        - auto_var_change, whether or not to perform automatic variable change
     """
     #Initialization
-    ring, derivation, x_equations, y_equations, point_generator = generate_io_equation_problem(ode, output)
+    ring, derivation, x_equations, y_equations, point_generator = generate_io_equation_problem(ode, outputs)
     x_left = Set(keys(x_equations))
     y_orders = [0 for _ in y_equations]
  

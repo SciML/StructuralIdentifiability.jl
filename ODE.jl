@@ -1,5 +1,6 @@
 using Dates
 using Logging
+using MacroTools
 using Oscar
 
 include("power_series_utils.jl")
@@ -149,6 +150,102 @@ function print_for_SIAN(ode::ODE{P}, outputs::Array{P, 1}) where P <: MPolyElem{
         result = result * "y_var_$y_ind(t) = $(_lhs_to_str(g)), \n"
     end
     return result
+end
+
+#------------------------------------------------------------------------------
+
+function macrohelper_extract_vars(equations::Array{Expr, 1}, summary::Bool=true)
+    funcs, x_vars, all_symb = Set(), Set(), Set()
+    aux_symb = Set([:(+), :(-), :(=), :(*), :(^), :t, :(/), :(//)])
+    for eq in equations
+        MacroTools.postwalk(
+            x -> begin 
+                if @capture(x, f_'(t)) 
+                    push!(x_vars, f)
+                    push!(all_symb, f)
+                elseif @capture(x, f_(t))
+                    push!(funcs, f)
+                elseif (x isa Symbol) && !(x in aux_symb)
+                    push!(all_symb, x)
+                end
+                return x
+            end, 
+            eq
+        )
+    end
+    u_vars = setdiff(funcs, x_vars)
+    params = setdiff(all_symb, union(x_vars, u_vars))
+    all_symb = collect(all_symb)
+    if summary
+        print("Summary of the model:\n")
+        print("State variables: ", join(map(string, collect(x_vars)), ", "), "\n")
+        print("Parameter: ", join(map(string, collect(params)), ", "), "\n")
+        print("Inputs: ", join(map(string, collect(u_vars)), ", "), "\n")
+    end
+    return collect(u_vars), collect(all_symb)
+end
+
+#------------------------------------------------------------------------------
+
+function macrohelper_clean(ex::Expr)
+    ex = MacroTools.postwalk(x -> @capture(x, f_'(t)) ? f : x, ex)
+    ex = MacroTools.postwalk(x -> @capture(x, f_(t)) ? f : x, ex)
+    ex = MacroTools.postwalk(x -> x == :(/) ? :(//) : x, ex)
+    return ex
+end
+
+#------------------------------------------------------------------------------
+
+macro ODEmodel(ex::Expr...)
+    """
+    Macros for creating an ODE from a list of equations
+    Also injects all variables into the global scope
+    """
+    extra_params = []
+    equations = [ex...]
+    if equations[end].head == :vect
+        extra_params = equations[end].args
+        equations = equations[1:end - 1]
+    end
+
+    u_vars, all_symb = macrohelper_extract_vars(equations)
+    append!(all_symb, extra_params)
+    
+    # creating the polynomial ring
+    vars_list = :([$(all_symb...)])
+    R = gensym()
+    vars_aux = gensym()
+    exp_ring = :(($R, $vars_aux) = PolynomialRing(QQ, map(string, $all_symb)))
+    assignments = [:($(all_symb[i]) = $vars_aux[$i]) for i in 1:length(all_symb)]
+    
+    # preparing equations
+    equations = map(macrohelper_clean, equations)
+    dict_var = gensym()
+    dict_create_expr = :($dict_var = Dict{fmpq_mpoly, Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}}())
+    eqs_expr = []
+    for eq in equations
+        if eq.head != :(=)
+            throw("Problem with parsing at $eq") 
+        end
+        lhs, rhs = eq.args[1:2]
+        loc_all_symb = macrohelper_extract_vars([rhs], false)[2]
+        if isempty(loc_all_symb)
+            push!(eqs_expr, :($dict_var[$lhs] = $R($rhs)))
+        else
+            push!(eqs_expr, :($dict_var[$lhs] = ($rhs)))
+        end
+    end
+    
+    # creating the ode object
+    ode_expr = :(ODE{fmpq_mpoly}($dict_var, Array{fmpq_mpoly}([$(u_vars...)])))
+    
+    result = Expr(
+        :block, 
+        exp_ring, assignments..., 
+        dict_create_expr, eqs_expr..., 
+        ode_expr
+    )
+    return esc(result)
 end
 
 #------------------------------------------------------------------------------
