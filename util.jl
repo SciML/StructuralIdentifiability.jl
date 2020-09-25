@@ -74,7 +74,7 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing)
     for u in gens(old_ring)
         push!(
             var_mapping,
-            findfirst(v -> (string(u) == string(v)), gens(new_ring))
+            findfirst(v -> (var_to_str(u) == var_to_str(v)), gens(new_ring))
         )
     end
     builder = MPolyBuildCtx(new_ring)
@@ -144,7 +144,7 @@ function factor_via_singular(polys::Array{<: MPolyElem{fmpq}, 1})
         return []
     end
     original_ring = parent(polys[1])
-    R_sing, var_sing = Singular.PolynomialRing(Singular.QQ, map(string, gens(original_ring)))
+    R_sing, var_sing = Singular.PolynomialRing(Singular.QQ, map(string, symbols(original_ring)))
     result = Array{typeof(polys[1]), 1}()
     for p in polys
         @debug "\t Factoring with Singular a polynomial of size $(length(p))"
@@ -191,8 +191,8 @@ function extract_coefficients(poly::P, variables::Array{P, 1}) where P <: MPolyE
     var_to_ind = Dict([(v, findfirst(e -> (e == v), gens(parent(poly)))) for v in variables])
     indices = [var_to_ind[v] for v in variables]
 
-    coeff_vars = filter(v -> !(string(v) in map(string, variables)), gens(parent(poly)))
-    new_ring, new_vars = PolynomialRing(base_ring(parent(poly)), map(string, coeff_vars))
+    coeff_vars = filter(v -> !(var_to_str(v) in map(var_to_str, variables)), gens(parent(poly)))
+    new_ring, new_vars = PolynomialRing(base_ring(parent(poly)), map(var_to_str, coeff_vars))
     coeff_var_to_ind = Dict([(v, findfirst(e -> (e == v), gens(parent(poly)))) for v in coeff_vars])
     FieldType = typeof(one(base_ring(new_ring)))
 
@@ -235,7 +235,7 @@ function check_injectivity(polys::Array{<: MPolyElem, 1}; method="Singular")
     for p = polys
         push!(eqs, p * evaluate(ring(pivot), point) - evaluate(ring(p), point) * pivot)
     end
-    ring_sing, vars_sing = Singular.PolynomialRing(Singular.QQ, vcat(map(string, gens(ring)), "sat_aux"); ordering=:degrevlex)
+    ring_sing, vars_sing = Singular.PolynomialRing(Singular.QQ, vcat(map(var_to_str, gens(ring)), "sat_aux"); ordering=:degrevlex)
     eqs_sing = map(p -> parent_ring_change(p, ring_sing), eqs)
     push!(
         eqs_sing,
@@ -271,7 +271,7 @@ function check_identifiability(io_equation::P, parameters::Array{P, 1}; method="
     """
     @debug "Extracting coefficients"
     flush(stdout)
-    nonparameters = filter(v -> !(string(v) in map(string, parameters)), gens(parent(io_equation)))
+    nonparameters = filter(v -> !(var_to_str(v) in map(var_to_str, parameters)), gens(parent(io_equation)))
     coeffs = extract_coefficients(io_equation, nonparameters)
 
     return check_injectivity(collect(values(coeffs)); method=method)
@@ -280,7 +280,28 @@ end
 #------------------------------------------------------------------------------
 
 function str_to_var(s::String, ring::MPolyRing)
-    return gens(ring)[findfirst(v -> (string(v) == s), gens(ring))]
+    ind = findfirst(v -> (string(v) == s), symbols(ring))
+    if ind == nothing
+        throw(Base.KeyError("Variable $s is not found in ring $ring"))
+    end
+    return gens(ring)[ind]
+end
+
+#------------------------------------------------------------------------------
+
+function var_to_str(v::MPolyElem)
+    ind = findfirst(vv -> vv == v, gens(parent(v)))
+    return string(symbols(parent(v))[ind])
+end
+
+#------------------------------------------------------------------------------
+
+function switch_ring(v::MPolyElem, ring::MPolyRing)
+    """
+    For a variable v, returns a variable in ring with the same name
+    """
+    ind = findfirst(vv -> vv == v, gens(parent(v)))
+    return str_to_var(string(symbols(parent(v))[ind]), ring)
 end
 
 #------------------------------------------------------------------------------

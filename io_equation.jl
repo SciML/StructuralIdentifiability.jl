@@ -38,16 +38,16 @@ function generate_io_equation_problem(
     old_vars = map(string, gens(ode.poly_ring))
     var_names = vcat(
         old_vars,
-        ["$(x)_dot" for x in ode.x_vars],
+        [var_to_str(x) * "_dot" for x in ode.x_vars],
         ["y$(j)_$i" for i in 0:dim_x for j in 1:length(outputs)],
-        ["$(u)_$i" for i in 1:dim_x for u in ode.u_vars],
+        [var_to_str(u) * "_$i" for i in 1:dim_x for u in ode.u_vars],
     )
     ring, ring_vars = PolynomialRing(base_ring(ode.poly_ring), var_names)
 
     # Definiting a (partial) derivation on it
     derivation = Dict{P, P}()
     for x in ode.x_vars
-        derivation[str_to_var(string(x), ring)] = str_to_var(string(x) * "_dot", ring)
+        derivation[switch_ring(x, ring)] = str_to_var(var_to_str(x) * "_dot", ring)
     end
     for i in 0:(dim_x - 1)
         for j in 1:length(outputs)
@@ -55,9 +55,9 @@ function generate_io_equation_problem(
         end
     end
     for u in ode.u_vars
-        derivation[str_to_var(string(u), ring)] = str_to_var("$(u)_1", ring)
+        derivation[switch_ring(u, ring)] = str_to_var(var_to_str(u) * "_1", ring)
         for i in 1:(dim_x - 1)
-            derivation[str_to_var("$(u)_$i", ring)] = str_to_var("$(u)_$(i + 1)", ring)
+            derivation[str_to_var(var_to_str(u) * "_$i", ring)] = str_to_var(var_to_str(u) * "_$(i + 1)", ring)
         end
     end
 

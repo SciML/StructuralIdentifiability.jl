@@ -8,15 +8,6 @@ end
 
 #------------------------------------------------------------------------------
 
-function fake_truncate_matrix(M::MatElem{<: Generic.AbsSeriesElem}, prec::Int)
-    prec = precision(M[1, 1])
-    truncation = truncate_matrix(M, prec)
-    map(e -> set_prec!(e, prec), truncation)
-    return truncation
-end
-
-#------------------------------------------------------------------------------
-
 function matrix_set_prec!(M::MatElem{<: Generic.AbsSeriesElem}, prec::Int)
     map(e -> set_prec!(e, prec), M)
 end
@@ -213,7 +204,7 @@ function ps_ode_solution(
     
     x_vars = filter(v -> ("$(v)_dot" in map(string, gens(ring))), gens(ring))
     x_vars = [x for x in x_vars]
-    x_dot_vars = [str_to_var("$(x)_dot", ring) for x in x_vars]
+    x_dot_vars = [str_to_var(var_to_str(x) * "_dot", ring) for x in x_vars]
 
     Jac_dots = S([derivative(p, xd) for p in equations, xd in x_dot_vars])
     Jac_xs = S([derivative(p, x) for p in equations, x in x_vars])

@@ -181,7 +181,7 @@ mutable struct ODEPointGenerator{P} <: PointGenerator{P}
     cached_points::Array{Dict{P, <: FieldElem}, 1}
     function ODEPointGenerator{P}(ode::ODE{P}, outputs::Array{P, 1}, big_ring::MPolyRing) where P <: MPolyElem{<: FieldElem}
         prec = 0
-        while findfirst(x -> string(x) == "y1_$prec", gens(big_ring)) != nothing
+        while findfirst(x -> var_to_str(x) == "y1_$prec", gens(big_ring)) != nothing
             prec += 1
         end
         number_type = typeof(one(base_ring(big_ring)))
@@ -226,11 +226,11 @@ function Base.iterate(gpg::ODEPointGenerator{P}, i::Int=1) where P <: MPolyElem{
 
             @debug "Constructing the point"
             flush(stdout)
-            result = Dict(str_to_var("$p", gpg.big_ring) => base_field(c) for (p, c) in param_values)
+            result = Dict(switch_ring(p, gpg.big_ring) => base_field(c) for (p, c) in param_values)
             for u in gpg.ode.u_vars
-                result[str_to_var(string(u), gpg.big_ring)] = coeff(ps_solution[u], 0)
+                result[switch_ring(u, gpg.big_ring)] = coeff(ps_solution[u], 0)
                 for i in 1:(gpg.precision - 1)
-                    result[str_to_var("$(u)_$i", gpg.big_ring)] = coeff(ps_solution[u], i) * factorial(i)
+                    result[str_to_var(var_to_str(u) * "_$i", gpg.big_ring)] = coeff(ps_solution[u], i) * factorial(i)
                 end
             end
             for i in 1:length(gpg.outputs)
@@ -239,8 +239,8 @@ function Base.iterate(gpg::ODEPointGenerator{P}, i::Int=1) where P <: MPolyElem{
                 end
             end
             for x in gpg.ode.x_vars
-                result[str_to_var("$x", gpg.big_ring)] = coeff(ps_solution[x], 0)
-                result[str_to_var("$(x)_dot", gpg.big_ring)] = coeff(ps_solution[x], 1)
+                result[switch_ring(x, gpg.big_ring)] = coeff(ps_solution[x], 0)
+                result[str_to_var(var_to_str(x) * "_dot", gpg.big_ring)] = coeff(ps_solution[x], 1)
             end
             break
         end
