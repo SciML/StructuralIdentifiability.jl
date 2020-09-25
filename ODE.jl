@@ -179,9 +179,9 @@ function macrohelper_extract_vars(equations::Array{Expr, 1}, summary::Bool=true)
     all_symb = collect(all_symb)
     if summary
         print("Summary of the model:\n")
-        print("State variables: ", join(map(var_to_str, collect(x_vars)), ", "), "\n")
-        print("Parameter: ", join(map(var_to_str, collect(params)), ", "), "\n")
-        print("Inputs: ", join(map(var_to_str, collect(u_vars)), ", "), "\n")
+        print("State variables: ", join(map(string, collect(x_vars)), ", "), "\n")
+        print("Parameter: ", join(map(string, collect(params)), ", "), "\n")
+        print("Inputs: ", join(map(string, collect(u_vars)), ", "), "\n")
     end
     return collect(u_vars), collect(all_symb)
 end
