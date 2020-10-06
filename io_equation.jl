@@ -6,6 +6,7 @@ using Oscar
 include("util.jl")
 include("elimination.jl")
 include("ODE.jl")
+include("primality_check.jl")
 
 #------------------------------------------------------------------------------
 
@@ -102,7 +103,7 @@ function find_ioequation(
         var_degs = [(i, [degree(eq, x) for x in x_left if degree(eq, x) > 0]) for (i, eq) in enumerate(y_equations)]
         filter!(d -> length(d[2]) > 0, var_degs)
         if isempty(var_degs)
-            return y_equations
+            return Dict(str_to_var("y$(i)_$(y_orders[i])", ring) => p for (i, p) in enumerate(y_equations))
         end
         @debug "Current degrees of io-equations $var_degs"
         @debug "Orders: $y_orders"

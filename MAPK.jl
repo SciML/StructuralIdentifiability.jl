@@ -20,8 +20,14 @@ ode = @ODEmodel(
 
 @time io_equations = find_ioequation(ode, [F, S00, S01, S10, S11])
 
-print(map(length, io_equations), "\n")
+eq_list = collect(values(io_equations))
 
-y_vars = filter(v -> string(v)[1] == "y", gens(parent(io_equations[1])))
+print(map(length, eq_list), "\n")
 
-print(map(e -> length(extract_coefficients(e, y_vars)), io_equations), "\n")
+y_vars = filter(v -> string(v)[1] == "y", gens(parent(eq_list[1])))
+
+print(map(e -> length(extract_coefficients(e, y_vars)), eq_list), "\n")
+
+print([degree(p, v) for (p, v) in io_equations])
+
+print(check_primality(io_equations))
