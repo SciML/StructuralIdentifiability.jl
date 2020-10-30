@@ -2,7 +2,7 @@ import GroebnerBasis
 
 #------------------------------------------------------------------------------
 
-function eval_at_dict(poly, d)
+function eval_at_dict(poly::P, d::Dict{P, <: RingElem}) where P <: MPolyElem
     """
     Evaluates a polynomial on a dict var => val
     missing values are replaced with zeroes
@@ -13,19 +13,17 @@ end
 
 #------------------------------------------------------------------------------
 
-function unpack_fraction(f)
-    """
-    Maps polynomial/rational function to a pair denominator/numerator
-    """
-    if applicable(numerator, f)
-        return (numerator(f), denominator(f))
-    end
-    return (f, parent(f)(1))
+function unpack_fraction(f::MPolyElem)
+    return (f, one(parent(f)))
+end
+
+function unpack_fraction(f::Generic.Frac{<: MPolyElem})
+    return (numerator(f), denominator(f))
 end
 
 #------------------------------------------------------------------------------
 
-function simplify_frac(numer, denom)
+function simplify_frac(numer::P, denom::P) where P <: MPolyElem
     gcd_sub = gcd(numer, denom)
     sub_numer = divexact(numer, gcd_sub)
     sub_denom = divexact(denom, gcd_sub)
@@ -34,7 +32,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function make_substitution(f, var_sub, val_numer, val_denom)
+function make_substitution(f::P, var_sub::P, val_numer::P, val_denom::P) where P <: MPolyElem
     """
     Substitute a variable in a polynomial with an expression
     Input:
@@ -46,21 +44,22 @@ function make_substitution(f, var_sub, val_numer, val_denom)
         polynomial, result of substitution
     """
     d = degree(f, var_sub)
-    f_subs = sum(coeff(f, [var_sub], [i]) * (val_numer ^ i) * (val_denom ^ (d - i)) for i in 0:d)
-    return f_subs
+
+    result = 0
+    @debug "Substitution in a polynomial of degree $d"
+    flush(stdout)
+    for i in 0:d
+        @debug "\t Degree $i"
+        flush(stdout)
+        result += coeff(f, [var_sub], [i]) * (val_numer ^ i) * (val_denom ^ (d - i))
+        @debug "\t Intermediate result of size $(length(result))"
+    end
+    return result
 end
 
 #------------------------------------------------------------------------------
 
-function evaluate_frac(f, var_sub, val_numer, val_denom)
-    f_numer = make_substitution(numerator(f), var_sub, val_numer, val_denom) // val_denom^(degree(numerator(f), var_sub))
-    f_denom = make_substitution(denominator(f), var_sub, val_numer, val_denom) // val_denom^(degree(denominator(f), var_sub))
-    return f_numer // f_denom
-end
-
-#------------------------------------------------------------------------------
-
-function parent_ring_change(poly, new_ring)
+function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing)
     """
     Converts a polynomial to a different polynomial ring
     Input
@@ -71,11 +70,11 @@ function parent_ring_change(poly, new_ring)
     """
     old_ring = parent(poly)
     # construct a mapping for the variable indices
-    var_mapping = []
-    for u in gens(old_ring)
+    var_mapping = Array{Any, 1}()
+    for u in symbols(old_ring)
         push!(
             var_mapping,
-            findfirst(v -> (string(u) == string(v)), gens(new_ring))
+            findfirst(v -> (string(u) == string(v)), symbols(new_ring))
         )
     end
     builder = MPolyBuildCtx(new_ring)
@@ -98,39 +97,78 @@ end
 
 #------------------------------------------------------------------------------
 
-function check_factors(f)
+function uncertain_factorization(f::MPolyElem{fmpq})
     """
-    !!! gens(parent(f))[end] must be y_order (highest order of y)!
-    If return (true, 1), f must be irreducible.
-    If return (true, gcd_coef), gcd_coef is an extra factor of f, and f//gcd_coef is irreducible.
-    If return (false, 1), f may or may not be irredicible.
-    If return (false, gcd_coef), gcd_coef is an extra factor of f, f//gcd_coef may or may not be irredicible.
+    Input: polynomial f with rational coefficients
+    Output: list of pairs (div, certainty) where
+      - div's are divisors f such that f is their product with certain powers
+      - if certainty is true, div is Q-irreducible
     """
     vars_f = vars(f)
-    var_test = vars_f[end]
-    d = degree(f, var_test)
-    lc = coeff(f, [var_test], [d])
-    is_irr = true
+    if isempty(vars_f)
+        return Array{Tuple{typeof(f), Bool}, 1}()
+    end
+    main_var = vars_f[end]
+    d = degree(f, main_var)
+    lc_f = coeff(f, [main_var], [d])
+    gcd_coef = lc_f
+    for i in  (d - 1):-1:0
+        gcd_coef = gcd(gcd_coef, coeff(f, [main_var], [i]))
+    end
+    f = divexact(f, gcd_coef)
+    lc_f = coeff(f, [main_var], [d])
+
+    is_irr = undef
     while true
         plugin = rand(5:10, length(vars_f) - 1)
-        if evaluate(lc, vars_f[1 : end - 1], plugin) != 0    
+        if evaluate(lc_f, vars_f[1 : end - 1], plugin) != 0
             f_sub = evaluate(f, vars_f[1 : end - 1], plugin)
-            uni_ring, var_uni = PolynomialRing(base_ring(f), "v")
+            uni_ring, var_uni = PolynomialRing(base_ring(f), string(main_var))
             f_uni = to_univariate(uni_ring, f_sub)
+            if !issquarefree(f_uni)
+                f = divexact(f, gcd(f, derivative(f, main_var)))
+            end
             is_irr = isirreducible(f_uni)
             break
         end
     end
-    gcd_coef = lc
-    for i in  (d - 1):-1:0
-        gcd_coef = gcd(gcd_coef, coeff(f, [var_test], [i]))
-    end
-    return (is_irr, gcd_coef)
+
+    coeff_factors = uncertain_factorization(gcd_coef)
+    push!(coeff_factors, (f, is_irr))
 end
 
 #------------------------------------------------------------------------------
 
-function dict_to_poly(dict_monom, poly_ring)
+function factor_via_singular(polys::Array{<: MPolyElem{fmpq}, 1})
+    if isempty(polys)
+        return []
+    end
+    original_ring = parent(polys[1])
+    R_sing, var_sing = Singular.PolynomialRing(Singular.QQ, map(string, symbols(original_ring)))
+    result = Array{typeof(polys[1]), 1}()
+    for p in polys
+        @debug "\t Factoring with Singular a polynomial of size $(length(p))"
+        p_sing = parent_ring_change(p, R_sing)
+        for f in Singular.factor(p_sing)
+            push!(result, parent_ring_change(f[1], original_ring))
+        end
+    end
+    return result
+end
+
+#------------------------------------------------------------------------------
+
+function fast_factor(poly::MPolyElem{fmpq})
+    prelim_factors = uncertain_factorization(poly)
+    cert_factors = map(pair -> pair[1], filter(f -> f[2], prelim_factors))
+    uncert_factors = map(pair -> pair[1], filter(f -> !f[2], prelim_factors))
+    append!(cert_factors, factor_via_singular(uncert_factors))
+    return cert_factors
+end
+
+#------------------------------------------------------------------------------
+
+function dict_to_poly(dict_monom::Dict{Array{Int, 1}, <: RingElem}, poly_ring::MPolyRing)
     builder = MPolyBuildCtx(poly_ring)
     for (monom, coef) in pairs(dict_monom)
         push_term!(builder, poly_ring.base_ring(coef), monom)
@@ -140,7 +178,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function extract_coefficients(poly, variables)
+function extract_coefficients(poly::P, variables::Array{P, 1}) where P <: MPolyElem
     """
     Intput:
         poly - multivariate polynomial
@@ -153,16 +191,17 @@ function extract_coefficients(poly, variables)
     var_to_ind = Dict([(v, findfirst(e -> (e == v), gens(parent(poly)))) for v in variables])
     indices = [var_to_ind[v] for v in variables]
 
-    coeff_vars = filter(v -> !(string(v) in map(string, variables)), gens(parent(poly)))
-    new_ring, new_vars = PolynomialRing(base_ring(parent(poly)), map(string, coeff_vars))
+    coeff_vars = filter(v -> !(var_to_str(v) in map(var_to_str, variables)), gens(parent(poly)))
+    new_ring, new_vars = PolynomialRing(base_ring(parent(poly)), map(var_to_str, coeff_vars))
     coeff_var_to_ind = Dict([(v, findfirst(e -> (e == v), gens(parent(poly)))) for v in coeff_vars])
+    FieldType = typeof(one(base_ring(new_ring)))
 
-    result = Dict()
+    result = Dict{Array{Int, 1}, Dict{Array{Int, 1}, FieldType}}()
 
     for (monom, coef) in zip(exponent_vectors(poly), coeffs(poly))
         var_slice = [monom[i] for i in indices]
         if !haskey(result, var_slice)
-            result[var_slice] = Dict()
+            result[var_slice] = Dict{Array{Int, 1}, FieldType}()
         end
         new_monom = [0 for _ in 1:length(coeff_vars)]
         for i in 1:length(new_monom)
@@ -171,12 +210,12 @@ function extract_coefficients(poly, variables)
         result[var_slice][new_monom] = coef
     end
 
-    return Dict([(k, dict_to_poly(v, new_ring)) for (k, v) in pairs(result)])
+    return Dict(k => dict_to_poly(v, new_ring) for (k, v) in result)
 end
 
 #------------------------------------------------------------------------------
 
-function check_injectivity(polys; method="Singular")
+function check_injectivity(polys::Array{<: MPolyElem, 1}; method="Singular")
     """
     Checks a generic injectivity of the *projective* map defined by polys
     Inputs:
@@ -196,7 +235,7 @@ function check_injectivity(polys; method="Singular")
     for p = polys
         push!(eqs, p * evaluate(ring(pivot), point) - evaluate(ring(p), point) * pivot)
     end
-    ring_sing, vars_sing = Singular.PolynomialRing(Singular.QQ, vcat(map(string, gens(ring)), "sat_aux"); ordering=:degrevlex)
+    ring_sing, vars_sing = Singular.PolynomialRing(Singular.QQ, vcat(map(var_to_str, gens(ring)), "sat_aux"); ordering=:degrevlex)
     eqs_sing = map(p -> parent_ring_change(p, ring_sing), eqs)
     push!(
         eqs_sing,
@@ -224,7 +263,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function check_identifiability(io_equation, parameters; method="Singular")
+function check_identifiability(io_equation::P, parameters::Array{P, 1}; method="Singular") where P <: MPolyElem{fmpq}
     """
     For the io_equation and the list of all parameter variables, returns a dictionary
     var => whether_globally_identifiable
@@ -232,7 +271,7 @@ function check_identifiability(io_equation, parameters; method="Singular")
     """
     @debug "Extracting coefficients"
     flush(stdout)
-    nonparameters = filter(v -> !(string(v) in map(string, parameters)), gens(parent(io_equation)))
+    nonparameters = filter(v -> !(var_to_str(v) in map(var_to_str, parameters)), gens(parent(io_equation)))
     coeffs = extract_coefficients(io_equation, nonparameters)
 
     return check_injectivity(collect(values(coeffs)); method=method)
@@ -240,8 +279,29 @@ end
 
 #------------------------------------------------------------------------------
 
-function str_to_var(s, ring)
-    return gens(ring)[findfirst(v -> (string(v) == s), gens(ring))]
+function str_to_var(s::String, ring::MPolyRing)
+    ind = findfirst(v -> (string(v) == s), symbols(ring))
+    if ind == nothing
+        throw(Base.KeyError("Variable $s is not found in ring $ring"))
+    end
+    return gens(ring)[ind]
+end
+
+#------------------------------------------------------------------------------
+
+function var_to_str(v::MPolyElem)
+    ind = findfirst(vv -> vv == v, gens(parent(v)))
+    return string(symbols(parent(v))[ind])
+end
+
+#------------------------------------------------------------------------------
+
+function switch_ring(v::MPolyElem, ring::MPolyRing)
+    """
+    For a variable v, returns a variable in ring with the same name
+    """
+    ind = findfirst(vv -> vv == v, gens(parent(v)))
+    return str_to_var(string(symbols(parent(v))[ind]), ring)
 end
 
 #------------------------------------------------------------------------------

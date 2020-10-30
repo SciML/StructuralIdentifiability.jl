@@ -2,34 +2,25 @@ include("util.jl")
 
 #------------------------------------------------------------------------------
 
-function truncate_matrix(M, prec)
+function truncate_matrix(M::MatElem{<: Generic.AbsSeriesElem}, prec::Int)
     return map(e -> truncate(e, prec), M)
 end
 
 #------------------------------------------------------------------------------
 
-function fake_truncate_matrix(M, prec)
-    prec = precision(M[1, 1])
-    truncation = truncate_matrix(M, prec)
-    map(e -> set_prec!(e, prec), truncation)
-    return truncation
-end
-
-#------------------------------------------------------------------------------
-
-function matrix_set_prec!(M, prec)
+function matrix_set_prec!(M::MatElem{<: Generic.AbsSeriesElem}, prec::Int)
     map(e -> set_prec!(e, prec), M)
 end
 
 #------------------------------------------------------------------------------
 
-function ps_matrix_const_term(M)
+function ps_matrix_const_term(M::MatElem{<: Generic.AbsSeriesElem})
     return map(e -> coeff(e, 0), M)
 end
 
 #------------------------------------------------------------------------------
 
-function _matrix_inv_newton_iteration(M, Minv)
+function _matrix_inv_newton_iteration(M::MatElem{T}, Minv::MatElem{T}) where T <: Generic.AbsSeriesElem{<: Generic.FieldElem}
     """
     Performs a single step of Newton iteration for inverting M with 
     Minv being a partial result
@@ -39,7 +30,7 @@ end
 
 #--------------------------------------
 
-function ps_matrix_inv(M, prec=nothing)
+function ps_matrix_inv(M::MatElem{<: Generic.AbsSeriesElem{<: Generic.FieldElem}}, prec::Int=-1)
     """
     Input:
         - M - a square matrix with entries in a univariate power series ring
@@ -47,7 +38,7 @@ function ps_matrix_inv(M, prec=nothing)
     Output: the inverse of M computed up to prec (the precision of the matrix if nothing)
     """
     const_term = ps_matrix_const_term(M)
-    prec = (prec == nothing) ? precision(M[1, 1]) : prec
+    prec = (prec == -1) ? precision(M[1, 1]) : prec
     power_series_ring = base_ring(parent(M))
     result = map(a -> power_series_ring(a), Base.inv(const_term))
     cur_prec = 1
@@ -60,7 +51,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function ps_diff(ps)
+function ps_diff(ps::Generic.AbsSeriesElem{<: Generic.RingElem})
     """
     Input: ps - (absolute capped) unvariate power series
     Output: the derivative of ps
@@ -75,7 +66,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function ps_integrate(ps)
+function ps_integrate(ps::Generic.AbsSeriesElem{<: Generic.FieldElem})
     """
     Input: ps - (absolute capped) unvariate power series
     Output: the integral of ps without constant term
@@ -90,7 +81,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function ps_matrix_log(M)
+function ps_matrix_log(M::MatElem{<: Generic.AbsSeriesElem{<: Generic.FieldElem}})
     """
     Input:
         - M - a square matrix with entries in a univariate power series ring
@@ -110,7 +101,12 @@ end
 
 #------------------------------------------------------------------------------
 
-function _matrix_homlinear_de_newton_iteration(A, Y, Z, cur_prec)
+function _matrix_homlinear_de_newton_iteration(
+        A::MatElem{<: Generic.AbsSeriesElem{T}},
+        Y::MatElem{<: Generic.AbsSeriesElem{T}},
+        Z::MatElem{<: Generic.AbsSeriesElem{T}},
+        cur_prec::Int
+    ) where T <: Generic.FieldElem
     Yprime = map(ps_diff, Y)
     Z = Z + truncate_matrix(Z * (one(parent(A)) - Y * Z), cur_prec)
     Y = Y - truncate_matrix(Y * map(ps_integrate, Z * (Yprime - truncate_matrix(A, 2 * cur_prec - 1) * Y)), 2 * cur_prec)
@@ -119,14 +115,18 @@ end
 
 #--------------------------------------
 
-function ps_matrix_homlinear_de(A, Y0, prec=nothing)
+function ps_matrix_homlinear_de(
+        A::MatElem{<: Generic.AbsSeriesElem{T}},
+        Y0::MatElem{<: T},
+        prec::Int=-1
+    ) where T <: Generic.FieldElem
     """
     Input:
         - A - a square matrix with entries in a univariate power series ring
         - Y0 - a square invertible matrix over the base field
     Output: matrix Y such that Y' = AY up to precision of A - 1 and Y(0) = Y0
     """
-    prec = (prec == nothing) ? precision(A[1, 1]) : prec
+    prec = (prec == -1) ? precision(A[1, 1]) : prec
     ps_ring = base_ring(parent(A))
     cur_prec = 1
     Y = (one(parent(A)) + gen(ps_ring) * truncate_matrix(A, cur_prec)) * map(e -> truncate(ps_ring(e), cur_prec), Y0)
@@ -142,7 +142,14 @@ end
 
 #------------------------------------------------------------------------------
 
-function _variation_of_constants(A, B, Yh, Zh, Y0, prec)
+function _variation_of_constants(
+        A::MatElem{<: Generic.AbsSeriesElem{T}},
+        B::MatElem{<: Generic.AbsSeriesElem{T}},
+        Yh::MatElem{<: Generic.AbsSeriesElem{T}},
+        Zh::MatElem{<: Generic.AbsSeriesElem{T}},
+        Y0::MatElem{<: T},
+        prec::Int
+    ) where T <: Generic.FieldElem
     Zh += truncate_matrix(Zh * (one(parent(A)) - Yh * Zh), prec)
     Y_particular = truncate_matrix(Yh * map(ps_integrate, Zh * B), prec)
     return Y_particular + Yh * map(e -> parent(A[1, 1])(e), Y0)
@@ -150,14 +157,19 @@ end
 
 #--------------------------------------
 
-function ps_matrix_linear_de(A, B, Y0, prec=nothing)
+function ps_matrix_linear_de(
+        A::MatElem{<: Generic.AbsSeriesElem{T}},
+        B::MatElem{<: Generic.AbsSeriesElem{T}},
+        Y0::MatElem{<: T},
+        prec::Int=-1
+    ) where T <: Generic.FieldElem
     """
     Input:
         - A, B - square matrices with entries in a univariate power series ring
         - Y0 - a matrix over the base field with the rows number the same as A
     Output: matrix Y such that Y' = AY + B up to precision of A - 1 and Y(0) = Y0
     """
-    prec = (prec == nothing) ? precision(A[1, 1]) : prec
+    prec = (prec == -1) ? precision(A[1, 1]) : prec
     n = nrows(A)
     identity = one(MatrixSpace(base_ring(parent(Y0)), n, n))
     Yh, Zh = ps_matrix_homlinear_de(A, identity, prec)
@@ -167,7 +179,12 @@ end
 
 #------------------------------------------------------------------------------
 
-function ps_ode_solution(equations, ic, inputs, prec)
+function ps_ode_solution(
+        equations::Array{P, 1},
+        ic::Dict{P, T},
+        inputs::Dict{P, Array{T, 1}},
+        prec::Int
+    ) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
     """
     Input
         - equations - a system of the form A(x, u, mu)x' - B(x, u, mu) = 0,
@@ -187,7 +204,7 @@ function ps_ode_solution(equations, ic, inputs, prec)
     
     x_vars = filter(v -> ("$(v)_dot" in map(string, gens(ring))), gens(ring))
     x_vars = [x for x in x_vars]
-    x_dot_vars = [str_to_var("$(x)_dot", ring) for x in x_vars]
+    x_dot_vars = [str_to_var(var_to_str(x) * "_dot", ring) for x in x_vars]
 
     Jac_dots = S([derivative(p, xd) for p in equations, xd in x_dot_vars])
     Jac_xs = S([derivative(p, x) for p in equations, x in x_vars])
@@ -227,4 +244,21 @@ function ps_ode_solution(equations, ic, inputs, prec)
     end
 
     return solution
+end
+
+#------------------------------------------------------------------------------
+
+function ps_ode_solution(
+        equations::Array{P, 1}, 
+        ic::Dict{P, Int}, 
+        inputs::Dict{P, Array{Int, 1}}, 
+        prec::Int
+    ) where P <: MPolyElem{<: Generic.FieldElem}
+    bring = base_ring(parent(equations[1]))
+    ps_ode_solution(
+        equations,
+        Dict(x => bring(v) for (x, v) in ic),
+        Dict(u => map(v -> bring(v), vv) for (u, vv) in inputs),
+        prec
+    )
 end

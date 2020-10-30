@@ -3,10 +3,17 @@ using Logging
 using Oscar
 
 include("util.jl")
+include("ODE.jl")
 
 #------------------------------------------------------------------------------
 
-function det_minor_expansion_inner(m, discarded, cache)
+PairIntTuples = Tuple{Tuple{Vararg{Int}}, Tuple{Vararg{Int}}}
+
+function det_minor_expansion_inner(
+        m::MatElem{<: T}, 
+        discarded::PairIntTuples, 
+        cache::Dict{PairIntTuples, T}
+    ) where T <: RingElem
     n = size(m, 1);
     if length(discarded[1]) == n
         return 1;
@@ -30,18 +37,19 @@ function det_minor_expansion_inner(m, discarded, cache)
     end
     if length(discarded[1]) < 3
         @debug "Discarded: $discarded; $(Dates.now())"
+        flush(stdout)
     end
     return result;
 end
 
-function det_minor_expansion(m)
-    cache = Dict();
+function det_minor_expansion(m::MatElem{T}) where T <: RingElem
+    cache = Dict{PairIntTuples, T}();
     return det_minor_expansion_inner(m, (Tuple{}(), Tuple{}()), cache);
 end
 
 #------------------------------------------------------------------------------
 
-function Bezout_matrix(f, g, var_elim)
+function Bezout_matrix(f::P, g::P, var_elim::P) where P <: MPolyElem
     """
     Compute the Bezout matrix of two polynomials f, g with respect to var_elim
     Inputs:
@@ -69,7 +77,39 @@ end
 
 #------------------------------------------------------------------------------
 
-function simplify_matrix(M)
+function Sylvester_matrix(f::P, g::P, var_elim::P) where P <: MPolyElem
+    """
+    Compute the Bezout matrix of two polynomials f, g with respect to var_elim
+    Inputs:
+        - f::AbstractAlgebra.MPolyElem, first polynomial
+        - g::AbstractAlgebra.MPolyElem, second polynomial
+        - var_elim::AbstractAlgebra.MPolyElem, variable, of which f and g are considered as polynomials
+    Output:
+        - M::MatrixElem, The Sylvester matrix
+    """
+    parent_ring = parent(f)
+    deg_f = degree(f, var_elim)
+    deg_g = degree(g, var_elim)
+    n = deg_f + deg_g
+    GL = MatrixSpace(parent_ring, n, n)
+    M = zero(GL)
+    for i in 1:deg_f
+        for j in 0:deg_g
+            M[i, j + i] = coeff(g, [var_elim], [j])
+        end
+    end
+    for i in 1:deg_g
+        for j in 0:deg_f
+            M[i + deg_f, j + i] = coeff(f, [var_elim], [j])
+        end
+    end
+
+    return M
+end
+
+#------------------------------------------------------------------------------
+
+function simplify_matrix(M::MatElem{P}) where P <: MPolyElem
     """
     Eliminate GCD of entries of every row and column
     Input:
@@ -79,7 +119,7 @@ function simplify_matrix(M)
         - extra_factors::Vector{AbstractAlgebra.MPolyElem}, array of GCDs eliminated from M.
     """
 
-    function _simplify_range(coords)
+    function _simplify_range(coords::Array{Tuple{Int, Int}, 1})
         """
         An auxiliary function taking a list of coordinates of cells
         and dividing them by their gcd.
@@ -97,8 +137,8 @@ function simplify_matrix(M)
         return gcd_temp
     end
 
-    extra_factors = []
-    rows_cols = []
+    extra_factors = Array{P, 1}()
+    rows_cols = Array{Array{Tuple{Int, Int}, 1}, 1}()
     # adding all rows
     for i in 1:nrows(M)
         push!(rows_cols, [(i, j) for j in 1:ncols(M)])
@@ -131,68 +171,88 @@ end
 
 #------------------------------------------------------------------------------
 
-mutable struct RationalVarietyPointGenerator
-    ring
-    equations
-    parametric_vars
-    ind_to_nonparam
-    linear_system_A
-    linear_system_b
-    cached_points
-    function RationalVarietyPointGenerator(equations, parametric_vars)
-        ring = parent(equations[1])
-        nonparametric_vars = filter(v -> !(v in parametric_vars), gens(ring))
-        ind_to_nonparam = Dict(i => nonparametric_vars[i] for i in 1:length(nonparametric_vars))
-        codim = length(nonparametric_vars)
-        S = MatrixSpace(ring, codim, codim)
-        Sv = MatrixSpace(ring, codim, 1)
+abstract type PointGenerator{P} end
 
-        linear_system_A = zero(S)
-        linear_system_b = zero(Sv)
-
-        for i in 1:codim
-            reminder = equations[i]
-            for j in 1:codim
-                linear_system_A[i, j] = derivative(equations[i], nonparametric_vars[j])
-                reminder = reminder - linear_system_A[i, j] * nonparametric_vars[j]
-            end
-            linear_system_b[i, 1] = -reminder
+mutable struct ODEPointGenerator{P} <: PointGenerator{P}
+    ode::ODE{P}
+    outputs::Array{P, 1}
+    big_ring::MPolyRing
+    precision::Int
+    cached_points::Array{Dict{P, <: FieldElem}, 1}
+    function ODEPointGenerator{P}(ode::ODE{P}, outputs::Array{P, 1}, big_ring::MPolyRing) where P <: MPolyElem{<: FieldElem}
+        prec = 0
+        while findfirst(x -> var_to_str(x) == "y1_$prec", gens(big_ring)) != nothing
+            prec += 1
         end
-
-        return new(ring, equations, parametric_vars, ind_to_nonparam, linear_system_A, linear_system_b, [])
+        number_type = typeof(one(base_ring(big_ring)))
+        return new(ode, outputs, big_ring, prec, Array{Dict{P, number_type}}[])
     end
 end
 
 #------------------------------------------------------------------------------
 
-function Base.iterate(p::RationalVarietyPointGenerator, i::Int=1)
-    if i > length(p.cached_points)
+function Base.iterate(gpg::ODEPointGenerator{P}, i::Int=1) where P <: MPolyElem{<: FieldElem}
+    if i > length(gpg.cached_points)
         @debug "Generating new point on the variety"
         sample_max = i * 50
         result = undef
         while true
-            result = Dict(v => base_ring(p.ring)(rand(1:sample_max)) for v in p.parametric_vars)
-            A = map(poly -> eval_at_dict(poly, result), p.linear_system_A)
-            b = map(poly -> eval_at_dict(poly, result), p.linear_system_b)
-            x = undef
+            @debug "Preparing initial condition"
+            flush(stdout)
+            base_field = base_ring(gpg.big_ring)
+            param_values = Dict{P, Int}(p => rand(1:sample_max) for p in gpg.ode.parameters)
+            initial_conditions = Dict{P, Int}(x => rand(1:sample_max) for x in gpg.ode.x_vars)
+            input_values = Dict{P, Array{Int, 1}}(u => [rand(1:sample_max) for _ in 1:gpg.precision] for u in gpg.ode.u_vars)
+            @debug "Computing a power series solution"
+            flush(stdout)
+            ps_solution = undef
             try
-                x = solve(A, b)
+                ps_solution = power_series_solution(gpg.ode, param_values, initial_conditions, input_values, gpg.precision)
             catch e
+                @debug "$e"
+                flush(stdout)
                 continue
             end
-            for i in 1:length(x)
-                result[p.ind_to_nonparam[i]] = x[i]
+            @debug "Evaluating outputs"
+            flush(stdout)
+            ps_ring = parent(first(values(ps_solution)))
+            for p in gpg.ode.parameters
+                ps_solution[p] = ps_ring(param_values[p])
+            end
+            eval_outputs = []
+            for g in gpg.outputs
+                push!(eval_outputs, eval_at_dict(g, ps_solution))
+            end
+
+            @debug "Constructing the point"
+            flush(stdout)
+            result = Dict(switch_ring(p, gpg.big_ring) => base_field(c) for (p, c) in param_values)
+            for u in gpg.ode.u_vars
+                result[switch_ring(u, gpg.big_ring)] = coeff(ps_solution[u], 0)
+                for i in 1:(gpg.precision - 1)
+                    result[str_to_var(var_to_str(u) * "_$i", gpg.big_ring)] = coeff(ps_solution[u], i) * factorial(i)
+                end
+            end
+            for i in 1:length(gpg.outputs)
+                for j in 0:(gpg.precision - 1)
+                    result[str_to_var("y$(i)_$j", gpg.big_ring)] = coeff(eval_outputs[i], j) * factorial(j)
+                end
+            end
+            for x in gpg.ode.x_vars
+                result[switch_ring(x, gpg.big_ring)] = coeff(ps_solution[x], 0)
+                result[str_to_var(var_to_str(x) * "_dot", gpg.big_ring)] = coeff(ps_solution[x], 1)
             end
             break
         end
-        push!(p.cached_points, result)
+        push!(gpg.cached_points, result)
     end
-    return (p.cached_points[i], i + 1)
+    return (gpg.cached_points[i], i + 1)
 end
+
 
 #------------------------------------------------------------------------------
 
-function choose(polys, generic_point_generator)
+function choose(polys::Array{P, 1}, generic_point_generator) where P <: MPolyElem{<: FieldElem}
     """
     Input:
         - array_f, an array of distinct irreducible polynomials in the same ring
@@ -206,14 +266,15 @@ function choose(polys, generic_point_generator)
             break
         end
         point = [p[v] for v in vars]
-        filter!(e -> (evaluate(e, point) == 0), polys)
+        polys = filter(e -> (evaluate(e, point) == 0), polys)
+        flush(stdout)
     end
     return polys[1]
 end
 
 #------------------------------------------------------------------------------
 
-function eliminate_var(f, g, var_elim, generic_point_generator)
+function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P <: MPolyElem{<: FieldElem}
     """
     Eliminate variable from a pair of polynomials
     Input:
@@ -224,7 +285,6 @@ function eliminate_var(f, g, var_elim, generic_point_generator)
     Output:
         polynomial, the desired factor of the resultant of f and g
     """
-    #Step 1: Possible simplification for (f,g)
     #Linear comb
     while f != 0 && g != 0
         if degree(f, var_elim) > degree(g, var_elim)
@@ -276,75 +336,51 @@ function eliminate_var(f, g, var_elim, generic_point_generator)
         g = sum([coeff(g, [var_elim], [gcd_deg * i]) * (var_elim ^ i) for i in 0:(degree(g, var_elim) ÷ gcd_deg)])
     end
 
-    #Step 2: Initialization
-    extra_factors = []
-
-    #Step 3: Compute resultant
+    resultant = undef
+    matrix_factors = []
     if degree(f, var_elim) == 0
-        R = f
-    elseif degree(f, var_elim) == 1
-        coef_1 = coeff(f, [var_elim], [1])
-        coef_0 = coeff(f, [var_elim], [0])
-        R = make_substitution(g, var_elim, -coef_0, coef_1)
+        resultant = f
     else
-        @debug "Calculating Bezout Matrix $(Dates.now())"
-        flush(stdout)
-        M = Bezout_matrix(f, g, var_elim)
-        if generic_point_generator != nothing
-            @debug "Simplifying Bezout Matrix $(Dates.now())"
+        if degree(f, var_elim) > 1
+            @debug "Calculating Bezout Matrix $(Dates.now())"
             flush(stdout)
-            M_simp, extra_factors = simplify_matrix(M)
+            M = Bezout_matrix(f, g, var_elim)
         else
-            M_simp = M
+            @debug "Calculating Sylvester matrix"
+            flush(stdout)
+            M = Sylvester_matrix(f, g, var_elim)
         end
+        @debug "Simplifying the matrix $(Dates.now())"
+        flush(stdout)
+        M_simp, matrix_factors = simplify_matrix(M)
+        @debug "Removed factors $(map(length, matrix_factors))"
         M_size = zero(MatrixSpace(ZZ, ncols(M_simp), ncols(M_simp)))
         for i in 1:ncols(M_simp)
             for j in 1:ncols(M_simp)
                 M_size[i,j] = length(M_simp[i,j])
             end
         end
-        @debug "\t Bezout matrix size: \n $M_size"
+        @debug "\t Matrix size: \n $M_size"
         @debug "\t Computing determinant $(Dates.now())"
         flush(stdout)
-        R = det_minor_expansion(M_simp)
+        resultant = det_minor_expansion(M_simp)
     end
     #Step 4: Eliminate extra factors
-    if generic_point_generator != nothing
-        #Preliminary factorization
-        #TODO: Theoretical justification
-        is_irr, gcd_coef = check_factors(R)
-        if is_irr
-            @debug "\t Using GCD to eliminate extra factors $(Dates.now())" 
-            flush(stdout)
-            res_pre = divexact(R, gcd_coef)
-            push!(extra_factors, gcd_coef)
-            push!(extra_factors, res_pre)
-            res = choose(extra_factors, generic_point_generator)
-            if res == res_pre
-                if gcd_coef != 1
-                    @debug "\t \t Size of extra factor: $(length(gcd_coef)); $(Dates.now())"
-                    flush(stdout)
-                end
-                return res
+    factors = fast_factor(resultant)
+    for mfac in matrix_factors
+        for fac in fast_factor(mfac)
+            if !(fac in factors)
+                push!(factors, fac)
             end
         end
-        @debug "\t Preliminary factorization failed, using Singular; $(Dates.now()) "
-        flush(stdout)
-        var_names = [string(v) for v in gens(parent(f))]
-        ring_sing, var_sing = Singular.PolynomialRing(Singular.QQ, var_names) 
-        poly_sing = mpoly_conversion(R, ring_sing)        
-        R_factors = Singular.factor(poly_sing)
-        @debug "\t Size and multiplicity of factors; $(Dates.now()) "
-        flush(stdout)
-        for fac in R_factors
-            fac_Nemo = mpoly_conversion(fac[1], parent(f))
-            @debug "Size $(length(fac_Nemo)) -- $(fac[2]) times; $(Dates.now())"
+    end
+    res = choose(factors, generic_point_generator)
+    for f in factors
+        if f != res
+            @debug "\t \t Size of extra factor: $(length(f)); $(Dates.now())"
+            @debug "\t \t It is $f"
             flush(stdout)
-            push!(extra_factors, fac_Nemo)
         end
-        res = choose(extra_factors, generic_point_generator)
-    else
-        res = R
     end
     return res
 end
