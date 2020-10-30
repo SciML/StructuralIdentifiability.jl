@@ -15,7 +15,7 @@ ode = @ODEmodel(
 
 g = C
 
-@time io_equation = collect(values(find_ioequation(ode, [g])))[1]
+@time io_equation = collect(values(find_ioequations(ode, [g])))[1]
 
 println("The number of monomial in the IO-equation is $(length(io_equation))")
 

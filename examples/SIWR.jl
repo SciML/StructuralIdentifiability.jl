@@ -12,7 +12,7 @@ ode = @ODEmodel(
     [k]
 )
 
-@time io_equation = collect(values(find_ioequation(ode, [k * I])))[1]
+@time io_equation = collect(values(find_ioequations(ode, [k * I])))[1]
 
 @time identifiability_report = check_identifiability(
     io_equation,

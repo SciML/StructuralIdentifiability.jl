@@ -3,8 +3,9 @@ using TestSetExtensions
 
 using Oscar
 
-include("../io_equation.jl")
-include("../power_series_utils.jl")
+include("../src/io_equation.jl")
+include("../src/power_series_utils.jl")
+include("../src/primality_check.jl")
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)

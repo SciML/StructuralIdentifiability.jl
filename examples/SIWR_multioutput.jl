@@ -13,4 +13,4 @@ ode = @ODEmodel(
     [k]
 )
 
-@time io_equation = find_ioequation(ode, [k * x_1, x_0 + x_1 + x_3])
+@time io_equation = find_ioequations(ode, [k * x_1, x_0 + x_1 + x_3])

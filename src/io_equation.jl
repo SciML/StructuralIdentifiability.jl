@@ -82,17 +82,18 @@ end
 
 #------------------------------------------------------------------------------
 
-function find_ioequation(
+function find_ioequations(
         ode::ODE{P}, 
         outputs::Array{<: Union{P, Generic.Frac{P}}, 1}, 
         auto_var_change::Bool=true
     ) where P <: MPolyElem{<: FieldElem}
     """
-    Find the io_equation of an ODE system
+    Finds the input-output equations of an ODE system
     Input:
         - ode, the ODE system
         - outputs, array of the output quantities
         - auto_var_change, whether or not to perform automatic variable change
+    Output: a dictionary from "leaders" to the corresponding io-equations
     """
     #Initialization
     ring, derivation, x_equations, y_equations, point_generator = generate_io_equation_problem(ode, outputs)

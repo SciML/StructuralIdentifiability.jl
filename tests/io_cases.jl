@@ -70,7 +70,7 @@ using MacroTools
     for case in test_cases
         ode = case["ode"]
         g = case["output"]
-        io_eq = find_ioequation(ode, [g])[1]
+        io_eq = collect(values(find_ioequations(ode, [g])))[1]
         gen_symbols = symbols(parent(io_eq))
         correct_expr = Meta.parse(case["correct"])
         for (i, s) in enumerate(gen_symbols)

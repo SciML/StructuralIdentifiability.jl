@@ -20,6 +20,6 @@ ode = ODE(Dict(
     xs[7] => ps[21] - ps[11] * xs[7] // (ps[18] + xs[7]) - (ps[21] + ps[27] * xs[7]) * u
 ), [u])
 
-@time io_equations = find_ioequation(ode, [xs[1], xs[4]])
+@time io_equations = find_ioequations(ode, [xs[1], xs[4]])
 
 print(map(length, io_equations), "\n")

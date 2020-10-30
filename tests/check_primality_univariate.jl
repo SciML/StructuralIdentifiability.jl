@@ -1,5 +1,3 @@
-include("../primality_check.jl")
-
 @testset "Primality check (univariate subroutine)" begin
     
     R, x = PolynomialRing(QQ, "x")

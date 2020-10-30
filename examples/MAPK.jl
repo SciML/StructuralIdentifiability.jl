@@ -18,7 +18,7 @@ ode = @ODEmodel(
     S11'(t) = -alpha01 * F(t) * S01(t) + (beta01 + gamma0100) * FS01(t) - alpha10 * F(t) * S10(t) + (beta10 + gamma1000) * FS10(t) - alpha11 * F(t) * S11(t) + (beta11 + gamma1101 + gamma1110 + gamma1100) * FS11(t)
 )
 
-@time io_equations = find_ioequation(ode, [F, S00, S01, S10, S11])
+@time io_equations = find_ioequations(ode, [F, S00, S01, S10, S11])
 
 eq_list = collect(values(io_equations))
 
