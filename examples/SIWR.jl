@@ -1,4 +1,4 @@
-include("../io_equation.jl")
+include("../src/io_equation.jl")
 
 # SIWR Cholera model
 logger = Logging.SimpleLogger(stdout, Logging.Debug)
@@ -14,9 +14,6 @@ ode = @ODEmodel(
 
 @time io_equation = collect(values(find_ioequations(ode, [k * I])))[1]
 
-@time identifiability_report = check_identifiability(
-    io_equation,
-    [a, bi, bw, gam, mu, xi, k]
-)
+@time identifiability_report = check_identifiability(io_equation, ode.parameters)
 
 println(identifiability_report)

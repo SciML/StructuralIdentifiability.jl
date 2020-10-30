@@ -1,4 +1,4 @@
-include("../io_equation.jl")
+include("../src/io_equation.jl")
 
 # This is the SIWR model with an extra output as considered in the SIAN paper
 
@@ -13,4 +13,8 @@ ode = @ODEmodel(
     [k]
 )
 
-@time io_equation = find_ioequations(ode, [k * x_1, x_0 + x_1 + x_3])
+@time io_equations = collect(values(find_ioequations(ode, [k * x_1, x_0 + x_1 + x_3])))
+
+@time identifiability_report = check_identifiability(io_equations, ode.parameters)
+
+println(identifiability_report)

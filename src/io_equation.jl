@@ -104,7 +104,7 @@ function find_ioequations(
         var_degs = [(i, [degree(eq, x) for x in x_left if degree(eq, x) > 0]) for (i, eq) in enumerate(y_equations)]
         filter!(d -> length(d[2]) > 0, var_degs)
         if isempty(var_degs)
-            return Dict(str_to_var("y$(i)_$(y_orders[i])", ring) => p for (i, p) in enumerate(y_equations))
+            break
         end
         @debug "Current degrees of io-equations $var_degs"
         @debug "Orders: $y_orders"
@@ -223,4 +223,6 @@ function find_ioequations(
         flush(stdout)
         y_equations[y_ind] = eliminate_var(y_equations[y_ind], next_y_equation, var_elim, point_generator)
     end
+
+    return Dict(str_to_var("y$(i)_$(y_orders[i])", ring) => p for (i, p) in enumerate(y_equations))
 end

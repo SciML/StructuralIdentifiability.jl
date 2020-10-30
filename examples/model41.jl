@@ -1,4 +1,4 @@
-include("../io_equation.jl")
+include("../src/io_equation.jl")
 
 # model 41, normalized (all state variables are divided by N)
 logger = Logging.SimpleLogger(stdout, Logging.Debug)

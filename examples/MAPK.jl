@@ -1,4 +1,4 @@
-include("io_equation.jl")
+include("../src/io_equation.jl")
 
 logger = Logging.SimpleLogger(stdout, Logging.Debug)
 global_logger(logger)

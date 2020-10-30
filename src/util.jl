@@ -215,32 +215,41 @@ end
 
 #------------------------------------------------------------------------------
 
-function check_injectivity(polys::Array{<: MPolyElem, 1}; method="Singular")
+function check_injectivity(polys::Array{<: Array{<: MPolyElem, 1}, 1}; method="Singular")
     """
-    Checks a generic injectivity of the *projective* map defined by polys
+    Checks a generic injectivity of the *multiprojective* map defined by polys
     Inputs:
-        - polys - a list of polynomials
+        - polys - a list of lists of polynomials
     Output: dictionary from variables of the parent ring to booleans as follows:
         True: every generic fiber of the map defined by polys has a single value of the variabe
         False: otherwise
     """
     @debug "Constructing equations"
     flush(stdout)
-    ring = parent(polys[1])
+    ring = parent(polys[1][1])
     point = map(v -> rand(5:100), gens(ring))
-    pivot = sort(polys, by = (p -> total_degree(ring(p))))[1]
-    @debug "Pivot polynomial is $pivot"
-    flush(stdout)
-    eqs = []
-    for p = polys
-        push!(eqs, p * evaluate(ring(pivot), point) - evaluate(ring(p), point) * pivot)
+    eqs_sing = Array{Singular.spoly{Singular.n_Q}, 1}()
+    ring_sing, vars_sing = Singular.PolynomialRing(
+                               Singular.QQ, 
+                               vcat(map(var_to_str, gens(ring)), ["sat_aux$i" for i in 1:length(polys)]); 
+                               ordering=:degrevlex
+                           )
+
+    for (i, component) in enumerate(polys)
+        pivot = sort(component, by = (p -> total_degree(ring(p))))[1]
+        @debug "Pivot polynomial is $pivot"
+        flush(stdout)
+        eqs = []
+        for p in component
+            push!(eqs, p * evaluate(ring(pivot), point) - evaluate(ring(p), point) * pivot)
+        end
+        append!(eqs_sing, map(p -> parent_ring_change(p, ring_sing), eqs))
+        push!(
+            eqs_sing,
+            parent_ring_change(pivot, ring_sing) * vars_sing[end - i + 1] - 1
+        )
     end
-    ring_sing, vars_sing = Singular.PolynomialRing(Singular.QQ, vcat(map(var_to_str, gens(ring)), "sat_aux"); ordering=:degrevlex)
-    eqs_sing = map(p -> parent_ring_change(p, ring_sing), eqs)
-    push!(
-        eqs_sing,
-        parent_ring_change(pivot, ring_sing) * vars_sing[end] - 1
-    )
+
     @debug "Computing Groebner basis ($(length(eqs_sing)) equations)"
     flush(stdout)
     if method == "Singular"
@@ -263,7 +272,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function check_identifiability(io_equation::P, parameters::Array{P, 1}; method="Singular") where P <: MPolyElem{fmpq}
+function check_identifiability(io_equations::Array{P, 1}, parameters::Array{P, 1}; method="Singular") where P <: MPolyElem{fmpq}
     """
     For the io_equation and the list of all parameter variables, returns a dictionary
     var => whether_globally_identifiable
@@ -271,10 +280,17 @@ function check_identifiability(io_equation::P, parameters::Array{P, 1}; method="
     """
     @debug "Extracting coefficients"
     flush(stdout)
-    nonparameters = filter(v -> !(var_to_str(v) in map(var_to_str, parameters)), gens(parent(io_equation)))
-    coeffs = extract_coefficients(io_equation, nonparameters)
+    nonparameters = filter(v -> !(var_to_str(v) in map(var_to_str, parameters)), gens(parent(io_equations[1])))
+    coeffs = Array{Array{P, 1}, 1}()
+    for eq in io_equations
+        push!(coeffs, collect(values(extract_coefficients(eq, nonparameters))))
+    end
 
-    return check_injectivity(collect(values(coeffs)); method=method)
+    return check_injectivity(coeffs; method=method)
+end
+
+function check_identifiability(io_equation::P, parameters::Array{P, 1}; method="Singular") where P <: MPolyElem{fmpq}
+    return check_identifiability([io_equation], parameters; method=method)
 end
 
 #------------------------------------------------------------------------------
