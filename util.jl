@@ -70,11 +70,11 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing)
     """
     old_ring = parent(poly)
     # construct a mapping for the variable indices
-    var_mapping = Array{Int, 1}()
-    for u in gens(old_ring)
+    var_mapping = Array{Any, 1}()
+    for u in symbols(old_ring)
         push!(
             var_mapping,
-            findfirst(v -> (var_to_str(u) == var_to_str(v)), gens(new_ring))
+            findfirst(v -> (string(u) == string(v)), symbols(new_ring))
         )
     end
     builder = MPolyBuildCtx(new_ring)
