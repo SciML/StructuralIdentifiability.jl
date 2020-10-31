@@ -1,22 +1,20 @@
-using Nemo
+using Oscar
 
-function check_primality_univariate(polys::Array{fmpq_poly, 1})
-    degrees = map(degree, polys)
-    basis = vec(collect(Base.Iterators.product([0:(d - 1) for d in degrees]...)))
-    S = MatrixSpace(Nemo.QQ, length(basis), length(basis))
+#------------------------------------------------------------------------------
+
+function check_primality_zerodim(J::Singular.sideal{Singular.spoly{Singular.n_Q}})
+    J = Singular.std(J)
+    basis = gens(Singular.kbase(J))
+    dim = length(basis)
+    S = MatrixSpace(QQ, dim, dim)
     matrices = []
-    for i in 1:length(polys)
-        d = degrees[i]
+
+    for v in gens(base_ring(J))
         M = zero(S)
-        e = tuple([j == i ? 1 : 0 for j in 1:length(polys)]...)
-        for (j, b) in enumerate(basis)
-            if b[i] < d - 1
-                M[findfirst(v -> v == b .+ e, basis), j] = 1
-            else
-                for k in 1:d
-                    M[findfirst(v -> v == b, basis), j] = -coeff(polys[i], d - k) // coeff(polys[i], d)
-                    b = b .- e
-                end
+        for (i, vec) in enumerate(basis)
+            image = Singular.reduce(v * vec, J)
+            for (j, base_vec) in enumerate(basis)
+                M[i, j] = Nemo.QQ(coeff(image, base_vec))
             end
         end
         push!(matrices, M)
@@ -25,11 +23,24 @@ function check_primality_univariate(polys::Array{fmpq_poly, 1})
     return isirreducible(Nemo.charpoly(generic_multiplication))
 end
 
-function check_primality(polys::Dict{fmpq_mpoly, fmpq_mpoly})
+#------------------------------------------------------------------------------
+
+function check_primality(polys::Dict{fmpq_mpoly, fmpq_mpoly}, extra_relations::Array{fmpq_mpoly, 1})
     leaders = collect(keys(polys))
     ring = parent(leaders[1])
-    R, x_aux = PolynomialRing(Nemo.QQ, "x")
-    eval_point = [v in keys(polys) ? x_aux : R(rand(1:100)) for v in gens(ring)]
-    univar = [evaluate(p, eval_point) for p in values(polys)]
-    return check_primality_univariate(univar)
+
+    Rsing, vsing = Singular.PolynomialRing(Singular.QQ, [var_to_str(l, ring) for l in leader])
+    eval_point = [v in keys(polys) ? v : ring(rand(1:100)) for v in gens(ring)]
+    all_polys = vcat(collect(values(polys)), extra_relations)
+    zerodim_ideal = Singular.Ideal(Rsing, map(p -> parent_ring_change(evaluate(p, eval_point), Rsing), all_polys))
+    
+    return check_primality_zerodim(zerodim_ideal)
 end
+
+#------------------------------------------------------------------------------
+
+function check_primality(polys::Dict{fmpq_mpoly, fmpq_mpoly})
+    return check_primality(polys, Array{fmpq_mpoly, 1}())
+end
+
+#------------------------------------------------------------------------------

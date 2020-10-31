@@ -222,7 +222,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function check_injectivity(polys::Array{<: Array{<: MPolyElem, 1}, 1}; method="Singular")
+function check_injectivity(polys::Array{<: Array{<: MPolyElem, 1}, 1}; method="GroebnerBasis")
     """
     Checks a generic injectivity of the *multiprojective* map defined by polys
     Inputs:
@@ -279,7 +279,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function check_identifiability(io_equations::Array{P, 1}, parameters::Array{P, 1}; method="Singular") where P <: MPolyElem{fmpq}
+function check_identifiability(io_equations::Array{P, 1}, parameters::Array{P, 1}; method="GroebnerBasis") where P <: MPolyElem{fmpq}
     """
     For the io_equation and the list of all parameter variables, returns a dictionary
     var => whether_globally_identifiable
