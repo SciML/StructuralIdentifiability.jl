@@ -11,6 +11,11 @@ function eval_at_dict(poly::P, d::Dict{P, <: RingElem}) where P <: MPolyElem
     return evaluate(poly, point)
 end
 
+function eval_at_dict(rational::Generic.Frac{<: P}, d::Dict{P, <: RingElem}) where P <: MPolyElem
+    f, g = unpack_fraction(rational)
+    return eval_at_dict(f, d) * inv(eval_at_dict(g, d))
+end
+
 #------------------------------------------------------------------------------
 
 function unpack_fraction(f::MPolyElem)
@@ -148,8 +153,10 @@ function factor_via_singular(polys::Array{<: MPolyElem{fmpq}, 1})
     result = Array{typeof(polys[1]), 1}()
     for p in polys
         @debug "\t Factoring with Singular a polynomial of size $(length(p))"
+        @debug p
         p_sing = parent_ring_change(p, R_sing)
-        for f in Singular.factor(p_sing)
+        for f in Singular.factor_squarefree(p_sing)
+            @debug f
             push!(result, parent_ring_change(f[1], original_ring))
         end
     end

@@ -42,6 +42,7 @@ function generate_io_equation_problem(
         [var_to_str(x) * "_dot" for x in ode.x_vars],
         ["y$(j)_$i" for i in 0:dim_x for j in 1:length(outputs)],
         [var_to_str(u) * "_$i" for i in 1:dim_x for u in ode.u_vars],
+        ["rand_proj_var"]
     )
     ring, ring_vars = PolynomialRing(base_ring(ode.poly_ring), var_names)
 
@@ -97,11 +98,10 @@ function find_ioequations(
     """
     #Initialization
     ring, derivation, x_equations, y_equations, point_generator = generate_io_equation_problem(ode, outputs)
-    x_left = Set(keys(x_equations))
     y_orders = [0 for _ in y_equations]
  
     while true        
-        var_degs = [(i, [degree(eq, x) for x in x_left if degree(eq, x) > 0]) for (i, eq) in enumerate(y_equations)]
+        var_degs = [(i, [degree(eq, x) for x in keys(x_equations) if degree(eq, x) > 0]) for (i, eq) in enumerate(y_equations)]
         filter!(d -> length(d[2]) > 0, var_degs)
         if isempty(var_degs)
             break
@@ -117,7 +117,7 @@ function find_ioequations(
                 -count(x -> x == min(d[2]...), d[2]) + length(y_equations[d[1]]) // 30,
                 length(y_equations[d[1]]),
                 d[1]
-            ) for d in var_degs               
+            ) for d in var_degs 
         ]
         @debug "Scores: $outputs_with_scores"
         y_ind = sort(outputs_with_scores)[1][end]
@@ -129,24 +129,24 @@ function find_ioequations(
         @debug "Prolonging"
         flush(stdout)
         next_y_equation = diff_poly(y_equations[y_ind], derivation)
-        for x in x_left
+        for x in keys(x_equations)
             @debug "Eliminating the derivative of $x"
             flush(stdout)
             next_y_equation = eliminate_var(x_equations[x], next_y_equation, derivation[x], point_generator)
         end
         
         #Choose variable to eliminate
-        var_degs_next = [(degree(y_equations[y_ind], x), degree(next_y_equation, x), x) for x in x_left if degree(y_equations[y_ind], x) > 0]
+        var_degs_next = [(degree(y_equations[y_ind], x), degree(next_y_equation, x), x) for x in keys(x_equations) if degree(y_equations[y_ind], x) > 0]
         our_choice = sort(var_degs_next)[1]
         var_elim_deg, var_elim = our_choice[1], our_choice[3]
         
-        @debug "Elimination of $var_elim, $(length(x_left) - 1) left; $(Dates.now())"
+        @debug "Elimination of $var_elim, $(length(x_equations)) left; $(Dates.now())"
         flush(stdout)
         
         #Possible variable change for Axy + Bx + p(y) (x = var_elim)
         if auto_var_change && (var_elim_deg == 1)
             Ay_plus_B = coeff(y_equations[y_ind], [var_elim], [1])
-            for x in setdiff(x_left, [var_elim])
+            for x in setdiff(keys(x_equations), [var_elim])
                 if degree(Ay_plus_B, x) == 1                      
                     A, B = divrem(Ay_plus_B, x)
                     A, B = simplify_frac(A, B)
@@ -187,7 +187,7 @@ function find_ioequations(
                         #recalibrate system
                         @debug "Unmixing the derivatives"
                         flush(stdout)
-                        for xx in setdiff(x_left, [x])
+                        for xx in setdiff(keys(x_equations), [x])
                             @debug "\t Unmixing $xx"
                             flush(stdout)
                             x_equations[x] = eliminate_var(x_equations[x], x_equations[xx], derivation[xx], point_generator)
@@ -202,13 +202,12 @@ function find_ioequations(
 
         #Eliminate var_elim from the system
         delete!(x_equations, var_elim)
-        delete!(x_left, var_elim)
         @debug "Elimination in states"
         flush(stdout)
-        for x in x_left
+        for (x, eq) in x_equations
             @debug "\t Elimination in the equation for $x"
             flush(stdout)
-            x_equations[x] = eliminate_var(x_equations[x], y_equations[y_ind], var_elim, point_generator)
+            x_equations[x] = eliminate_var(eq, y_equations[y_ind], var_elim, point_generator)
         end
         @debug "Elimination in y_equations"
         flush(stdout)
@@ -224,5 +223,22 @@ function find_ioequations(
         y_equations[y_ind] = eliminate_var(y_equations[y_ind], next_y_equation, var_elim, point_generator)
     end
 
-    return Dict(str_to_var("y$(i)_$(y_orders[i])", ring) => p for (i, p) in enumerate(y_equations))
+    io_equations = Dict(str_to_var("y$(i)_$(y_orders[i])", ring) => p for (i, p) in enumerate(y_equations))
+
+    @debug "Check whether the original projections are enough"
+    if length(io_equations) == 1 || check_primality(io_equations) 
+        @debug "The projections generate an ideal with a single components of highest dimension, returning"
+        return io_equations
+    end
+
+    extra_var = str_to_var("rand_proj_var", ring)
+    extra_var_rhs = sum([rand(1:10) * v for v in keys(io_equations)])
+    @debug "Extra projections: $extra_var_rhs"
+    point_generator = generator_var_change(point_generator, extra_var, extra_var_rhs, one(ring))
+    extra_poly = extra_var - extra_var_rhs
+    for (y, io_eq) in io_equations
+        extra_poly = eliminate_var(extra_poly, io_eq, y, point_generator)
+    end
+    io_equations[extra_var] = extra_poly
+    return io_equations
 end

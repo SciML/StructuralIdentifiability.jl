@@ -24,14 +24,6 @@ eq_list = collect(values(io_equations))
 
 println(map(length, eq_list), "\n")
 
-y_vars = filter(v -> 'y' in string(v), gena(parent(eq_list[1])))
+@time identifiability_report = check_identifiability(eq_list, ode.parameters)
 
-println(map(e -> length(extract_coefficients(e, y_vars)), eq_list), "\n")
-
-println([degree(p, v) for (p, v) in io_equations])
-
-if check_primality(io_equations) == true
-    println("Prime")
-else
-    println("Not prime")
-end
+println(identifiability_report)

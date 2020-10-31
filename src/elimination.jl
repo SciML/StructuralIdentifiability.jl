@@ -175,11 +175,12 @@ abstract type PointGenerator{P} end
 
 mutable struct ODEPointGenerator{P} <: PointGenerator{P}
     ode::ODE{P}
-    outputs::Array{P, 1}
+    outputs::Array{Union{P, Generic.Frac{P}}, 1}
     big_ring::MPolyRing
     precision::Int
     cached_points::Array{Dict{P, <: FieldElem}, 1}
-    function ODEPointGenerator{P}(ode::ODE{P}, outputs::Array{P, 1}, big_ring::MPolyRing) where P <: MPolyElem{<: FieldElem}
+
+    function ODEPointGenerator{P}(ode::ODE{P}, outputs::Array{Union{P, Generic.Frac{P}}, 1}, big_ring::MPolyRing) where P <: MPolyElem{<: FieldElem}
         prec = 0
         while findfirst(x -> var_to_str(x) == "y1_$prec", gens(big_ring)) != nothing
             prec += 1
@@ -255,7 +256,7 @@ end
 function choose(polys::Array{P, 1}, generic_point_generator) where P <: MPolyElem{<: FieldElem}
     """
     Input:
-        - array_f, an array of distinct irreducible polynomials in the same ring
+        - polys, an array of distinct irreducible polynomials in the same ring
         - generic_point_generator, a generic point generator as described above for one of polys
     Output:
         - the polynomial that vanishes at the generic_point_generator
@@ -265,7 +266,8 @@ function choose(polys::Array{P, 1}, generic_point_generator) where P <: MPolyEle
         if length(polys) <= 1
             break
         end
-        point = [p[v] for v in vars]
+        # get accounts for the fact that the big ring may contain some auxiliary variables, e.g. rand_proj_var
+        point = [get(p, v, zero(base_ring(generic_point_generator.big_ring))) for v in vars]
         polys = filter(e -> (evaluate(e, point) == 0), polys)
         flush(stdout)
     end
