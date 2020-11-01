@@ -5,7 +5,7 @@ global_logger(logger)
 
 ode = @ODEmodel(
     x1'(t) = k_prod  - k_deg * x1(t) - k1 * x1(t) * u(t),
-    x2'(t) = -k3 * x2(t) - k_deg * x2(t) a2 * x2(t) * x10(t) + t1 * x4(t) - a3 * x2(t) * x13(t) + t2 * x5(t) + (k1 * x1(t) - k2 * x2(t) * x8(t)) * u(t),
+    x2'(t) = -k3 * x2(t) - k_deg * x2(t) - a2 * x2(t) * x10(t) + t1 * x4(t) - a3 * x2(t) * x13(t) + t2 * x5(t) + (k1 * x1(t) - k2 * x2(t) * x8(t)) * u(t),
     x3'(t) = k3 * x2(t) - k_deg * x3(t) + k2 * x2(t) * x8(t) * u(t),
     x4'(t) = a2 * x2(t) * x10(t) - t1 * x4(t),
     x5'(t) = a3 *  x2(t) * x13(t) - t2 *  x5(t),
@@ -21,7 +21,35 @@ ode = @ODEmodel(
     x15'(t) = c2c + c1c * x7(t) - c3c * x15(t)
 )
 
-@time io_equations = find_ioequations(ode, Array{Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}, 1}([x7, x10 + x13, x9, x1 + x2 + x3, x2, x12]))
+ode = SetParameterValues(ode, Dict(
+    a1 => QQ(1, 2),
+    a2 => QQ(1, 5),
+    a3 => QQ(1),
+    c1a => QQ(5, 10^(7)),
+    c2a => QQ(0),
+    c5a => QQ(1, 10^(4)),
+    c6a => QQ(2, 10^(5)),
+    c1 => QQ(5, 10^(7)),
+    c2 => QQ(0),
+    c3 => QQ(4, 10^(4)),
+    c4 => QQ(1, 2),
+    kv => QQ(5),
+    e1a => QQ(5, 10^(4)),
+    c1c => QQ(5, 10^(7)),
+    c2c => QQ(0),
+    c3c => QQ(4, 10^(4))                             
+))
+
+@time io_equations = find_ioequations(
+    ode, 
+    Array{Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}, 1}([
+        parent_ring_change(x7, ode.poly_ring), 
+        parent_ring_change(x10 + x13, ode.poly_ring), 
+        parent_ring_change(x9, ode.poly_ring), 
+        parent_ring_change(x1 + x2 + x3, ode.poly_ring), 
+        parent_ring_change(x2, ode.poly_ring), 
+        parent_ring_change(x12, ode.poly_ring)
+]))
 
 eq_list = collect(values(io_equations))
 
