@@ -150,7 +150,7 @@ function find_ioequations(
                 if degree(Ay_plus_B, x) == 1                      
                     A, B = divrem(Ay_plus_B, x)
                     A, B = simplify_frac(A, B)
-                    if isempty(filter!(v -> (v in x_left), vars(A))) && (B != 0) #&& (length(coeffs(A))==1) 
+                    if isempty(filter!(v -> (v in keys(x_equations)), vars(A))) && (B != 0) #&& (length(coeffs(A))==1) 
                         #variable change x_i' --> x_i' - (B/A)', x_i --> x_i - B/A
                         @debug "\t Applying variable change: $(x) --> $(x) - ( $B )/( $A ); $(Dates.now())"
                         flush(stdout)
@@ -169,7 +169,7 @@ function find_ioequations(
                         @debug "Change in the system"
                         flush(stdout)
                         x_equations[x] = make_substitution(x_equations[x], derivation[x], denom_d * derivation[x] - numer_d, denom_d)
-                        for xx in x_left
+                        for xx in keys(x_equations)
                             @debug "\t Change in the equation for $xx"
                             flush(stdout)
                             x_equations[xx] = make_substitution(x_equations[xx], x, A * x - B, A)

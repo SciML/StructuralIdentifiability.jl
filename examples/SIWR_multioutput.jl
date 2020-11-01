@@ -13,7 +13,7 @@ ode = @ODEmodel(
     [k]
 )
 
-@time io_equations = collect(values(find_ioequations(ode, [k * x_1, x_0 + x_1 + x_3])))
+@time io_equations = collect(values(find_ioequations(ode, Array{Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}, 1}([k * x_1, x_0 + x_1 + x_3]))))
 
 @time identifiability_report = check_identifiability(io_equations, ode.parameters)
 

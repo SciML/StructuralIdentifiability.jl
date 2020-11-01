@@ -267,7 +267,7 @@ function choose(polys::Array{P, 1}, generic_point_generator) where P <: MPolyEle
             break
         end
         # get accounts for the fact that the big ring may contain some auxiliary variables, e.g. rand_proj_var
-        point = [get(p, v, zero(base_ring(generic_point_generator.big_ring))) for v in vars]
+        point = [get(p, v, zero(base_ring(parent(polys[1])))) for v in vars]
         polys = filter(e -> (evaluate(e, point) == 0), polys)
         flush(stdout)
     end
