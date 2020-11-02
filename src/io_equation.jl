@@ -29,10 +29,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function generate_io_equation_problem(
-        ode::ODE{P}, 
-        outputs::Array{<: Union{P, Generic.Frac{P}}, 1}
-    ) where P <: MPolyElem{<: FieldElem}
+function generate_io_equation_problem(ode::ODE{P}) where P <: MPolyElem{<: FieldElem}
     dim_x = length(ode.x_vars)
 
     # Creating a ring
@@ -40,7 +37,7 @@ function generate_io_equation_problem(
     var_names = vcat(
         old_vars,
         [var_to_str(x) * "_dot" for x in ode.x_vars],
-        ["y$(j)_$i" for i in 0:dim_x for j in 1:length(outputs)],
+        [var_to_str(y) * "_$i" for i in 0:dim_x for y in ode.y_vars],
         [var_to_str(u) * "_$i" for i in 1:dim_x for u in ode.u_vars],
         ["rand_proj_var"]
     )
@@ -52,8 +49,8 @@ function generate_io_equation_problem(
         derivation[switch_ring(x, ring)] = str_to_var(var_to_str(x) * "_dot", ring)
     end
     for i in 0:(dim_x - 1)
-        for j in 1:length(outputs)
-            derivation[str_to_var("y$(j)_$i", ring)] = str_to_var("y$(j)_$(i + 1)", ring)
+        for y in ode.y_vars
+            derivation[str_to_var(var_to_str(y) * "_$i", ring)] = str_to_var(var_to_str(y) * "_$(i + 1)", ring)
         end
     end
     for u in ode.u_vars
@@ -67,16 +64,17 @@ function generate_io_equation_problem(
     x_equations = Dict{P, P}()
     for x in ode.x_vars
         x_lifted = parent_ring_change(x, ring)
-        num, den = map(p -> parent_ring_change(ode.poly_ring(p), ring), unpack_fraction(ode.equations[x]))
+        num, den = map(p -> parent_ring_change(ode.poly_ring(p), ring), unpack_fraction(ode.x_equations[x]))
         x_equations[x_lifted] = den * derivation[x_lifted] - num
     end
-    y_equations = Array{P, 1}()
-    for (i, g) in enumerate(outputs)
-        g_num, g_den = map(p -> parent_ring_change(ode.poly_ring(p), ring), unpack_fraction(g))
-        push!(y_equations, g_den * str_to_var("y$(i)_0", ring) - g_num)
+    y_equations = Dict{P, P}()
+    for y in ode.y_vars
+        y_lifted = str_to_var(var_to_str(y) * "_0", ring)
+        g_num, g_den = map(p -> parent_ring_change(ode.poly_ring(p), ring), unpack_fraction(ode.y_equations[y]))
+        y_equations[y_lifted] = g_den * y_lifted - g_num
     end
 
-    generic_point_generator = ODEPointGenerator{P}(ode, outputs, ring)
+    generic_point_generator = ODEPointGenerator{P}(ode, ring)
 
     return (ring, derivation, x_equations, y_equations, generic_point_generator)
 end
@@ -85,7 +83,6 @@ end
 
 function find_ioequations(
         ode::ODE{P}, 
-        outputs::Array{<: Union{P, Generic.Frac{P}}, 1}, 
         auto_var_change::Bool=true
     ) where P <: MPolyElem{<: FieldElem}
     """
@@ -97,22 +94,23 @@ function find_ioequations(
     Output: a dictionary from "leaders" to the corresponding io-equations
     """
     #Initialization
-    ring, derivation, x_equations, y_equations, point_generator = generate_io_equation_problem(ode, outputs)
-    y_orders = [0 for _ in y_equations]
+    ring, derivation, x_equations, y_equations, point_generator = generate_io_equation_problem(ode)
+    y_orders = Dict(y => 0 for y in keys(y_equations))
  
     while true        
-        var_degs = [(i, [degree(eq, x) for x in keys(x_equations) if degree(eq, x) > 0]) for (i, eq) in enumerate(y_equations)]
+        var_degs = [(y, [degree(eq, x) for x in keys(x_equations) if degree(eq, x) > 0]) for (y, eq) in y_equations]
         filter!(d -> length(d[2]) > 0, var_degs)
         if isempty(var_degs)
             break
         end
         @debug "Current degrees of io-equations $var_degs"
         @debug "Orders: $y_orders"
-        @debug "Sizes: $([length(eq) for eq in y_equations])"
+        @debug "Sizes: $(Dict(y => length(eq) for (y, eq) in y_equations))"
 
         # choosing the output to prolong
         outputs_with_scores = [
             (
+                min(d[2]...) * length(y_equations[d[1]]),
                 min(d[2]...),
                 -count(x -> x == min(d[2]...), d[2]) + length(y_equations[d[1]]) // 30,
                 length(y_equations[d[1]]),
@@ -120,15 +118,15 @@ function find_ioequations(
             ) for d in var_degs 
         ]
         @debug "Scores: $outputs_with_scores"
-        y_ind = sort(outputs_with_scores)[1][end]
-        y_orders[y_ind] += 1
-        @debug "Prolonging output number $y_ind"
+        y_prolong = sort(outputs_with_scores)[1][end]
+        y_orders[y_prolong] += 1
+        @debug "Prolonging output $y_prolong"
         flush(stdout)
 
         #Calculate the Lie derivative of the io_relation
         @debug "Prolonging"
         flush(stdout)
-        next_y_equation = diff_poly(y_equations[y_ind], derivation)
+        next_y_equation = diff_poly(y_equations[y_prolong], derivation)
         for x in keys(x_equations)
             @debug "Eliminating the derivative of $x"
             flush(stdout)
@@ -136,7 +134,7 @@ function find_ioequations(
         end
         
         #Choose variable to eliminate
-        var_degs_next = [(degree(y_equations[y_ind], x), degree(next_y_equation, x), x) for x in keys(x_equations) if degree(y_equations[y_ind], x) > 0]
+        var_degs_next = [(degree(y_equations[y_prolong], x), degree(next_y_equation, x), x) for x in keys(x_equations) if degree(y_equations[y_prolong], x) > 0]
         our_choice = sort(var_degs_next)[1]
         var_elim_deg, var_elim = our_choice[1], our_choice[3]
         
@@ -145,7 +143,7 @@ function find_ioequations(
         
         #Possible variable change for Axy + Bx + p(y) (x = var_elim)
         if auto_var_change && (var_elim_deg == 1)
-            Ay_plus_B = coeff(y_equations[y_ind], [var_elim], [1])
+            Ay_plus_B = coeff(y_equations[y_prolong], [var_elim], [1])
             for x in setdiff(keys(x_equations), [var_elim])
                 if degree(Ay_plus_B, x) == 1                      
                     A, B = divrem(Ay_plus_B, x)
@@ -176,10 +174,10 @@ function find_ioequations(
                         end
                         @debug "Change in the outputs"
                         flush(stdout)
-                        for i in 1:length(y_equations)
-                            @debug "\t Change in the $i th output"
+                        for y in keys(y_equations)
+                            @debug "\t Change in the output $y"
                             flush(stdout)
-                            y_equations[i] = make_substitution(y_equations[i], x, A * x - B, A)
+                            y_equations[y] = make_substitution(y_equations[y], x, A * x - B, A)
                         end
                         @debug "\t Change in the prolonged equation"
                         flush(stdout)
@@ -207,23 +205,23 @@ function find_ioequations(
         for (x, eq) in x_equations
             @debug "\t Elimination in the equation for $x"
             flush(stdout)
-            x_equations[x] = eliminate_var(eq, y_equations[y_ind], var_elim, point_generator)
+            x_equations[x] = eliminate_var(eq, y_equations[y_prolong], var_elim, point_generator)
         end
         @debug "Elimination in y_equations"
         flush(stdout)
-        for i in 1:length(y_equations)
-            if i != y_ind
+        for y in keys(y_equations)
+            if y != y_prolong
                 @debug "Elimination in the $i th output"
                 flush(stdout)
-                y_equations[i] = eliminate_var(y_equations[i], y_equations[y_ind], var_elim, point_generator)
+                y_equations[y] = eliminate_var(y_equations[y], y_equations[y_prolong], var_elim, point_generator)
             end
         end
         @debug "\t Elimination in the prolonged equation"
         flush(stdout)
-        y_equations[y_ind] = eliminate_var(y_equations[y_ind], next_y_equation, var_elim, point_generator)
+        y_equations[y_prolong] = eliminate_var(y_equations[y_prolong], next_y_equation, var_elim, point_generator)
     end
 
-    io_equations = Dict(str_to_var("y$(i)_$(y_orders[i])", ring) => p for (i, p) in enumerate(y_equations))
+    io_equations = Dict(str_to_var(var_to_str(y)[1:end-2] * "_$(y_orders[y])", ring) => p for (y, p) in y_equations)
 
     @debug "Check whether the original projections are enough"
     if length(io_equations) == 1 || check_primality(io_equations) 

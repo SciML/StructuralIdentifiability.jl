@@ -10,10 +10,11 @@ ode = @ODEmodel(
     x_1'(t) = bw * x_0(t) * x_2(t) + bi * x_0(t) * x_1(t) - (gam + mu) * x_1(t),
     x_2'(t) = xi * (x_1(t) - x_2(t)),
     x_3'(t) = gam * x_1(t) - (mu + a) * x_3(t),
-    [k]
+    y1(t) = k * x_1(t),
+    y2(t) = x_0(t) + x_1(t) + x_3(t)
 )
 
-@time io_equations = collect(values(find_ioequations(ode, Array{Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}, 1}([k * x_1, x_0 + x_1 + x_3]))))
+@time io_equations = collect(values(find_ioequations(ode)))
 
 @time identifiability_report = check_identifiability(io_equations, ode.parameters)
 

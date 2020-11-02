@@ -9,10 +9,10 @@ ode = @ODEmodel(
     I'(t) = bw * S(t) * W(t) + bi * S(t) * I(t) - (gam + mu) * I(t),
     W'(t) = xi * (I(t) - W(t)),
     R'(t) = gam * I(t) - (mu + a) * R(t),
-    [k]
+    y(t) = k * I(t)
 )
 
-@time io_equation = collect(values(find_ioequations(ode, [k * I])))[1]
+@time io_equation = collect(values(find_ioequations(ode)))[1]
 
 @time identifiability_report = check_identifiability(io_equation, ode.parameters)
 

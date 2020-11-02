@@ -175,18 +175,14 @@ abstract type PointGenerator{P} end
 
 mutable struct ODEPointGenerator{P} <: PointGenerator{P}
     ode::ODE{P}
-    outputs::Array{Union{P, Generic.Frac{P}}, 1}
     big_ring::MPolyRing
     precision::Int
     cached_points::Array{Dict{P, <: FieldElem}, 1}
 
-    function ODEPointGenerator{P}(ode::ODE{P}, outputs::Array{Union{P, Generic.Frac{P}}, 1}, big_ring::MPolyRing) where P <: MPolyElem{<: FieldElem}
-        prec = 0
-        while findfirst(x -> var_to_str(x) == "y1_$prec", gens(big_ring)) != nothing
-            prec += 1
-        end
+    function ODEPointGenerator{P}(ode::ODE{P}, big_ring::MPolyRing) where P <: MPolyElem
+        prec = length(ode.x_vars) + 1
         number_type = typeof(one(base_ring(big_ring)))
-        return new(ode, outputs, big_ring, prec, Array{Dict{P, number_type}}[])
+        return new(ode, big_ring, prec, Array{Dict{P, number_type}}[])
     end
 end
 
@@ -214,16 +210,6 @@ function Base.iterate(gpg::ODEPointGenerator{P}, i::Int=1) where P <: MPolyElem{
                 flush(stdout)
                 continue
             end
-            @debug "Evaluating outputs"
-            flush(stdout)
-            ps_ring = parent(first(values(ps_solution)))
-            for p in gpg.ode.parameters
-                ps_solution[p] = ps_ring(param_values[p])
-            end
-            eval_outputs = []
-            for g in gpg.outputs
-                push!(eval_outputs, eval_at_dict(g, ps_solution))
-            end
 
             @debug "Constructing the point"
             flush(stdout)
@@ -234,9 +220,9 @@ function Base.iterate(gpg::ODEPointGenerator{P}, i::Int=1) where P <: MPolyElem{
                     result[str_to_var(var_to_str(u) * "_$i", gpg.big_ring)] = coeff(ps_solution[u], i) * factorial(i)
                 end
             end
-            for i in 1:length(gpg.outputs)
+            for y in gpg.ode.y_vars
                 for j in 0:(gpg.precision - 1)
-                    result[str_to_var("y$(i)_$j", gpg.big_ring)] = coeff(eval_outputs[i], j) * factorial(j)
+                    result[str_to_var(var_to_str(y) * "_$j", gpg.big_ring)] = coeff(ps_solution[y], j) * factorial(j)
                 end
             end
             for x in gpg.ode.x_vars

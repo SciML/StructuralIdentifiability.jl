@@ -9,20 +9,28 @@ include("power_series_utils.jl")
 struct ODE{P}
     poly_ring::MPolyRing
     x_vars::Array{P, 1}
+    y_vars::Array{P, 1}
     u_vars::Array{P, 1}
     parameters::Array{P, 1}
-    equations::Dict{P, <: Union{P, Generic.Frac{P}}}
+    x_equations::Dict{P, <: Union{P, Generic.Frac{P}}}
+    y_equations::Dict{P, <: Union{P, Generic.Frac{P}}}
     
-    function ODE{P}(eqs::Dict{P, <: Union{P, Generic.Frac{P}}}, inputs::Array{P, 1}) where {P <: MPolyElem{<: FieldElem}}
-        #Initialize ODE
-        #equations is a dictionary x_i => f_i(x, u, params)
+    function ODE{P}(
+            x_eqs::Dict{P, <: Union{P, Generic.Frac{P}}}, 
+            y_eqs::Dict{P, <: Union{P, Generic.Frac{P}}},    
+            inputs::Array{P, 1}
+        ) where {P <: MPolyElem{<: FieldElem}}
+        # Initialize ODE
+        # x_eqs is a dictionary x_i => f_i(x, u, params)
+        # y_eqs is a dictionary y_i => g_i(x, u, params)
 
-        num, den = unpack_fraction(collect(values(eqs))[1])
+        num, den = unpack_fraction(collect(values(x_eqs))[1])
         poly_ring = parent(num)
-        x_vars = collect(keys(eqs))
+        x_vars = collect(keys(x_eqs))
+        y_vars = collect(keys(y_eqs))
         u_vars = inputs
-        parameters = filter(v -> (!(v in x_vars) && !(v in u_vars)), gens(poly_ring))
-        new(poly_ring, x_vars, u_vars, parameters, eqs)
+        parameters = filter(v -> (!(v in x_vars) && !(v in u_vars) && !(v in y_vars)), gens(poly_ring))
+        new(poly_ring, x_vars, y_vars, u_vars, parameters, x_eqs, y_eqs)
     end
 end
 
@@ -75,14 +83,25 @@ function power_series_solution(
     for v in vcat(ode.x_vars, ode.u_vars)
         evaluation[v] = switch_ring(v, new_ring)
     end
-    for (v, eq) in ode.equations
+    for (v, eq) in ode.x_equations
         num, den = map(p -> eval_at_dict(p, evaluation), unpack_fraction(eq))
         push!(equations, den * str_to_var(var_to_str(v) * "_dot", new_ring) - num)
     end
     new_inputs = Dict(switch_ring(k, new_ring) => v for (k, v) in input_values)
     new_ic = Dict(switch_ring(k, new_ring) => v for (k, v) in initial_conditions)
     result = ps_ode_solution(equations, new_ic, new_inputs, prec)
-    return Dict(v => result[switch_ring(v, new_ring)] for v in vcat(ode.x_vars, ode.u_vars))
+
+    # Evaluation outputs
+    result = Dict(v => result[switch_ring(v, new_ring)] for v in vcat(ode.x_vars, ode.u_vars))
+    ps_ring = parent(first(values(result)))
+    for p in ode.parameters
+        result[p] = ps_ring(param_values[p])
+    end
+    eval_outputs = []
+    for (y, g) in ode.y_equations
+        result[y] = eval_at_dict(g, result)
+    end
+    return result
 end
 
 #------------------------------------------------------------------------------
@@ -194,16 +213,9 @@ function macrohelper_extract_vars(equations::Array{Expr, 1}, summary::Bool=true)
             eq
         )
     end
-    u_vars = setdiff(funcs, x_vars)
-    params = setdiff(all_symb, union(x_vars, u_vars))
+    io_vars = setdiff(funcs, x_vars)
     all_symb = collect(all_symb)
-    if summary
-        print("Summary of the model:\n")
-        print("State variables: ", join(map(string, collect(x_vars)), ", "), "\n")
-        print("Parameter: ", join(map(string, collect(params)), ", "), "\n")
-        print("Inputs: ", join(map(string, collect(u_vars)), ", "), "\n")
-    end
-    return collect(u_vars), collect(all_symb)
+    return collect(x_vars), collect(io_vars), collect(all_symb)
 end
 
 #------------------------------------------------------------------------------
@@ -222,15 +234,8 @@ macro ODEmodel(ex::Expr...)
     Macros for creating an ODE from a list of equations
     Also injects all variables into the global scope
     """
-    extra_params = []
     equations = [ex...]
-    if equations[end].head == :vect
-        extra_params = equations[end].args
-        equations = equations[1:end - 1]
-    end
-
-    u_vars, all_symb = macrohelper_extract_vars(equations)
-    append!(all_symb, extra_params)
+    x_vars, io_vars, all_symb = macrohelper_extract_vars(equations)
     
     # creating the polynomial ring
     vars_list = :([$(all_symb...)])
@@ -241,8 +246,11 @@ macro ODEmodel(ex::Expr...)
     
     # preparing equations
     equations = map(macrohelper_clean, equations)
-    dict_var = gensym()
-    dict_create_expr = :($dict_var = Dict{fmpq_mpoly, Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}}())
+    x_dict = gensym()
+    y_dict = gensym()
+    y_vars = Set()
+    x_dict_create_expr = :($x_dict = Dict{fmpq_mpoly, Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}}())
+    y_dict_create_expr = :($y_dict = Dict{fmpq_mpoly, Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}}())
     eqs_expr = []
     for eq in equations
         if eq.head != :(=)
@@ -250,20 +258,37 @@ macro ODEmodel(ex::Expr...)
         end
         lhs, rhs = eq.args[1:2]
         loc_all_symb = macrohelper_extract_vars([rhs], false)[2]
-        if isempty(loc_all_symb)
-            push!(eqs_expr, :($dict_var[$lhs] = $R($rhs)))
+        to_insert = undef
+        if lhs in x_vars
+            to_insert = x_dict
+        elseif lhs in io_vars
+            to_insert = y_dict
+            push!(y_vars, lhs)
         else
-            push!(eqs_expr, :($dict_var[$lhs] = ($rhs)))
+            throw("Unknown left-hand side $lhs")
+        end
+        if isempty(loc_all_symb)
+            push!(eqs_expr, :($to_insert[$lhs] = $R($rhs)))
+        else
+            push!(eqs_expr, :($to_insert[$lhs] = ($rhs)))
         end
     end
-    
+
+    u_vars = setdiff(io_vars, y_vars)
+    params = setdiff(all_symb, union(x_vars, y_vars, u_vars))
+    print("Summary of the model:\n")
+    print("State variables: ", join(map(string, collect(x_vars)), ", "), "\n")
+    print("Parameter: ", join(map(string, collect(params)), ", "), "\n")
+    print("Inputs: ", join(map(string, collect(u_vars)), ", "), "\n")
+    print("Outputs: ", join(map(string, collect(y_vars)), ", "), "\n")
+   
     # creating the ode object
-    ode_expr = :(ODE{fmpq_mpoly}($dict_var, Array{fmpq_mpoly}([$(u_vars...)])))
+    ode_expr = :(ODE{fmpq_mpoly}($x_dict, $y_dict, Array{fmpq_mpoly}([$(u_vars...)])))
     
     result = Expr(
         :block, 
         exp_ring, assignments..., 
-        dict_create_expr, eqs_expr..., 
+        x_dict_create_expr, y_dict_create_expr, eqs_expr..., 
         ode_expr
     )
     return esc(result)
