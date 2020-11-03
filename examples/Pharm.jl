@@ -7,19 +7,14 @@ ode = @ODEmodel(
     x0'(t) = a1 * (x1(t) - x0(t)) - (ka * n * x0(t)) / (kc * ka + kc * x2(t) + ka * x0(t)),
     x1'(t) = a2 * (x0(t) - x1(t)),
     x2'(t) = b1 * (x3(t) - x2(t)) - (kc * n * x2(t)) / (kc * ka + kc * x2(t) + ka * x0(t)),
-    x3'(t) = b2 * (x2(t) - x3(t))
+    x3'(t) = b2 * (x2(t) - x3(t)),
+    y1(t) = x0(t)
 )
 
-g = x0
-
-@time io_equation = collect(values(find_ioequations(ode, [g])))[1]
+@time io_equation = collect(values(find_ioequations(ode)))[1]
 
 println("The number of monomials in the IO-equation is $(length(io_equation))")
 
-@time identifiability_report = check_identifiability(
-    io_equation,
-    [a1, a2, b1, b2, kc, ka, n];
-    method="GroebnerBasis"
-)
+@time identifiability_report = check_identifiability(io_equation, ode.parameters)
 
 println(identifiability_report)

@@ -211,7 +211,7 @@ function find_ioequations(
         flush(stdout)
         for y in keys(y_equations)
             if y != y_prolong
-                @debug "Elimination in the $i th output"
+                @debug "Elimination in the output $y"
                 flush(stdout)
                 y_equations[y] = eliminate_var(y_equations[y], y_equations[y_prolong], var_elim, point_generator)
             end

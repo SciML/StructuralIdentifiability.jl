@@ -296,7 +296,7 @@ function check_identifiability(io_equations::Array{P, 1}, parameters::Array{P, 1
     return check_injectivity(coeffs; method=method)
 end
 
-function check_identifiability(io_equation::P, parameters::Array{P, 1}; method="Singular") where P <: MPolyElem{fmpq}
+function check_identifiability(io_equation::P, parameters::Array{P, 1}; method="GroebnerBasis") where P <: MPolyElem{fmpq}
     return check_identifiability([io_equation], parameters; method=method)
 end
 

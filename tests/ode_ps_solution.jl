@@ -66,8 +66,10 @@ end
             ["u_$i" for i in 1:2],
         )
         R, vars = PolynomialRing(GF(2^31 - 1), varnames)
-        eqs = Dict(vars[i] => rand_poly(2, vars) // rand_poly(1, vars) for i in 1:3)
-        ode = ODE{Generic.MPoly{Nemo.gfp_elem}}(eqs, vars[(end - 1):end])
+        PType = Generic.MPoly{Nemo.gfp_elem}
+        TDict = Dict{PType, Union{PType, Generic.Frac{PType}}}
+        eqs = TDict(vars[i] => rand_poly(2, vars) // rand_poly(1, vars) for i in 1:3)
+        ode = ODE{PType}(eqs, TDict(), vars[(end - 1):end])
         ic = Dict(vars[i] => rand(-5:5) for i in 1:3)
         param_vals = Dict(vars[i + 3] => rand(-5:5) for i in 1:3)
         inputs = Dict(u => [rand(-3:3) for i in 1:prec] for u in vars[7:end])
