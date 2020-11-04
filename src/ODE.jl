@@ -124,7 +124,7 @@ function power_series_solution(
 end
 #------------------------------------------------------------------------------
 
-function _reduce_poly_mod_p(poly::MPolyElem{Nemo.fmpq}, p::Int)
+function _reduce_mod_p(poly::fmpq_mpoly, p::Int)
     """
     Reduces a polynomial over Q modulo p
     """
@@ -134,6 +134,17 @@ function _reduce_poly_mod_p(poly::MPolyElem{Nemo.fmpq}, p::Int)
         throw(Base.ArgumentError("Prime $p divides the denominator of $poly"))
     end
     return change_base_ring(GF(p), num) * (1 // GF(p)(den))
+end
+
+function _reduce_mod_p(rat::Generic.Frac{fmpq_mpoly}, p::Int)
+    """
+    Reduces a rational function over Q modulo p
+    """
+    num, den = map(poly -> _reduce_mod_p(poly, p), [numerator(rat), denominator(rat)])
+    if den == 0
+        throw(Base.ArgumentError("Prime $p divides the denominator of $rat"))
+    end
+    return num // den
 end
 
 #--------------------------------------
@@ -146,21 +157,15 @@ function reduce_ode_mod_p(ode::ODE{<: MPolyElem{Nemo.fmpq}}, p::Int)
     new_ring, new_vars = PolynomialRing(GF(p), map(var_to_str, gens(ode.poly_ring)))
     new_type = typeof(new_vars[1])
     new_inputs = map(u -> switch_ring(u, new_ring), ode.u_vars)
-    new_eqs = Dict{new_type, Union{new_type, Generic.Frac{new_type}}}()
-    for (v, f) in ode.equations
-        new_v = switch_ring(v, new_ring)
-        if applicable(numerator, f)
-            # if f is a rational function
-            num, den = map(poly -> _reduce_poly_mod_p(poly, p), [numerator(f), denominator(f)])
-            if den == 0
-                throw(Base.ArgumentError("Prime $p divides the denominator of $poly"))
-            end
-            new_eqs[new_v] = num // den
-        else
-            new_eqs[new_v] = _reduce_poly_mod_p(f, p)
+    new_x_eqs = Dict{new_type, Union{new_type, Generic.Frac{new_type}}}()
+    new_y_eqs = Dict{new_type, Union{new_type, Generic.Frac{new_type}}}()
+    for (old, new) in Dict(ode.x_equations => new_x_eqs, ode.y_equations => new_y_eqs)
+        for (v, f) in old
+            new_v = switch_ring(v, new_ring)
+            new[new_v] = _reduce_mod_p(f, p)
         end
     end
-    return ODE{new_type}(new_eqs, new_inputs)
+    return ODE{new_type}(new_x_eqs, new_y_eqs, new_inputs)
 end
 
 #------------------------------------------------------------------------------
@@ -194,7 +199,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function macrohelper_extract_vars(equations::Array{Expr, 1}, summary::Bool=true)
+function macrohelper_extract_vars(equations::Array{Expr, 1})
     funcs, x_vars, all_symb = Set(), Set(), Set()
     aux_symb = Set([:(+), :(-), :(=), :(*), :(^), :t, :(/), :(//)])
     for eq in equations
@@ -257,7 +262,7 @@ macro ODEmodel(ex::Expr...)
             throw("Problem with parsing at $eq") 
         end
         lhs, rhs = eq.args[1:2]
-        loc_all_symb = macrohelper_extract_vars([rhs], false)[2]
+        loc_all_symb = macrohelper_extract_vars([rhs])[3]
         to_insert = undef
         if lhs in x_vars
             to_insert = x_dict
