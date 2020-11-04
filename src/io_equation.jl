@@ -89,7 +89,6 @@ function find_ioequations(
     Finds the input-output equations of an ODE system
     Input:
         - ode, the ODE system
-        - outputs, array of the output quantities
         - auto_var_change, whether or not to perform automatic variable change
     Output: a dictionary from "leaders" to the corresponding io-equations
     """
