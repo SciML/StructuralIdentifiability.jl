@@ -126,10 +126,22 @@ function find_ioequations(
         @debug "Prolonging"
         flush(stdout)
         next_y_equation = diff_poly(y_equations[y_prolong], derivation)
-        for x in keys(x_equations)
+        for (x, eq) in x_equations
             @debug "Eliminating the derivative of $x"
             flush(stdout)
-            next_y_equation = eliminate_var(x_equations[x], next_y_equation, derivation[x], point_generator)
+            next_y_equation = eliminate_var(eq, next_y_equation, derivation[x], point_generator)
+        end
+        for (y, eq) in y_equations
+            if y != y_prolong
+                @debug "Eliminating the leader of the equation for $y"
+                flush(stdout)
+                # an ugly way of gettin the leader, to replace
+                next_y_equation = eliminate_var(
+                    next_y_equation, eq, 
+                    str_to_var(var_to_str(y)[1:end-2] * "_$(y_orders[y])", ring), 
+                    point_generator
+                )
+            end
         end
         
         #Choose variable to eliminate
