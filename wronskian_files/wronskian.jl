@@ -13,7 +13,17 @@ include("../src/io_equation.jl")
 We want to construct the Wronskian, translate the Mathematica code into Julia
 =#
 
-function monomial_compress(ioequation::fmpq_mpoly,ode::ODE)
+function monomial_compress0(ioequation::fmpq_mpoly, ode::ODE)
+	params = ode.parameters # Extract the list of parameters from the io equation
+	variables = gens(parent(ioequation))[findall(!in(map(string,params)),map(string,gens(parent(ioequation))))]
+	coeffdict = extract_coefficients(ioequation,variables)
+	expvect = collect(keys(coeffdict))
+	coeffs = collect(values(coeffdict))
+	terms = map(x->prod(variables.^x),expvect)
+    return (coeffs, terms)
+end
+
+function monomial_compress1(ioequation::fmpq_mpoly,ode::ODE)
 
 	params = ode.parameters # Extract the list of parameters from the io equation
 	variables = gens(parent(ioequation))[findall(!in(map(string,params)),map(string,gens(parent(ioequation))))]
@@ -58,6 +68,33 @@ function monomial_compress(ioequation::fmpq_mpoly,ode::ODE)
 		end
 	end
 	return (condensed_coefficients, collectedterms)
+end
+
+#----------------------------------------------------------------------------------------------------
+
+function monomial_compress2(io_equation::fmpq_mpoly, ode::ODE)
+	params = ode.parameters
+    other_vars = [v for v in gens(parent(io_equation)) if !(var_to_str(v) in map(var_to_str, params))]
+	coeffdict = extract_coefficients(io_equation, other_vars)
+	expvect = collect(keys(coeffdict))
+	coeffs = collect(values(coeffdict))
+	terms = map(x->prod(other_vars.^x), expvect)
+
+    echelon_form = Dict()
+    for (c, p) in zip(coeffs, terms)
+        for basis_c in keys(echelon_form)
+            coef = coeff(c, lm(basis_c)) // lc(basis_c)
+            if coef != 0
+                c = c - coef * basis_c
+                echelon_form[basis_c] += coef * p
+            end
+        end
+        if c != 0
+            echelon_form[c] = p
+        end
+    end
+
+    return (collect(keys(echelon_form)), collect(values(echelon_form)))
 end
 
 #----------------------------------------------------------------------------------------------------
