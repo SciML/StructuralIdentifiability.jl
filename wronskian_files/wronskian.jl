@@ -99,7 +99,16 @@ end
 
 #----------------------------------------------------------------------------------------------------
 
-function wronskian()
+function wronskian(io_equation::fmpq_mpoly, ode::ODE)
+	#Inputs:	io_equation: the input output equations
+	#					ode: the ODE system
+	#Outputs:	wronskian: the wronskian of the monomials
+	(coefficients, monomials) = monomial_compress2(io_equation,ode);
+	ps = power_series_solution(
+	ode,
+	Dict(p => rand(1:10) for p in params),
+	Dict(x => rand(1:10) for x in states),
+	1000);
 
 	return
 
