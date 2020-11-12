@@ -72,7 +72,7 @@ end
 
 #----------------------------------------------------------------------------------------------------
 
-function monomial_compress2(io_equation::fmpq_mpoly, ode::ODE)
+function monomial_compress2(io_equation, ode::ODE)
 	params = ode.parameters
     other_vars = [v for v in gens(parent(io_equation)) if !(var_to_str(v) in map(var_to_str, params))]
 	coeffdict = extract_coefficients(io_equation, other_vars)
@@ -99,17 +99,57 @@ end
 
 #----------------------------------------------------------------------------------------------------
 
-function wronskian(io_equation::fmpq_mpoly, ode::ODE)
+function wronskian(io_equation, ode::ODE)
 	#Inputs:	io_equation: the input output equations
 	#					ode: the ODE system
-	#Outputs:	wronskian: the wronskian of the monomials
-	(coefficients, monomials) = monomial_compress2(io_equation,ode);
+	#Outputs:	wronskian: the wronskian of the compressed terms
+	(coefficients, terms) = monomial_compress2(io_equation,ode);
 	ps = power_series_solution(
 	ode,
 	Dict(p => rand(1:10) for p in params),
 	Dict(x => rand(1:10) for x in states),
 	1000);
-
+    outs = collect(keys(ode.y_equations));
+    prolongedVariables = gens(parent(first(terms)));
+    #terms contains the functions whose Wronskian we seek to compute.
+    
+    #We need to augment the ps dictionary with the higher derivative solutions
+    
+    prolongedVarStrings = map(var_to_str,prolongedVariables);
+    repRules = Dict();
+    replVarStrs = map(x->(var_to_str(x)*"_0"),outs);
+    
+    #get the order zero replacement rules in the ps dictionary
+    for x in outs
+        if var_to_str(x)*"_0" in prolongedVarStrings
+            repRules[str_to_var(var_to_str(x)*"_0",parent(first(terms)))] = ps[x];
+        end
+    end
+    
+    #now we need to get the higher order rules in place
+    deg = 1
+    while any(map(y->y in prolongedVarStrings,map(x->var_to_str(x)*"_"*string(deg),outs)))
+        for x in outs
+            if var_to_str(x)*"_"*string(deg) in prolongedVarStrings
+                repRules[str_to_var(var_to_str(x)*"_"*string(deg),parent(first(terms)))] = ps_diff(repRules[str_to_var(var_to_str(x)*"_"*string(deg-1),parent(first(terms)))]);
+            end
+        end
+        deg+=1;
+    end
+    
+    #repRules is a dictionary sending variables to their power series. We now need to substitute them into the terms.
+    #powerterms = replace(terms,repRules...); #this isn't the right way to do this, but let's assume it is for now
+    
+    
+    powerdiff = powerterms;
+    maxdeg = length(powerdiff)-1;
+    wronMat=powerdiff;
+    for i = 1:maxdeg
+        powerdiff = map(ps_diff,powerdiff);
+        wronMat=hcat(wronMat,powerdiff);
+    end
+    
+    #at this point, we have a matrix of power series (wronMat) and we want it's determinant.
 	return
 
 end
