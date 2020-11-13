@@ -13,58 +13,164 @@ include("../src/io_equation.jl")
 We want to construct the Wronskian, translate the Mathematica code into Julia
 =#
 
-function monomial_compress(ioequation::fmpq_mpoly,ode::ODE)
+function monomial_compress0(ioequation::fmpq_mpoly, ode::ODE)
+	params = ode.parameters # Extract the list of parameters from the io equation
+	variables = gens(parent(ioequation))[findall(!in(map(string,params)),map(string,gens(parent(ioequation))))]
+	coeffdict = extract_coefficients(ioequation,variables)
+	expvect = collect(keys(coeffdict))
+	coeffs = collect(values(coeffdict))
+	termlist = map(x->prod(variables.^x),expvect)
+    return (coeffs, termlist)
+end
+
+function monomial_compress1(ioequation::fmpq_mpoly,ode::ODE)
 
 	params = ode.parameters # Extract the list of parameters from the io equation
 	variables = gens(parent(ioequation))[findall(!in(map(string,params)),map(string,gens(parent(ioequation))))]
 	coeffdict = extract_coefficients(ioequation,variables)
 	expvect = collect(keys(coeffdict))
 	coeffs = collect(values(coeffdict))
-	terms = map(x->prod(variables.^x),expvect)
+	termlist = map(x->prod(variables.^x),expvect)
 	# parameterRing, parametersymbols = PolynomialRing(base_ring(parent(ioequation)),map((x)->string(x),params)) # Create a ring of parameters
 	# refactored_ring, variable_symbols = PolynomialRing(parameterRing,map((x)->string(x),vcat(ode.x_vars,ode.u_vars)))
 	# print(refactored_ring) # the refactored ring is correct, but it breaks parent_ring_change
 	# refactored_ioequation = parent_ring_change(ioequation,refactored_ring ) # change the input io equation so that it lives in the ring of variables over the ring of parameters over the base ring
 
 	# We want to factor each monomial in the form f(p)*g(x,u) where overall numerical factors are in g.
-	# terms = collect(monomials(refactored_ioequation)) # These are the g(x,u) above
-	# coeffs = collect(coefficients(refectored_ioequation)) # These are the f(p) above (At the moment the common factors are here rather than in the terms list.
+	# termlist = collect(monomials(refactored_ioequation)) # These are the g(x,u) above
+	# coeffs = collect(coefficients(refectored_ioequation)) # These are the f(p) above (At the moment the common factors are here rather than in the termlist list.
 	consts = map((x)->collect(coefficients(x)),coeffs) # Take the list of constants from the coefficients
 	gcds = map((x)->reduce(gcd,x),consts) # take the gcds of each of these lists to get the overall numerical factors
 	reducedcoeffs = coeffs.//gcds # divide the coefficients by the overall numerical factors
-	modifiedterms = terms.*gcds # multiply the terms by the overall numerical factors
+	modifiedtermlist = termlist.*gcds # multiply the termlist by the overall numerical factors
 	
 	# We have now gotten each monomial into the form f(p)*g(x,u).
 
 
 	#=
-	as a sanity check, taking the inner product of the terms list and the coeffs list should yield the original io equation
+	as a sanity check, taking the inner product of the termlist list and the coeffs list should yield the original io equation
 	=#
 
 
-	# Now, we want to loop through the coefficients, and if we come across a repeat, we want to add the corresponding terms and delete the repeat.
+	# Now, we want to loop through the coefficients, and if we come across a repeat, we want to add the corresponding termlist and delete the repeat.
 	foundDuplicateIndices = Vector{Int}()
-	collectedterms = Vector()
+	collectedtermlist = Vector()
 	condensed_coefficients = Vector()
 	for i = 1:length(reducedcoeffs)
 		if !(i in foundDuplicateIndices)
 			testcoeff = reducedcoeffs[i]
 			locations = findall(x->x==testcoeff,reducedcoeffs)
 			append!(foundDuplicateIndices,locations)
-			condensed_term = sum(modifiedterms[locations])
-			push!(collectedterms,condensed_term)
+			condensed_term = sum(modifiedtermlist[locations])
+			push!(collectedtermlist,condensed_term)
 			push!(condensed_coefficients,testcoeff)
 
 		end
 	end
-	return (condensed_coefficients, collectedterms)
+	return (condensed_coefficients, collectedtermlist)
 end
 
 #----------------------------------------------------------------------------------------------------
 
-function wronskian()
+function monomial_compress2(io_equation, ode::ODE)
+	params = ode.parameters
+    other_vars = [v for v in gens(parent(io_equation)) if !(var_to_str(v) in map(var_to_str, params))]
+	coeffdict = extract_coefficients(io_equation, other_vars)
+	expvect = collect(keys(coeffdict))
+	coeffs = collect(values(coeffdict))
+	termlist = map(x->prod(other_vars.^x), expvect)
 
-	return
+    echelon_form = Dict()
+    for (c, p) in zip(coeffs, termlist)
+        for basis_c in keys(echelon_form)
+            coef = coeff(c, lm(basis_c)) // lc(basis_c)
+            if coef != 0
+                c = c - coef * basis_c
+                echelon_form[basis_c] += coef * p
+            end
+        end
+        if c != 0
+            echelon_form[c] = p
+        end
+    end
+
+    return (collect(keys(echelon_form)), collect(values(echelon_form)))
+end
+
+#----------------------------------------------------------------------------------------------------
+
+function wronskian(io_equation, ode::ODE)
+	#Inputs:	io_equation: the input output equations
+	#					ode: the ODE system
+	#Outputs:	wronskian: the wronskian of the compressed termlist
+	(coefficients, termlist) = monomial_compress2(io_equation,ode);
+	ps = power_series_solution(
+        ode,
+        Dict(p => rand(1:10) for p in ode.parameters),
+        Dict(x => rand(1:10) for x in ode.x_vars),
+        Dict{typeof(ode.x_vars[1]), Array{Int64, 1}}(),
+        1000);
+    outs = collect(keys(ode.y_equations));
+    prolongedVariables = gens(parent(first(termlist)));
+    #termlist contains the functions whose Wronskian we seek to compute.
+    
+    #We need to augment the ps dictionary with the higher derivative solutions
+    
+    prolongedVarStrings = map(var_to_str,prolongedVariables);
+    repRules = Dict();
+    replVarStrs = map(x->(var_to_str(x)*"_0"),outs);
+    for x in prolongedVariables
+        if x in collect(keys(ps))
+            repRules[x] = ps[x];
+        else
+            repRules[x] = 1;
+        end
+    end
+    
+    #get the order zero replacement rules in the ps dictionary
+    for x in outs
+        if var_to_str(x)*"_0" in prolongedVarStrings
+            repRules[str_to_var(var_to_str(x)*"_0",parent(first(termlist)))] = ps[x];
+        end
+    end
+    
+    #now we need to get the higher order rules in place
+    deg = 1
+    while any(map(y->y in prolongedVarStrings,map(x->var_to_str(x)*"_"*string(deg),outs)))
+        for x in outs
+            if var_to_str(x)*"_"*string(deg) in prolongedVarStrings
+                repRules[str_to_var(var_to_str(x)*"_"*string(deg),parent(first(termlist)))] = ps_diff(repRules[str_to_var(var_to_str(x)*"_"*string(deg-1),parent(first(termlist)))]);
+            end
+        end
+        deg+=1;
+    end
+    
+    #repRules is a dictionary sending variables to their power series. We now need to substitute them into the termlist.
+    #powertermlist = replace(termlist,repRules...); #this isn't the right way to do this, but let's assume it is for now
+    sortedRepVars = filter(x->x in collect(keys(repRules)),gens(parent(termlist[1]))); #sorted list of variables to be replaced
+    #print(typeof(termlist))
+    powercoeffs = map(x->collect(coeffs(x)),termlist); #array of coefficient arrays
+    powerexponents = map(x->collect(exponent_vectors(x)),termlist); #array of exponent vector arrays
+    sortedPowerSeries = map(x->repRules[x],sortedRepVars); #array of power series
+    powertermlist = similar(sortedPowerSeries,length(termlist));
+    for i in 1:length(termlist)
+        coefficientlist = powercoeffs[i];
+        exponentvectors = powerexponents[i];
+        powertermlist[i] = coefficientlist'prod.(map(x->sortedPowerSeries.^x,exponentvectors));
+    end
+    #now we just need to combine the power series in the same way as the original function.
+    
+    
+    powerdiff = powertermlist;
+    maxdeg = length(powerdiff)-1;
+    wronMat=powerdiff;
+    for i = 1:maxdeg
+        powerdiff = map(ps_diff,powerdiff);
+        wronMat=hcat(wronMat,powerdiff);
+    end
+    
+    #at this point, we have a matrix of power series (wronMat) and we want it's determinant.
+	return wronMat
 
 end
 
@@ -94,3 +200,4 @@ function rowreduce(ioequation::fmpq_mpoly,ode::ODE)
     return rank(coeffmat)
 
 end
+
