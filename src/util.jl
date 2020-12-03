@@ -7,7 +7,8 @@ function eval_at_dict(poly::P, d::Dict{P, <: RingElem}) where P <: MPolyElem
     Evaluates a polynomial on a dict var => val
     missing values are replaced with zeroes
     """
-    point = [get(d, v, base_ring(parent(poly))(0)) for v in gens(parent(poly))]
+    R = parent(first(values(d)))
+    point = [get(d, v, zero(R)) for v in gens(parent(poly))]
     return evaluate(poly, point)
 end
 
@@ -234,7 +235,7 @@ function check_injectivity(polys::Array{<: Array{<: MPolyElem, 1}, 1}; method="G
     @debug "Constructing equations"
     flush(stdout)
     ring = parent(polys[1][1])
-    point = map(v -> rand(5:100), gens(ring))
+    point = map(v -> rand(1:20^6), gens(ring))
     eqs_sing = Array{Singular.spoly{Singular.n_Q}, 1}()
     ring_sing, vars_sing = Singular.PolynomialRing(
                                Singular.QQ, 

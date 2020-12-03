@@ -1,6 +1,7 @@
 using Dates
 using IterTools
 using Logging
+using AbstractAlgebra, Nemo
 using Oscar
 
 include("util.jl")

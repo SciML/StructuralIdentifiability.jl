@@ -1,6 +1,7 @@
 using Dates
 using Logging
 using MacroTools
+using AbstractAlgebra, Nemo
 using Oscar
 
 include("power_series_utils.jl")
@@ -223,6 +224,10 @@ function macrohelper_extract_vars(equations::Array{Expr, 1})
     return collect(x_vars), collect(io_vars), collect(all_symb)
 end
 
+function macrohelper_extract_vars(equations::Array{Symbol, 1})
+    return macrohelper_extract_vars(map(Expr, equations))
+end
+
 #------------------------------------------------------------------------------
 
 function macrohelper_clean(ex::Expr)
@@ -246,7 +251,7 @@ macro ODEmodel(ex::Expr...)
     vars_list = :([$(all_symb...)])
     R = gensym()
     vars_aux = gensym()
-    exp_ring = :(($R, $vars_aux) = PolynomialRing(QQ, map(string, $all_symb)))
+    exp_ring = :(($R, $vars_aux) = PolynomialRing(Nemo.QQ, map(string, $all_symb)))
     assignments = [:($(all_symb[i]) = $vars_aux[$i]) for i in 1:length(all_symb)]
     
     # preparing equations

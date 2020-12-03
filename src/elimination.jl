@@ -178,11 +178,12 @@ mutable struct ODEPointGenerator{P} <: PointGenerator{P}
     big_ring::MPolyRing
     precision::Int
     cached_points::Array{Dict{P, <: FieldElem}, 1}
+    number_type::Type
 
     function ODEPointGenerator{P}(ode::ODE{P}, big_ring::MPolyRing) where P <: MPolyElem
         prec = length(ode.x_vars) + 1
         number_type = typeof(one(base_ring(big_ring)))
-        return new(ode, big_ring, prec, Array{Dict{P, number_type}}[])
+        return new(ode, big_ring, prec, Array{Dict{P, number_type}}[], number_type)
     end
 end
 
@@ -213,7 +214,7 @@ function Base.iterate(gpg::ODEPointGenerator{P}, i::Int=1) where P <: MPolyElem{
 
             @debug "Constructing the point"
             flush(stdout)
-            result = Dict(switch_ring(p, gpg.big_ring) => base_field(c) for (p, c) in param_values)
+            result = Dict{P, gpg.number_type}(switch_ring(p, gpg.big_ring) => base_field(c) for (p, c) in param_values)
             for u in gpg.ode.u_vars
                 result[switch_ring(u, gpg.big_ring)] = coeff(ps_solution[u], 0)
                 for i in 1:(gpg.precision - 1)
@@ -342,7 +343,7 @@ function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P
         flush(stdout)
         M_simp, matrix_factors = simplify_matrix(M)
         @debug "Removed factors $(map(length, matrix_factors))"
-        M_size = zero(MatrixSpace(ZZ, ncols(M_simp), ncols(M_simp)))
+        M_size = zero(MatrixSpace(Nemo.ZZ, ncols(M_simp), ncols(M_simp)))
         for i in 1:ncols(M_simp)
             for j in 1:ncols(M_simp)
                 M_size[i,j] = length(M_simp[i,j])
