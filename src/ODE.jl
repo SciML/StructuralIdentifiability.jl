@@ -130,11 +130,11 @@ function _reduce_mod_p(poly::fmpq_mpoly, p::Int)
     Reduces a polynomial over Q modulo p
     """
     den = denominator(poly)
-    num = change_base_ring(ZZ, den * poly)
-    if GF(p)(den) == 0
+    num = change_base_ring(Nemo.ZZ, den * poly)
+    if Nemo.GF(p)(den) == 0
         throw(Base.ArgumentError("Prime $p divides the denominator of $poly"))
     end
-    return change_base_ring(GF(p), num) * (1 // GF(p)(den))
+    return change_base_ring(Nemo.GF(p), num) * (1 // Nemo.GF(p)(den))
 end
 
 function _reduce_mod_p(rat::Generic.Frac{fmpq_mpoly}, p::Int)
@@ -155,7 +155,7 @@ function reduce_ode_mod_p(ode::ODE{<: MPolyElem{Nemo.fmpq}}, p::Int)
     Input: ode is an ODE over QQ, p is a prime number
     Output: the reduction mod p, throws an exception if p divides one of the denominators
     """
-    new_ring, new_vars = PolynomialRing(GF(p), map(var_to_str, gens(ode.poly_ring)))
+    new_ring, new_vars = PolynomialRing(Nemo.GF(p), map(var_to_str, gens(ode.poly_ring)))
     new_type = typeof(new_vars[1])
     new_inputs = map(u -> switch_ring(u, new_ring), ode.u_vars)
     new_x_eqs = Dict{new_type, Union{new_type, Generic.Frac{new_type}}}()

@@ -224,9 +224,11 @@ function ps_ode_solution(
 
     cur_prec = 1
     while cur_prec < prec
+        @debug "\t Computing power series solution, currently at precision $cur_prec"
+        new_prec = min(prec, 2 * cur_prec)
         for i in 1:length(x_vars)
-            set_prec!(solution[x_vars[i]], 2 * cur_prec)
-            set_prec!(solution[x_dot_vars[i]], 2 * cur_prec)
+            set_prec!(solution[x_vars[i]], new_prec)
+            set_prec!(solution[x_dot_vars[i]], new_prec)
         end
         eval_point = [solution[v] for v in gens(ring)]
         map(ps -> set_prec!(ps, 2 * cur_prec), eval_point)
@@ -240,7 +242,7 @@ function ps_ode_solution(
             solution[x_vars[i]] = solution[x_vars[i]] + X_err[i]
             solution[x_dot_vars[i]] = ps_diff(solution[x_vars[i]])
         end
-        cur_prec *= 2
+        cur_prec = new_prec
     end
 
     return solution

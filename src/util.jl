@@ -65,6 +65,14 @@ end
 
 #------------------------------------------------------------------------------
 
+function (F::Nemo.GaloisField)(a::fmpq)
+    den = denominator(a)
+    if F(den) == 0
+        throw(Base.ArgumentError("Denominator of $a vanishes in $F"))
+    end
+    return F(numerator(a)) // den
+end
+
 function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing)
     """
     Converts a polynomial to a different polynomial ring
