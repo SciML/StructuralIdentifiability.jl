@@ -4,6 +4,8 @@ using Logging
 using Oscar
 using Base.Iterators
 
+import Base.push!
+
 include("util.jl")
 include("elimination.jl")
 include("ODE.jl")
@@ -48,27 +50,115 @@ end
 
 #----------------------------------------------------------------------------------------------------
 
-# TODO generator
+# A data structure for storing exponent vectors as a trie in order
+# to reduce the number of multiplications when computing many monomials
+# in `massive_eval`
+mutable struct ExpVectTrie
+    depth::Int
+    subtries::Dict{Int, ExpVectTrie}
+
+    function ExpVectTrie(depth::Int)
+        return new(depth, Dict{Int, ExpVectTrie}())
+    end
+end
+
+function Base.push!(t::ExpVectTrie, vect::Array{Int, 1})
+    if t.depth == 0
+        if length(vect) != 0
+            throw(DomainError("Inserting too long vector"))
+        end
+        return
+    end
+
+    f = last(vect)
+    if !(f in keys(t.subtries))
+        t.subtries[f] = ExpVectTrie(t.depth - 1)
+    end
+    push!(t.subtries[f], vect[1:end - 1])
+end
+
+function get_max_below(t::ExpVectTrie, vect::Array{Int, 1})
+    """
+    Input:
+        - t - a trie with exponent vectors
+        - vect -yet another exponent vector
+    Output: a pair d, v, where v is a vector in the trie which is
+        componenwise <= vect and the difference d is as small as possible
+    """
+    if t.depth == 0
+        return (0, [])
+    end
+    min_diff, best_below = nothing, nothing
+    for k in keys(t.subtries)
+        last_diff = last(vect) - k
+        if last_diff >= 0
+            cur_diff, cur_below = get_max_below(t.subtries[k], vect[1:end - 1])
+            if !isnothing(cur_diff)
+                if isnothing(min_diff) || min_diff > cur_diff + last_diff
+                    min_diff = cur_diff + last_diff
+                    push!(cur_below, k)
+                    best_below = cur_below
+                end
+            end
+        end
+    end
+    return (min_diff, best_below)
+end
+
+#----------------------------------------------------------------------------------------------------
+
+
 function massive_eval(polys, eval_dict)
+    """
+    Evaluates a list of polynomails at a point. Assumes that multiplications are relatively expensive
+    (like in truncated power series) so all the monomials are precomputed first and the values of monomials
+    of lower degree are cached and used to compute the values of the monomials of higher degree
+    Input:
+        - polys - a list of polynomials
+        - eval_dict - dictionary from variables to the values. Missing are treated as zeroes
+    Output: a list of values of the polynomials
+    """
     R = parent(first(values(eval_dict)))
     point = [get(eval_dict, v, zero(R)) for v in gens(parent(first(polys)))]
+    n = length(point)
+
+    monomials = Set()
+    for p in polys
+        for exp in exponent_vectors(p)
+            push!(monomials, exp)
+        end
+    end
 
     cache = Dict()
-    cache[ [0 for i in 1:length(point)] ] = one(R)
+    cache[ [0 for i in 1:n] ] = one(R)
+    cached_monoms = ExpVectTrie(n)
+    push!(cached_monoms, [0 for _ in 1:n])
+
+    for i in 1:n
+        var_exp = [(i != j) ? 0 : 1 for j in 1:n]
+        cache[var_exp] = point[i]
+        push!(cached_monoms, var_exp)
+    end
+
+    for exp in sort!(collect(monomials), by=sum)
+        if !(exp in keys(cache))
+            monom_val = one(R)
+            computed = [0 for i in 1:n]
+            while sum(exp) > 0
+                _, below = get_max_below(cached_monoms, exp)
+                monom_val = monom_val * cache[below]
+                exp = exp .- below
+                computed = computed .+ below
+                cache[computed] = monom_val
+                push!(cached_monoms, computed)
+            end
+        end
+    end
 
     results = []
     for p in polys
         res = zero(R)
         for (exp, coef) in zip(exponent_vectors(p), coefficients(p))
-            if !(exp in keys(cache))
-                prod = one(R)
-                for (i, pow) in enumerate(exp)
-                    if pow > 0
-                        prod *= point[i]^pow
-                    end
-                end
-                cache[exp] = prod
-            end
             res += coef * cache[exp]
         end
         push!(results, res)
