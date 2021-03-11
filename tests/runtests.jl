@@ -6,6 +6,8 @@ using Oscar
 include("../src/io_equation.jl")
 include("../src/power_series_utils.jl")
 include("../src/primality_check.jl")
+include("../src/wronskian.jl")
+include("../src/global_identifiability.jl")
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)

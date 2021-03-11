@@ -1,5 +1,3 @@
-import GroebnerBasis
-
 #------------------------------------------------------------------------------
 
 function eval_at_dict(poly::P, d::Dict{P, <: RingElem}) where P <: MPolyElem
@@ -109,6 +107,11 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing)
     return finish(builder)
 end
 
+function parent_ring_change(f::Generic.Frac{<: MPolyElem}, new_ring::MPolyRing)
+    n, d = unpack_fraction(f)
+    return parent_ring_change(n, new_ring) // parent_ring_change(d, new_ring)
+end
+ 
 #------------------------------------------------------------------------------
 
 function uncertain_factorization(f::MPolyElem{fmpq})
@@ -227,86 +230,6 @@ function extract_coefficients(poly::P, variables::Array{P, 1}) where P <: MPolyE
     end
 
     return Dict(k => dict_to_poly(v, new_ring) for (k, v) in result)
-end
-
-#------------------------------------------------------------------------------
-
-function check_injectivity(polys::Array{<: Array{<: MPolyElem, 1}, 1}; method="GroebnerBasis")
-    """
-    Checks a generic injectivity of the *multiprojective* map defined by polys
-    Inputs:
-        - polys - a list of lists of polynomials
-    Output: dictionary from variables of the parent ring to booleans as follows:
-        True: every generic fiber of the map defined by polys has a single value of the variabe
-        False: otherwise
-    """
-    @debug "Constructing equations"
-    flush(stdout)
-    ring = parent(polys[1][1])
-    point = map(v -> rand(1:20^6), gens(ring))
-    eqs_sing = Array{Singular.spoly{Singular.n_Q}, 1}()
-    ring_sing, vars_sing = Singular.PolynomialRing(
-                               Singular.QQ, 
-                               vcat(map(var_to_str, gens(ring)), ["sat_aux$i" for i in 1:length(polys)]); 
-                               ordering=:degrevlex
-                           )
-
-    for (i, component) in enumerate(polys)
-        pivot = sort(component, by = (p -> total_degree(ring(p))))[1]
-        @debug "Pivot polynomial is $pivot"
-        flush(stdout)
-        eqs = []
-        for p in component
-            push!(eqs, p * evaluate(ring(pivot), point) - evaluate(ring(p), point) * pivot)
-        end
-        append!(eqs_sing, map(p -> parent_ring_change(p, ring_sing), eqs))
-        push!(
-            eqs_sing,
-            parent_ring_change(pivot, ring_sing) * vars_sing[end - i + 1] - 1
-        )
-    end
-
-    @debug "Computing Groebner basis ($(length(eqs_sing)) equations)"
-    flush(stdout)
-    if method == "Singular"
-        gb = Singular.std(Singular.Ideal(ring_sing, eqs_sing))
-    elseif method == "GroebnerBasis"
-        gb = GroebnerBasis.f4(Singular.Ideal(ring_sing, eqs_sing))
-    else
-        throw(Base.ArgumentError("Unknown method $method"))
-    end
-
-    @debug "Producing the result"
-    flush(stdout)
-    result = Dict()
-    for v in gens(ring)
-        v_sing = parent_ring_change(v, ring_sing)
-        result[v] = (total_degree(Singular.reduce(v_sing, gb)) == 0)
-    end
-    return result
-end
-
-#------------------------------------------------------------------------------
-
-function check_identifiability(io_equations::Array{P, 1}, parameters::Array{P, 1}; method="GroebnerBasis") where P <: MPolyElem{fmpq}
-    """
-    For the io_equation and the list of all parameter variables, returns a dictionary
-    var => whether_globally_identifiable
-    method can be "Singular" or "GroebnerBasis" yielding using Singular.jl or GroebnerBasis.jl
-    """
-    @debug "Extracting coefficients"
-    flush(stdout)
-    nonparameters = filter(v -> !(var_to_str(v) in map(var_to_str, parameters)), gens(parent(io_equations[1])))
-    coeffs = Array{Array{P, 1}, 1}()
-    for eq in io_equations
-        push!(coeffs, collect(values(extract_coefficients(eq, nonparameters))))
-    end
-
-    return check_injectivity(coeffs; method=method)
-end
-
-function check_identifiability(io_equation::P, parameters::Array{P, 1}; method="GroebnerBasis") where P <: MPolyElem{fmpq}
-    return check_identifiability([io_equation], parameters; method=method)
 end
 
 #------------------------------------------------------------------------------
