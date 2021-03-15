@@ -245,7 +245,7 @@ macro ODEmodel(ex::Expr...)
     vars_list = :([$(all_symb...)])
     R = gensym()
     vars_aux = gensym()
-    exp_ring = :(($R, $vars_aux) = PolynomialRing(Nemo.QQ, map(string, $all_symb)))
+    exp_ring = :(($R, $vars_aux) = Nemo.PolynomialRing(Nemo.QQ, map(string, $all_symb)))
     assignments = [:($(all_symb[i]) = $vars_aux[$i]) for i in 1:length(all_symb)]
     
     # preparing equations

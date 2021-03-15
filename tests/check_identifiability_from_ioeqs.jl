@@ -1,5 +1,5 @@
 @testset "Check identifiability from given IO-equations" begin
-    R, (x, y, z, t) = PolynomialRing(Nemo.QQ, ["x", "y", "z", "t"])
+    R, (x, y, z, t) = Nemo.PolynomialRing(Nemo.QQ, ["x", "y", "z", "t"])
 
     @test check_identifiability(
         x * (y + z) * t^4 - x^3 * y * z * t^5 + 7 + t * x,

@@ -1,5 +1,5 @@
 @testset "Check identifiability from given IO-equations" begin
-    R, (x, y, z) = PolynomialRing(Nemo.QQ, ["x", "y", "z"])
+    R, (x, y, z) = Nemo.PolynomialRing(Nemo.QQ, ["x", "y", "z"])
 
     println(simplify_field_generators([[R(1), x + y, x^2 + y^2]]))
 

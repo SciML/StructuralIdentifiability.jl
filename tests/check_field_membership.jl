@@ -1,5 +1,5 @@
 @testset "Check field membership" begin
-    R, (x, y, z) = PolynomialRing(Nemo.QQ, ["x", "y", "z"])
+    R, (x, y, z) = Nemo.PolynomialRing(Nemo.QQ, ["x", "y", "z"])
 
     @test check_field_membership(
         [[R(1), x + y], [R(1), x * y], [z, (x + y)^2]],
