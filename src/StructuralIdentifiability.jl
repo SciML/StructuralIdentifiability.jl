@@ -13,7 +13,7 @@ using Nemo
 using Oscar
 using GroebnerBasis
 
-export find_io_equations, assess_global_identifiability, ODE, @ODEmodel, extract_identifiable_functions 
+export find_ioequations, assess_global_identifiability, ODE, @ODEmodel, extract_identifiable_functions 
 
 include("util.jl")
 include("power_series_utils.jl")

@@ -167,7 +167,7 @@ function factor_via_singular(polys::Array{<: MPolyElem{fmpq}, 1})
         @debug "\t Factoring with Singular a polynomial of size $(length(p))"
         @debug p
         p_sing = parent_ring_change(p, R_sing)
-        for f in Singular.factor_squarefree(p_sing)
+        for f in Singular.factor(p_sing)
             @debug f
             push!(result, parent_ring_change(f[1], original_ring))
         end

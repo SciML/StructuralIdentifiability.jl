@@ -240,14 +240,24 @@ function find_ioequations(
         return io_equations
     end
 
-    extra_var = str_to_var("rand_proj_var", ring)
-    extra_var_rhs = sum([rand(1:10) * v for v in keys(io_equations)])
-    @debug "Extra projections: $extra_var_rhs"
-    point_generator = generator_var_change(point_generator, extra_var, extra_var_rhs, one(ring))
-    extra_poly = extra_var - extra_var_rhs
-    for (y, io_eq) in io_equations
-        extra_poly = eliminate_var(extra_poly, io_eq, y, point_generator)
+    sampling_range = 5
+    while true
+        @debug "There are several components of the highest dimension, trying to isolate one"
+        extra_var = str_to_var("rand_proj_var", ring)
+        extra_var_rhs = sum([rand(1:sampling_range) * v for v in keys(io_equations)])
+        @debug "Extra projections: $extra_var_rhs"
+        point_generator = generator_var_change(point_generator, extra_var, extra_var_rhs, one(ring))
+        extra_poly = extra_var - extra_var_rhs
+        for (y, io_eq) in io_equations
+            extra_poly = eliminate_var(extra_poly, io_eq, y, point_generator)
+        end
+        extra_poly = evaluate(extra_poly, [extra_var], [extra_var_rhs])
+        if check_primality(io_equations, [extra_poly])
+            @debug "Single component of highest dimension isolated, returning"
+            io_equations[extra_var] = extra_poly
+            break
+        end
+        sampling_range = 2 * sampling_range
     end
-    io_equations[extra_var] = extra_poly
     return io_equations
 end
