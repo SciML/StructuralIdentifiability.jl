@@ -1,14 +1,3 @@
-using Dates
-using IterTools
-using Logging
-using AbstractAlgebra, Nemo
-using Oscar
-
-include("util.jl")
-include("elimination.jl")
-include("ODE.jl")
-include("primality_check.jl")
-
 #------------------------------------------------------------------------------
 
 function generator_var_change(generator, var::P, numer::P, denom::P) where P <: MPolyElem
@@ -83,8 +72,8 @@ end
 #------------------------------------------------------------------------------
 
 function find_ioequations(
-        ode::ODE{P}, 
-        auto_var_change::Bool=true
+        ode::ODE{P}; 
+        var_change_policy=:default
     ) where P <: MPolyElem{<: FieldElem}
     """
     Finds the input-output equations of an ODE system
@@ -93,7 +82,17 @@ function find_ioequations(
         - auto_var_change, whether or not to perform automatic variable change
     Output: a dictionary from "leaders" to the corresponding io-equations
     """
-    #Initialization
+    # Setting the var_change policy
+    if (var_change_policy == :yes) || (var_change_policy == :default && length(ode.y_vars) < 3)
+        auto_var_change = true
+    elseif (var_change_policy == :no) || (var_change_policy == :default && length(ode.y_vars) >= 3)
+        auto_var_change = false
+    else
+        @error "Unknown var_change policy $var_change_policy"
+        return
+    end
+
+    # Initialization
     ring, derivation, x_equations, y_equations, point_generator = generate_io_equation_problem(ode)
     y_orders = Dict(y => 0 for y in keys(y_equations))
  

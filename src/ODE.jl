@@ -1,11 +1,3 @@
-using Dates
-using Logging
-using MacroTools
-using AbstractAlgebra, Nemo
-using Oscar
-
-include("power_series_utils.jl")
-
 # P is the type of polynomials in the rhs of the ODE system
 struct ODE{P}
     poly_ring::MPolyRing
@@ -246,7 +238,9 @@ macro ODEmodel(ex::Expr...)
     """
     equations = [ex...]
     x_vars, io_vars, all_symb = macrohelper_extract_vars(equations)
-    
+   
+    import_expr = :(using Nemo)
+
     # creating the polynomial ring
     vars_list = :([$(all_symb...)])
     R = gensym()
@@ -296,7 +290,8 @@ macro ODEmodel(ex::Expr...)
     ode_expr = :(ODE{fmpq_mpoly}($x_dict, $y_dict, Array{fmpq_mpoly}([$(u_vars...)])))
     
     result = Expr(
-        :block, 
+        :block,
+        import_expr,
         exp_ring, assignments..., 
         x_dict_create_expr, y_dict_create_expr, eqs_expr..., 
         ode_expr

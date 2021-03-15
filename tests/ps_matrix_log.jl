@@ -1,6 +1,6 @@
 @testset "Logarith of power series matrices" begin
     
-    T, t = PowerSeriesRing(QQ, 300, "t"; model=:capped_absolute)
+    T, t = PowerSeriesRing(Nemo.QQ, 300, "t"; model=:capped_absolute)
     
     for d in 1:5
         diag_elements = [1 + t * random_ps(T) for i in 1:d]

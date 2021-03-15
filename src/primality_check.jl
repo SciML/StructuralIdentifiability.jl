@@ -1,5 +1,3 @@
-using Oscar
-
 #------------------------------------------------------------------------------
 
 function check_primality_zerodim(J::Singular.sideal{Singular.spoly{Singular.n_Q}})

@@ -1,4 +1,7 @@
-include("../src/io_equation.jl")
+using Logging
+
+include("../src/StructuralIdentifiability.jl")
+using .StructuralIdentifiability
 
 # SIWR Cholera model
 logger = Logging.SimpleLogger(stdout, Logging.Debug)
@@ -12,8 +15,4 @@ ode = @ODEmodel(
     y(t) = k * I(t)
 )
 
-@time io_equation = collect(values(find_ioequations(ode)))[1]
-
-@time identifiability_report = check_identifiability(io_equation, ode.parameters)
-
-println(identifiability_report)
+@time println(assess_global_identifiability(ode))

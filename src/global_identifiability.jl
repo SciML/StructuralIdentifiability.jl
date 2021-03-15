@@ -1,12 +1,10 @@
-import GroebnerBasis
-
 #------------------------------------------------------------------------------
 
 function check_field_membership(
         generators::Array{<: Array{<: MPolyElem, 1}, 1},
         rat_funcs::Array{<: Any, 1},
         p::Float64;
-        method="GroebnerBasis")
+        method=:GroebnerBasis)
     """
     Checks whether given rational function belogn to a given field of rational functions
     Inputs:
@@ -18,7 +16,7 @@ function check_field_membership(
         the i-th function belongs to F. The whole result is correct with probability at least p
     """
     @debug "Finding pivot polynomials"
-    pivots = map(plist -> min(map(poly -> (total_degree(poly), poly), plist)...)[2], generators)
+    pivots = map(plist -> plist[findmin(map(total_degree, plist))[2]], generators)
     @debug "\tDegrees are $(map(total_degree, pivots))"
 
     @debug "Sampling the point"
@@ -43,7 +41,7 @@ function check_field_membership(
     )
     @debug "\tThe total number of variables in $(length(total_vars))"
 
-    sampling_bound = 3 * BigInt(degree)^(length(total_vars) + 3) * length(rat_funcs) * ceil(1 / (1 - p))
+    sampling_bound = BigInt(3 * BigInt(degree)^(length(total_vars) + 3) * length(rat_funcs) * ceil(1 / (1 - p)))
     @debug "\tSampling from $(-sampling_bound) to $(sampling_bound)"
     point = map(v -> rand(-sampling_bound:sampling_bound), gens(ring))
     @debug "\tPoint is $point"
@@ -72,9 +70,9 @@ function check_field_membership(
 
     @debug "Computing Groebner basis ($(length(eqs_sing)) equations)"
     flush(stdout)
-    if method == "Singular"
+    if method == :Singular
         gb = Singular.std(Singular.Ideal(ring_sing, eqs_sing))
-    elseif method == "GroebnerBasis"
+    elseif method == :GroebnerBasis
         gb = GroebnerBasis.f4(Singular.Ideal(ring_sing, eqs_sing))
     else
         throw(Base.ArgumentError("Unknown method $method"))
@@ -98,8 +96,8 @@ function check_identifiability(
         io_equations::Array{P, 1}, 
         parameters::Array{P, 1},
         funcs_to_check::Array{<: Any, 1},
-        p::Float64; 
-        method="GroebnerBasis"
+        p::Float64=0.99;
+        method=:GroebnerBasis
     ) where P <: MPolyElem{fmpq}
     """
     For the io_equation and the list of all parameter variables, returns a dictionary
@@ -126,18 +124,89 @@ function check_identifiability(
         io_equation::P,
         parameters::Array{P, 1}, 
         funcs_to_check::Array{<: Any, 1}, 
-        p::Float64; 
-        method="GroebnerBasis"
+        p::Float64=0.99; 
+        method=:GroebnerBasis
     ) where P <: MPolyElem{fmpq}
     return check_identifiability([io_equation], parameters, funcs_to_check, p; method=method)
 end
 
-function check_identifiability(io_equations::Array{P, 1}, parameters::Array{P, 1}, p::Float64; method="GroebnerBasis") where P <: MPolyElem{fmpq}
+function check_identifiability(io_equations::Array{P, 1}, parameters::Array{P, 1}, p::Float64=0.99; method=:GroebnerBasis) where P <: MPolyElem{fmpq}
     check_identifiability(io_equations, parameters, parameters, p; method=method)
 end
 
-function check_identifiability(io_equation::P, parameters::Array{P, 1}, p::Float64; method="GroebnerBasis") where P <: MPolyElem{fmpq}
+function check_identifiability(io_equation::P, parameters::Array{P, 1}, p::Float64=0.99; method=:GroebnerBasis) where P <: MPolyElem{fmpq}
     return check_identifiability([io_equation], parameters, p; method=method)
+end
+
+#------------------------------------------------------------------------------
+
+function assess_global_identifiability(
+        ode::ODE{P},
+        funcs_to_check::Array{<: Any, 1},
+        p::Float64=0.99;
+        var_change=:default,
+        gb_method=:GroebnerBasis
+    ) where P <: MPolyElem{fmpq}
+    """
+    Checks global identifiability of given functions of parameters
+    Input:
+        - ode - the ODE model
+        - funcs_to_check - rational functions in parameters
+        - p - probability of correctness
+        - var_change - a policy for variable change (default, yes, no),
+                       affects only the runtime
+        - gb_method - library used for Groebner bases (GroebnerBasis, Singular)
+    Output: array of length  |funcs_to_check| with true/false values for global identifiability
+    """
+
+    @info "Computing IO-equations"
+    ioeq_time = @elapsed io_equations = find_ioequations(ode; var_change_policy=var_change)
+    @debug "Sizes: $(map(length, values(io_equations)))"
+    @info "Computed in $ioeq_time seconds"
+
+    @info "Computing Wronskians"
+    wrnsk_time = @elapsed wrnsk = wronskian(io_equations, ode)
+    @info "Computed in $wrnsk_time seconds"
+    dims = map(ncols, wrnsk)
+    @debug "Dimensions of the wronskians $dims"
+    rank_times = @elapsed wranks = map(rank, wrnsk)
+    @debug "Dimensions of the wronskians $dims"
+    @debug "Ranks of the wronskians $wranks"
+    @info "Ranks of the Wronskians computed in $rank_times seconds"
+    if any([dim != rk + 1 for (dim, rk) in zip(dims, wranks)])
+        @warn "One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still  would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)"
+    end
+
+    @info "Assessing global identifiability using the coefficients of the io-equations"
+    check_time = @elapsed result = check_identifiability(collect(values(io_equations)), funcs_to_check, p; method=gb_method)
+    @info "Computed in $check_time seconds"
+
+    return result
+end
+
+#------------------------------------------------------------------------------
+
+function assess_global_identifiability(
+        ode::ODE{P},
+        p::Float64=0.99;
+        
+        var_change=:default,
+        gb_method=:GroebnerBasis
+    ) where P <: MPolyElem{fmpq}
+    """
+    Checks global identifiability of the parameters
+    Input:
+        - ode - the ODE model
+        - p - probability of correctness
+        - var_change - a policy for variable change (default, yes, no),
+                       affects only the runtime
+        - gb_method - library used for Groebner bases (GroebnerBasis, Singular)
+    Output: dictionary param => (globall_identifiable?)
+    """
+
+    result_list = assess_global_identifiability(ode, ode.parameters, p; var_change=var_change, gb_method=gb_method)
+
+    return Dict([param => val for (param, val) in zip(ode.parameters, result_list)])
 end
 
 #------------------------------------------------------------------------------
@@ -156,7 +225,7 @@ function simplify_field_generators(generators::Array{<: Array{<: MPolyElem, 1}, 
     Output: simplified generators of F
     """
     @debug "Finding pivot polynomials"
-    pivots = map(plist -> min(map(poly -> (total_degree(poly), poly), plist)...)[2], generators)
+    pivots = map(plist -> plist[findmin(map(total_degree, plist))[2]], generators)
     @debug "\tDegrees are $(map(total_degree, pivots))"
 
     total_vars = foldl(

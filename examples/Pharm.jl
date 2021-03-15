@@ -1,4 +1,7 @@
-include("../src/io_equation.jl")
+using Logging
+
+include("../src/StructuralIdentifiability.jl")
+using .StructuralIdentifiability
 
 logger = Logging.SimpleLogger(stdout, Logging.Debug)
 global_logger(logger)
@@ -11,10 +14,4 @@ ode = @ODEmodel(
     y1(t) = x0(t)
 )
 
-@time io_equation = collect(values(find_ioequations(ode)))[1]
-
-println("The number of monomials in the IO-equation is $(length(io_equation))")
-
-@time identifiability_report = check_identifiability(io_equation, ode.parameters)
-
-println(identifiability_report)
+@time println(assess_global_identifiability(ode))

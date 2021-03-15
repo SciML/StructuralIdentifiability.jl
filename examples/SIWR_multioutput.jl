@@ -1,7 +1,9 @@
-include("../src/io_equation.jl")
+using Logging
+
+include("../src/StructuralIdentifiability.jl")
+using .StructuralIdentifiability
 
 # This is the SIWR model with an extra output as considered in the SIAN paper
-
 logger = Logging.SimpleLogger(stdout, Logging.Debug)
 global_logger(logger)
 
@@ -14,8 +16,4 @@ ode = @ODEmodel(
     y2(t) = x_0(t) + x_1(t) + x_3(t)
 )
 
-@time io_equations = collect(values(find_ioequations(ode)))
-
-@time identifiability_report = check_identifiability(io_equations, ode.parameters)
-
-println(identifiability_report)
+@time println(assess_global_identifiability(ode))

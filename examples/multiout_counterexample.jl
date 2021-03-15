@@ -1,4 +1,7 @@
-include("../src/io_equation.jl")
+using Logging
+
+include("../src/StructuralIdentifiability.jl")
+using .StructuralIdentifiability
 
 logger = Logging.SimpleLogger(stdout, Logging.Debug)
 global_logger(logger)
@@ -10,6 +13,4 @@ ode = @ODEmodel(
     y2(t) = x2
 )
 
-@time io_equations = find_ioequations(ode)
-
-println(io_equations)
+@time println(assess_global_identifiability(ode))

@@ -1,6 +1,6 @@
 @testset "Power Series Differentiation" begin
     
-    T, t = PowerSeriesRing(QQ, 300, "t"; model=:capped_absolute)
+    T, t = PowerSeriesRing(Nemo.QQ, 300, "t"; model=:capped_absolute)
     
     @test ps_diff(zero(T)) == zero(T)
     

@@ -24,11 +24,11 @@ end
 
 @testset "Power series solution for an ODE system" begin
 
-    R, (x, x_dot) = PolynomialRing(QQ, ["x", "x_dot"])
+    R, (x, x_dot) = PolynomialRing(Nemo.QQ, ["x", "x_dot"])
     exp_t = ps_ode_solution([x_dot - x], Dict{fmpq_mpoly, fmpq}(x => 1), Dict{fmpq_mpoly, Array{fmpq, 1}}(), 20)[x]
     @test valuation(ps_diff(exp_t) - exp_t) == 19
 
-    R, (x, y, x_dot, y_dot, u) = PolynomialRing(QQ, ["x", "y", "x_dot", "y_dot", "u"])
+    R, (x, y, x_dot, y_dot, u) = PolynomialRing(Nemo.QQ, ["x", "y", "x_dot", "y_dot", "u"])
     prec = 100
     eqs = [
         x_dot - x + 3 * x * y - u,
@@ -46,7 +46,7 @@ end
             ["x_$i" for i in 1:5],
             ["u_$i" for i in 1:3],
         )
-        R, vars = PolynomialRing(GF(2^31 - 1), varnames)
+        R, vars = PolynomialRing(Nemo.GF(2^31 - 1), varnames)
         eqs = [rand_poly(1, vars[6:end]) * vars[i] - rand_poly(2, vars[6:end]) for i in 1:5]
         ic = Dict(vars[i + 5] => rand(-5:5) for i in 1:5)
         inputs = Dict(u => [rand(-3:3) for i in 1:prec] for u in vars[11:end])
@@ -65,7 +65,7 @@ end
             ["p_$i" for i in 1:3],
             ["u_$i" for i in 1:2],
         )
-        R, vars = PolynomialRing(GF(2^31 - 1), varnames)
+        R, vars = PolynomialRing(Nemo.GF(2^31 - 1), varnames)
         PType = Generic.MPoly{Nemo.gfp_elem}
         TDict = Dict{PType, Union{PType, Generic.Frac{PType}}}
         eqs = TDict(vars[i] => rand_poly(2, vars) // rand_poly(1, vars) for i in 1:3)

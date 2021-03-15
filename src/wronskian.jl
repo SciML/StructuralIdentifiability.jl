@@ -1,15 +1,4 @@
-using Dates
-using IterTools
-using Logging
-using Oscar
-using Base.Iterators
-
 import Base.push!
-
-include("util.jl")
-include("elimination.jl")
-include("ODE.jl")
-include("io_equation.jl")
 
 #----------------------------------------------------------------------------------------------------
 

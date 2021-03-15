@@ -1,6 +1,6 @@
 @testset "Power series matrix inverse" begin
 
-    T, t = PowerSeriesRing(GF(2^31 - 1), 50, "t"; model=:capped_absolute)
+    T, t = PowerSeriesRing(Nemo.GF(2^31 - 1), 50, "t"; model=:capped_absolute)
     
     for d in 1:5
         S = MatrixSpace(T, d, d)

@@ -1,5 +1,3 @@
-include("util.jl")
-
 #------------------------------------------------------------------------------
 
 function truncate_matrix(M::MatElem{<: Generic.AbsSeriesElem}, prec::Int)

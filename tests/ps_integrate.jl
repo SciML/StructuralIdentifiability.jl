@@ -1,6 +1,6 @@
 @testset "Power series integration" begin
     
-    T, t = PowerSeriesRing(QQ, 300, "t"; model=:capped_absolute)
+    T, t = PowerSeriesRing(Nemo.QQ, 300, "t"; model=:capped_absolute)
     
     @test ps_integrate(zero(T)) == zero(T)
     
