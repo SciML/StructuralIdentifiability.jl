@@ -12,7 +12,8 @@ using .StructuralIdentifiability: check_field_membership, check_identifiability,
                                   power_series_solution, ps_diff, ps_integrate, ps_matrix_inv,
                                   ps_matrix_homlinear_de, ps_matrix_linear_de, ps_matrix_log,
                                   reduce_ode_mod_p, simplify_field_generators, ODE, @ODEmodel,
-                                  truncate_matrix, find_ioequations, str_to_var, unpack_fraction
+                                  truncate_matrix, find_ioequations, str_to_var, unpack_fraction,
+                                  assess_global_identifiability
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)

@@ -28,7 +28,7 @@ function generate_io_equation_problem(ode::ODE{P}) where P <: MPolyElem{<: Field
         old_vars,
         [var_to_str(x) * "_dot" for x in ode.x_vars],
         [var_to_str(y) * "_$i" for i in 0:dim_x for y in ode.y_vars],
-        [var_to_str(u) * "_$i" for i in 1:dim_x for u in ode.u_vars],
+        [var_to_str(u) * "_$i" for i in 0:dim_x for u in ode.u_vars],
         ["rand_proj_var"]
     )
     ring, ring_vars = PolynomialRing(base_ring(ode.poly_ring), var_names)
@@ -44,23 +44,27 @@ function generate_io_equation_problem(ode::ODE{P}) where P <: MPolyElem{<: Field
         end
     end
     for u in ode.u_vars
-        derivation[switch_ring(u, ring)] = str_to_var(var_to_str(u) * "_1", ring)
-        for i in 1:(dim_x - 1)
+        for i in 0:(dim_x - 1)
             derivation[str_to_var(var_to_str(u) * "_$i", ring)] = str_to_var(var_to_str(u) * "_$(i + 1)", ring)
         end
     end
 
     # Generate equations
+    old_us = [parent_ring_change(u, ring) for u in ode.u_vars]
+    new_us = [str_to_var(var_to_str(u) * "_0", ring) for u in ode.u_vars]
+    function to_new_ring(p)
+        return evaluate(parent_ring_change(ode.poly_ring(p), ring), old_us, new_us)
+    end
     x_equations = Dict{P, P}()
     for x in ode.x_vars
         x_lifted = parent_ring_change(x, ring)
-        num, den = map(p -> parent_ring_change(ode.poly_ring(p), ring), unpack_fraction(ode.x_equations[x]))
+        num, den = map(to_new_ring, unpack_fraction(ode.x_equations[x]))
         x_equations[x_lifted] = den * derivation[x_lifted] - num
     end
     y_equations = Dict{P, P}()
     for y in ode.y_vars
         y_lifted = str_to_var(var_to_str(y) * "_0", ring)
-        g_num, g_den = map(p -> parent_ring_change(ode.poly_ring(p), ring), unpack_fraction(ode.y_equations[y]))
+        g_num, g_den = map(to_new_ring, unpack_fraction(ode.y_equations[y]))
         y_equations[y_lifted] = g_den * y_lifted - g_num
     end
 

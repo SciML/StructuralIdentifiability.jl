@@ -178,7 +178,7 @@ function assess_global_identifiability(
     end
 
     @info "Assessing global identifiability using the coefficients of the io-equations"
-    check_time = @elapsed result = check_identifiability(collect(values(io_equations)), funcs_to_check, p; method=gb_method)
+    check_time = @elapsed result = check_identifiability(collect(values(io_equations)), ode.parameters, funcs_to_check, p; method=gb_method)
     @info "Computed in $check_time seconds"
 
     return result
