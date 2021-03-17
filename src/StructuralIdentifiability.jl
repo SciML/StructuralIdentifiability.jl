@@ -4,8 +4,10 @@ module StructuralIdentifiability
 using Base.Iterators
 using Dates
 using IterTools
+using LinearAlgebra
 using Logging
 using MacroTools
+using Primes
 
 # Algebra packages
 using AbstractAlgebra
@@ -18,6 +20,7 @@ export find_ioequations, assess_global_identifiability, ODE, @ODEmodel, extract_
 include("util.jl")
 include("power_series_utils.jl")
 include("ODE.jl")
+include("local_identifiability.jl")
 include("wronskian.jl")
 include("elimination.jl")
 include("primality_check.jl")

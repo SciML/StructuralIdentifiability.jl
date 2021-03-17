@@ -15,6 +15,16 @@ function eval_at_dict(rational::Generic.Frac{<: P}, d::Dict{P, <: RingElem}) whe
     return eval_at_dict(f, d) * inv(eval_at_dict(g, d))
 end
 
+function eval_at_dict(rational::Generic.Frac{<: P}, d::Dict{P, <: Generic.Frac}) where P <: MPolyElem
+    f, g = unpack_fraction(rational)
+    return eval_at_dict(f, d) // eval_at_dict(g, d)
+end
+
+function eval_at_dict(rational::Generic.Frac{<: P}, d::Dict{P, <: MPolyElem}) where P <: MPolyElem
+    f, g = unpack_fraction(rational)
+    return eval_at_dict(f, d) // eval_at_dict(g, d)
+end
+
 #------------------------------------------------------------------------------
 
 function unpack_fraction(f::MPolyElem)

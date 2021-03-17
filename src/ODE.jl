@@ -29,6 +29,20 @@ end
 
 #------------------------------------------------------------------------------
 
+function add_outputs(ode::ODE{P}, extra_y::Dict{String, <: RingElem}) where P <: MPolyElem
+    new_var_names = vcat(collect(map(var_to_str, gens(ode.poly_ring))), collect(keys(extra_y)))
+    new_ring, new_vars = Nemo.PolynomialRing(base_ring(ode.poly_ring), new_var_names)
+    
+    new_x_eqs = Dict{P, Union{P, Generic.Frac{P}}}(parent_ring_change(x, new_ring) => parent_ring_change(f, new_ring) for (x, f) in ode.x_equations)
+    new_y_eqs = Dict{P, Union{P, Generic.Frac{P}}}(parent_ring_change(y, new_ring) => parent_ring_change(g, new_ring) for (y, g) in ode.y_equations)
+    extra_y_eqs = Dict{P, Union{P, Generic.Frac{P}}}(str_to_var(y, new_ring) => parent_ring_change(g, new_ring) for (y, g) in extra_y)
+    merge!(new_y_eqs, extra_y_eqs)
+    new_us = map(v -> switch_ring(v, new_ring), ode.u_vars)
+    return ODE{P}(new_x_eqs, new_y_eqs, new_us)
+end
+
+#------------------------------------------------------------------------------
+
 function SetParameterValues(ode::ODE{P}, param_values::Dict{P, T}) where {T <: FieldElem, P <: MPolyElem{T}}
     """
     Input:
