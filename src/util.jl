@@ -1,10 +1,12 @@
 #------------------------------------------------------------------------------
 
+"""
+    eval_at_dict(f, d)
+
+Evaluates a polynomial/rational function on a dict var => val
+missing values are replaced with zeroes
+"""
 function eval_at_dict(poly::P, d::Dict{P, <: RingElem}) where P <: MPolyElem
-    """
-    Evaluates a polynomial on a dict var => val
-    missing values are replaced with zeroes
-    """
     R = parent(first(values(d)))
     point = [get(d, v, zero(R)) for v in gens(parent(poly))]
     return evaluate(poly, point)
@@ -46,17 +48,19 @@ end
 
 #------------------------------------------------------------------------------
 
+"""
+    make_substitution(f, var_sub, val_numer, val_denom)
+
+Substitute a variable in a polynomial with an expression
+Input:
+    - f, the polynomial
+    - var_sub, the variable to be substituted
+    - var_numer, numerator of the substitution expression
+    - var_denom, denominator of the substitution expression
+Output:
+    polynomial, result of substitution
+"""
 function make_substitution(f::P, var_sub::P, val_numer::P, val_denom::P) where P <: MPolyElem
-    """
-    Substitute a variable in a polynomial with an expression
-    Input:
-        - f, the polynomial
-        - var_sub, the variable to be substituted
-        - var_numer, numerator of the substitution expression
-        - var_denom, denominator of the substitution expression
-    Output:
-        polynomial, result of substitution
-    """
     d = degree(f, var_sub)
 
     result = 0
@@ -81,15 +85,17 @@ function (F::Nemo.GaloisField)(a::fmpq)
     return F(numerator(a)) // den
 end
 
+"""
+    parent_ring_change(poly, new_ring)
+
+Converts a polynomial to a different polynomial ring
+Input
+  - poly - a polynomial to be converted
+  - new_ring - a polynomial ring such that every variable name
+      appearing in poly appears among the generators
+Output: a polynomial in new_ring "equal" to poly
+"""
 function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing)
-    """
-    Converts a polynomial to a different polynomial ring
-    Input
-      - poly - a polynomial to be converted
-      - new_ring - a polynomial ring such that every variable name
-          appearing in poly appears among the generators
-    Output: a polynomial in new_ring "equal" to poly
-    """
     old_ring = parent(poly)
     # construct a mapping for the variable indices
     var_mapping = Array{Any, 1}()
@@ -124,13 +130,15 @@ end
  
 #------------------------------------------------------------------------------
 
+"""
+    uncertain_factorization(f)
+
+Input: polynomial f with rational coefficients
+Output: list of pairs (div, certainty) where
+  - div's are divisors f such that f is their product with certain powers
+  - if certainty is true, div is Q-irreducible
+"""
 function uncertain_factorization(f::MPolyElem{fmpq})
-    """
-    Input: polynomial f with rational coefficients
-    Output: list of pairs (div, certainty) where
-      - div's are divisors f such that f is their product with certain powers
-      - if certainty is true, div is Q-irreducible
-    """
     vars_f = vars(f)
     if isempty(vars_f)
         return Array{Tuple{typeof(f), Bool}, 1}()
@@ -207,16 +215,18 @@ end
 
 #------------------------------------------------------------------------------
 
+"""
+    extract_coefficients(poly, variables)
+
+Intput:
+    poly - multivariate polynomial
+    variables - a list of variables from the generators of the ring of p
+Output:
+    dictionary with keys being tuples of length len(variables) and values being 
+    polynomials in the variables other than variables which are the coefficients
+    at the corresponding monomials (in a smaller polynomial ring)
+"""
 function extract_coefficients(poly::P, variables::Array{P, 1}) where P <: MPolyElem
-    """
-    Intput:
-        poly - multivariate polynomial
-        variables - a list of variables from the generators of the ring of p
-    Output:
-        dictionary with keys being tuples of length len(variables) and values being 
-        polynomials in the variables other than variables which are the coefficients
-        at the corresponding monomials (in a smaller polynomial ring)
-    """
     var_to_ind = Dict([(v, findfirst(e -> (e == v), gens(parent(poly)))) for v in variables])
     indices = [var_to_ind[v] for v in variables]
 
@@ -261,10 +271,12 @@ end
 
 #------------------------------------------------------------------------------
 
+"""
+    switch_ring(v, ring)
+
+For a variable v, returns a variable in ring with the same name
+"""
 function switch_ring(v::MPolyElem, ring::MPolyRing)
-    """
-    For a variable v, returns a variable in ring with the same name
-    """
     ind = findfirst(vv -> vv == v, gens(parent(v)))
     return str_to_var(string(symbols(parent(v))[ind]), ring)
 end

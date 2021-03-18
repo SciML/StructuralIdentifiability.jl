@@ -42,16 +42,18 @@ end
 
 #------------------------------------------------------------------------------
 
+"""
+    Bezout_matrix(f, g, var_elim)
+
+Compute the Bezout matrix of two polynomials f, g with respect to var_elim
+Inputs:
+    - f - first polynomial
+    - g - second polynomial
+    - var_elim - variable, of which f and g are considered as polynomials
+Output:
+    - M::MatrixElem, The Bezout matrix
+"""
 function Bezout_matrix(f::P, g::P, var_elim::P) where P <: MPolyElem
-    """
-    Compute the Bezout matrix of two polynomials f, g with respect to var_elim
-    Inputs:
-        - f::AbstractAlgebra.MPolyElem, first polynomial
-        - g::AbstractAlgebra.MPolyElem, second polynomial
-        - var_elim::AbstractAlgebra.MPolyElem, variable, of which f and g are considered as polynomials
-    Output:
-        - M::MatrixElem, The Bezout matrix
-    """
     parent_ring = parent(f)
     deg_f = degree(f, var_elim)
     deg_g = degree(g, var_elim)
@@ -70,16 +72,18 @@ end
 
 #------------------------------------------------------------------------------
 
+"""
+    Sylvester_matrix(f, g, var_elim)
+
+Compute the Sylvester matrix of two polynomials f, g with respect to var_elim
+Inputs:
+    - f - first polynomial
+    - g - second polynomial
+    - var_elim - variable, of which f and g are considered as polynomials
+Output:
+    - M::MatrixElem, The Sylvester matrix
+"""
 function Sylvester_matrix(f::P, g::P, var_elim::P) where P <: MPolyElem
-    """
-    Compute the Bezout matrix of two polynomials f, g with respect to var_elim
-    Inputs:
-        - f::AbstractAlgebra.MPolyElem, first polynomial
-        - g::AbstractAlgebra.MPolyElem, second polynomial
-        - var_elim::AbstractAlgebra.MPolyElem, variable, of which f and g are considered as polynomials
-    Output:
-        - M::MatrixElem, The Sylvester matrix
-    """
     parent_ring = parent(f)
     deg_f = degree(f, var_elim)
     deg_g = degree(g, var_elim)
@@ -102,22 +106,23 @@ end
 
 #------------------------------------------------------------------------------
 
+"""
+    simplify_matrix(M)
+
+Eliminate GCD of entries of every row and column
+Input:
+    - M::MatrixElem, matrix to be simplified
+Output:
+    - M::MatrixElem, Simplified matrix
+    - extra_factors::Vector{AbstractAlgebra.MPolyElem}, array of GCDs eliminated from M.
+"""
 function simplify_matrix(M::MatElem{P}) where P <: MPolyElem
     """
-    Eliminate GCD of entries of every row and column
-    Input:
-        - M::MatrixElem, matrix to be simplified
-    Output:
-        - M::MatrixElem, Simplified matrix
-        - extra_factors::Vector{AbstractAlgebra.MPolyElem}, array of GCDs eliminated from M.
+    An auxiliary function taking a list of coordinates of cells
+    and dividing them by their gcd.
+    Returns the gcd
     """
-
     function _simplify_range(coords::Array{Tuple{Int, Int}, 1})
-        """
-        An auxiliary function taking a list of coordinates of cells
-        and dividing them by their gcd.
-        Returns the gcd
-        """
         gcd_temp = M[coords[1]...]
         for c in coords[2:end]
             gcd_temp = gcd(gcd_temp, M[c...])
@@ -232,14 +237,16 @@ end
 
 #------------------------------------------------------------------------------
 
+"""
+    choose(polys, generic_point_generator)
+
+Input:
+    - polys, an array of distinct irreducible polynomials in the same ring
+    - generic_point_generator, a generic point generator as described above for one of polys
+Output:
+    - the polynomial that vanishes at the generic_point_generator
+"""
 function choose(polys::Array{P, 1}, generic_point_generator) where P <: MPolyElem{<: FieldElem}
-    """
-    Input:
-        - polys, an array of distinct irreducible polynomials in the same ring
-        - generic_point_generator, a generic point generator as described above for one of polys
-    Output:
-        - the polynomial that vanishes at the generic_point_generator
-    """
     vars = gens(parent(polys[1]))
     for p in generic_point_generator
         if length(polys) <= 1
@@ -255,17 +262,19 @@ end
 
 #------------------------------------------------------------------------------
 
+"""
+    eliminate_var(f, g, var_elim, generic_point_generator)
+
+Eliminate variable from a pair of polynomials
+Input:
+    - f and g, polynomials
+    - var_elim, variable to be eliminated
+    - generic_point_generator, a generic point generator object for the factor
+      of the resultant of f and g of interest
+Output:
+    polynomial, the desired factor of the resultant of f and g
+"""
 function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P <: MPolyElem{<: FieldElem}
-    """
-    Eliminate variable from a pair of polynomials
-    Input:
-        - f and g, polynomials
-        - var_elim, variable to be eliminated
-        - generic_point_generator, a generic point generator object for the factor
-          of the resultant of f and g of interest
-    Output:
-        polynomial, the desired factor of the resultant of f and g
-    """
     #Linear comb
     while f != 0 && g != 0
         if degree(f, var_elim) > degree(g, var_elim)

@@ -75,17 +75,19 @@ end
 
 #------------------------------------------------------------------------------
 
+"""
+    find_ioequations(ode, [var_change_policy=:default])
+
+Finds the input-output equations of an ODE system
+Input:
+    - ode, the ODE system
+    - auto_var_change, whether or not to perform automatic variable change
+Output: a dictionary from "leaders" to the corresponding io-equations
+"""
 function find_ioequations(
         ode::ODE{P}; 
         var_change_policy=:default
     ) where P <: MPolyElem{<: FieldElem}
-    """
-    Finds the input-output equations of an ODE system
-    Input:
-        - ode, the ODE system
-        - auto_var_change, whether or not to perform automatic variable change
-    Output: a dictionary from "leaders" to the corresponding io-equations
-    """
     # Setting the var_change policy
     if (var_change_policy == :yes) || (var_change_policy == :default && length(ode.y_vars) < 3)
         auto_var_change = true

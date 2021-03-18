@@ -13,6 +13,15 @@
 
 #------------------------------------------------------------------------------
 
+"""
+    differentiate_solution(ode, params, ic, inputs, prec)
+
+Input: the same as for power_series_solutions
+Output: a tuple consisting of the power series solution and 
+        a dictionary of the form (u, v) => power series, where u is a state variable
+        v is a state or parameter, and the power series is the partial derivative of
+        the function u w.r.t. v evaluated at the solution
+"""
 function differentiate_solution(
         ode::ODE{P},
         params::Dict{P, T},
@@ -20,13 +29,6 @@ function differentiate_solution(
         inputs::Dict{P, Array{T, 1}},
         prec::Int
     ) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
-    """
-    Input: the same as for power_series_solutions
-    Output: a tuple consisting of the power series solution and 
-            a dictionary of the form (u, v) => power series, where u is a state variable
-            v is a state or parameter, and the power series is the partial derivative of
-            the function u w.r.t. v evaluated at the solution
-    """
     @debug "Computing the power series solution of the system"
     ps_sol = power_series_solution(ode, params, ic, inputs, prec)
     ps_ring = parent(first(values(ps_sol)))
@@ -68,6 +70,12 @@ end
 
 #------------------------------------------------------------------------------
 
+"""
+    differentiate_output(ode, params, ic, inputs, prec)
+
+Similar to differentiate_solution but computes partial derivatives of a prescribed outputs
+returns a dict from y's to dictionalries from vars to dy / dvar
+"""
 function differentiate_output(
         ode::ODE{P},
         params::Dict{P, T},
@@ -75,10 +83,6 @@ function differentiate_output(
         inputs::Dict{P, Array{T, 1}},
         prec::Int
     ) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
-    """
-    Similar to differentiate_solution but computes partial derivatives of a prescribed outputs
-    returns a dict from y's to dictionalries from vars to dy / dvar
-    """
     @debug "Computing partial derivatives of the solution"
     ps_sol, sol_diff = differentiate_solution(ode, params, ic, inputs, prec)
     ps_ring = parent(first(values(ps_sol)))
@@ -104,11 +108,13 @@ end
 
 #------------------------------------------------------------------------------
 
+"""
+    get_degree_and_coeffsize(f)
+
+for f being a polynomial/rational function over QQ returns a tuple
+(degree, max_coef_size)
+"""
 function get_degree_and_coeffsize(f::MPolyElem{Nemo.fmpq})
-    """
-    for f being polynomial over QQ returns a tuple
-    (degree, max_coef_size)
-    """
     if length(f) == 0
         return (0, 1)
     end
@@ -120,10 +126,6 @@ function get_degree_and_coeffsize(f::MPolyElem{Nemo.fmpq})
 end
 
 function get_degree_and_coeffsize(f::Generic.Frac{<: MPolyElem{Nemo.fmpq}})
-    """
-    for f being rational function over QQ returns a tuple
-    (degree, max_coef_size)
-    """
     num_deg, num_coef = get_degree_and_coeffsize(numerator(f))
     den_deg, den_coef = get_degree_and_coeffsize(denominator(f))
     return (max(num_deg, den_deg), max(num_coef, den_coef))
@@ -132,12 +134,13 @@ end
 
 #------------------------------------------------------------------------------
 
-function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any, 1}, p::Float64 = 0.99) where P <: MPolyElem{Nemo.fmpq}
-    """
-    Checks the local identifiability/observability of the functions in funcs_to_check
-    The result is correct with probability at least p
-    """
+"""
+    assess_local_identifiability(ode, funcs_to_check, p)
 
+Checks the local identifiability/observability of the functions in funcs_to_check
+The result is correct with probability at least p
+"""
+function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any, 1}, p::Float64 = 0.99) where P <: MPolyElem{Nemo.fmpq}
     # Computing the prime using Proposition 3.3 from https://doi.org/10.1006/jsco.2002.0532
     @debug "Computing the prime number"
     d, h = 1, 1
