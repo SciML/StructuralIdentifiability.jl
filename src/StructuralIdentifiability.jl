@@ -21,6 +21,9 @@ export ODE, @ODEmodel
 # assessing identifiability
 export assess_local_identifiability, assess_global_identifiability, assess_identifiability
 
+# auxuliary function
+export set_parameter_values
+
 # extra functionality
 export find_ioequations, extract_identifiable_functions 
 

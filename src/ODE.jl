@@ -44,21 +44,22 @@ end
 #------------------------------------------------------------------------------
 
 """
-    SetParameterValues(ode, param_values)
+    set_parameter_values(ode, param_values)
 
 Input:
     - ode, an ODE as above
     - param_values, values for (some of) the parameters as dictionary parameter => value
 Output: new ode with the parameters in param_values plugged with the given numbers
 """
-function SetParameterValues(ode::ODE{P}, param_values::Dict{P, T}) where {T <: FieldElem, P <: MPolyElem{T}}
+function set_parameter_values(ode::ODE{P}, param_values::Dict{P, T}) where {T <: FieldElem, P <: MPolyElem{T}}
     new_vars = map(var_to_str, [v for v in gens(ode.poly_ring) if !(v in keys(param_values))])
-    small_ring, small_vars = PolynomialRing(base_ring(ode.poly_ring), new_vars)
+    small_ring, small_vars = Nemo.PolynomialRing(base_ring(ode.poly_ring), new_vars)
     eval_dict = Dict(str_to_var(v, ode.poly_ring) => str_to_var(v, small_ring) for v in new_vars)
     merge!(eval_dict, Dict(p => small_ring(val) for (p, val) in param_values))
 
     return ODE{P}(
-        Dict{P, Union{P, Generic.Frac{P}}}(eval_at_dict(v, eval_dict) => eval_at_dict(f, eval_dict) for (v, f) in ode.equations),
+        Dict{P, Union{P, Generic.Frac{P}}}(eval_at_dict(v, eval_dict) => eval_at_dict(f, eval_dict) for (v, f) in ode.x_equations),
+        Dict{P, Union{P, Generic.Frac{P}}}(eval_at_dict(v, eval_dict) => eval_at_dict(f, eval_dict) for (v, f) in ode.y_equations),
         [eval_at_dict(u, eval_dict) for u in ode.u_vars]
     )
 end
