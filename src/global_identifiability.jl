@@ -43,6 +43,7 @@ function check_field_membership(
     @debug "\tThe total number of variables in $(length(total_vars))"
 
     sampling_bound = BigInt(3 * BigInt(degree)^(length(total_vars) + 3) * length(rat_funcs) * ceil(1 / (1 - p)))
+    #sampling_bound = 5
     @debug "\tSampling from $(-sampling_bound) to $(sampling_bound)"
     point = map(v -> rand(-sampling_bound:sampling_bound), gens(ring))
     @debug "\tPoint is $point"
@@ -78,6 +79,7 @@ function check_field_membership(
     else
         throw(Base.ArgumentError("Unknown method $method"))
     end
+    #@debug gens(gb)
 
     @debug "Producing the result"
     flush(stdout)
@@ -162,24 +164,31 @@ function assess_global_identifiability(
     @info "Computing IO-equations"
     ioeq_time = @elapsed io_equations = find_ioequations(ode; var_change_policy=var_change)
     @debug "Sizes: $(map(length, values(io_equations)))"
-    @info "Computed in $ioeq_time seconds"
+    @info "Computed in $ioeq_time seconds" :ioeq_time ioeq_time
+    _runtime_logger[:ioeq_time] = ioeq_time
 
     @info "Computing Wronskians"
     wrnsk_time = @elapsed wrnsk = wronskian(io_equations, ode)
-    @info "Computed in $wrnsk_time seconds"
+    @info "Computed in $wrnsk_time seconds" :wrnsk_time wrnsk_time
+    _runtime_logger[:wrnsk_time] = wrnsk_time
+
     dims = map(ncols, wrnsk)
-    @debug "Dimensions of the wronskians $dims"
+    @info "Dimensions of the wronskians $dims"
+
     rank_times = @elapsed wranks = map(rank, wrnsk)
     @debug "Dimensions of the wronskians $dims"
     @debug "Ranks of the wronskians $wranks"
-    @info "Ranks of the Wronskians computed in $rank_times seconds"
+    @info "Ranks of the Wronskians computed in $rank_times seconds" :rank_time rank_times
+    _runtime_logger[:rank_time] = rank_times
+
     if any([dim != rk + 1 for (dim, rk) in zip(dims, wranks)])
         @warn "One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still  would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)"
     end
 
     @info "Assessing global identifiability using the coefficients of the io-equations"
     check_time = @elapsed result = check_identifiability(collect(values(io_equations)), ode.parameters, funcs_to_check, p; method=gb_method)
-    @info "Computed in $check_time seconds"
+    @info "Computed in $check_time seconds" :check_time check_time
+    _runtime_logger[:check_time] = check_time
 
     return result
 end
@@ -220,17 +229,18 @@ function simplify_field_generators(generators::Array{<: Array{<: MPolyElem, 1}, 
 
     total_vars = foldl(
         union, 
-        map(plist -> foldl(union, map(poly -> Set(vars(poly)), plist)), generators)
+        map(plist -> foldl(union, map(poly -> Set(map(var_to_str, vars(poly))), plist)), generators)
     )
     total_vars = collect(total_vars)
+    @debug sort(total_vars)
 
     @debug "Constructing the equations"
-    F, Fvars = Singular.FunctionField(Singular.QQ, map(var_to_str, total_vars))
+    F, Fvars = Singular.FunctionField(Singular.QQ, total_vars)
     eqs_sing = Array{Singular.spoly{Singular.n_transExt}, 1}()
     ring_sing, vars_sing = Singular.PolynomialRing(
                                F, 
                                vcat(
-                                    map(v -> var_to_str(v), total_vars),
+                                    total_vars,
                                     ["sat_aux$i" for i in 1:length(generators)]
                                );
                                ordering=:degrevlex
@@ -280,13 +290,20 @@ For the io_equation and the list of all parameter variables, returns a dictionar
 var => whether_globally_identifiable
 method can be "Singular" or "GroebnerBasis" yielding using Singular.jl or GroebnerBasis.jl
 """
-function extract_identifiable_functions(io_equations::Array{P, 1}, parameters::Array{P, 1}) where P <: MPolyElem{fmpq}
+function extract_identifiable_functions(
+    io_equations::Array{P, 1}, 
+    parameters::Array{P, 1}, 
+    known_functions::Array{P, 1}
+) where P <: MPolyElem{fmpq}
     @debug "Extracting coefficients"
     flush(stdout)
     nonparameters = filter(v -> !(var_to_str(v) in map(var_to_str, parameters)), gens(parent(io_equations[1])))
     coeff_lists = Array{Array{P, 1}, 1}()
     for eq in io_equations
         push!(coeff_lists, collect(values(extract_coefficients(eq, nonparameters))))
+    end
+    for f in known_functions
+        push!(coeff_lists, [one(parent(f)), f])
     end
     for p in coeff_lists
         @debug sort(map(total_degree, p))
@@ -295,4 +312,17 @@ function extract_identifiable_functions(io_equations::Array{P, 1}, parameters::A
     return simplify_field_generators(coeff_lists)
 end
 
+#------------------------------------------------------------------------------
 
+function find_identifiable_functions(ode::ODE{<: MPolyElem{fmpq}}, p::Float64=0.99)
+    @debug "Computing IO-equations"
+    io_equations = find_ioequations(ode)
+    global_result = check_identifiability(collect(values(io_equations)), ode.parameters, p)
+    known_params = Array{fmpq_mpoly, 1}()
+    for (glob, p) in zip(global_result, ode.parameters)
+        if glob
+            push!(known_params, p)
+        end
+    end
+    return extract_identifiable_functions(collect(values(io_equations)), ode.parameters, known_params)
+end

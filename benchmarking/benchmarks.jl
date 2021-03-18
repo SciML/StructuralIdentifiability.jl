@@ -31,7 +31,7 @@ benchmarks = [
             x3'(t) = b2 * (x2(t) - x3(t)),
             y1(t) = x0(t)
         ),
-        :skip => false
+        :skip => true
     ),
     Dict(
         :name => "SEAIJRC Covid model",
