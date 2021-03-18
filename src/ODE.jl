@@ -184,38 +184,6 @@ end
 
 #------------------------------------------------------------------------------
 
-"""
-    print_for_SIAN(ode)
-
-Prints the ODE in the format accepted by SIAN (https://github.com/pogudingleb/SIAN)
-TODO: update
-"""
-function print_for_SIAN(ode::ODE{P}, outputs::Array{P, 1}) where P <: MPolyElem{<: FieldElem}
-    var_to_str = Dict(x => var_to_str(x) * "(t)" for x in vcat(ode.x_vars, ode.u_vars))
-    merge!(var_to_str, Dict(p => var_to_str(p) for p in ode.parameters))
-    R_print, vars_print = PolynomialRing(base_ring(ode.poly_ring), [var_to_str[v] for v in gens(ode.poly_ring)])
-    result = ""
-
-    function _lhs_to_str(lhs)
-        num, den = unpack_fraction(lhs)
-        result = string(evaluate(num, vars_print))
-        if den != 1
-             result = "($result) / ($(evaluate(den, vars_print)))"
-        end
-        return result
-    end
-
-    for (x, f) in ode.equations
-        result = result * "diff(" * var_to_str(x) * "(t), t) = $(_lhs_to_str(f)), \n"
-    end
-    for (y_ind, g) in enumerate(outputs)
-        result = result * "y_var_$y_ind(t) = $(_lhs_to_str(g)), \n"
-    end
-    return result
-end
-
-#------------------------------------------------------------------------------
-
 function macrohelper_extract_vars(equations::Array{Expr, 1})
     funcs, x_vars, all_symb = Set(), Set(), Set()
     aux_symb = Set([:(+), :(-), :(=), :(*), :(^), :t, :(/), :(//)])

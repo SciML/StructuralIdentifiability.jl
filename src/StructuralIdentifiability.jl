@@ -25,11 +25,18 @@ export assess_local_identifiability, assess_global_identifiability, assess_ident
 export set_parameter_values
 
 # extra functionality
-export find_ioequations, extract_identifiable_functions 
+export find_ioequations, find_identifiable_functions
+
+# exporting to other formats
+export print_for_SIAN#, print_for_DAISY, print_for_RosenfeldGroebner, print_for_DifferentialThomas
+
+# would be great to merge with the Julia logger
+_runtime_logger = Dict()
 
 include("util.jl")
 include("power_series_utils.jl")
 include("ODE.jl")
+include("ODEexport.jl")
 include("local_identifiability.jl")
 include("wronskian.jl")
 include("elimination.jl")
@@ -56,6 +63,7 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem, 
     @info "Assessing local identifiability"
     runtime = @elapsed local_result = assess_local_identifiability(ode, funcs_to_check, p_loc)
     @info "Local identifiability assessed in $runtime seconds"
+    _runtime_logger[:loc_time] = runtime
 
     locally_identifiable = Array{Any, 1}()
     for (loc, f) in zip(local_result, funcs_to_check)
@@ -66,7 +74,8 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem, 
 
     @info "Assessing global identifiability"
     runtime = @elapsed global_result = assess_global_identifiability(ode, locally_identifiable, p_glob)
-    @info "Global identifiability assessed in $runtime seconds"
+    @info "Global identifiability assessed in $runtime seconds" 
+    _runtime_logger[:glob_time] = runtime
 
     result = Array{Symbol, 1}()
     glob_ind = 1
