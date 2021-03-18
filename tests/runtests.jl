@@ -14,7 +14,8 @@ using .StructuralIdentifiability: check_field_membership, check_identifiability,
                                   reduce_ode_mod_p, simplify_field_generators, ODE, @ODEmodel,
                                   truncate_matrix, find_ioequations, str_to_var, unpack_fraction,
                                   assess_global_identifiability, differentiate_output, var_to_str,
-                                  switch_ring, eval_at_dict, assess_local_identifiability
+                                  switch_ring, eval_at_dict, assess_local_identifiability,
+                                  assess_identifiability
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)
