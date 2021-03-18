@@ -146,7 +146,8 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
         d = max(d, df)
         h = max(h, hf)
     end
-    mu = ceil(1 / (1 - sqrt(p)))
+    p_per_func = 1 - (1 - p) / length(funcs_to_check)
+    mu = ceil(1 / (1 - sqrt(p_per_func)))
     n = length(ode.x_vars)
     m = length(ode.y_vars)
     r = length(ode.u_vars)

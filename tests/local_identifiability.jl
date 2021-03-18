@@ -10,8 +10,8 @@ using MacroTools
         x1'(t) = a21 * x0(t) - a12 * x1(t),
         y(t) = x0(t)
     )
-    funcs_to_test = [a01, a21, a12, a01 * a12, a01 + a12 + a21, (a01 + a12 + a21) // (a01 * a12)]
-    correct = [false, false, false, true, true, true]
+    funcs_to_test = [a01, a21, a12, a01 * a12, a01 + a12 + a21, (a01 + a12 + a21) // (a01 * a12), x0, x1]
+    correct = [false, false, false, true, true, true, true, false]
     push!(test_cases, Dict(
         :ode => ode,
         :funcs => funcs_to_test,
@@ -25,8 +25,8 @@ using MacroTools
         x1'(t) = c * x1(t) + d * x0(t) * x1(t),
         y(t) = x0(t)
     )
-    funcs_to_test = [a, b, c, d]
-    correct = [true, false, true, true]
+    funcs_to_test = [a, b, c, d, x0, x1]
+    correct = [true, false, true, true, true, false]
     push!(test_cases, Dict(
         :ode => ode,
         :funcs => funcs_to_test,
@@ -42,7 +42,7 @@ using MacroTools
         R'(t) = gam * I(t) - (mu + a) * R(t),
         y(t) = k * I(t)
     )
-    funcs_to_test = [mu, bi, bw, a, xi, gam, mu, gam + mu, k]
+    funcs_to_test = [mu, bi, bw, a, xi, gam, mu, gam + mu, k, S, I, W, R]
     correct = [true for _ in funcs_to_test]
     push!(test_cases, Dict(
         :ode => ode,
