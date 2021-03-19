@@ -52,10 +52,12 @@ function check_field_membership(
     eqs_sing = Array{Singular.spoly{Singular.n_Q}, 1}()
     ring_sing, vars_sing = Singular.PolynomialRing(
                                Singular.QQ, 
-                               vcat(map(var_to_str, gens(ring)), ["sat_aux$i" for i in 1:length(generators)]);
+                               #vcat(map(var_to_str, gens(ring)), ["sat_aux$i" for i in 1:length(generators)]);
+                               vcat(map(var_to_str, gens(ring)), ["sat_aux"]);
                                ordering=:degrevlex
                            )
 
+    common_pivot = one(ring_sing)
     for (i, component) in enumerate(generators)
         pivot = pivots[i]
         @debug "\tPivot polynomial is $(pivots)"
@@ -64,11 +66,13 @@ function check_field_membership(
             push!(eqs, poly * evaluate(ring(pivot), point) - evaluate(ring(poly), point) * pivot)
         end
         append!(eqs_sing, map(p -> parent_ring_change(p, ring_sing), eqs))
-        push!(
-            eqs_sing,
-            parent_ring_change(pivot, ring_sing) * vars_sing[end - i + 1] - 1
-        )
+        #push!(
+        #    eqs_sing,
+        #    parent_ring_change(pivot, ring_sing) * vars_sing[end - i + 1] - 1
+        #)
+        common_pivot = lcm(parent_ring_change(pivot, ring_sing), common_pivot)
     end
+    push!(eqs_sing, common_pivot * vars_sing[end] - 1)
 
     @debug "Computing Groebner basis ($(length(eqs_sing)) equations)"
     flush(stdout)
