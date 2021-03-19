@@ -6,7 +6,8 @@ using Nemo
 using Oscar
 using Singular
 
-using StructuralIdentifiability: check_field_membership, check_identifiability, check_primality_zerodim,
+include("../src/StructuralIdentifiability.jl")
+using .StructuralIdentifiability: check_field_membership, check_identifiability, check_primality_zerodim,
                                  det_minor_expansion, ExpVectTrie, get_max_below, ps_ode_solution, 
                                  power_series_solution, ps_diff, ps_integrate, ps_matrix_inv,
                                  ps_matrix_homlinear_de, ps_matrix_linear_de, ps_matrix_log,
@@ -14,7 +15,7 @@ using StructuralIdentifiability: check_field_membership, check_identifiability, 
                                  truncate_matrix, find_ioequations, str_to_var, unpack_fraction,
                                  assess_global_identifiability, differentiate_output, var_to_str,
                                  switch_ring, eval_at_dict, assess_local_identifiability,
-                                 assess_identifiability
+                                 assess_identifiability, monomial_compress, parent_ring_change
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)

@@ -1,6 +1,7 @@
 using Logging
 
-using StructuralIdentifiability
+include("../src/StructuralIdentifiability.jl")
+using .StructuralIdentifiability
 
 # SIWR Cholera model
 logger = Logging.SimpleLogger(stdout, Logging.Debug)

@@ -15,28 +15,40 @@ Output: pair (coeffs, terms) such that
     - length of the representation is the smallest possible
 """
 function monomial_compress(io_equation, ode::ODE)
-	params = ode.parameters
+    return monomial_compress(io_equation, ode.parameters)
+end
+
+function monomial_compress(io_equation, params::Array{<: MPolyElem, 1})
     other_vars = [v for v in gens(parent(io_equation)) if !(var_to_str(v) in map(var_to_str, params))]
 	coeffdict = extract_coefficients(io_equation, other_vars)
 	expvect = collect(keys(coeffdict))
 	coeffs = collect(values(coeffdict))
 	termlist = map(x->prod(other_vars.^x), expvect)
 
-    echelon_form = Dict()
+    echelon_form = Array{Any, 1}()
     for (c, p) in zip(coeffs, termlist)
-        for basis_c in keys(echelon_form)
+        for i in 1:length(echelon_form)
+            basis_c = echelon_form[i][1]
             coef = coeff(c, lm(basis_c)) // lc(basis_c)
             if coef != 0
                 c = c - coef * basis_c
-                echelon_form[basis_c] += coef * p
+                echelon_form[i][2] += coef * p
             end
         end
         if c != 0
-            echelon_form[c] = p
+            push!(echelon_form, [c, p])
         end
     end
 
-    return (collect(keys(echelon_form)), collect(values(echelon_form)))
+    result = ([a[1] for a in echelon_form], [a[2] for a in echelon_form])
+    #s = 0
+    #for (a, b) in zip(result[1], result[2])
+    #    s += parent_ring_change(a, parent(io_equation)) * parent_ring_change(b, parent(io_equation))
+    #end
+    #println("====================")
+    #println(s - io_equation)
+
+    return result
 end
 
 #----------------------------------------------------------------------------------------------------

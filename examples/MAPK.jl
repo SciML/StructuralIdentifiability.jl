@@ -26,4 +26,4 @@ ode = @ODEmodel(
     y5(t) = S11(t)
 )
 
-@time println(assess_global_identifiability(ode))
+@time println(assess_identifiability(ode))

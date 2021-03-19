@@ -39,16 +39,16 @@ function print_for_DAISY(ode::ODE)
     result = ""
 
     # listing functions (ordering u, y, x matters!)
-    result = result * "B_:={" * join(map(var_to_str, vcat(ode.u_vars, ode.y_vars, ode.x_vars)), ", ") * "}$\n"
+    result = result * "B_:={" * join(map(var_to_str, vcat(ode.u_vars, ode.y_vars, ode.x_vars)), ", ") * "}\$\n"
 
-    result = result * "FOR EACH EL_ IN B_ DO DEPEND EL_,T$\n"
+    result = result * "FOR EACH EL_ IN B_ DO DEPEND EL_,T\$\n"
 
     # listing parameters
-    result = result * result * "B1_:={" * join(map(var_to_str, ode.parameters), ", ") * "}$\n"
+    result = result * result * "B1_:={" * join(map(var_to_str, ode.parameters), ", ") * "}\$\n"
 
-    result = result * "%NUMBER OF STATES\nNX_:=$(length(ode.x_vars))$"
-    result = result * "%NUMBER OF INPUTS\nNU_:=$(length(ode.u_vars))$"
-    result = result * "%NUMBER OF OUTPUTS\nNY_:=$(lenght(ode.y_vars))$"
+    result = result * "%NUMBER OF STATES\nNX_:=$(length(ode.x_vars))\$"
+    result = result * "%NUMBER OF INPUTS\nNU_:=$(length(ode.u_vars))\$"
+    result = result * "%NUMBER OF OUTPUTS\nNY_:=$(lenght(ode.y_vars))\$"
 
     eqs = []
 
@@ -68,9 +68,9 @@ function print_for_DAISY(ode::ODE)
         push!(eqs, "$(var_to_str(y)) = " * _lhs_to_str(g))
     end
 
-    result = result * "C_:={" * join(eqs, ",\n") * "}$\n"
+    result = result * "C_:={" * join(eqs, ",\n") * "}\$\n"
 
-    result = result * "SEED_:=25$\nDAISY()\$\nEND$\n"
+    result = result * "SEED_:=25\$\nDAISY()\$\nEND\$\n"
 
     return result
 end

@@ -1,4 +1,5 @@
 using Logging
+using Printf
 
 include("../src/StructuralIdentifiability.jl")
 using .StructuralIdentifiability
@@ -32,4 +33,18 @@ for bmark in benchmarks
     end
 end
 
-println(runtimes)
+resulting_md = ""
+
+resulting_md *= "|Model|" * join(TIME_CATEGORIES, "|") * "|\n"
+resulting_md *= "|-----|" * join(["---" for _ in TIME_CATEGORIES], "|") * "|\n"
+for (name, times) in runtimes
+    global resulting_md *= "|$name|"
+    for c in TIME_CATEGORIES
+        resulting_md *= @sprintf("%.2f", times[c]) * "|"
+    end
+    resulting_md *= "\n"
+end
+
+open("benchmark_result.md", "w") do io
+    write(io, resulting_md)
+end
