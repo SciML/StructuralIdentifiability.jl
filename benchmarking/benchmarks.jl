@@ -78,5 +78,29 @@ benchmarks = [
             x4'(t) = sigma * x4(t) * (gama * x2(t) - delta * x3(t)) / x3(t),
             y(t) = x1(t)
         )
+    ),
+    Dict(
+        :name => "HIV",
+        :ode => @ODEmodel(
+            x'(t) = lm - d * x(t) - beta * x(t) * v(t),
+            y'(t) = beta * x(t) * v(t) - a * y(t),
+            v'(t) = k * y(t) - u * v(t),
+            w'(t) = c * x(t) * y(t) * w(t) - c * q * y(t) * w(t) - b * w(t),
+            z'(t) = c * q * y(t) * w(t) - h * z(t),
+            y1(t) = w(t),
+            y2(t) = z(t)
+        )
+    ),
+    Dict(
+        :name => "SIRS forced",
+        :ode => @ODEmodel(
+            s'(t) = mu - mu * s(t) - b0 * (1 + b1 * x1(t)) * i(t) * s(t) + g * r(t),
+            i'(t) = b0 * (1 + b1 * x1(t)) * i(t) * s(t) - (nu + mu) * i(t),
+            r'(t) = nu * i(t) - (mu + g) * r(t),
+            x1'(t) = -M * x2(t),
+            x2'(t) = M * x1(t),
+            y1(t) = i(t),
+            y2(t) = r(t)
+        )
     )
 ]
