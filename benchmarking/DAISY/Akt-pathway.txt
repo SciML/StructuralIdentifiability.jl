@@ -1,0 +1,26 @@
+B_:={pro_EGFR, y2, y1, y3, S6, EGFR, pAkt, EGF_EGFR, pEGFR, pS6, pAkt_S6, Akt, pEGFR_Akt}$
+FOR EACH EL_ IN B_ DO DEPEND EL_,T$
+
+B1_:={a2, a3, reaction_1_k1, reaction_4_k1, reaction_9_k1, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, reaction_3_k1, reaction_5_k1, reaction_2_k1, EGFR_turnover, reaction_2_k2, reaction_5_k2, reaction_8_k1}$
+ %NUMBER OF STATES
+NX_:=9$
+ %NUMBER OF INPUTS
+NU_:=1$
+ %NUMBER OF OUTPUTS
+NY_:=3$
+
+C_:={df(S6, t) = pS6*reaction_8_k1 - pAkt*reaction_5_k1*S6 + pAkt_S6*reaction_5_k2,
+df(EGFR, t) = -reaction_1_k1*EGF_EGFR + reaction_1_k2*EGF_EGFR - EGFR*EGFR_turnover + EGFR_turnover*pro_EGFR,
+df(pAkt, t) = -pAkt*reaction_7_k1 - pAkt*reaction_5_k1*S6 + reaction_6_k1*pAkt_S6 + reaction_3_k1*pEGFR_Akt + pAkt_S6*reaction_5_k2,
+df(EGF_EGFR, t) = reaction_1_k1*EGF_EGFR - reaction_9_k1*EGF_EGFR - reaction_1_k2*EGF_EGFR,
+df(pEGFR, t) = -reaction_4_k1*pEGFR + reaction_9_k1*EGF_EGFR - pEGFR*Akt*reaction_2_k1 + reaction_3_k1*pEGFR_Akt + pEGFR_Akt*reaction_2_k2,
+df(pS6, t) = -pS6*reaction_8_k1 + reaction_6_k1*pAkt_S6,
+df(pAkt_S6, t) = pAkt*reaction_5_k1*S6 - reaction_6_k1*pAkt_S6 - pAkt_S6*reaction_5_k2,
+df(Akt, t) = pAkt*reaction_7_k1 - pEGFR*Akt*reaction_2_k1 + pEGFR_Akt*reaction_2_k2,
+df(pEGFR_Akt, t) = pEGFR*Akt*reaction_2_k1 - reaction_3_k1*pEGFR_Akt - pEGFR_Akt*reaction_2_k2,
+y2 = a2*pAkt + a2*pAkt_S6,
+y1 = pEGFR*a1 + a1*pEGFR_Akt,
+y3 = pS6*a3}$
+SEED_:=25$
+DAISY()$
+END$

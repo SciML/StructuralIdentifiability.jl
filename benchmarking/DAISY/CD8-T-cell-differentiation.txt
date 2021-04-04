@@ -1,0 +1,22 @@
+B_:={y1, y3, y2, M, S, E, P, N}$
+FOR EACH EL_ IN B_ DO DEPEND EL_,T$
+
+B1_:={rho_P, mu_EE, delta_NE, mu_LE, delta_EL, mu_N, mu_M, delta_LM, mu_PE, mu_PL, mu_LL, mu_P, rho_E}$
+ %NUMBER OF STATES
+NX_:=5$
+ %NUMBER OF INPUTS
+NU_:=0$
+ %NUMBER OF OUTPUTS
+NY_:=3$
+
+C_:={df(M, t) = S*delta_LM - M*mu_M,
+df(S, t) = -mu_LE*S*E + delta_EL*S - S^2*mu_LL - S*delta_LM,
+df(E, t) = -mu_EE*E^2 + delta_NE*N*P - delta_EL*E + E*P*rho_E,
+df(P, t) = rho_P*P^2 - S*P*mu_PL - E*mu_PE*P - P*mu_P,
+df(N, t) = -delta_NE*N*P - mu_N*N,
+y1 = N,
+y3 = M,
+y2 = S + E}$
+SEED_:=25$
+DAISY()$
+END$

@@ -1,0 +1,20 @@
+B_:={y2, y, R, I, S, W}$
+FOR EACH EL_ IN B_ DO DEPEND EL_,T$
+
+B1_:={bi, gam, mu, bw, k, xi, a}$
+ %NUMBER OF STATES
+NX_:=4$
+ %NUMBER OF INPUTS
+NU_:=0$
+ %NUMBER OF OUTPUTS
+NY_:=2$
+
+C_:={df(R, t) = gam*I - R*mu - R*a,
+df(I, t) = bi*S*I - gam*I + S*bw*W - mu*I,
+df(S, t) = -bi*S*I - S*mu - S*bw*W + R*a + mu,
+df(W, t) = xi*I - xi*W,
+y2 = S + R + I,
+y = k*I}$
+SEED_:=25$
+DAISY()$
+END$

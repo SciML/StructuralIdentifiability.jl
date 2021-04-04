@@ -1,0 +1,23 @@
+B_:={y, y2, C, E, A, I, J, S, Ninv}$
+FOR EACH EL_ IN B_ DO DEPEND EL_,T$
+
+B1_:={b, alpha, g2, k, g1, q, r}$
+ %NUMBER OF STATES
+NX_:=7$
+ %NUMBER OF INPUTS
+NU_:=0$
+ %NUMBER OF OUTPUTS
+NY_:=2$
+
+C_:={df(C, t) = alpha*I,
+df(E, t) = b*S*Ninv*A*q + b*S*Ninv*I + b*S*Ninv*J - E*k,
+df(A, t) = -E*k*r + E*k - A*g1,
+df(I, t) = -alpha*I + E*k*r - g1*I,
+df(J, t) = alpha*I - g2*J,
+df(S, t) = -b*S*Ninv*A*q - b*S*Ninv*I - b*S*Ninv*J,
+df(Ninv, t) = 0,
+y = C,
+y2 = Ninv}$
+SEED_:=25$
+DAISY()$
+END$
