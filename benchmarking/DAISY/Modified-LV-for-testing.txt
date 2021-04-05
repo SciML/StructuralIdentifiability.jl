@@ -1,0 +1,17 @@
+B_:={y1, x2, x1}$
+FOR EACH EL_ IN B_ DO DEPEND EL_,T$
+
+B1_:={a, b, d, c}$
+ %NUMBER OF STATES
+NX_:=2$
+ %NUMBER OF INPUTS
+NU_:=0$
+ %NUMBER OF OUTPUTS
+NY_:=1$
+
+C_:={df(x2, t) = -a*b*x2 + d*x2*x1,
+df(x1, t) = a*x1 + b*x1 - x2*c*x1,
+y1 = x1}$
+SEED_:=25$
+DAISY()$
+END$

@@ -41,24 +41,24 @@ function print_for_DAISY(ode::ODE)
     # listing functions (ordering u, y, x matters!)
     result = result * "B_:={" * join(map(var_to_str, vcat(ode.u_vars, ode.y_vars, ode.x_vars)), ", ") * "}\$\n"
 
-    result = result * "FOR EACH EL_ IN B_ DO DEPEND EL_,T\$\n"
+    result = result * "FOR EACH EL_ IN B_ DO DEPEND EL_,T\$\n\n"
 
     # listing parameters
-    result = result * result * "B1_:={" * join(map(var_to_str, ode.parameters), ", ") * "}\$\n"
+    result = result * "B1_:={" * join(map(var_to_str, ode.parameters), ", ") * "}\$\n"
 
-    result = result * "%NUMBER OF STATES\nNX_:=$(length(ode.x_vars))\$"
-    result = result * "%NUMBER OF INPUTS\nNU_:=$(length(ode.u_vars))\$"
-    result = result * "%NUMBER OF OUTPUTS\nNY_:=$(lenght(ode.y_vars))\$"
+    result = result * " %NUMBER OF STATES\nNX_:=$(length(ode.x_vars))\$\n"
+    result = result * " %NUMBER OF INPUTS\nNU_:=$(length(ode.u_vars))\$\n"
+    result = result * " %NUMBER OF OUTPUTS\nNY_:=$(length(ode.y_vars))\$\n\n"
 
     eqs = []
 
     function _lhs_to_str(lhs)
-        num, den = unpack_fraction(rhs)
-        result = string(num)
+        num, den = unpack_fraction(lhs)
+        rslt = string(num)
         if den != 1
-             result = "($result) / ($den)"
+             rslt = "($rslt) / ($den)"
         end
-        return result
+        return rslt
     end
 
     for (x, f) in ode.x_equations

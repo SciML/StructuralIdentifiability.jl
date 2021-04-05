@@ -1,0 +1,22 @@
+B_:={y1, y2, x2, x3, x6, x4, x5, x1}$
+FOR EACH EL_ IN B_ DO DEPEND EL_,T$
+
+B1_:={k5, k3, k4, k2, k6, k1}$
+ %NUMBER OF STATES
+NX_:=6$
+ %NUMBER OF INPUTS
+NU_:=0$
+ %NUMBER OF OUTPUTS
+NY_:=2$
+
+C_:={df(x2, t) = k3*x4 + k2*x4 + k1*x1*x2,
+df(x3, t) = k5*x6 + k3*x4 - k6*x5*x3,
+df(x6, t) = -k5*x6 - k4*x6 + k6*x5*x3,
+df(x4, t) = -k3*x4 - k2*x4 + k1*x1*x2,
+df(x5, t) = k5*x6 + k4*x6 - k6*x5*x3,
+df(x1, t) = k4*x6 + k2*x4 - k1*x1*x2,
+y1 = x3,
+y2 = x2}$
+SEED_:=25$
+DAISY()$
+END$
