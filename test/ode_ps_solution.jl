@@ -1,6 +1,4 @@
 # using Profile
-using IterTools
-using Oscar
 
 function rand_poly(deg, vars)
     result = 0

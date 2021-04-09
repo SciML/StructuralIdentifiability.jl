@@ -39,12 +39,12 @@ function differentiate_solution(
     @debug "Building the variational system at the solution"
     # Y' = AY + B
     vars = vcat(ode.x_vars, ode.parameters)
-    SA = MatrixSpace(ps_ring, length(ode.x_vars), length(ode.x_vars))
+    SA = AbstractAlgebra.MatrixSpace(ps_ring, length(ode.x_vars), length(ode.x_vars))
     A = SA([
         eval_at_dict(derivative(ode.x_equations[vars[i]], vars[j]), ps_sol)
         for i in 1:length(ode.x_vars), j in 1:length(ode.x_vars)
     ])
-    SB = MatrixSpace(ps_ring, length(ode.x_vars), length(vars))
+    SB = AbstractAlgebra.MatrixSpace(ps_ring, length(ode.x_vars), length(vars))
     B = zero(SB)
     for i in 1:length(ode.x_vars)
         for j in (length(ode.x_vars) + 1):length(vars)
@@ -52,7 +52,7 @@ function differentiate_solution(
         end
     end
     # TODO: make use of one() function (problems modulo prime)
-    initial_condition = zero(MatrixSpace(base_ring(ode.poly_ring), length(ode.x_vars), length(vars)))
+    initial_condition = zero(Nemo.MatrixSpace(base_ring(ode.poly_ring), length(ode.x_vars), length(vars)))
     for i in 1:length(ode.x_vars)
         initial_condition[i, i] = 1
     end
@@ -177,7 +177,7 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
 
     @debug "Building the matrices"
     # +1 is for the function to assess
-    Jac = zero(MatrixSpace(F, length(ode.y_vars) * prec + 1, prec))
+    Jac = zero(Nemo.MatrixSpace(F, length(ode.y_vars) * prec + 1, prec))
     xs_params = vcat(ode_red.x_vars, ode_red.parameters)
     for (i, y) in enumerate(ode.y_vars)
         y_red = str_to_var(var_to_str(y), ode_red.poly_ring)

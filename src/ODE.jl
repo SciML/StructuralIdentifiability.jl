@@ -89,7 +89,7 @@ function power_series_solution(
     new_varnames = map(var_to_str, vcat(ode.x_vars, ode.u_vars))
     append!(new_varnames, map(v -> var_to_str(v) * "_dot", ode.x_vars))
 
-    new_ring, new_vars = PolynomialRing(base_ring(ode.poly_ring), new_varnames)
+    new_ring, new_vars = Nemo.PolynomialRing(base_ring(ode.poly_ring), new_varnames)
     equations = Array{P, 1}()
     evaluation = Dict(k => new_ring(v) for (k, v) in param_values)
     for v in vcat(ode.x_vars, ode.u_vars)
@@ -168,7 +168,7 @@ Input: ode is an ODE over QQ, p is a prime number
 Output: the reduction mod p, throws an exception if p divides one of the denominators
 """
 function reduce_ode_mod_p(ode::ODE{<: MPolyElem{Nemo.fmpq}}, p::Int)
-    new_ring, new_vars = PolynomialRing(Nemo.GF(p), map(var_to_str, gens(ode.poly_ring)))
+    new_ring, new_vars = Nemo.PolynomialRing(Nemo.GF(p), map(var_to_str, gens(ode.poly_ring)))
     new_type = typeof(new_vars[1])
     new_inputs = map(u -> switch_ring(u, new_ring), ode.u_vars)
     new_x_eqs = Dict{new_type, Union{new_type, Generic.Frac{new_type}}}()

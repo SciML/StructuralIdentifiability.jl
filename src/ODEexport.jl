@@ -6,7 +6,7 @@ Prints the ODE in the format accepted by SIAN (https://github.com/pogudingleb/SI
 function print_for_SIAN(ode::ODE)
     varstr = Dict(x => var_to_str(x) * "(t)" for x in vcat(ode.x_vars, ode.u_vars, ode.y_vars))
     merge!(varstr, Dict(p => var_to_str(p) for p in ode.parameters))
-    R_print, vars_print = PolynomialRing(base_ring(ode.poly_ring), [varstr[v] for v in gens(ode.poly_ring)])
+    R_print, vars_print = Nemo.PolynomialRing(base_ring(ode.poly_ring), [varstr[v] for v in gens(ode.poly_ring)])
     result = "read '../IdentifiabilityODE.mpl';\n\nsigma := [\n"
 
     function _rhs_to_str(rhs)

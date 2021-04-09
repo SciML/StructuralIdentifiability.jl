@@ -158,7 +158,7 @@ function uncertain_factorization(f::MPolyElem{fmpq})
         plugin = rand(5:10, length(vars_f) - 1)
         if evaluate(lc_f, vars_f[1 : end - 1], plugin) != 0
             f_sub = evaluate(f, vars_f[1 : end - 1], plugin)
-            uni_ring, var_uni = PolynomialRing(base_ring(f), string(main_var))
+            uni_ring, var_uni = Nemo.PolynomialRing(base_ring(f), string(main_var))
             f_uni = to_univariate(uni_ring, f_sub)
             if !issquarefree(f_uni)
                 f = divexact(f, gcd(f, derivative(f, main_var)))
@@ -231,7 +231,7 @@ function extract_coefficients(poly::P, variables::Array{P, 1}) where P <: MPolyE
     indices = [var_to_ind[v] for v in variables]
 
     coeff_vars = filter(v -> !(var_to_str(v) in map(var_to_str, variables)), gens(parent(poly)))
-    new_ring, new_vars = PolynomialRing(base_ring(parent(poly)), map(var_to_str, coeff_vars))
+    new_ring, new_vars = Nemo.PolynomialRing(base_ring(parent(poly)), map(var_to_str, coeff_vars))
     coeff_var_to_ind = Dict([(v, findfirst(e -> (e == v), gens(parent(poly)))) for v in coeff_vars])
     FieldType = typeof(one(base_ring(new_ring)))
 

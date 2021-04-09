@@ -31,7 +31,7 @@ function generate_io_equation_problem(ode::ODE{P}) where P <: MPolyElem{<: Field
         [var_to_str(u) * "_$i" for i in 0:dim_x for u in ode.u_vars],
         ["rand_proj_var"]
     )
-    ring, ring_vars = PolynomialRing(base_ring(ode.poly_ring), var_names)
+    ring, ring_vars = Nemo.PolynomialRing(base_ring(ode.poly_ring), var_names)
 
     # Definiting a (partial) derivation on it
     derivation = Dict{P, P}()

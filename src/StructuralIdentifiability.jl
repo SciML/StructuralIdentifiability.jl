@@ -12,8 +12,8 @@ using Primes
 # Algebra packages
 using AbstractAlgebra
 using Nemo
-using Oscar
 using GroebnerBasis
+using Singular
 
 # defining a model
 export ODE, @ODEmodel

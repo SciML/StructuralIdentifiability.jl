@@ -3,7 +3,6 @@ using TestSetExtensions
 
 using AbstractAlgebra
 using Nemo
-using Oscar
 using Singular
 
 include("../src/StructuralIdentifiability.jl")

@@ -194,7 +194,7 @@ function wronskian(io_equations::Dict{P, P}, ode::ODE{P}) where P <: MPolyElem
     # reducing everything modulo prime
     PRIME = 2^31 - 1
     F = Nemo.GF(PRIME)
-    polyring_red, gens_red = PolynomialRing(F, map(var_to_str, gens(parent(termlists[1][1]))))
+    polyring_red, gens_red = Nemo.PolynomialRing(F, map(var_to_str, gens(parent(termlists[1][1]))))
     termlists = [map(p -> parent_ring_change(p, polyring_red), tlist) for tlist in termlists]
     ode_red = reduce_ode_mod_p(ode, PRIME) 
 

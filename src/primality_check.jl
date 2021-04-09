@@ -4,7 +4,7 @@ function check_primality_zerodim(J::Singular.sideal{Singular.spoly{Singular.n_Q}
     J = Singular.std(J)
     basis = gens(Singular.kbase(J))
     dim = length(basis)
-    S = MatrixSpace(Nemo.QQ, dim, dim)
+    S = Nemo.MatrixSpace(Nemo.QQ, dim, dim)
     matrices = []
 
     for v in gens(base_ring(J))
