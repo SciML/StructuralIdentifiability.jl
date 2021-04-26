@@ -70,7 +70,7 @@ function print_for_DAISY(ode::ODE)
 
     result = result * "C_:={" * join(eqs, ",\n") * "}\$\n"
 
-    result = result * "SEED_:=25\$\nDAISY()\$\nEND\$\n"
+    result = result * "FLAG_:=1\$\nDAISY()\$\nEND\$\n"
 
     return result
 end
