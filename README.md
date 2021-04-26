@@ -98,3 +98,20 @@ Alexandre Sedoglavic,
 [*A probabilistic algorithm to test local algebraic observability in polynomial time*](https://doi.org/10.1006/jsco.2002.0532),
 Journal of Symbolic Computation, 2002.
 
+## Other identifiability software
+
+The following software can be used to assess both local and global identifiability
+
+* [SIAN](https://github.com/pogudingleb/SIAN) is written in Maple, there is a [Julia version](https://github.com/alexeyovchinnikov/SIAN-Julia). There is also a [webapp](https://maple.cloud/app/6509768948056064) with extended functionality.
+* [DAISY](https://daisy.dei.unipd.it/) a package for the Reduce computer algebra system
+* [COMBOS](http://biocyb1.cs.ucla.edu/combos/), a webapp.
+
+Some benchmarking results for them can be found in [this paper](https://doi.org/10.1093/bioinformatics/bty1069).
+
+The following software can be used to assess local identifiability
+
+* [STRIKE-GOLDD](https://sites.google.com/site/strikegolddtoolbox/) in Matlab
+* [ObservabilityTest](https://github.com/sedoglavic/ObservabilityTest/) in Maple
+* [IdentifiabilityAnalysis](http://www.fcc.chalmers.se/software/other-software/identifiabilityanalysis/) in Mathematica
+
+If your software is not listed here, sorry, we either forgot or did not know about it, feel free to contact Gleb Pogudin.
