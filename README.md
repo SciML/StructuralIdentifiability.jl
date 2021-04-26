@@ -10,7 +10,7 @@ For an introduction to structural identifiability, we refer to [[2]](#review).
 The package can be installed from this repository by
 ```julia
 > using Pkg
-> Pkg.add("https://github.com/pogudingleb/StructuralIdentifiability.jl")
+> Pkg.add(url = "https://github.com/pogudingleb/StructuralIdentifiability.jl")
 ```
 
 ## How to use
@@ -23,7 +23,7 @@ A parametric ODE system in the state-space from can be defined by the `@ODEmodel
 ```julia
 ode = @ODEmodel(
     x1'(t) = -(a01 + a21) * x1(t) + a12 * x2(t) + u(t),
-    x2'(t) = a21 * x1(t) - a21 * x2(t) - x3(t) / b,
+    x2'(t) = a21 * x1(t) - a12 * x2(t) - x3(t) / b,
     x3'(t) = x3(t),
     y(t) = x2(t)
 )
@@ -49,11 +49,25 @@ The returned value is a dictionary from the parameter of the model to one of the
 * `:locally` meaning that the parameter is locally but not globally identifiable
 * `:nonidentifiable` meaning that the parameter is not identifiable even locally.
 
+For example, for the `ode` defined above, it will be
+```julia
+Dict{Nemo.fmpq_mpoly, Symbol} with 4 entries:
+  a12 => :locally
+  a21 => :globally
+  a01 => :locally
+  b   => :nonidentifiable
+```
+
 If one is interested in the identifiability of particular functions of the parameter, one can pass a list of them as a second argument:
 ```julia
-assess_identifiability(ode, [a01 + a21, a01 * a21])
+assess_identifiability(ode, [a01 + a12, a01 * a12])
 ```
-This will return a list of the results (i.e., `:globally`, `:locally`, or `:nonidentifiable`).
+This will return a list of the results (i.e., `:globally`, `:locally`, or `:nonidentifiable`). In this example:
+```julia
+2-element Vector{Symbol}:
+ :globally
+ :globally
+```
 
 ### Assessing local identifiability
 
@@ -61,7 +75,11 @@ Local identifiability can be assessed efficiently even for the models for which 
 ```julia
 assess_local_identifiability(ode)
 ```
-The returned value is a dictionary from parameters and state variables to `true` (is locally identifiable) and `false` (not identifiable) values.
+The returned value is a dictionary from parameters and state variables to `true` (is locally identifiable) and `false` (not identifiable) values. In our example:
+```julia
+
+```
+
 As for `assess_identifiability`, one can assess local identifiability of arbitrary rational functions in the parameters (and also states) by providing a list of such functions as the second argument.
 
 **Remark** The algorithms we used are randomized, the default probability of the correctness of the result is 99%, one can change it by changing the value of a keyword argument `p` to any real number between 0 and 1, for example:
