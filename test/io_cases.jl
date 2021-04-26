@@ -47,7 +47,7 @@
         gen_symbols = symbols(parent(io_eq))
         correct_expr = Meta.parse(case["correct"])
         for (i, s) in enumerate(gen_symbols)
-            correct_expr = MacroTools.postwalk(ex -> ex == s ? :(polyvars[$i]) : ex, correct_expr)
+            correct_expr = StructuralIdentifiability.MacroTools.postwalk(ex -> ex == s ? :(polyvars[$i]) : ex, correct_expr)
         end
         # dirty hack to eval within the local scope
         correct_function = @eval function(eq)

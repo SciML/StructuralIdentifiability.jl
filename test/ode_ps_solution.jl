@@ -5,7 +5,7 @@ function rand_poly(deg, vars)
     indices = vcat(collect(1:length(vars)), collect(1:length(vars)))
     monomials = []
     for d in 0:deg
-        for subs in IterTools.subsets(indices, d)
+        for subs in StructuralIdentifiability.IterTools.subsets(indices, d)
             push!(monomials, subs)
         end
     end
