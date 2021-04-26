@@ -17,4 +17,4 @@ ode = @ODEmodel(
     y(t) = k * I(t)
 )
 
-@time println(assess_global_identifiability(ode))
+@time println(assess_identifiability(ode))

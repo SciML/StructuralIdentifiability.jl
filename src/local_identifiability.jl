@@ -201,4 +201,9 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
     return result
 end
 
+function assess_local_identifiability(ode::ODE{P}, p::Float64 = 0.99) where P <: MPolyElem{Nemo.fmpq}
+    params_and_states = vcat(ode.parameters, ode.x_vars)
+    result = assess_local_identifiability(ode, params_and_states)
+    return Dict(a => b for (a, b) in zip(params_and_states, result))
+end 
 #------------------------------------------------------------------------------
