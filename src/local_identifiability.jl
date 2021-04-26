@@ -205,5 +205,6 @@ function assess_local_identifiability(ode::ODE{P}, p::Float64 = 0.99) where P <:
     params_and_states = vcat(ode.parameters, ode.x_vars)
     result = assess_local_identifiability(ode, params_and_states)
     return Dict(a => b for (a, b) in zip(params_and_states, result))
-end 
+end
+
 #------------------------------------------------------------------------------
