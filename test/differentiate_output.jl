@@ -1,5 +1,3 @@
-using IterTools
-
 #------- Auxiliary functions --------------------------------------------------
 
 function diff_sol_Lie_derivatives(ode::ODE, params, ic, inputs, prec::Int)

@@ -1,5 +1,3 @@
-using MacroTools
-
 @testset "Assessing global identifiability" begin
     test_cases = []
 

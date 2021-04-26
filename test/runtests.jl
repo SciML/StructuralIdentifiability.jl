@@ -1,3 +1,5 @@
+using StructuralIdentifiability
+
 using StructuralIdentifiability.Test
 using StructuralIdentifiability.TestSetExtensions
 

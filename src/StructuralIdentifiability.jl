@@ -15,9 +15,11 @@ using Nemo
 using GroebnerBasis
 using Singular
 
-# For testing
+# For testing (TODO: move to the test-specific dependencies)
 using Test
 using TestSetExtensions
+using IterTools
+using MacroTools
 
 # defining a model
 export ODE, @ODEmodel
@@ -32,7 +34,7 @@ export set_parameter_values
 export find_ioequations, find_identifiable_functions
 
 # exporting to other formats
-export print_for_SIAN#, print_for_DAISY, print_for_RosenfeldGroebner, print_for_DifferentialThomas
+export print_for_SIAN, print_for_DAISY #, print_for_RosenfeldGroebner, print_for_DifferentialThomas
 
 # would be great to merge with the Julia logger
 _runtime_logger = Dict()

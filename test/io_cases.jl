@@ -1,5 +1,3 @@
-using MacroTools
-
 @testset "Checking io-equations: single output" begin
     test_cases = []
 
