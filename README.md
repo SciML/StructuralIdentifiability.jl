@@ -75,9 +75,16 @@ Local identifiability can be assessed efficiently even for the models for which 
 ```julia
 assess_local_identifiability(ode)
 ```
-The returned value is a dictionary from parameters and state variables to `true` (is locally identifiable) and `false` (not identifiable) values. In our example:
+The returned value is a dictionary from parameters and state variables to `1` (is locally identifiable/observable) and `0` (not identifiable/observable) values. In our example:
 ```julia
-
+Dict{Nemo.fmpq_mpoly, Bool} with 7 entries:
+  a12 => 1
+  a21 => 1
+  x3  => 0
+  a01 => 1
+  x2  => 1
+  x1  => 1
+  b   => 0
 ```
 
 As for `assess_identifiability`, one can assess local identifiability of arbitrary rational functions in the parameters (and also states) by providing a list of such functions as the second argument.
