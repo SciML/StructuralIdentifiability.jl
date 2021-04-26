@@ -1,9 +1,11 @@
+# Demignot, S., D., D., 
+# Effect of prosthetic sugar groups on the pharmacokinetics of glucose-oxidase
+# https://pubmed.ncbi.nlm.nih.gov/2855567/
 using Logging
 
-include("../src/StructuralIdentifiability.jl")
-using .StructuralIdentifiability
+using StructuralIdentifiability
 
-logger = Logging.SimpleLogger(stdout, Logging.Debug)
+logger = Logging.SimpleLogger(stdout, Logging.Info)
 global_logger(logger)
 
 ode = @ODEmodel(

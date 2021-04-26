@@ -1,9 +1,12 @@
+# Balsa-Canto, E., Alonso, A. A., Banga, J. R., 
+# An iterative identification procedure for dynamic modeling of biochemical networks
+# https://doi.org/10.1186/1752-0509-4-11
+# The model is out of reach at the moment but can be analyzed by SIAN (https://github.com/pogudingleb/SIAN)
 using Logging
 
-include("../src/StructuralIdentifiability.jl")
-using .StructuralIdentifiability
+using StructuralIdentifiability
 
-logger = Logging.SimpleLogger(stdout, Logging.Debug)
+logger = Logging.SimpleLogger(stdout, Logging.Info)
 global_logger(logger)
 
 ode = @ODEmodel(
@@ -50,5 +53,3 @@ ode = set_parameter_values(ode, Dict(
 ))
 
 @time io_equations = find_ioequations(ode)
-
-eq_list = collect(values(io_equations))

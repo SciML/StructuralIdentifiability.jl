@@ -1,9 +1,11 @@
+# Lee, E. C., Kelly, M. R., Ochocki, B. M., Akinwumi, S. M., Hamre, K. E., Tien, J. H., Eisenberg, M. C.,
+# Model distinguishability and inference robustness in mechanisms of cholera transmission and loss of immunity
+# https://doi.org/10.1016/j.jtbi.2017.01.032
+# Eq. (3) + extra output
 using Logging
 
-include("../src/StructuralIdentifiability.jl")
-using .StructuralIdentifiability
+using StructuralIdentifiability
 
-# This is the SIWR model with an extra output as considered in the SIAN paper
 logger = Logging.SimpleLogger(stdout, Logging.Debug)
 global_logger(logger)
 

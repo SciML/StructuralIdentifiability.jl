@@ -1,7 +1,10 @@
+# K. A. Fujita, Y. Toyoshima, S. Uda, Y. I. Ozaki, H. Kubota, and S. Kuroda
+# Decoupling of receptor and downstream signals in the Akt pathway by its low-pass filter characteristics
+# https://doi.org/10.1126/scisignal.2000810
+
 using Logging
 
-include("../src/StructuralIdentifiability.jl")
-using .StructuralIdentifiability
+using StructuralIdentifiability
 
 logger = Logging.SimpleLogger(stdout, Logging.Debug)
 global_logger(logger)

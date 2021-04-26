@@ -1,10 +1,12 @@
+# Wodarz, D., Nowak, M.
+# Specific therapy regimes could lead to long-term immunological control of HIV
+# https://doi.org/10.1073/pnas.96.25.14464
+# Page 1
 using Logging
 
-include("../src/StructuralIdentifiability.jl")
-using .StructuralIdentifiability
+using StructuralIdentifiability
 
-# SIWR Cholera model
-logger = Logging.SimpleLogger(stdout, Logging.Debug)
+logger = Logging.SimpleLogger(stdout, Logging.Info)
 global_logger(logger)
 
 ode = @ODEmodel(

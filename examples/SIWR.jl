@@ -1,10 +1,12 @@
+# Lee, E. C., Kelly, M. R., Ochocki, B. M., Akinwumi, S. M., Hamre, K. E., Tien, J. H., Eisenberg, M. C.,
+# Model distinguishability and inference robustness in mechanisms of cholera transmission and loss of immunity
+# https://doi.org/10.1016/j.jtbi.2017.01.032
+# Eq. (3)
 using Logging
 
-include("../src/StructuralIdentifiability.jl")
-using .StructuralIdentifiability
+using StructuralIdentifiability
 
-# SIWR Cholera model
-logger = Logging.SimpleLogger(stdout, Logging.Debug)
+logger = Logging.SimpleLogger(stdout, Logging.Info)
 global_logger(logger)
 
 ode = @ODEmodel(

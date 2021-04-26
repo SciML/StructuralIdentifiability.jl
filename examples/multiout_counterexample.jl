@@ -1,9 +1,9 @@
+# an artificial example illustrating the necessity of an extra projection in the multi-output case
 using Logging
 
-include("../src/StructuralIdentifiability.jl")
-using .StructuralIdentifiability
+using StructuralIdentifiability
 
-logger = Logging.SimpleLogger(stdout, Logging.Debug)
+logger = Logging.SimpleLogger(stdout, Logging.Info)
 global_logger(logger)
 
 ode = @ODEmodel(

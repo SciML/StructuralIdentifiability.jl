@@ -1,9 +1,11 @@
+# A. K. Manrai and J. Gunawardena. 
+# The geometry of multisite phosphorylation
+# https://dx.doi.org/10.1529%2Fbiophysj.108.140632
 using Logging
 
-include("../src/StructuralIdentifiability.jl")
-using .StructuralIdentifiability
+using StructuralIdentifiability
 
-logger = Logging.SimpleLogger(stdout, Logging.Debug)
+logger = Logging.SimpleLogger(stdout, Logging.Info)
 global_logger(logger)
 
 ode = @ODEmodel(

@@ -1,10 +1,12 @@
+# Capistran M., Moreles M., Lara B.
+# Parameter Estimation of Some Epidemic Models. The Case of Recurrent Epidemics Caused by Respiratory Syncytial Virus
+# doi.org/10.1007/s11538-009-9429-3
+# Equations (7)-(11)
 using Logging
 
-include("../src/StructuralIdentifiability.jl")
-using .StructuralIdentifiability
+using StructuralIdentifiability
 
-# SIWR Cholera model
-logger = Logging.SimpleLogger(stdout, Logging.Debug)
+logger = Logging.SimpleLogger(stdout, Logging.Info)
 global_logger(logger)
 
 ode = @ODEmodel(
