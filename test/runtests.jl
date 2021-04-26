@@ -1,12 +1,11 @@
-using Test
-using TestSetExtensions
+using StructuralIdentifiability.Test
+using StructuralIdentifiability.TestSetExtensions
 
-using AbstractAlgebra
-using Nemo
-using Singular
+using StructuralIdentifiability.AbstractAlgebra
+using StructuralIdentifiability.Nemo
+using StructuralIdentifiability.Singular
 
-include("../src/StructuralIdentifiability.jl")
-using .StructuralIdentifiability: check_field_membership, check_identifiability, check_primality_zerodim,
+using StructuralIdentifiability: check_field_membership, check_identifiability, check_primality_zerodim,
                                  det_minor_expansion, ExpVectTrie, get_max_below, ps_ode_solution, 
                                  power_series_solution, ps_diff, ps_integrate, ps_matrix_inv,
                                  ps_matrix_homlinear_de, ps_matrix_linear_de, ps_matrix_log,

@@ -15,6 +15,10 @@ using Nemo
 using GroebnerBasis
 using Singular
 
+# For testing
+using Test
+using TestSetExtensions
+
 # defining a model
 export ODE, @ODEmodel
 

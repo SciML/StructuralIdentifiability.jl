@@ -231,13 +231,14 @@ macro ODEmodel(ex::Expr...)
     equations = [ex...]
     x_vars, io_vars, all_symb = macrohelper_extract_vars(equations)
    
-    import_expr = :(using Nemo)
-
     # creating the polynomial ring
     vars_list = :([$(all_symb...)])
     R = gensym()
     vars_aux = gensym()
-    exp_ring = :(($R, $vars_aux) = Nemo.PolynomialRing(Nemo.QQ, map(string, $all_symb)))
+    exp_ring = :(($R, $vars_aux) = StructuralIdentifiability.Nemo.PolynomialRing(
+        StructuralIdentifiability.Nemo.QQ, 
+        map(string, $all_symb)
+    ))
     assignments = [:($(all_symb[i]) = $vars_aux[$i]) for i in 1:length(all_symb)]
     
     # preparing equations
@@ -245,8 +246,14 @@ macro ODEmodel(ex::Expr...)
     x_dict = gensym()
     y_dict = gensym()
     y_vars = Set()
-    x_dict_create_expr = :($x_dict = Dict{fmpq_mpoly, Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}}())
-    y_dict_create_expr = :($y_dict = Dict{fmpq_mpoly, Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}}())
+    x_dict_create_expr = :($x_dict = Dict{
+        StructuralIdentifiability.Nemo.fmpq_mpoly, 
+        Union{StructuralIdentifiability.Nemo.fmpq_mpoly, StructuralIdentifiability.AbstractAlgebra.Generic.Frac{StructuralIdentifiability.Nemo.fmpq_mpoly}}
+    }())
+    y_dict_create_expr = :($y_dict = Dict{
+        StructuralIdentifiability.Nemo.fmpq_mpoly, 
+        Union{StructuralIdentifiability.Nemo.fmpq_mpoly, StructuralIdentifiability.AbstractAlgebra.Generic.Frac{StructuralIdentifiability.Nemo.fmpq_mpoly}}
+    }())
     eqs_expr = []
     for eq in equations
         if eq.head != :(=)
@@ -279,11 +286,10 @@ macro ODEmodel(ex::Expr...)
     @info "Outputs: " * join(map(string, collect(y_vars)), ", ")
    
     # creating the ode object
-    ode_expr = :(ODE{fmpq_mpoly}($x_dict, $y_dict, Array{fmpq_mpoly}([$(u_vars...)])))
+    ode_expr = :(ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}($x_dict, $y_dict, Array{StructuralIdentifiability.Nemo.fmpq_mpoly}([$(u_vars...)])))
     
     result = Expr(
         :block,
-        import_expr,
         exp_ring, assignments..., 
         x_dict_create_expr, y_dict_create_expr, eqs_expr..., 
         ode_expr
