@@ -159,7 +159,6 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
     Dprime = D * (2 * log(n + ell + r + 1) + log(mu * D)) + 4 * (n + ell)^2 * ((n + m) * h + log(2 * n * D))
     prime = Primes.nextprime(Int(ceil(2 * mu * Dprime)))
     @debug "The prime is $prime"
-    prime = 2^31 - 1
     F = Nemo.GF(prime)
  
     @debug "Extending the model"
