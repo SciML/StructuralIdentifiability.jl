@@ -11,11 +11,11 @@ function print_for_SIAN(ode::ODE)
 
     function _rhs_to_str(rhs)
         num, den = unpack_fraction(rhs)
-        result = string(evaluate(num, vars_print))
+        res = string(evaluate(num, vars_print))
         if den != 1
-             result = "($result) / ($(evaluate(den, vars_print)))"
+             res = "($res) / ($(evaluate(den, vars_print)))"
         end
-        return result
+        return res
     end
 
     eqs = []

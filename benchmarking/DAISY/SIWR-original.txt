@@ -1,4 +1,4 @@
-B_:={y, S, I, R, W}$
+B_:={y, S, I, W, R}$
 FOR EACH EL_ IN B_ DO DEPEND EL_,T$
 
 B1_:={bi, gam, mu, bw, k, xi, a}$
@@ -11,9 +11,11 @@ NY_:=1$
 
 C_:={df(S, t) = -bi*S*I - S*mu - S*bw*W + R*a + mu,
 df(I, t) = bi*S*I - gam*I + S*bw*W - mu*I,
-df(R, t) = gam*I - R*mu - R*a,
 df(W, t) = xi*I - xi*W,
+df(R, t) = gam*I - R*mu - R*a,
 y = k*I}$
 FLAG_:=1$
+SHOWTIME$
 DAISY()$
+SHOWTIME$
 END$

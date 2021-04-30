@@ -1,8 +1,7 @@
 using Printf
 
-include("../src/StructuralIdentifiability.jl")
-using .StructuralIdentifiability
-using .StructuralIdentifiability: ODE, print_for_DAISY, print_for_SIAN
+using StructuralIdentifiability
+using StructuralIdentifiability: ODE, print_for_DAISY, print_for_SIAN
 
 include("benchmarks.jl")
 

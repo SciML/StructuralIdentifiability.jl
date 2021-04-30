@@ -1,4 +1,4 @@
-B_:={u, y3, y4, y5, y2, y6, y1, x15, x1, x6, x3, x5, x4, x7, x13, x8, x2, x12, x10, x11, x14, x9}$
+B_:={u, y4, y6, y2, y1, y3, y5, x15, x13, x7, x9, x2, x8, x14, x5, x4, x12, x6, x1, x10, x11, x3}$
 FOR EACH EL_ IN B_ DO DEPEND EL_,T$
 
 B1_:={e2a, i1, i1a, c5, k_deg, k2, t2, c3a, k3, k1, c4a, k_prod, t1}$
@@ -10,26 +10,28 @@ NU_:=1$
 NY_:=6$
 
 C_:={df(x15, t) = -1//2500*x15 + 1//2000000*x7,
-df(x1, t) = -x1*k_deg - x1*u*k1 + k_prod,
-df(x6, t) = -1//2*x10*x6 + 1//50000*x13 - i1*x6 - x5*t2,
-df(x3, t) = x2*k2*u*x8 + x2*k3 - x3*k_deg,
+df(x13, t) = e2a*x14 + 1//2*x10*x6 - x2*x13 - 1//50000*x13,
+df(x7, t) = 5*i1*x6 - 1//2*x11*x7,
+df(x9, t) = -1//2500*x9 - 1//2000000*x7,
+df(x2, t) = -1//5*x10*x2 - x2*x13 - x2*k_deg - x2*k2*u*x8 - x2*k3 + x1*u*k1 + x4*t1 + x5*t2,
+df(x8, t) = 1//2*x9 - c5*x8,
+df(x14, t) = -5*e2a*x14 + 1//2*x11*x7,
 df(x5, t) = x2*x13 - x5*t2,
 df(x4, t) = 1//5*x10*x2 - x4*t1,
-df(x7, t) = 5*i1*x6 - 1//2*x11*x7,
-df(x13, t) = e2a*x14 + 1//2*x10*x6 - x2*x13 - 1//50000*x13,
-df(x8, t) = 1//2*x9 - c5*x8,
-df(x2, t) = -1//5*x10*x2 - x2*x13 - x2*k_deg - x2*k2*u*x8 - x2*k3 + x1*u*k1 + x4*t1 + x5*t2,
 df(x12, t) = 1//2000000*x7 - c3a*x12,
+df(x6, t) = -1//2*x10*x6 + 1//50000*x13 - i1*x6 - x5*t2,
+df(x1, t) = -x1*k_deg - x1*u*k1 + k_prod,
 df(x10, t) = -1//5*x10*x2 - x10*i1a - 1//2*x10*x6 - 1//10000*x10 + 1//2000*x11 + x12*c4a,
 df(x11, t) = 5*x10*i1a - 1//2*x11*x7 - 1//400*x11,
-df(x14, t) = -5*e2a*x14 + 1//2*x11*x7,
-df(x9, t) = -1//2500*x9 - 1//2000000*x7,
-y3 = x9,
+df(x3, t) = x2*k2*u*x8 + x2*k3 - x3*k_deg,
 y4 = x2 + x3 + x1,
-y5 = x2,
-y2 = x10 + x13,
 y6 = x12,
-y1 = x7}$
+y2 = x10 + x13,
+y1 = x7,
+y3 = x9,
+y5 = x2}$
 FLAG_:=1$
+SHOWTIME$
 DAISY()$
+SHOWTIME$
 END$

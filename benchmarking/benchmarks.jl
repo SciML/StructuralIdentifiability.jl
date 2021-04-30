@@ -228,6 +228,8 @@ ode = @ODEmodel(
     y6(t) = x12(t)
 )
 
+QQ = StructuralIdentifiability.Nemo.QQ
+
 ode = set_parameter_values(ode, Dict(
     a1 => QQ(1, 2),
     a2 => QQ(1, 5),

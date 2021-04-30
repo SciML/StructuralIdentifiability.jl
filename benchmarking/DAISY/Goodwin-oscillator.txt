@@ -1,4 +1,4 @@
-B_:={y, x3, x4, x2, x1}$
+B_:={y, x2, x4, x1, x3}$
 FOR EACH EL_ IN B_ DO DEPEND EL_,T$
 
 B1_:={b, alpha, c, gama, delta, sigma, beta}$
@@ -9,11 +9,13 @@ NU_:=0$
  %NUMBER OF OUTPUTS
 NY_:=1$
 
-C_:={df(x3, t) = gama*x2 - delta*x3,
+C_:={df(x2, t) = alpha*x1 - beta*x2,
 df(x4, t) = (gama*sigma*x2*x4 - delta*sigma*x3*x4) / (x3),
-df(x2, t) = alpha*x1 - beta*x2,
 df(x1, t) = (-b*c*x1 - b*x1*x4 + 1) / (c + x4),
+df(x3, t) = gama*x2 - delta*x3,
 y = x1}$
 FLAG_:=1$
+SHOWTIME$
 DAISY()$
+SHOWTIME$
 END$
