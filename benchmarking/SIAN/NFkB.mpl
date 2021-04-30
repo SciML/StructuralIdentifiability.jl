@@ -1,4 +1,7 @@
-x2(t)diff(x15(t), t) = -1//2500*x15(t) + 1//2000000*x7(t),
+read '../IdentifiabilityODE.mpl';
+
+sigma := [
+diff(x15(t), t) = -1//2500*x15(t) + 1//2000000*x7(t),
 diff(x13(t), t) = e2a*x14(t) + 1//2*x10(t)*x6(t) - x2(t)*x13(t) - 1//50000*x13(t),
 diff(x7(t), t) = 5*i1*x6(t) - 1//2*x11(t)*x7(t),
 diff(x9(t), t) = -1//2500*x9(t) - 1//2000000*x7(t),

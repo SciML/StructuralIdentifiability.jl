@@ -1,4 +1,7 @@
-S(t) + E(t)diff(N(t), t) = -delta_NE*N(t)*P(t) - mu_N*N(t),
+read '../IdentifiabilityODE.mpl';
+
+sigma := [
+diff(N(t), t) = -delta_NE*N(t)*P(t) - mu_N*N(t),
 diff(S(t), t) = -mu_LE*S(t)*E(t) + delta_EL*S(t) - S(t)^2*mu_LL - S(t)*delta_LM,
 diff(M(t), t) = S(t)*delta_LM - M(t)*mu_M,
 diff(P(t), t) = rho_P*P(t)^2 - S(t)*P(t)*mu_PL - E(t)*mu_PE*P(t) - P(t)*mu_P,

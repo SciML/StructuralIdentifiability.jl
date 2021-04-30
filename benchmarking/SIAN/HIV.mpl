@@ -1,4 +1,7 @@
-w(t)diff(v(t), t) = k*y(t) - v(t)*u,
+read '../IdentifiabilityODE.mpl';
+
+sigma := [
+diff(v(t), t) = k*y(t) - v(t)*u,
 diff(x(t), t) = lm - x(t)*d - x(t)*v(t)*beta,
 diff(z(t), t) = c*w(t)*q*y(t) - h*z(t),
 diff(w(t), t) = -b*w(t) + c*w(t)*x(t)*y(t) - c*w(t)*q*y(t),

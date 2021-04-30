@@ -1,4 +1,7 @@
-S01(t) + S10(t)diff(KS00(t), t) = FS11(t)*gamma1100 + gamma1000*FS10(t) + FS01(t)*gamma0100 + b00*KS00(t) - S00(t)*K(t)*a00,
+read '../IdentifiabilityODE.mpl';
+
+sigma := [
+diff(KS00(t), t) = FS11(t)*gamma1100 + gamma1000*FS10(t) + FS01(t)*gamma0100 + b00*KS00(t) - S00(t)*K(t)*a00,
 diff(KS10(t), t) = -a10*K(t)*S10(t) + FS11(t)*gamma1110 - F(t)*alpha10*S10(t) + KS10(t)*b10 + beta10*FS10(t) + c0010*KS00(t),
 diff(S01(t), t) = -FS11(t)*beta11 - FS11(t)*gamma1100 - FS11(t)*gamma1101 - FS11(t)*gamma1110 + F(t)*alpha11*S11(t),
 diff(FS01(t), t) = FS11(t)*beta11 - F(t)*alpha11*S11(t) + KS10(t)*c1011 + c0111*KS01(t) + c0011*KS00(t),
