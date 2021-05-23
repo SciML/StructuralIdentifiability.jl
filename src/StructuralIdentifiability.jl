@@ -67,9 +67,14 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem, 
     p_loc = 1 - (1 - p) * 0.1
 
     @info "Assessing local identifiability"
-    runtime = @elapsed local_result = assess_local_identifiability(ode, funcs_to_check, p_loc)
+    runtime = @elapsed local_result, bound = assess_local_identifiability(ode, funcs_to_check, p_loc, :ME)
     @info "Local identifiability assessed in $runtime seconds"
     _runtime_logger[:loc_time] = runtime
+
+    if bound > 1
+        @warn "For this model single-experiment identifiable functions are not the same as multi-experiment identifiable. The analysis performed by this program is right now for multi-experiment only. If you still  would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)"
+        @debug "Bound: $bound"
+    end
 
     locally_identifiable = Array{Any, 1}()
     for (loc, f) in zip(local_result, funcs_to_check)
