@@ -1,6 +1,6 @@
-read '../IdentifiabilityODE.mpl';
+read "../IdentifiabilityODE.mpl";
 
-sigma := [
+sys := [
 diff(EGF_EGFR(t), t) = reaction_1_k1*EGF_EGFR(t) - reaction_9_k1*EGF_EGFR(t) - reaction_1_k2*EGF_EGFR(t),
 diff(EGFR(t), t) = -reaction_1_k1*EGF_EGFR(t) + reaction_1_k2*EGF_EGFR(t) - EGFR(t)*EGFR_turnover + EGFR_turnover*pro_EGFR(t),
 diff(pEGFR(t), t) = -reaction_4_k1*pEGFR(t) + reaction_9_k1*EGF_EGFR(t) - pEGFR(t)*Akt(t)*reaction_2_k1 + reaction_3_k1*pEGFR_Akt(t) + pEGFR_Akt(t)*reaction_2_k2,
@@ -14,4 +14,4 @@ y1(t) = pEGFR(t)*a1 + a1*pEGFR_Akt(t),
 y2(t) = a2*pAkt(t) + a2*pAkt_S6(t),
 y3(t) = pS6(t)*a3
 ];
-IdentifiabilityODE(sigma, GetParameters(sigma));
+CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));

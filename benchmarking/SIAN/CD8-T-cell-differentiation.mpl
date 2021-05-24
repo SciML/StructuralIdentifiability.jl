@@ -1,6 +1,6 @@
-read '../IdentifiabilityODE.mpl';
+read "../IdentifiabilityODE.mpl";
 
-sigma := [
+sys := [
 diff(N(t), t) = -delta_NE*N(t)*P(t) - mu_N*N(t),
 diff(S(t), t) = -mu_LE*S(t)*E(t) + delta_EL*S(t) - S(t)^2*mu_LL - S(t)*delta_LM,
 diff(M(t), t) = S(t)*delta_LM - M(t)*mu_M,
@@ -10,4 +10,4 @@ y1(t) = N(t),
 y3(t) = M(t),
 y2(t) = S(t) + E(t)
 ];
-IdentifiabilityODE(sigma, GetParameters(sigma));
+CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));

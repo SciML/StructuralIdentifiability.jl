@@ -1,6 +1,6 @@
-read '../IdentifiabilityODE.mpl';
+read "../IdentifiabilityODE.mpl";
 
-sigma := [
+sys := [
 diff(KS01(t), t) = c0001*KS00(t) + FS11(t)*gamma1101 - F(t)*alpha01*S01(t) + FS01(t)*beta01 - K(t)*S01(t)*a01 + KS01(t)*b01,
 diff(KS10(t), t) = -a10*K(t)*S10(t) + FS11(t)*gamma1110 - F(t)*alpha10*S10(t) + KS10(t)*b10 + beta10*FS10(t) + c0010*KS00(t),
 diff(FS01(t), t) = FS11(t)*beta11 - F(t)*alpha11*S11(t) + KS10(t)*c1011 + c0111*KS01(t) + c0011*KS00(t),
@@ -19,4 +19,4 @@ y5(t) = S11(t),
 y2(t) = S00(t),
 y3(t) = S01(t)
 ];
-IdentifiabilityODE(sigma, GetParameters(sigma));
+CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));

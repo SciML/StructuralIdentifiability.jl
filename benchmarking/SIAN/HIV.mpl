@@ -1,6 +1,6 @@
-read '../IdentifiabilityODE.mpl';
+read "../IdentifiabilityODE.mpl";
 
-sigma := [
+sys := [
 diff(v(t), t) = k*y(t) - v(t)*u,
 diff(x(t), t) = lm - x(t)*d - x(t)*v(t)*beta,
 diff(z(t), t) = c*w(t)*q*y(t) - h*z(t),
@@ -9,4 +9,4 @@ diff(y(t), t) = x(t)*v(t)*beta - a*y(t),
 y2(t) = z(t),
 y1(t) = w(t)
 ];
-IdentifiabilityODE(sigma, GetParameters(sigma));
+CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));

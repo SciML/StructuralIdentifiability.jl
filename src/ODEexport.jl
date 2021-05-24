@@ -7,7 +7,7 @@ function print_for_SIAN(ode::ODE)
     varstr = Dict(x => var_to_str(x) * "(t)" for x in vcat(ode.x_vars, ode.u_vars, ode.y_vars))
     merge!(varstr, Dict(p => var_to_str(p) for p in ode.parameters))
     R_print, vars_print = Nemo.PolynomialRing(base_ring(ode.poly_ring), [varstr[v] for v in gens(ode.poly_ring)])
-    result = "read '../IdentifiabilityODE.mpl';\n\nsigma := [\n"
+    result = "read \"../IdentifiabilityODE.mpl\";\n\nsys := [\n"
 
     function _rhs_to_str(rhs)
         num, den = unpack_fraction(rhs)
@@ -25,7 +25,9 @@ function print_for_SIAN(ode::ODE)
     for (y, g) in ode.y_equations
         push!(eqs, var_to_str(y) * "(t) = $(_rhs_to_str(g))")
     end
-    return result * join(eqs, ",\n") * "\n];\nIdentifiabilityODE(sigma, GetParameters(sigma));"
+    result = result * join(eqs, ",\n") * "\n];\nCodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));"
+    result = replace(result, "//" => "/")
+    return result
 end
 
 #------------------------------------------------------------------------------
@@ -72,5 +74,6 @@ function print_for_DAISY(ode::ODE)
 
     result = result * "FLAG_:=1\$\nSHOWTIME\$\nDAISY()\$\nSHOWTIME\$\nEND\$\n"
 
+    result = replace(result, "//" => "/")
     return result
 end
