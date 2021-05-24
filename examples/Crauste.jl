@@ -1,7 +1,6 @@
 using Logging
 
-include("../src/StructuralIdentifiability.jl")
-using .StructuralIdentifiability
+using StructuralIdentifiability
 
 logger = Logging.SimpleLogger(stdout, Logging.Debug)
 global_logger(logger)

@@ -1,7 +1,6 @@
 using Logging
 
-include("../src/StructuralIdentifiability.jl")
-using .StructuralIdentifiability
+using StructuralIdentifiability
 
 #QWWC
 logger = Logging.SimpleLogger(stdout, Logging.Debug)
@@ -15,4 +14,4 @@ ode = @ODEmodel(
     g(t) = x(t)
 )
 
-println(assess_global_identifiability(ode))
+println(assess_identifiability(ode))
