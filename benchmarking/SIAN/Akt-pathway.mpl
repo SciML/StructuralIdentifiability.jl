@@ -14,4 +14,4 @@ y1(t) = pEGFR(t)*a1 + a1*pEGFR_Akt(t),
 y2(t) = a2*pAkt(t) + a2*pAkt_S6(t),
 y3(t) = pS6(t)*a3
 ];
-CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));
+CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));

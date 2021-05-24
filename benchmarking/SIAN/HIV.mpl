@@ -9,4 +9,4 @@ diff(y(t), t) = x(t)*v(t)*beta - a*y(t),
 y2(t) = z(t),
 y1(t) = w(t)
 ];
-CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));
+CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));

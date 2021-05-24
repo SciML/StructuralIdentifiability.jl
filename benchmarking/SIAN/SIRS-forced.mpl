@@ -9,4 +9,4 @@ diff(x1(t), t) = -M*x2(t),
 y1(t) = i(t),
 y2(t) = r(t)
 ];
-CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));
+CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));

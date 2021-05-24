@@ -23,4 +23,4 @@ y1(t) = x7(t),
 y3(t) = x9(t),
 y5(t) = x2(t)
 ];
-CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));
+CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));

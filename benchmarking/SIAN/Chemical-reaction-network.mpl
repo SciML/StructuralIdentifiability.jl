@@ -10,4 +10,4 @@ diff(x3(t), t) = k5*x6(t) + k3*x4(t) - k6*x5(t)*x3(t),
 y1(t) = x3(t),
 y2(t) = x2(t)
 ];
-CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));
+CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));

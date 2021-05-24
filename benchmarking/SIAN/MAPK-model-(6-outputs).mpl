@@ -20,4 +20,4 @@ y0(t) = K(t),
 y4(t) = S10(t),
 y2(t) = S00(t)
 ];
-CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));
+CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));

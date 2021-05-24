@@ -25,7 +25,7 @@ function print_for_SIAN(ode::ODE)
     for (y, g) in ode.y_equations
         push!(eqs, var_to_str(y) * "(t) = $(_rhs_to_str(g))")
     end
-    result = result * join(eqs, ",\n") * "\n];\nCodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));"
+    result = result * join(eqs, ",\n") * "\n];\nCodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));"
     result = replace(result, "//" => "/")
     return result
 end

@@ -7,4 +7,4 @@ diff(x2(t), t) = (ka*kc*b1*x3(t) - ka*kc*b1*x2(t) + ka*b1*x0(t)*x3(t) - ka*b1*x0
 diff(x0(t), t) = (-ka*n*x0(t) - ka*kc*a1*x0(t) + ka*kc*a1*x1(t) - ka*a1*x0(t)^2 + ka*a1*x0(t)*x1(t) - kc*a1*x0(t)*x2(t) + kc*a1*x1(t)*x2(t)) / (ka*kc + ka*x0(t) + kc*x2(t)),
 y1(t) = x0(t)
 ];
-CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));
+CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));

@@ -10,4 +10,4 @@ y1(t) = N(t),
 y3(t) = M(t),
 y2(t) = S(t) + E(t)
 ];
-CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));
+CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));

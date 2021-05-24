@@ -11,4 +11,4 @@ diff(I(t), t) = -alpha*I(t) + E(t)*k*r - g1*I(t),
 y2(t) = Ninv(t),
 y(t) = C(t)
 ];
-CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));
+CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));

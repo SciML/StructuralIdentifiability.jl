@@ -7,4 +7,4 @@ diff(W(t), t) = xi*I(t) - xi*W(t),
 diff(R(t), t) = gam*I(t) - R(t)*mu - R(t)*a,
 y(t) = k*I(t)
 ];
-CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));
+CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));

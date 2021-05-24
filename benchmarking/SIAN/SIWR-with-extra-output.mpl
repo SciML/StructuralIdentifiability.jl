@@ -8,4 +8,4 @@ diff(R(t), t) = gam*I(t) - R(t)*mu - R(t)*a,
 y(t) = k*I(t),
 y2(t) = S(t) + R(t) + I(t)
 ];
-CodeTools[CPUInfo](IdentifiabilityODE(sys, GetParameters(sys)));
+CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));
