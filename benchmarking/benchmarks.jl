@@ -98,7 +98,8 @@ benchmarks = [
             y2(t) = S00(t),
             y3(t) = S01(t) + S10(t),
             y4(t) = S11(t)
-        ) 
+        ),
+        :skip => true 
     ),
     Dict(
         :name => "MAPK model (6 outputs)",
