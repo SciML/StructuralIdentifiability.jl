@@ -50,6 +50,10 @@ include("primality_check.jl")
 include("io_equation.jl")
 include("global_identifiability.jl")
 
+# experimental numeric-shnumeric
+include("differential_polynomials.jl")
+include("numeric.jl")
+
 """
     assess_identifiability(ode, [funcs_to_check, p=0.99])
 
