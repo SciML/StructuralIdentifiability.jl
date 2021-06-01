@@ -27,6 +27,7 @@ function print_for_SIAN(ode::ODE)
     end
     result = result * join(eqs, ",\n") * "\n];\nCodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));"
     result = replace(result, "//" => "/")
+    result = replace(result, "I(t)" => "II(t)")
     return result
 end
 
