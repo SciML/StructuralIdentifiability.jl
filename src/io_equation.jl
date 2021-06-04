@@ -53,7 +53,7 @@ function generate_io_equation_problem(ode::ODE{P}) where P <: MPolyElem{<: Field
     old_us = [parent_ring_change(u, ring) for u in ode.u_vars]
     new_us = [str_to_var(var_to_str(u) * "_0", ring) for u in ode.u_vars]
     function to_new_ring(p)
-        return evaluate(parent_ring_change(ode.poly_ring(p), ring), old_us, new_us)
+        return AbstractAlgebra.evaluate(parent_ring_change(ode.poly_ring(p), ring), old_us, new_us)
     end
     x_equations = Dict{P, P}()
     for x in ode.x_vars
@@ -257,7 +257,7 @@ function find_ioequations(
         for (y, io_eq) in io_equations
             extra_poly = eliminate_var(extra_poly, io_eq, y, point_generator)
         end
-        extra_poly = evaluate(extra_poly, [extra_var], [extra_var_rhs])
+        extra_poly = AbstractAlgebra.evaluate(extra_poly, [extra_var], [extra_var_rhs])
         if check_primality(io_equations, [extra_poly])
             @debug "Single component of highest dimension isolated, returning"
             io_equations[extra_var] = extra_poly

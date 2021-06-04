@@ -9,7 +9,7 @@ missing values are replaced with zeroes
 function eval_at_dict(poly::P, d::Dict{P, <: RingElem}) where P <: MPolyElem
     R = parent(first(values(d)))
     point = [get(d, v, zero(R)) for v in gens(parent(poly))]
-    return evaluate(poly, point)
+    return AbstractAlgebra.evaluate(poly, point)
 end
 
 function eval_at_dict(rational::Generic.Frac{<: P}, d::Dict{P, <: RingElem}) where P <: MPolyElem
@@ -156,8 +156,8 @@ function uncertain_factorization(f::MPolyElem{fmpq})
     is_irr = undef
     while true
         plugin = rand(5:10, length(vars_f) - 1)
-        if evaluate(lc_f, vars_f[1 : end - 1], plugin) != 0
-            f_sub = evaluate(f, vars_f[1 : end - 1], plugin)
+        if AbstractAlgebra.evaluate(lc_f, vars_f[1 : end - 1], plugin) != 0
+            f_sub = AbstractAlgebra.evaluate(f, vars_f[1 : end - 1], plugin)
             uni_ring, var_uni = Nemo.PolynomialRing(base_ring(f), string(main_var))
             f_uni = to_univariate(uni_ring, f_sub)
             if !issquarefree(f_uni)

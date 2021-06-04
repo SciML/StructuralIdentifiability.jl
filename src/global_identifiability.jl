@@ -63,7 +63,7 @@ function check_field_membership(
         @debug "\tPivot polynomial is $(pivots)"
         eqs = []
         for poly in component
-            push!(eqs, poly * evaluate(ring(pivot), point) - evaluate(ring(poly), point) * pivot)
+            push!(eqs, poly * Singular.evaluate(ring(pivot), point) - evaluate(ring(poly), point) * pivot)
         end
         append!(eqs_sing, map(p -> parent_ring_change(p, ring_sing), eqs))
         push!(
@@ -90,7 +90,7 @@ function check_field_membership(
     result = []
     for f in rat_funcs
         num, den = unpack_fraction(f)
-        poly = num * evaluate(den, point) - den * evaluate(num, point)
+        poly = num * evaluate(den, point) - den * Singular.evaluate(num, point)
         poly_sing = parent_ring_change(poly, ring_sing)
         push!(result, iszero(Singular.reduce(poly_sing, gb)))
     end

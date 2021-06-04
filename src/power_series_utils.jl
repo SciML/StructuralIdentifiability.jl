@@ -246,9 +246,9 @@ function ps_ode_solution(
         end
         eval_point = [solution[v] for v in gens(ring)]
         map(ps -> set_prec!(ps, 2 * cur_prec), eval_point)
-        eqs_eval = map(p -> evaluate(p, eval_point), eqs)
-        J_eval = map(p -> evaluate(p, eval_point), Jac_xs)
-        Jd_eval = map(p -> evaluate(p, eval_point), Jac_dots)
+        eqs_eval = map(p -> AbstractAlgebra.evaluate(p, eval_point), eqs)
+        J_eval = map(p -> AbstractAlgebra.evaluate(p, eval_point), Jac_xs)
+        Jd_eval = map(p -> AbstractAlgebra.evaluate(p, eval_point), Jac_dots)
         Jd_inv = ps_matrix_inv(Jd_eval, cur_prec)
 
         X_err = ps_matrix_linear_de(-Jd_inv * J_eval, -Jd_inv * eqs_eval, zero(Svconst))

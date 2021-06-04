@@ -30,7 +30,10 @@ function check_primality(polys::Dict{fmpq_mpoly, fmpq_mpoly}, extra_relations::A
     Rsing, vsing = Singular.PolynomialRing(Singular.QQ, [var_to_str(l) for l in leaders])
     eval_point = [v in keys(polys) ? v : ring(rand(1:100)) for v in gens(ring)]
     all_polys = vcat(collect(values(polys)), extra_relations)
-    zerodim_ideal = Singular.Ideal(Rsing, map(p -> parent_ring_change(evaluate(p, eval_point), Rsing), all_polys))
+    zerodim_ideal = Singular.Ideal(
+        Rsing, 
+        map(p -> parent_ring_change(AbstractAlgebra.evaluate(p, eval_point), Rsing), all_polys)
+    )
     
     return check_primality_zerodim(zerodim_ideal)
 end

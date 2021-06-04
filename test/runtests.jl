@@ -15,7 +15,8 @@ using StructuralIdentifiability: check_field_membership, check_identifiability, 
                                  truncate_matrix, find_ioequations, str_to_var, unpack_fraction,
                                  assess_global_identifiability, differentiate_output, var_to_str,
                                  switch_ring, eval_at_dict, assess_local_identifiability,
-                                 assess_identifiability, monomial_compress, parent_ring_change
+                                 assess_identifiability, monomial_compress, parent_ring_change,
+                                 get_poly_system_Lie, diffvar, get_poly_system_lazy, produce_point
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)

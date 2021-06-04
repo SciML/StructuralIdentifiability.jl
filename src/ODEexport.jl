@@ -11,9 +11,9 @@ function print_for_SIAN(ode::ODE)
 
     function _rhs_to_str(rhs)
         num, den = unpack_fraction(rhs)
-        res = string(evaluate(num, vars_print))
+        res = string(AbstractAlgebra.evaluate(num, vars_print))
         if den != 1
-             res = "($res) / ($(evaluate(den, vars_print)))"
+             res = "($res) / ($(AbstractAlgebra.evaluate(den, vars_print)))"
         end
         return res
     end
@@ -27,6 +27,7 @@ function print_for_SIAN(ode::ODE)
     end
     result = result * join(eqs, ",\n") * "\n];\nCodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));"
     result = replace(result, "//" => "/")
+    result = replace(result, "I(t)" => "II(t)")
     return result
 end
 
