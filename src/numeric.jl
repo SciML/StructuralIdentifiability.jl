@@ -1,7 +1,8 @@
+using Printf
 using HomotopyContinuation
 
 """
-    Everything for locally identifiable, polynomial, single-output, no-input models for the moment
+    Everything for locally identifiable, polynomial, single-output models for the moment
 """
 
 """
@@ -138,7 +139,6 @@ function get_poly_system_lazy(ode::ODE{P}) where P <: MPolyElem{<: FieldElem}
         for _ in 2:prolongation_total[var_to_str(x)]
             push!(result_core, diff(result_core[end], R))
         end
-        #append!(result_extra, prolongations[(prolongation_square[var_to_str(x)] + 1):end])
     end
 
     return Dict(
@@ -150,6 +150,10 @@ end
 
 #------------------------------------------------------------------------------
 
+"""
+    Converts any Oscar polynomial to a HomotopyContinuation polynomial via a given mapping
+    of variables
+"""
 function oscar_to_hc_poly(poly::MPolyElem, binding::Dict{<: MPolyElem, HomotopyContinuation.Variable})
     result = HomotopyContinuation.Expression(0)
     for (m, coef) in zip(exponent_vectors(poly), coeffs(poly))
@@ -161,8 +165,25 @@ end
 
 #------------------------------------------------------------------------------
 
+"""
+    Selects only those of points (with complex coordinates) which are (approximate)
+    zeroes of the give HC polynomials
+"""
+function filter_points(polynomials, vars, points, tolerance)
+    result = []
+    for p in points
+        if all([abs(HomotopyContinuation.evaluate(poly, vars => p)) > tolerance for poly in polynomials])
+            push!(result, p)
+        end
+    end
+    return result
+end
+
+#------------------------------------------------------------------------------
+
 function numerical_identifiability(ode::ODE{P}, method=:lazy, solver=:monodromy) where P <: MPolyElem{<: FieldElem}
-    # prolonging the system
+
+    # 1. Prolonging the system
     equations = undef
     if method == :lazy
         equations = get_poly_system_lazy(ode)
@@ -173,19 +194,24 @@ function numerical_identifiability(ode::ODE{P}, method=:lazy, solver=:monodromy)
     end
     R = equations[:diff_ring]
 
-    # generating a solution
-    param_vals = Dict(p => Nemo.QQ(rand(1:10) // 10) for p in ode.parameters)
-    ic_vals = Dict(x => Nemo.QQ(rand(1:10) // 10) for x in ode.x_vars)
-    ps_sol = power_series_solution(
-        ode, 
-        param_vals, 
-        ic_vals, 
-        Dict{P, Array{fmpq, 1}}(), length(ode.x_vars) + length(ode.parameters) + 2
+    # 2. Sampling a polint
+    # no special reason for "+2" in the precision
+    prec = length(ode.x_vars) + length(ode.parameters) + 2
+    # constant for sampling
+    N = 100
+    param_vals = Dict(p => Nemo.QQ(rand(1:N) // N) for p in ode.parameters)
+    ic_vals = Dict(x => Nemo.QQ(rand(1:N) // N) for x in ode.x_vars)
+    input_vals = Dict{fmpq_mpoly, Array{fmpq, 1}}(
+        u => Array{fmpq, 1}([Nemo.QQ(rand(1:N) // N) for _ in 0:prec]) for u in ode.u_vars
     )
+    ps_sol = power_series_solution(ode, param_vals, ic_vals, input_vals, prec)
     ps_sol = Dict(var_to_str(v) => sol for (v, sol) in ps_sol)
     point = produce_point(ps_sol, R)
 
-    y_varnames = map(var_to_str, ode.y_vars)
+    # 3. Converting the system to HC format
+    yu_varnames = map(var_to_str, vcat(ode.y_vars, ode.u_vars))
+    # in the HC terminology parameters would be the derivatives of the observables and inputs;
+    # the rest would be nonparameters
     params = Array{HomotopyContinuation.Variable, 1}()
     nonparams = collect(map(p -> Variable(var_to_str(p)), R.parameters))
     binding = Dict(p => Variable(var_to_str(p)) for p in R.parameters)
@@ -193,7 +219,7 @@ function numerical_identifiability(ode::ODE{P}, method=:lazy, solver=:monodromy)
     for (i, v) in enumerate(R.diff_var_names)
         for ord in 0:R.max_orders[i]
             binding[str_to_var(diffvar(v, ord), R.ring)] = Variable(v, ord)
-            if v in y_varnames 
+            if v in yu_varnames 
                 push!(params, Variable(v, ord))
             else
                 push!(nonparams, Variable(v, ord))
@@ -209,6 +235,7 @@ function numerical_identifiability(ode::ODE{P}, method=:lazy, solver=:monodromy)
     point_param = [Float64(point[inv_binding[p]]) for p in params]
     point_nonparam = [Float64(point[inv_binding[np]]) for np in nonparams]
 
+    # 4. Solving
     sol_raw = undef
     if solver == :monodromy
         system = HomotopyContinuation.System(hc_polys; parameters=params)
@@ -222,22 +249,20 @@ function numerical_identifiability(ode::ODE{P}, method=:lazy, solver=:monodromy)
 
     @info sol_raw
 
-    final_result = []
-    for solution in solutions(sol_raw)
-        to_add = true
-        for poly in hc_polys_ext
-            if abs(HomotopyContinuation.evaluate(poly, vcat(nonparams, params) => vcat(solution, point_param))) > 10^(-6)
-                to_add = false
-                println(HomotopyContinuation.evaluate(poly, vcat(nonparams, params) => vcat(solution, point_param)))
-            end
-        end
-        if to_add
-            push!(final_result, solution)
+    # 5. Filtering
+    filtered = filter_points(
+        [HomotopyContinuation.evaluate(poly, params => point_param) for poly in hc_polys_ext],
+        solutions(sol_raw),
+        nonparams,
+        10^(-6)
+    )
+
+    @info "Number of solutions: $(length(filtered))"
+    if length(filtered) > 1
+        for (i, v) in enumerate(nonparams)
+            @info "$v : " * join([@sprintf("%.2f + %.2f im", real(s[i]), imag(s[i])) for s in filtered], "  ")
         end
     end
 
-    @info "Number of solutions: $(length(final_result))"
-    @info final_result
-
-    return length(final_result) == 1
+    return length(filtered) == 1
 end
