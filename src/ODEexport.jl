@@ -1,14 +1,40 @@
 """
-    print_for_SIAN(ode)
+    print_for_maple(ode, package)
 
-Prints the ODE in the format accepted by SIAN (https://github.com/pogudingleb/SIAN)
+Prints the ODE in the format accepted by maple packages
+  - SIAN (https://github.com/pogudingleb/SIAN) if package=:SIAN
+  - DifferentialAlgebra if package=:DifferentialAlgebra
+  - DifferentialThomas if package=:DifferentialThomas
 """
-function print_for_SIAN(ode::ODE)
+function print_for_maple(ode::ODE, package=:SIAN)
     varstr = Dict(x => var_to_str(x) * "(t)" for x in vcat(ode.x_vars, ode.u_vars, ode.y_vars))
     merge!(varstr, Dict(p => var_to_str(p) for p in ode.parameters))
     R_print, vars_print = Nemo.PolynomialRing(base_ring(ode.poly_ring), [varstr[v] for v in gens(ode.poly_ring)])
-    result = "read \"../IdentifiabilityODE.mpl\";\n\nsys := [\n"
+    x_names = join(map(var_to_str, ode.x_vars), ", ")
+    y_names = join(map(var_to_str, ode.y_vars), ", ")
+    u_names = join(map(var_to_str, ode.u_vars), ", ")
+    u_string = length(u_names) > 0 ? "[$u_names]" : ""
+    ranking = "[$x_names], [$y_names], $u_string"
 
+    result = ""
+
+    # Forming the header
+    if package == :SIAN
+        result *= "read \"../IdentifiabilityODE.mpl\";\n\nsys := [\n"
+    elseif package == :DifferentialAlgebra
+        result *= "with(DifferentialAlgebra):\n"
+        u_string = length(u_names) > 0 ? "[$u_names]" : ""
+        result *= "ring_diff := DifferentialRing(blocks = [$ranking], derivations = [t]):\n"
+        result *= "sys := [\n"
+    elseif package == :DifferentialThomas
+        result *= "with(DifferentialThomas):\nwith(Tools):\n"
+        result *= "Ranking($ranking):\n"
+        result *= "sys := [\n"
+    else
+        throw(Base.ArgumentError("Unknown package: $package"))
+    end
+
+    # Form the equations
     function _rhs_to_str(rhs)
         num, den = unpack_fraction(rhs)
         res = string(evaluate(num, vars_print))
@@ -20,12 +46,27 @@ function print_for_SIAN(ode::ODE)
 
     eqs = []
     for (x, f) in ode.x_equations
-        push!(eqs, "diff(" * var_to_str(x) * "(t), t) = $(_rhs_to_str(f))")
+        push!(eqs, ("diff(" * var_to_str(x) * "(t), t)", _rhs_to_str(f)))
     end
     for (y, g) in ode.y_equations
-        push!(eqs, var_to_str(y) * "(t) = $(_rhs_to_str(g))")
+        push!(eqs, (var_to_str(y) * "(t)", _rhs_to_str(g)))
     end
-    result = result * join(eqs, ",\n") * "\n];\nCodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));"
+    if package == :SIAN 
+        result *= join(map(a -> a[1] * " = " * a[2], eqs), ",\n") * "\n];\n"
+    else
+        result *= join(map(a -> "$(a[1]) - ($(a[2]))", eqs), ",\n") * "\n];\n"
+    end
+
+    # Forming the footer
+    if package == :SIAN
+        result *= "CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));"
+    elseif package == :DifferentialAlgebra
+        result *= "CodeTools[CPUTime](RosenfeldGroebner(sys, ring_diff));"
+    else
+        result *= "CodeTools[CPUTime](ThomasDecomposition(sys));"
+    end
+
+    # Eliminating Julia integer divisions and variable name I
     result = replace(result, "//" => "/")
     result = replace(result, "I(t)" => "II(t)")
     return result

@@ -1,14 +1,24 @@
 using Printf
 
 using StructuralIdentifiability
-using StructuralIdentifiability: ODE, print_for_DAISY, print_for_SIAN
+using StructuralIdentifiability: ODE, print_for_DAISY, print_for_maple
 
 include("benchmarks.jl")
 
 formats = [
     Dict(
         :name => "SIAN",
-        :function => print_for_SIAN,
+        :function => ode -> print_for_maple(ode, :SIAN),
+        :extension => ".mpl"
+    ),
+    Dict(
+        :name => "RosenfeldGroebner",
+        :function => ode -> print_for_maple(ode, :DifferentialAlgebra),
+        :extension => ".mpl"
+    ),
+    Dict(
+        :name => "DifferentialThomas",
+        :function => ode -> print_for_maple(ode, :DifferentialThomas),
         :extension => ".mpl"
     ),
     Dict(

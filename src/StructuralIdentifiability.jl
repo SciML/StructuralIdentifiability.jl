@@ -34,7 +34,7 @@ export set_parameter_values
 export find_ioequations, find_identifiable_functions
 
 # exporting to other formats
-export print_for_SIAN, print_for_DAISY #, print_for_RosenfeldGroebner, print_for_DifferentialThomas
+export print_for_maple, print_for_DAISY
 
 # would be great to merge with the Julia logger
 _runtime_logger = Dict()
