@@ -61,9 +61,9 @@ function print_for_maple(ode::ODE, package=:SIAN)
     if package == :SIAN
         result *= "CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));"
     elseif package == :DifferentialAlgebra
-        result *= "CodeTools[CPUTime](RosenfeldGroebner(sys, ring_diff, singsol=none));"
+        result *= "res := CodeTools[CPUTime](RosenfeldGroebner(sys, ring_diff, singsol=none));"
     else
-        result *= "CodeTools[CPUTime](ThomasDecomposition(sys));"
+        result *= "res := CodeTools[CPUTime](ThomasDecomposition(sys));"
     end
 
     # Eliminating Julia integer divisions and variable name I
