@@ -13,8 +13,8 @@ function print_for_maple(ode::ODE, package=:SIAN)
     x_names = join(map(var_to_str, ode.x_vars), ", ")
     y_names = join(map(var_to_str, ode.y_vars), ", ")
     u_names = join(map(var_to_str, ode.u_vars), ", ")
-    u_string = length(u_names) > 0 ? "[$u_names]" : ""
-    ranking = "[$x_names], [$y_names], $u_string"
+    u_string = length(u_names) > 0 ? ", [$u_names]" : ""
+    ranking = "[$x_names], [$y_names] $u_string"
 
     result = ""
 
