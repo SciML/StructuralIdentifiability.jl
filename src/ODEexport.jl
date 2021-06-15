@@ -61,7 +61,7 @@ function print_for_maple(ode::ODE, package=:SIAN)
     if package == :SIAN
         result *= "CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));"
     elseif package == :DifferentialAlgebra
-        result *= "CodeTools[CPUTime](RosenfeldGroebner(sys, ring_diff));"
+        result *= "CodeTools[CPUTime](RosenfeldGroebner(sys, ring_diff, singsol=none));"
     else
         result *= "CodeTools[CPUTime](ThomasDecomposition(sys));"
     end
