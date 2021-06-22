@@ -298,3 +298,21 @@ macro ODEmodel(ex::Expr...)
 end
 
 #------------------------------------------------------------------------------
+
+function Base.show(io::IO, ode::ODE)
+    varstr = Dict(x => var_to_str(x) * "(t)" for x in vcat(ode.x_vars, ode.u_vars, ode.y_vars))
+    merge!(varstr, Dict(p => var_to_str(p) for p in ode.parameters))
+    R_print, vars_print = Nemo.PolynomialRing(base_ring(ode.poly_ring), [varstr[v] for v in gens(ode.poly_ring)])
+    for (x, eq) in ode.x_equations
+        print(io, var_to_str(x) * "'(t) = ")
+        print(io, evaluate(eq, vars_print))
+        print(io, "\n")
+    end
+    for (y, eq) in ode.y_equations
+        print(io, var_to_str(y) * "(t) = ")
+        print(io, evaluate(eq, vars_print))
+        print(io, "\n")
+    end
+end
+
+#------------------------------------------------------------------------------

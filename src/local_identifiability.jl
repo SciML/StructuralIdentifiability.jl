@@ -266,7 +266,7 @@ function assess_local_identifiability(ode::ODE{P}, p::Float64 = 0.99, type=:SE) 
     end
     result = assess_local_identifiability(ode, funcs_to_check, p, type)
     if type == :SE
-        return Dict(a => b for (a, b) in zip(params_and_states, result))
+        return Dict(a => b for (a, b) in zip(funcs_to_check, result))
     end
     return (
         Dict(a => b for (a, b) in zip(funcs_to_check, result[1])),

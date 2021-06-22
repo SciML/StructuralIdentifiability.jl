@@ -36,6 +36,9 @@ export find_ioequations, find_identifiable_functions
 # exporting to other formats
 export print_for_maple, print_for_DAISY
 
+# function for creating linear compartment models
+export linear_compartment_model
+
 # would be great to merge with the Julia logger
 _runtime_logger = Dict()
 
@@ -49,6 +52,7 @@ include("elimination.jl")
 include("primality_check.jl")
 include("io_equation.jl")
 include("global_identifiability.jl")
+include("lincomp.jl")
 
 """
     assess_identifiability(ode, [funcs_to_check, p=0.99])
