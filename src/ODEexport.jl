@@ -28,7 +28,7 @@ function print_for_maple(ode::ODE, package=:SIAN)
         result *= "sys := [\n"
     elseif package == :DifferentialThomas
         result *= "with(DifferentialThomas):\nwith(Tools):\n"
-        result *= "Ranking($ranking):\n"
+        result *= "Ranking([t], [$ranking]):\n"
         result *= "sys := [\n"
     else
         throw(Base.ArgumentError("Unknown package: $package"))
