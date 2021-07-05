@@ -17,7 +17,7 @@ using StructuralIdentifiability: check_field_membership, check_identifiability, 
                                  switch_ring, eval_at_dict, assess_local_identifiability,
                                  assess_identifiability, monomial_compress, parent_ring_change
 
-function random_ps(ps_ring, range = 1000)
+function random_ps(ps_ring, range=1000)
     result = zero(ps_ring)
     t = gen(ps_ring)
     for i in 0:(max_precision(ps_ring) - 1)
