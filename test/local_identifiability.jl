@@ -1,4 +1,4 @@
-@testset "Assessing global identifiability" begin
+@testset "Assessing local identifiability" begin
     test_cases = []
 
     # 2-compartiment model

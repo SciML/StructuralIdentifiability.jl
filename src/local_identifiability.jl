@@ -135,12 +135,32 @@ end
 #------------------------------------------------------------------------------
 
 """
-    assess_local_identifiability(ode, funcs_to_check, p)
+    assess_local_identifiability(ode, funcs_to_check, p, type)
 
 Checks the local identifiability/observability of the functions in funcs_to_check
 The result is correct with probability at least p
+
+type can be either `:SE` (single-experiment identifiability) or 
+`:ME` (multi-experiment identifiability).
+The the type is ME, states are not allowed to appear in the `funcs_to_check`
+and the return value is a typle consisting of the array of bools 
+and the number of experiments to be performed
 """
-function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any, 1}, p::Float64 = 0.99) where P <: MPolyElem{Nemo.fmpq}
+function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any, 1}, p::Float64=0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
+
+    # Checking whether the states appear in the ME case
+    if type == :ME
+        for f in funcs_to_check
+            num, den = unpack_fraction(f)
+            for v in vcat(vars(num), vars(den))
+                if !(v in ode.parameters)
+                    @error "Multi-experiment identifiability is not properly defined for the states"
+                    throw(ArgumentError("State variable $v appears in $f"))
+                end
+            end
+        end
+    end
+
     # Computing the prime using Proposition 3.3 from https://doi.org/10.1006/jsco.2002.0532
     @debug "Computing the prime number"
     d, h = 1, 1
@@ -151,7 +171,13 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
     end
     p_per_func = 1 - (1 - p) / length(funcs_to_check)
     mu = ceil(1 / (1 - sqrt(p_per_func)))
+
     n = length(ode.x_vars)
+    # if type == ME, we take into account the largest possible replica of the system to be considered
+    if type == :ME
+        n *= length(ode.parameters)
+    end
+
     m = length(ode.y_vars)
     r = length(ode.u_vars)
     ell = length(ode.parameters)
@@ -159,7 +185,6 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
     Dprime = D * (2 * log(n + ell + r + 1) + log(mu * D)) + 4 * (n + ell)^2 * ((n + m) * h + log(2 * n * D))
     prime = Primes.nextprime(Int(ceil(2 * mu * Dprime)))
     @debug "The prime is $prime"
-    prime = 2^31 - 1
     F = Nemo.GF(prime)
  
     @debug "Extending the model"
@@ -167,44 +192,86 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
 
     @debug "Reducing the system modulo prime"
     ode_red = reduce_ode_mod_p(ode_ext, prime)
+
+    @debug "Coumpting the observbaility matrix (and, if ME, the bound)"
     prec = length(ode.x_vars) + length(ode.parameters)
+    
+    # Parameter values are the same across all the replicas
     params_vals = Dict(p => F(rand(1:prime)) for p in ode_red.parameters)
-    ic = Dict(x => F(rand(1:prime)) for x in ode_red.x_vars)
-    inputs = Dict{Nemo.gfp_mpoly, Array{Nemo.gfp_elem, 1}}(u => [F(rand(1:prime)) for i in 1:prec] for u in ode_red.u_vars)
 
-    @debug "Computing the output derivatives"
-    output_derivatives = differentiate_output(ode_red, params_vals, ic, inputs, prec)
+    prev_defect = length(ode.parameters)
+    num_exp = 0
+    Jac = zero(Nemo.MatrixSpace(F, length(ode.parameters), 1))
+    output_derivatives = undef
+    while true
+        ic = Dict(x => F(rand(1:prime)) for x in ode_red.x_vars)
+        inputs = Dict{Nemo.gfp_mpoly, Array{Nemo.gfp_elem, 1}}(u => [F(rand(1:prime)) for i in 1:prec] for u in ode_red.u_vars)
 
-    @debug "Building the matrices"
-    # +1 is for the function to assess
-    Jac = zero(Nemo.MatrixSpace(F, length(ode.y_vars) * prec + 1, prec))
-    xs_params = vcat(ode_red.x_vars, ode_red.parameters)
-    for (i, y) in enumerate(ode.y_vars)
-        y_red = str_to_var(var_to_str(y), ode_red.poly_ring)
-        for j in 1:prec
-            for (k, x) in enumerate(xs_params)
-                Jac[(i - 1) * prec + j, k] = coeff(output_derivatives[y_red][x], j - 1)
+        @debug "Computing the output derivatives"
+        output_derivatives = differentiate_output(ode_red, params_vals, ic, inputs, prec)
+
+        @debug "Building the matrices"
+        newJac = vcat(Jac, zero(Nemo.MatrixSpace(F, length(ode.x_vars), ncols(Jac))))
+        newJac = hcat(newJac, zero(Nemo.MatrixSpace(F, nrows(newJac), prec * length(ode.y_vars))))
+        xs_params = vcat(ode_red.x_vars, ode_red.parameters)
+        for (i, y) in enumerate(ode.y_vars)
+            y_red = str_to_var(var_to_str(y), ode_red.poly_ring)
+            offset = 1 + num_exp * prec * length(ode.y_vars)
+            for j in 1:prec
+                for (k, p) in enumerate(ode_red.parameters)
+                    newJac[k, offset + (i - 1) * prec + j] = coeff(output_derivatives[y_red][p], j - 1)
+                end
+                for (k, x) in enumerate(ode_red.x_vars)
+                    newJac[end - k + 1, offset + (i - 1) * prec + j] = coeff(output_derivatives[y_red][x], j - 1)
+                end
             end
         end
+        if type == :SE
+            Jac = newJac
+            break
+        end
+
+        new_defect = length(ode.parameters) + LinearAlgebra.rank(newJac[(length(ode.parameters) + 1):end, :]) - LinearAlgebra.rank(newJac)
+        if new_defect == prev_defect
+            break
+        end
+        prev_defect = new_defect
+        num_exp += 1
+        Jac = newJac
     end
 
     @debug "Computing the result"
     base_rank = LinearAlgebra.rank(Jac)
     result = Array{Bool, 1}()
     for i in 1:length(funcs_to_check)
-        for (k, x) in enumerate(xs_params)
-            Jac[end, k] = coeff(output_derivatives[str_to_var("loc_aux_$i", ode_red.poly_ring)][x], 0)
+        for (k, p) in enumerate(ode_red.parameters)
+            Jac[k, 1] = coeff(output_derivatives[str_to_var("loc_aux_$i", ode_red.poly_ring)][p], 0)
+        end
+        for (k, x) in enumerate(ode_red.x_vars)
+            Jac[end - k + 1, 1] = coeff(output_derivatives[str_to_var("loc_aux_$i", ode_red.poly_ring)][x], 0)
         end
         push!(result, LinearAlgebra.rank(Jac) == base_rank)
     end
 
-    return result
+    if type == :SE
+        return result
+    end
+    return (result, num_exp)
 end
 
-function assess_local_identifiability(ode::ODE{P}, p::Float64 = 0.99) where P <: MPolyElem{Nemo.fmpq}
-    params_and_states = vcat(ode.parameters, ode.x_vars)
-    result = assess_local_identifiability(ode, params_and_states)
-    return Dict(a => b for (a, b) in zip(params_and_states, result))
+function assess_local_identifiability(ode::ODE{P}, p::Float64 = 0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
+    funcs_to_check = ode.parameters
+    if type == :SE
+        funcs_to_check = vcat(funcs_to_check, ode.x_vars)
+    end
+    result = assess_local_identifiability(ode, funcs_to_check, p, type)
+    if type == :SE
+        return Dict(a => b for (a, b) in zip(funcs_to_check, result))
+    end
+    return (
+        Dict(a => b for (a, b) in zip(funcs_to_check, result[1])),
+        result[2]
+    )
 end
 
 #------------------------------------------------------------------------------
