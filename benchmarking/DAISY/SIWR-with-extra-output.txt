@@ -1,4 +1,4 @@
-B_:={y2, y, R, I, S, W}$
+B_:={y, y2, S, I, W, R}$
 FOR EACH EL_ IN B_ DO DEPEND EL_,T$
 
 B1_:={bi, gam, mu, bw, k, xi, a}$
@@ -9,12 +9,14 @@ NU_:=0$
  %NUMBER OF OUTPUTS
 NY_:=2$
 
-C_:={df(R, t) = gam*I - R*mu - R*a,
+C_:={df(S, t) = -bi*S*I - S*mu - S*bw*W + R*a + mu,
 df(I, t) = bi*S*I - gam*I + S*bw*W - mu*I,
-df(S, t) = -bi*S*I - S*mu - S*bw*W + R*a + mu,
 df(W, t) = xi*I - xi*W,
-y2 = S + R + I,
-y = k*I}$
+df(R, t) = gam*I - R*mu - R*a,
+y = k*I,
+y2 = S + R + I}$
 FLAG_:=1$
+SHOWTIME$
 DAISY()$
+SHOWTIME$
 END$

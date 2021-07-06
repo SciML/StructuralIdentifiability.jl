@@ -1,4 +1,4 @@
-B_:={y1, y2, z, v, w, y, x}$
+B_:={y2, y1, v, x, z, w, y}$
 FOR EACH EL_ IN B_ DO DEPEND EL_,T$
 
 B1_:={b, c, h, lm, d, k, u, q, a, beta}$
@@ -9,13 +9,15 @@ NU_:=0$
  %NUMBER OF OUTPUTS
 NY_:=2$
 
-C_:={df(z, t) = c*w*q*y - h*z,
-df(v, t) = k*y - v*u,
+C_:={df(v, t) = k*y - v*u,
+df(x, t) = lm - x*d - x*v*beta,
+df(z, t) = c*w*q*y - h*z,
 df(w, t) = -b*w + c*w*x*y - c*w*q*y,
 df(y, t) = x*v*beta - a*y,
-df(x, t) = lm - x*d - x*v*beta,
-y1 = w,
-y2 = z}$
+y2 = z,
+y1 = w}$
 FLAG_:=1$
+SHOWTIME$
 DAISY()$
+SHOWTIME$
 END$

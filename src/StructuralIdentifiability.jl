@@ -34,7 +34,10 @@ export set_parameter_values
 export find_ioequations, find_identifiable_functions
 
 # exporting to other formats
-export print_for_SIAN, print_for_DAISY #, print_for_RosenfeldGroebner, print_for_DifferentialThomas
+export print_for_maple, print_for_DAISY
+
+# function for creating linear compartment models
+export linear_compartment_model
 
 # would be great to merge with the Julia logger
 _runtime_logger = Dict()
@@ -49,6 +52,7 @@ include("elimination.jl")
 include("primality_check.jl")
 include("io_equation.jl")
 include("global_identifiability.jl")
+include("lincomp.jl")
 
 """
     assess_identifiability(ode, [funcs_to_check, p=0.99])
@@ -67,9 +71,14 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem, 
     p_loc = 1 - (1 - p) * 0.1
 
     @info "Assessing local identifiability"
-    runtime = @elapsed local_result = assess_local_identifiability(ode, funcs_to_check, p_loc)
+    runtime = @elapsed local_result, bound = assess_local_identifiability(ode, funcs_to_check, p_loc, :ME)
     @info "Local identifiability assessed in $runtime seconds"
     _runtime_logger[:loc_time] = runtime
+
+    if bound > 1
+        @warn "For this model single-experiment identifiable functions are not the same as multi-experiment identifiable. The analysis performed by this program is right now for multi-experiment only. If you still  would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)"
+        @debug "Bound: $bound"
+    end
 
     locally_identifiable = Array{Any, 1}()
     for (loc, f) in zip(local_result, funcs_to_check)

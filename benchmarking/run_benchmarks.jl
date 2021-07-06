@@ -1,9 +1,10 @@
+using CpuId
 using Logging
+using Pkg
 using Printf
 
-include("../src/StructuralIdentifiability.jl")
-using .StructuralIdentifiability
-using .StructuralIdentifiability: _runtime_logger, ODE
+using StructuralIdentifiability
+using StructuralIdentifiability: _runtime_logger, ODE
 
 logger = Logging.SimpleLogger(stdout, Logging.Info)
 global_logger(logger)
@@ -12,7 +13,7 @@ include("benchmarks.jl")
 
 runtimes = Dict()
 TIME_CATEGORIES = [:loc_time, :glob_time, :ioeq_time, :wrnsk_time, :rank_time, :check_time, :total]
-NUM_RUNS = 3
+NUM_RUNS = 5
 
 for bmark in benchmarks
     name = bmark[:name]
@@ -44,6 +45,21 @@ for (name, times) in runtimes
     end
     resulting_md *= "\n"
 end
+
+resulting_md *= "\n*Benchmarking environment:*\n\n"
+resulting_md *= "* Total RAM (Mb): $(Sys.total_memory() / 2^20)\n"
+resulting_md *= "* Processor: $(cpubrand())\n"
+resulting_md *= "* Julia version: $(VERSION)\n\n"
+resulting_md *= "Versions of the dependencies:\n\n"
+
+deps = Pkg.dependencies()
+stid_info = deps[findfirst(x -> x.name == "StructuralIdentifiability", deps)]
+for (s, uid) in stid_info.dependencies
+    if deps[uid].version != nothing
+        global resulting_md *= "* $s : $(deps[uid].version)\n"
+    end
+end
+
 
 open("benchmark_result.md", "w") do io
     write(io, resulting_md)

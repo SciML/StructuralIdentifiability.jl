@@ -1,4 +1,4 @@
-B_:={y1, y2, x2, i, r, s, x1}$
+B_:={y1, y2, s, x2, i, r, x1}$
 FOR EACH EL_ IN B_ DO DEPEND EL_,T$
 
 B1_:={nu, b1, b0, M, mu, g}$
@@ -9,13 +9,15 @@ NU_:=0$
  %NUMBER OF OUTPUTS
 NY_:=2$
 
-C_:={df(x2, t) = M*x1,
+C_:={df(s, t) = -b1*b0*s*x1*i - b0*s*i - s*mu + mu + g*r,
+df(x2, t) = M*x1,
 df(i, t) = -nu*i + b1*b0*s*x1*i + b0*s*i - mu*i,
 df(r, t) = nu*i - mu*r - g*r,
-df(s, t) = -b1*b0*s*x1*i - b0*s*i - s*mu + mu + g*r,
 df(x1, t) = -M*x2,
 y1 = i,
 y2 = r}$
 FLAG_:=1$
+SHOWTIME$
 DAISY()$
+SHOWTIME$
 END$

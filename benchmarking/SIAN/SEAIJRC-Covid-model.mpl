@@ -1,11 +1,14 @@
-Ninv(t)diff(C(t), t) = alpha*I(t),
-diff(E(t), t) = b*S(t)*Ninv(t)*A(t)*q + b*S(t)*Ninv(t)*I(t) + b*S(t)*Ninv(t)*J(t) - E(t)*k,
+read "../IdentifiabilityODE.mpl";
+
+sys := [
+diff(S(t), t) = -b*S(t)*Ninv(t)*A(t)*q - b*S(t)*Ninv(t)*II(t) - b*S(t)*Ninv(t)*J(t),
 diff(A(t), t) = -E(t)*k*r + E(t)*k - A(t)*g1,
-diff(I(t), t) = -alpha*I(t) + E(t)*k*r - g1*I(t),
-diff(J(t), t) = alpha*I(t) - g2*J(t),
-diff(S(t), t) = -b*S(t)*Ninv(t)*A(t)*q - b*S(t)*Ninv(t)*I(t) - b*S(t)*Ninv(t)*J(t),
+diff(E(t), t) = b*S(t)*Ninv(t)*A(t)*q + b*S(t)*Ninv(t)*II(t) + b*S(t)*Ninv(t)*J(t) - E(t)*k,
+diff(C(t), t) = alpha*II(t),
 diff(Ninv(t), t) = 0,
-y(t) = C(t),
-y2(t) = Ninv(t)
+diff(J(t), t) = alpha*II(t) - g2*J(t),
+diff(II(t), t) = -alpha*II(t) + E(t)*k*r - g1*II(t),
+y2(t) = Ninv(t),
+y(t) = C(t)
 ];
-IdentifiabilityODE(sigma, GetParameters(sigma));
+CodeTools[CPUTime](IdentifiabilityODE(sys, GetParameters(sys)));

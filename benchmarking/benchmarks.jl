@@ -98,7 +98,8 @@ benchmarks = [
             y2(t) = S00(t),
             y3(t) = S01(t) + S10(t),
             y4(t) = S11(t)
-        ) 
+        ),
+        :skip => false 
     ),
     Dict(
         :name => "MAPK model (6 outputs)",
@@ -227,6 +228,8 @@ ode = @ODEmodel(
     y5(t) = x2(t),
     y6(t) = x12(t)
 )
+
+QQ = StructuralIdentifiability.Nemo.QQ
 
 ode = set_parameter_values(ode, Dict(
     a1 => QQ(1, 2),

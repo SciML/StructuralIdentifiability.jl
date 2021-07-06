@@ -1,4 +1,4 @@
-B_:={y1, x2, x1}$
+B_:={y1, x1, x2}$
 FOR EACH EL_ IN B_ DO DEPEND EL_,T$
 
 B1_:={a, b, d, c}$
@@ -9,9 +9,11 @@ NU_:=0$
  %NUMBER OF OUTPUTS
 NY_:=1$
 
-C_:={df(x2, t) = -a*b*x2 + d*x2*x1,
-df(x1, t) = a*x1 + b*x1 - x2*c*x1,
+C_:={df(x1, t) = a*x1 + b*x1 - x2*c*x1,
+df(x2, t) = -a*b*x2 + d*x2*x1,
 y1 = x1}$
 FLAG_:=1$
+SHOWTIME$
 DAISY()$
+SHOWTIME$
 END$

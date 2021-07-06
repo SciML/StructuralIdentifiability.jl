@@ -15,7 +15,8 @@ using StructuralIdentifiability: check_field_membership, check_identifiability, 
                                  truncate_matrix, find_ioequations, str_to_var, unpack_fraction,
                                  assess_global_identifiability, differentiate_output, var_to_str,
                                  switch_ring, eval_at_dict, assess_local_identifiability,
-                                 assess_identifiability, monomial_compress, parent_ring_change
+                                 assess_identifiability, monomial_compress, parent_ring_change,
+                                 ps_matrix_const_term
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)
@@ -27,7 +28,11 @@ function random_ps(ps_ring, range = 1000)
 end
 
 function random_ps_matrix(ps_ring, matrix_space)
-    return map(e -> random_ps(ps_ring), zero(matrix_space))
+    result = zero(matrix_space)
+    while StructuralIdentifiability.LinearAlgebra.det(ps_matrix_const_term(result)) == 0
+        result = map(e -> random_ps(ps_ring), zero(matrix_space))
+    end
+    return result
 end
 
 

@@ -9,7 +9,7 @@ Inputs:
     - rat_funcs - list rational functions
     - p - a real number between 0 and 1, the probability of correctness
 Output: a list L[i] of bools of length `length(rat_funcs)` such that L[i] is true iff
-    the i-th function belongs to F. The whole result is correct with probability at least p
+   the i-th function belongs to F. The whole result is correct with probability at least p
 """
 function check_field_membership(
         generators::Array{<: Array{<: MPolyElem, 1}, 1},
@@ -52,8 +52,8 @@ function check_field_membership(
     eqs_sing = Array{Singular.spoly{Singular.n_Q}, 1}()
     ring_sing, vars_sing = Singular.PolynomialRing(
                                Singular.QQ, 
-                               #vcat(map(var_to_str, gens(ring)), ["sat_aux$i" for i in 1:length(generators)]);
-                               vcat(map(var_to_str, gens(ring)), ["sat_aux"]);
+                               vcat(map(var_to_str, gens(ring)), ["sat_aux$i" for i in 1:length(generators)]);
+                               #vcat(map(var_to_str, gens(ring)), ["sat_aux"]);
                                ordering=:degrevlex
                            )
 
@@ -66,13 +66,13 @@ function check_field_membership(
             push!(eqs, poly * evaluate(ring(pivot), point) - evaluate(ring(poly), point) * pivot)
         end
         append!(eqs_sing, map(p -> parent_ring_change(p, ring_sing), eqs))
-        #push!(
-        #    eqs_sing,
-        #    parent_ring_change(pivot, ring_sing) * vars_sing[end - i + 1] - 1
-        #)
-        common_pivot = lcm(parent_ring_change(pivot, ring_sing), common_pivot)
+        push!(
+            eqs_sing,
+            parent_ring_change(pivot, ring_sing) * vars_sing[end - i + 1] - 1
+        )
+        #common_pivot = lcm(parent_ring_change(pivot, ring_sing), common_pivot)
     end
-    push!(eqs_sing, common_pivot * vars_sing[end] - 1)
+    #push!(eqs_sing, common_pivot * vars_sing[end] - 1)
 
     @debug "Computing Groebner basis ($(length(eqs_sing)) equations)"
     flush(stdout)
