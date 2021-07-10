@@ -11,7 +11,7 @@
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 """
     differentiate_solution(ode, params, ic, inputs, prec)
@@ -24,11 +24,11 @@ Output: a tuple consisting of the power series solution and
 """
 function differentiate_solution(
         ode::ODE{P},
-        params::Dict{P, T},
-        ic::Dict{P, T},
-        inputs::Dict{P, Array{T, 1}},
+        params::Dict{P,T},
+        ic::Dict{P,T},
+        inputs::Dict{P,Array{T,1}},
         prec::Int
-    ) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
+    ) where {T <: Generic.FieldElem,P <: MPolyElem{T}}
     @debug "Computing the power series solution of the system"
     ps_sol = power_series_solution(ode, params, ic, inputs, prec)
     ps_ring = parent(first(values(ps_sol)))
@@ -68,7 +68,7 @@ function differentiate_solution(
     )
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 """
     differentiate_output(ode, params, ic, inputs, prec)
@@ -78,11 +78,11 @@ returns a dict from y's to dictionalries from vars to dy / dvar
 """
 function differentiate_output(
         ode::ODE{P},
-        params::Dict{P, T},
-        ic::Dict{P, T},
-        inputs::Dict{P, Array{T, 1}},
+        params::Dict{P,T},
+        ic::Dict{P,T},
+        inputs::Dict{P,Array{T,1}},
         prec::Int
-    ) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
+    ) where {T <: Generic.FieldElem,P <: MPolyElem{T}}
     @debug "Computing partial derivatives of the solution"
     ps_sol, sol_diff = differentiate_solution(ode, params, ic, inputs, prec)
     ps_ring = parent(first(values(ps_sol)))
@@ -95,10 +95,10 @@ function differentiate_output(
     for (y, g) in ode.y_equations
         result[y] = Dict()
         for x in ode.x_vars
-            result[y][x] = sum([eval_at_dict(derivative(g, xx), ps_sol) * sol_diff[(xx, x)] for xx in ode.x_vars])
+            result[y][x] = sum(eval_at_dict(derivative(g, xx), ps_sol) * sol_diff[(xx, x)] for xx in ode.x_vars)
         end
         for p in ode.parameters
-            result[y][p] = sum([eval_at_dict(derivative(g, xx), ps_sol) * sol_diff[(xx, p)] for xx in ode.x_vars])
+            result[y][p] = sum(eval_at_dict(derivative(g, xx), ps_sol) * sol_diff[(xx, p)] for xx in ode.x_vars)
             result[y][p] += eval_at_dict(derivative(g, p), ps_sol)
         end
     end
@@ -106,7 +106,7 @@ function differentiate_output(
     return result 
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 """
     get_degree_and_coeffsize(f)
@@ -132,7 +132,7 @@ function get_degree_and_coeffsize(f::Generic.Frac{<: MPolyElem{Nemo.fmpq}})
 end
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 """
     assess_local_identifiability(ode, funcs_to_check, p, type)
@@ -146,7 +146,7 @@ The the type is ME, states are not allowed to appear in the `funcs_to_check`
 and the return value is a typle consisting of the array of bools 
 and the number of experiments to be performed
 """
-function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any, 1}, p::Float64=0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
+function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,1}, p::Float64=0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
 
     # Checking whether the states appear in the ME case
     if type == :ME
@@ -205,7 +205,7 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
     output_derivatives = undef
     while true
         ic = Dict(x => F(rand(1:prime)) for x in ode_red.x_vars)
-        inputs = Dict{Nemo.gfp_mpoly, Array{Nemo.gfp_elem, 1}}(u => [F(rand(1:prime)) for i in 1:prec] for u in ode_red.u_vars)
+        inputs = Dict{Nemo.gfp_mpoly,Array{Nemo.gfp_elem,1}}(u => [F(rand(1:prime)) for i in 1:prec] for u in ode_red.u_vars)
 
         @debug "Computing the output derivatives"
         output_derivatives = differentiate_output(ode_red, params_vals, ic, inputs, prec)
@@ -242,7 +242,7 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
 
     @debug "Computing the result"
     base_rank = LinearAlgebra.rank(Jac)
-    result = Array{Bool, 1}()
+    result = Array{Bool,1}()
     for i in 1:length(funcs_to_check)
         for (k, p) in enumerate(ode_red.parameters)
             Jac[k, 1] = coeff(output_derivatives[str_to_var("loc_aux_$i", ode_red.poly_ring)][p], 0)
@@ -259,7 +259,7 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
     return (result, num_exp)
 end
 
-function assess_local_identifiability(ode::ODE{P}, p::Float64 = 0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
+function assess_local_identifiability(ode::ODE{P}, p::Float64=0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
     funcs_to_check = ode.parameters
     if type == :SE
         funcs_to_check = vcat(funcs_to_check, ode.x_vars)
@@ -274,4 +274,4 @@ function assess_local_identifiability(ode::ODE{P}, p::Float64 = 0.99, type=:SE) 
     )
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------

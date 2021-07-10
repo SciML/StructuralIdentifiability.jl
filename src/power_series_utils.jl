@@ -226,7 +226,7 @@ function ps_ode_solution(
     ps_ring, t = PowerSeriesRing(base_ring(ring), prec, "t"; model=:capped_absolute)
     solution = Dict()
     for (u, coeffs) in inputs
-        solution[u] = sum([coeffs[i] * t^(i - 1) for i in 1:length(coeffs)])
+        solution[u] = sum(coeffs[i] * t^(i - 1) for i in 1:length(coeffs))
     end
     for x in x_vars
         solution[x] = ps_ring(ic[x])

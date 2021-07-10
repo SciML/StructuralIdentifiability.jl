@@ -1,4 +1,4 @@
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 """
     eval_at_dict(f, d)
@@ -6,28 +6,28 @@
 Evaluates a polynomial/rational function on a dict var => val
 missing values are replaced with zeroes
 """
-function eval_at_dict(poly::P, d::Dict{P, <: RingElem}) where P <: MPolyElem
+function eval_at_dict(poly::P, d::Dict{P,<: RingElem}) where P <: MPolyElem
     R = parent(first(values(d)))
     point = [get(d, v, zero(R)) for v in gens(parent(poly))]
     return evaluate(poly, point)
 end
 
-function eval_at_dict(rational::Generic.Frac{<: P}, d::Dict{P, <: RingElem}) where P <: MPolyElem
+function eval_at_dict(rational::Generic.Frac{<: P}, d::Dict{P,<: RingElem}) where P <: MPolyElem
     f, g = unpack_fraction(rational)
     return eval_at_dict(f, d) * inv(eval_at_dict(g, d))
 end
 
-function eval_at_dict(rational::Generic.Frac{<: P}, d::Dict{P, <: Generic.Frac}) where P <: MPolyElem
+function eval_at_dict(rational::Generic.Frac{<: P}, d::Dict{P,<: Generic.Frac}) where P <: MPolyElem
     f, g = unpack_fraction(rational)
     return eval_at_dict(f, d) // eval_at_dict(g, d)
 end
 
-function eval_at_dict(rational::Generic.Frac{<: P}, d::Dict{P, <: MPolyElem}) where P <: MPolyElem
+function eval_at_dict(rational::Generic.Frac{<: P}, d::Dict{P,<: MPolyElem}) where P <: MPolyElem
     f, g = unpack_fraction(rational)
     return eval_at_dict(f, d) // eval_at_dict(g, d)
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 function unpack_fraction(f::MPolyElem)
     return (f, one(parent(f)))
@@ -37,7 +37,7 @@ function unpack_fraction(f::Generic.Frac{<: MPolyElem})
     return (numerator(f), denominator(f))
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 function simplify_frac(numer::P, denom::P) where P <: MPolyElem
     gcd_sub = gcd(numer, denom)
@@ -46,7 +46,7 @@ function simplify_frac(numer::P, denom::P) where P <: MPolyElem
     return sub_numer, sub_denom
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 """
     make_substitution(f, var_sub, val_numer, val_denom)
@@ -69,13 +69,13 @@ function make_substitution(f::P, var_sub::P, val_numer::P, val_denom::P) where P
     for i in 0:d
         @debug "\t Degree $i"
         flush(stdout)
-        result += coeff(f, [var_sub], [i]) * (val_numer ^ i) * (val_denom ^ (d - i))
+        result += coeff(f, [var_sub], [i]) * (val_numer^i) * (val_denom^(d - i))
         @debug "\t Intermediate result of size $(length(result))"
     end
     return result
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 function (F::Nemo.GaloisField)(a::fmpq)
     den = denominator(a)
@@ -98,7 +98,7 @@ Output: a polynomial in new_ring "equal" to poly
 function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing)
     old_ring = parent(poly)
     # construct a mapping for the variable indices
-    var_mapping = Array{Any, 1}()
+    var_mapping = Array{Any,1}()
     for u in symbols(old_ring)
         push!(
             var_mapping,
@@ -128,7 +128,7 @@ function parent_ring_change(f::Generic.Frac{<: MPolyElem}, new_ring::MPolyRing)
     return parent_ring_change(n, new_ring) // parent_ring_change(d, new_ring)
 end
  
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 """
     uncertain_factorization(f)
@@ -141,7 +141,7 @@ Output: list of pairs (div, certainty) where
 function uncertain_factorization(f::MPolyElem{fmpq})
     vars_f = vars(f)
     if isempty(vars_f)
-        return Array{Tuple{typeof(f), Bool}, 1}()
+        return Array{Tuple{typeof(f),Bool},1}()
     end
     main_var = vars_f[end]
     d = degree(f, main_var)
@@ -156,8 +156,8 @@ function uncertain_factorization(f::MPolyElem{fmpq})
     is_irr = undef
     while true
         plugin = rand(5:10, length(vars_f) - 1)
-        if evaluate(lc_f, vars_f[1 : end - 1], plugin) != 0
-            f_sub = evaluate(f, vars_f[1 : end - 1], plugin)
+        if evaluate(lc_f, vars_f[1:end - 1], plugin) != 0
+            f_sub = evaluate(f, vars_f[1:end - 1], plugin)
             uni_ring, var_uni = Nemo.PolynomialRing(base_ring(f), string(main_var))
             f_uni = to_univariate(uni_ring, f_sub)
             if !issquarefree(f_uni)
@@ -172,15 +172,15 @@ function uncertain_factorization(f::MPolyElem{fmpq})
     push!(coeff_factors, (f, is_irr))
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-function factor_via_singular(polys::Array{<: MPolyElem{fmpq}, 1})
+function factor_via_singular(polys::Array{<: MPolyElem{fmpq},1})
     if isempty(polys)
         return []
     end
     original_ring = parent(polys[1])
     R_sing, var_sing = Singular.PolynomialRing(Singular.QQ, map(string, symbols(original_ring)))
-    result = Array{typeof(polys[1]), 1}()
+    result = Array{typeof(polys[1]),1}()
     for p in polys
         @debug "\t Factoring with Singular a polynomial of size $(length(p))"
         @debug p
@@ -193,7 +193,7 @@ function factor_via_singular(polys::Array{<: MPolyElem{fmpq}, 1})
     return result
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 function fast_factor(poly::MPolyElem{fmpq})
     prelim_factors = uncertain_factorization(poly)
@@ -203,9 +203,9 @@ function fast_factor(poly::MPolyElem{fmpq})
     return cert_factors
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-function dict_to_poly(dict_monom::Dict{Array{Int, 1}, <: RingElem}, poly_ring::MPolyRing)
+function dict_to_poly(dict_monom::Dict{Array{Int,1},<: RingElem}, poly_ring::MPolyRing)
     builder = MPolyBuildCtx(poly_ring)
     for (monom, coef) in pairs(dict_monom)
         push_term!(builder, poly_ring.base_ring(coef), monom)
@@ -213,7 +213,7 @@ function dict_to_poly(dict_monom::Dict{Array{Int, 1}, <: RingElem}, poly_ring::M
     return finish(builder)
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 """
     extract_coefficients(poly, variables)
@@ -226,21 +226,21 @@ Output:
     polynomials in the variables other than variables which are the coefficients
     at the corresponding monomials (in a smaller polynomial ring)
 """
-function extract_coefficients(poly::P, variables::Array{P, 1}) where P <: MPolyElem
-    var_to_ind = Dict([(v, findfirst(e -> (e == v), gens(parent(poly)))) for v in variables])
+function extract_coefficients(poly::P, variables::Array{P,1}) where P <: MPolyElem
+    var_to_ind = Dict((v, findfirst(e -> (e == v), gens(parent(poly)))) for v in variables)
     indices = [var_to_ind[v] for v in variables]
 
     coeff_vars = filter(v -> !(var_to_str(v) in map(var_to_str, variables)), gens(parent(poly)))
     new_ring, new_vars = Nemo.PolynomialRing(base_ring(parent(poly)), map(var_to_str, coeff_vars))
-    coeff_var_to_ind = Dict([(v, findfirst(e -> (e == v), gens(parent(poly)))) for v in coeff_vars])
+    coeff_var_to_ind = Dict((v, findfirst(e -> (e == v), gens(parent(poly)))) for v in coeff_vars)
     FieldType = typeof(one(base_ring(new_ring)))
 
-    result = Dict{Array{Int, 1}, Dict{Array{Int, 1}, FieldType}}()
+    result = Dict{Array{Int,1},Dict{Array{Int,1},FieldType}}()
 
     for (monom, coef) in zip(exponent_vectors(poly), coeffs(poly))
         var_slice = [monom[i] for i in indices]
         if !haskey(result, var_slice)
-            result[var_slice] = Dict{Array{Int, 1}, FieldType}()
+            result[var_slice] = Dict{Array{Int,1},FieldType}()
         end
         new_monom = [0 for _ in 1:length(coeff_vars)]
         for i in 1:length(new_monom)
@@ -252,7 +252,7 @@ function extract_coefficients(poly::P, variables::Array{P, 1}) where P <: MPolyE
     return Dict(k => dict_to_poly(v, new_ring) for (k, v) in result)
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 function str_to_var(s::String, ring::MPolyRing)
     ind = findfirst(v -> (string(v) == s), symbols(ring))
@@ -262,14 +262,14 @@ function str_to_var(s::String, ring::MPolyRing)
     return gens(ring)[ind]
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 function var_to_str(v::MPolyElem)
     ind = findfirst(vv -> vv == v, gens(parent(v)))
     return string(symbols(parent(v))[ind])
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 """
     switch_ring(v, ring)
@@ -281,4 +281,4 @@ function switch_ring(v::MPolyElem, ring::MPolyRing)
     return str_to_var(string(symbols(parent(v))[ind]), ring)
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
