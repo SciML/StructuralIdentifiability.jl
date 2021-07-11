@@ -37,18 +37,34 @@ end
     sol = ps_ode_solution(eqs, Dict(x => 0, y => -2), Dict(u => u_coeff), prec)
     @test map(e -> valuation(evaluate(e, [sol[v] for v in gens(R)])), eqs) == [prec - 1, prec - 1]
 
+    F = Nemo.GF(2^31 - 1)
+    prec = 100
+    
     # Testing the function ps_ode_solution by itself
-    for i in 1:3
-        prec = 100
+    for i in 1:30
+        # Setting up the ring
+        NUMX = 5
+        NUMU = 3
         varnames = vcat(
-            ["x_$(i)_dot" for i in 1:5],
-            ["x_$i" for i in 1:5],
-            ["u_$i" for i in 1:3],
+            ["x_$(i)_dot" for i in 1:NUMX],
+            ["x_$i" for i in 1:NUMX],
+            ["u_$i" for i in 1:NUMU],
         )
-        R, vars = Nemo.PolynomialRing(Nemo.GF(2^31 - 1), varnames)
-        eqs = [rand_poly(1, vars[6:end]) * vars[i] - rand_poly(2, vars[6:end]) for i in 1:5]
-        ic = Dict(vars[i + 5] => rand(-5:5) for i in 1:5)
-        inputs = Dict(u => [rand(-3:3) for i in 1:prec] for u in vars[11:end])
+        R, vars = Nemo.PolynomialRing(F, varnames)
+
+        # Generating the initial conditions and inputs
+        ic = Dict(vars[i + NUMX] => F(rand(-5:5)) for i in 1:NUMX)
+        inputs = Dict(u => [F(rand(-3:3)) for i in 1:prec] for u in vars[(2 * NUMX + 1):end])
+        # a dictionary for evaluation at zero (to avoid singularities)
+        eval_at_zero = merge(ic, Dict(u => val[1] for (u, val) in inputs))
+
+        # Generating denominators not vanishing at t = 0
+        denominators = [rand_poly(1, vars[(NUMX + 1):end]) for i in 1:NUMX]
+        while any([eval_at_dict(p, eval_at_zero) == 0 for p in denominators])
+            denominators = [rand_poly(1, vars[(NUMX + 1):end]) for i in 1:NUMX]
+        end
+
+        eqs = [denominators[i] * vars[i] - rand_poly(2, vars[(NUMX + 1):end]) for i in 1:NUMX]
         @time sol = ps_ode_solution(eqs, ic, inputs, prec)
         evals = map(e -> valuation(evaluate(e, [sol[v] for v in gens(R)])), eqs)
         for e in evals
@@ -57,21 +73,34 @@ end
     end
 
     # Testing ps_ode_solution in conjuntion with the ODE class
-    for i in 1:3
-        prec = 100
+    for i in 1:30
+        # Setting up the ring
+        NUMX = 3
+        NUMP = 3
+        NUMU = 2
         varnames = vcat(
-            ["x_$i" for i in 1:3],
-            ["p_$i" for i in 1:3],
-            ["u_$i" for i in 1:2],
+            ["x_$i" for i in 1:NUMX],
+            ["p_$i" for i in 1:NUMP],
+            ["u_$i" for i in 1:NUMU],
         )
-        R, vars = Nemo.PolynomialRing(Nemo.GF(2^31 - 1), varnames)
+        R, vars = Nemo.PolynomialRing(F, varnames)
         PType = gfp_mpoly
         TDict = Dict{PType, Union{PType, Generic.Frac{PType}}}
-        eqs = TDict(vars[i] => rand_poly(2, vars) // rand_poly(1, vars) for i in 1:3)
-        ode = ODE{PType}(eqs, TDict(), vars[(end - 1):end])
-        ic = Dict(vars[i] => rand(-5:5) for i in 1:3)
-        param_vals = Dict(vars[i + 3] => rand(-5:5) for i in 1:3)
-        inputs = Dict(u => [rand(-3:3) for i in 1:prec] for u in vars[7:end])
+
+        # Generating the intial conditions etc
+        ic = Dict(vars[i] => F(rand(-5:5)) for i in 1:NUMX)
+        param_vals = Dict(vars[i + NUMX] => F(rand(-5:5)) for i in 1:NUMP)
+        inputs = Dict(u => [F(rand(-3:3)) for i in 1:prec] for u in vars[(NUMX + NUMP + 1):end])
+        eval_at_zero = merge(ic, param_vals, Dict(u => val[1] for (u, val) in inputs))
+
+        # Generating denominators not vanishing at t = 0
+        denominators = [rand_poly(1, vars) for i in 1:NUMX]
+        while any([eval_at_dict(p, eval_at_zero) == 0 for p in denominators])
+            denominators = [rand_poly(1, vars) for i in 1:NUMX]
+        end
+
+        eqs = TDict(vars[i] => rand_poly(2, vars) // denominators[i] for i in 1:NUMX)
+        ode = ODE{PType}(eqs, TDict(), vars[(NUMX + NUMP + 1):end])
         @time sol = power_series_solution(ode, param_vals, ic, inputs, prec)
         ps_ring = parent(collect(values(sol))[1])
         for (p, val) in param_vals
@@ -86,5 +115,4 @@ end
         end
     end
 
-#Profile.print(format=:flat, maxdepth=4, sortedby=:count)
 end
