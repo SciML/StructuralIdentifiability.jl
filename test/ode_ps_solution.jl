@@ -24,7 +24,7 @@ end
 @testset "Power series solution for an ODE system" begin
 
     R, (x, x_dot) = Nemo.PolynomialRing(Nemo.QQ, ["x", "x_dot"])
-    exp_t = ps_ode_solution([x_dot - x], Dict{fmpq_mpoly, fmpq}(x => 1), Dict{fmpq_mpoly, Array{fmpq, 1}}(), 20)[x]
+    exp_t = ps_ode_solution([x_dot - x], Dict{fmpq_mpoly,fmpq}(x => 1), Dict{fmpq_mpoly,Array{fmpq,1}}(), 20)[x]
     @test valuation(ps_diff(exp_t) - exp_t) == 19
 
     R, (x, y, x_dot, y_dot, u) = Nemo.PolynomialRing(Nemo.QQ, ["x", "y", "x_dot", "y_dot", "u"])
@@ -66,7 +66,7 @@ end
         )
         R, vars = Nemo.PolynomialRing(Nemo.GF(2^31 - 1), varnames)
         PType = gfp_mpoly
-        TDict = Dict{PType, Union{PType, Generic.Frac{PType}}}
+        TDict = Dict{PType,Union{PType,Generic.Frac{PType}}}
         eqs = TDict(vars[i] => rand_poly(2, vars) // rand_poly(1, vars) for i in 1:3)
         ode = ODE{PType}(eqs, TDict(), vars[(end - 1):end])
         ic = Dict(vars[i] => rand(-5:5) for i in 1:3)
@@ -86,5 +86,5 @@ end
         end
     end
 
-#Profile.print(format=:flat, maxdepth=4, sortedby=:count)
+# Profile.print(format=:flat, maxdepth=4, sortedby=:count)
 end
