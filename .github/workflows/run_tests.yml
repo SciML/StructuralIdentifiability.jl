@@ -1,0 +1,28 @@
+name: "Tests"
+on:
+  push:
+    paths-ignore:
+    - 'README.md'
+    - 'Dockerfile'
+    - '.gitignore'
+jobs:
+  run-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        julia-version: ['1.5', '1.6']
+        julia-arch: [x64]
+        os: [macos-latest, ubuntu-latest]
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+      - name: "Setup Julia"
+        uses: julia-actions/setup-julia@v1
+        with:
+          version: ${{ matrix.julia-version }}
+          arch: ${{ matrix.julia-arch }} 
+      - name: "Build Package"
+        uses: julia-actions/julia-buildpkg@latest
+      - name: "Run tests"
+        uses: julia-actions/julia-runtest@latest
