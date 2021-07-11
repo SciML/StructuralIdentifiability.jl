@@ -6,8 +6,8 @@ end
 
 #------------------------------------------------------------------------------
 
-function matrix_set_prec!(M::MatElem{<: Generic.AbsSeriesElem}, prec::Int)
-    map(e -> set_prec!(e, prec), M)
+function matrix_set_precision!(M::MatElem{<: Generic.AbsSeriesElem}, prec::Int)
+    map(e -> set_precision!(e, prec), M)
 end
 
 #------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ Output: the derivative of ps
 """
 function ps_diff(ps::Generic.AbsSeriesElem{<: Generic.RingElem})
     result = zero(parent(ps))
-    set_prec!(result, precision(ps))
+    set_precision!(result, precision(ps))
     for exp in 1:(precision(ps) - 1)
         setcoeff!(result, exp - 1, coeff(ps, exp) * exp)
     end
@@ -78,7 +78,7 @@ Output: the integral of ps without constant term
 """
 function ps_integrate(ps::Generic.AbsSeriesElem{<: Generic.FieldElem})
     result = zero(parent(ps))
-    set_prec!(result, precision(ps) + 1)
+    set_precision!(result, precision(ps) + 1)
     for exp in 0:(precision(ps) - 1)
         setcoeff!(result, exp + 1, coeff(ps, exp) // (exp + 1))
     end
@@ -142,8 +142,8 @@ function ps_matrix_homlinear_de(
     Y = (one(parent(A)) + gen(ps_ring) * truncate_matrix(A, cur_prec)) * map(e -> truncate(ps_ring(e), cur_prec), Y0)
     Z = map(e -> truncate(ps_ring(e), cur_prec), Base.inv(Y0))
     while cur_prec < prec
-        matrix_set_prec!(Y, 2 * cur_prec)
-        matrix_set_prec!(Z, cur_prec)
+        matrix_set_precision!(Y, 2 * cur_prec)
+        matrix_set_precision!(Z, cur_prec)
         Y, Z = _matrix_homlinear_de_newton_iteration(A, Y, Z, cur_prec)
         cur_prec *= 2
     end
@@ -185,7 +185,7 @@ function ps_matrix_linear_de(
     n = nrows(A)
     identity = one(AbstractAlgebra.MatrixSpace(base_ring(parent(Y0)), n, n))
     Yh, Zh = ps_matrix_homlinear_de(A, identity, prec)
-    matrix_set_prec!(Zh, prec)
+    matrix_set_precision!(Zh, prec)
     return _variation_of_constants(A, B, Yh, Zh, Y0, prec)
 end
 
@@ -233,7 +233,7 @@ function ps_ode_solution(
     end
     for xd in x_dot_vars
         solution[xd] = ps_ring(0)
-        set_prec!(solution[xd], 1)
+        set_precision!(solution[xd], 1)
     end
 
     cur_prec = 1
@@ -241,11 +241,11 @@ function ps_ode_solution(
         @debug "\t Computing power series solution, currently at precision $cur_prec"
         new_prec = min(prec, 2 * cur_prec)
         for i in 1:length(x_vars)
-            set_prec!(solution[x_vars[i]], new_prec)
-            set_prec!(solution[x_dot_vars[i]], new_prec)
+            set_precision!(solution[x_vars[i]], new_prec)
+            set_precision!(solution[x_dot_vars[i]], new_prec)
         end
         eval_point = [solution[v] for v in gens(ring)]
-        map(ps -> set_prec!(ps, 2 * cur_prec), eval_point)
+        map(ps -> set_precision!(ps, 2 * cur_prec), eval_point)
         eqs_eval = map(p -> evaluate(p, eval_point), eqs)
         J_eval = map(p -> evaluate(p, eval_point), Jac_xs)
         Jd_eval = map(p -> evaluate(p, eval_point), Jac_dots)
