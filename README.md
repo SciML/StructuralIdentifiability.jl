@@ -101,6 +101,10 @@ The algorithm used for assessing global identifiability is described in [[1]](#g
 Local identifiability is assessed using the algorithm by Sedoglavic [[4]](#local).
 We also use some of the algorithms described in [[3]](#allident).
 
+## Contacts
+
+Maintained by Gleb Pogudin (<gleb.pogudin@polytechnique.edu>)
+
 ## References
 
 <a id="global">[1]</a> 
