@@ -224,8 +224,10 @@ end
 #------------------------------------------------------------------------------
 
 """
-Macros for creating an ODE from a list of equations
-Also injects all variables into the global scope
+    ODEmodel(ex::Expr...)
+    
+Macro for creating an ODE from a list of equations.
+Also injects all variables into the global scope.
 """
 macro ODEmodel(ex::Expr...)
     equations = [ex...]

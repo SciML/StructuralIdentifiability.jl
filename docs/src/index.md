@@ -14,7 +14,9 @@ Pkg.add("StructuralIdentifiability")
 ## Feature Summary
 
 ### Feature List
-
+```@docs
+ODEmodel(ex::Expr...)
+```
 ## Contributing
 
 - Please refer to the
