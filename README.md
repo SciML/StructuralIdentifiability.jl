@@ -1,5 +1,10 @@
 # StructuralIdentifiability.jl
 
+[![Github Action CI](https://github.com/SciML/StructuralIdentifiability.jl/workflows/Tests/badge.svg)](https://github.com/SciML/StructuralIdentifiability.jl/actions)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](http://si.sciml.ai/stable/)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](http://si.sciml.ai/dev/)
+[![ColPrac: Contributor's Guide on Collaborative Practices for Community Packages](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet)](https://github.com/SciML/ColPrac)
+
 ## About
 
 `StructuralIdentifiability.jl` is a Julia package for assessing structural parameter identifiability of parametric ODE models, both local and global.
