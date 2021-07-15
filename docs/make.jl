@@ -14,6 +14,7 @@ makedocs(
         ],
         "Basics" => Any[
             "input/input.md",
+            "identifiability/identifiability.md",
             "local_identifiability/local_identifiability.md",
             "global_identifiability/global_identifiability.md"
         ],
