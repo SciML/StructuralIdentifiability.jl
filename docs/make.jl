@@ -14,10 +14,13 @@ makedocs(
         ],
         "Basics" => Any[
             "input/input.md",
-            "identifiability/identifiability.md"
+            "identifiability/identifiability.md",
         ],
         "Export" => Any[
-
+            "export/export.md"
+        ],
+        "Utilities" => Any[
+            "ioequations/ioequations.md"
         ]
     ]
 )
