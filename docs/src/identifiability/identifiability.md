@@ -2,7 +2,17 @@
 
 ```@docs
 assess_identifiability
-find_identifiable_functions
+```
+# Assessing Local Identifiability
+
+```@docs
+assess_local_identifiability
+```
+
+# Assessing Global Identifiability
+
+```@docs
+assess_global_identifiability
 ```
 
 # Input-Output Equations

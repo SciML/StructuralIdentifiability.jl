@@ -1,6 +1,6 @@
 # Exporting to Other Systems
 
-Here we document some helpful utilities to export you code to other computer algebra systems.
+Here we put some helpful utilities to export you code to other computer algebra systems.
 
 ## Maple
 
