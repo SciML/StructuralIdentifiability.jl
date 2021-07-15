@@ -143,20 +143,47 @@ function check_identifiability(io_equation::P, parameters::Array{P, 1}, p::Float
 end
 
 #------------------------------------------------------------------------------
+"""
+    assess_global_identifiability(ode::ODE{P}, p::Float64=0.99; var_change=:default, gb_method=:GroebnerBasis) where P <: MPolyElem{fmpq}
+
+Input:
+- `ode` - the ODE model
+- `p` - probability of correctness
+- `var_change` - a policy for variable change (default, yes, no), affects only the runtime
+- `gb_method` - library used for Groebner bases (GroebnerBasis, Singular)
+
+Output: 
+- a dictionary mapping each parameter to a boolean.
+
+Checks global identifiability for a parameters of the model provided in `ode`. Call this function to check global identifiability of all parameters automatically.
+"""
+function assess_global_identifiability(
+        ode::ODE{P},
+        p::Float64=0.99; 
+        var_change=:default,
+        gb_method=:GroebnerBasis
+    ) where P <: MPolyElem{fmpq}
+    result_list = assess_global_identifiability(ode, ode.parameters, p; var_change=var_change, gb_method=gb_method)
+
+    return Dict([param => val for (param, val) in zip(ode.parameters, result_list)])
+end
+
+#------------------------------------------------------------------------------
 
 """
     assess_global_identifiability(ode, [funcs_to_check, p=0.99, var_change=:default, gb_method=:GroebnerBasis])
 
-Checks global identifiability of given functions of parameters
 Input:
-    - ode - the ODE model
-    - funcs_to_check - rational functions in parameters
-    - p - probability of correctness
-    - var_change - a policy for variable change (default, yes, no),
-                   affects only the runtime
-    - gb_method - library used for Groebner bases (GroebnerBasis, Singular)
-Output: array of length  |funcs_to_check| with true/false values for global identifiability
-        or dictionary param => Bool if funcs_to_check are not given
+- `ode` - the ODE model
+- `funcs_to_check` - rational functions in parameters
+- `p` - probability of correctness
+- `var_change` - a policy for variable change (default, yes, no),
+                affects only the runtime
+- `gb_method` - library used for Groebner bases (GroebnerBasis, Singular)
+Output: array of length |`funcs_to_check`| with true/false values for global identifiability
+        or dictionary param => Bool if `funcs_to_check` are not given
+
+Checks global identifiability of functions of parameters specified in `funcs_to_check`.
 """
 function assess_global_identifiability(
         ode::ODE{P},
@@ -195,19 +222,6 @@ function assess_global_identifiability(
     _runtime_logger[:check_time] = check_time
 
     return result
-end
-
-#------------------------------------------------------------------------------
-
-function assess_global_identifiability(
-        ode::ODE{P},
-        p::Float64=0.99; 
-        var_change=:default,
-        gb_method=:GroebnerBasis
-    ) where P <: MPolyElem{fmpq}
-    result_list = assess_global_identifiability(ode, ode.parameters, p; var_change=var_change, gb_method=gb_method)
-
-    return Dict([param => val for (param, val) in zip(ode.parameters, result_list)])
 end
 
 #------------------------------------------------------------------------------

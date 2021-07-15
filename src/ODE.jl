@@ -1,4 +1,11 @@
 # P is the type of polynomials in the rhs of the ODE system
+"""
+The main structure that represents input ODE system.
+
+Stores information about states (`x_vars`), outputs (`y_vars`), inputs (`u_vars`), parameters (`parameters`) and the equations.
+
+This structure is constructed via `@ODEmodel` macro.
+"""
 struct ODE{P}
     poly_ring::MPolyRing
     x_vars::Array{P, 1}
@@ -223,11 +230,17 @@ end
 
 #------------------------------------------------------------------------------
 
-"""
-    ODEmodel(ex::Expr...)
-    
+""" 
 Macro for creating an ODE from a list of equations.
 Also injects all variables into the global scope.
+
+This macro accepts a sybolically written ODE system and generates an `ODE` structure instance:
+```julia
+ode = @ODEmodel(
+    x1'(t) = -k1 * x1(t),
+    y1(t) = x1(t)
+)
+```
 """
 macro ODEmodel(ex::Expr...)
     equations = [ex...]
