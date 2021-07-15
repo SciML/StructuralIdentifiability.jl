@@ -5,3 +5,9 @@
 ODE
 set_parameter_values
 ```
+
+## Create Compartmental Model
+
+```@docs
+linear_compartment_model
+```

@@ -2,9 +2,9 @@
     print_for_maple(ode, package)
 
 Prints the ODE in the format accepted by maple packages
-  - SIAN (https://github.com/pogudingleb/SIAN) if package=:SIAN
-  - DifferentialAlgebra if package=:DifferentialAlgebra
-  - DifferentialThomas if package=:DifferentialThomas
+- SIAN (https://github.com/pogudingleb/SIAN) if package=:SIAN
+- DifferentialAlgebra if package=:DifferentialAlgebra
+- DifferentialThomas if package=:DifferentialThomas
 """
 function print_for_maple(ode::ODE, package=:SIAN)
     varstr = Dict(x => var_to_str(x) * "(t)" for x in vcat(ode.x_vars, ode.u_vars, ode.y_vars))
