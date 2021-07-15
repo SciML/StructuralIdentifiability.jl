@@ -304,9 +304,7 @@ end
 """
     extract_identifiable_functions(io_equations, parameters)
 
-For the io_equation and the list of all parameter variables, returns a dictionary
-var => whether_globally_identifiable
-method can be "Singular" or "GroebnerBasis" yielding using Singular.jl or GroebnerBasis.jl
+For the io_equation and the list of all parameter variables, returns a set of generators of a field of all functions of parameters
 """
 function extract_identifiable_functions(
     io_equations::Array{P, 1}, 
@@ -331,7 +329,18 @@ function extract_identifiable_functions(
 end
 
 #------------------------------------------------------------------------------
+"""
+find_identifiable_functions(ode::ODE{<: MPolyElem{fmpq}}, p::Float64=0.99)
 
+Input:
+- `ode` - `ODE`-system
+- `p` - probability of correctness
+
+Output:
+- returns a set of generators of the field of all functions of parameters
+
+Find identifiable functions of parameters for a given `ode`. 
+"""
 function find_identifiable_functions(ode::ODE{<: MPolyElem{fmpq}}, p::Float64=0.99)
     @debug "Computing IO-equations"
     io_equations = find_ioequations(ode)

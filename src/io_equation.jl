@@ -80,9 +80,11 @@ end
 
 Finds the input-output equations of an ODE system
 Input:
-    - ode, the ODE system
-    - auto_var_change, whether or not to perform automatic variable change
-Output: a dictionary from "leaders" to the corresponding io-equations
+- `ode` - the ODE system
+- `var_change_policy` - whether to perform automatic variable change, can be one of `:default`, `:yes`, `:no`
+
+Output:
+- a dictionary from "leaders" to the corresponding input-output equations
 """
 function find_ioequations(
         ode::ODE{P}; 
