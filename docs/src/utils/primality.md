@@ -5,7 +5,6 @@
 Pages=["primality.md"]
 ```
 
-```@autodocs
-Modules = [StructuralIdentifiability]
-Pages   = ["primality_checks.jl"]
+```@docs
+StructuralIdentifiability.check_primality
 ```
