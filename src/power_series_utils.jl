@@ -19,7 +19,7 @@ end
 #------------------------------------------------------------------------------
 
 """
-   `_matrix_inv_newton_iteration`(M, Minv)
+    _matrix_inv_newton_iteration(M, Minv)
 
 Performs a single step of Newton iteration for inverting `M` with `Minv` being a partial result
 """

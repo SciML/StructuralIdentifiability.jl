@@ -21,7 +21,7 @@ makedocs(
             "Elimination"=>"utils/elimination.md",
             "ODE Tools" => "utils/ode.md",
             "Power Series Tools" => "utils/power_series_utils.md",
-            "Primality Chekcs" => "utils/primality.md",
+            # "Primality Chekcs" => "utils/primality.md",
             "Wronskian Tools" => "utils/wronskian.md",
             "Input-Output Equation tools"=>"ioequations/ioequations.md",
             "Other Utilities"=>"utils/util.md"
