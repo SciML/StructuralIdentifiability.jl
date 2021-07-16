@@ -46,12 +46,14 @@ end
     Bezout_matrix(f, g, var_elim)
 
 Compute the Bezout matrix of two polynomials f, g with respect to var_elim
+
 Inputs:
-    - f - first polynomial
-    - g - second polynomial
-    - var_elim - variable, of which f and g are considered as polynomials
+- `f` - first polynomial
+- `g` - second polynomial
+- `var_elim` - variable, of which f and g are considered as polynomials
+
 Output:
-    - M::MatrixElem, The Bezout matrix
+- `M::MatrixElem` - The Bezout matrix
 """
 function Bezout_matrix(f::P, g::P, var_elim::P) where P <: MPolyElem
     parent_ring = parent(f)
@@ -77,11 +79,11 @@ end
 
 Compute the Sylvester matrix of two polynomials f, g with respect to var_elim
 Inputs:
-    - f - first polynomial
-    - g - second polynomial
-    - var_elim - variable, of which f and g are considered as polynomials
+- `f` - first polynomial
+- `g` - second polynomial
+- `var_elim` - variable, of which f and g are considered as polynomials
 Output:
-    - M::MatrixElem, The Sylvester matrix
+- `M::MatrixElem` - The Sylvester matrix
 """
 function Sylvester_matrix(f::P, g::P, var_elim::P) where P <: MPolyElem
     parent_ring = parent(f)
@@ -110,11 +112,13 @@ end
     simplify_matrix(M)
 
 Eliminate GCD of entries of every row and column
+
 Input:
-    - M::MatrixElem, matrix to be simplified
+- `M::MatrixElem` - matrix to be simplified
+
 Output:
-    - M::MatrixElem, Simplified matrix
-    - extra_factors::Vector{AbstractAlgebra.MPolyElem}, array of GCDs eliminated from M.
+- `M::MatrixElem` - Simplified matrix
+- `extra_factors::Vector{AbstractAlgebra.MPolyElem}` - array of GCDs eliminated from `M`.
 """
 function simplify_matrix(M::MatElem{P}) where P <: MPolyElem
     """
@@ -241,10 +245,11 @@ end
     choose(polys, generic_point_generator)
 
 Input:
-    - polys, an array of distinct irreducible polynomials in the same ring
-    - generic_point_generator, a generic point generator as described above for one of polys
+- `polys` - an array of distinct irreducible polynomials in the same ring
+- `generic_point_generator` - a generic point generator as described above for one of polys
+
 Output:
-    - the polynomial that vanishes at the generic_point_generator
+- the polynomial that vanishes at the `generic_point_generator`
 """
 function choose(polys::Array{P, 1}, generic_point_generator) where P <: MPolyElem{<: FieldElem}
     vars = gens(parent(polys[1]))
@@ -266,13 +271,15 @@ end
     eliminate_var(f, g, var_elim, generic_point_generator)
 
 Eliminate variable from a pair of polynomials
+
 Input:
-    - f and g, polynomials
-    - var_elim, variable to be eliminated
-    - generic_point_generator, a generic point generator object for the factor
-      of the resultant of f and g of interest
+- `f` and `g` - polynomials
+- `var_elim` - variable to be eliminated
+- `generic_point_generator` - a generic point generator object for the factor
+      of the resultant of `f` and `g` of interest
+
 Output:
-    polynomial, the desired factor of the resultant of f and g
+- `polynomial` - the desired factor of the resultant of `f` and `g`
 """
 function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P <: MPolyElem{<: FieldElem}
     #Linear comb

@@ -19,10 +19,9 @@ end
 #------------------------------------------------------------------------------
 
 """
-   _matrix_inv_newton_iteration(M, Minv)
+   `_matrix_inv_newton_iteration`(M, Minv)
 
-Performs a single step of Newton iteration for inverting M with 
-Minv being a partial result
+Performs a single step of Newton iteration for inverting `M` with `Minv` being a partial result
 """
 function _matrix_inv_newton_iteration(M::MatElem{T}, Minv::MatElem{T}) where T <: Generic.AbsSeriesElem{<: Generic.FieldElem}
     return 2 * Minv - Minv * M * Minv
@@ -34,9 +33,12 @@ end
     ps_matrix_inv(M, prec)
 
 Input:
-    - M - a square matrix with entries in a univariate power series ring
+- `M` - a square matrix with entries in a univariate power series ring
       it is assumed that M(0) is invertible and all entries having the same precision
-Output: the inverse of M computed up to prec (the precision of the matrix if nothing)
+- `prec` - an integer, precision, if `-1` then defaults to precision of `M`
+
+Output:
+- the inverse of `M` computed up to `prec`
 """
 function ps_matrix_inv(M::MatElem{<: Generic.AbsSeriesElem{<: Generic.FieldElem}}, prec::Int=-1)
     const_term = ps_matrix_const_term(M)
@@ -56,8 +58,11 @@ end
 """
     ps_diff(ps)
 
-Input: ps - (absolute capped) unvariate power series
-Output: the derivative of ps
+Input:
+- `ps` - (absolute capped) unvariate power series
+
+Output: 
+- the derivative of `ps`
 """
 function ps_diff(ps::Generic.AbsSeriesElem{<: Generic.RingElem})
     result = zero(parent(ps))
@@ -73,8 +78,10 @@ end
 """
     ps_integrate(ps)
 
-Input: ps - (absolute capped) unvariate power series
-Output: the integral of ps without constant term
+Input:
+- `ps` - (absolute capped) unvariate power series
+Output:
+- the integral of `ps` without constant term
 """
 function ps_integrate(ps::Generic.AbsSeriesElem{<: Generic.FieldElem})
     result = zero(parent(ps))
@@ -91,9 +98,10 @@ end
     ps_matrix_log(M)
 
 Input:
-    - M - a square matrix with entries in a univariate power series ring
-      it is assumed that M(0) is the identity
-Output: the natural log of M
+- M - a square matrix with entries in a univariate power series ring
+      it is assumed that `M(0)` is the identity
+Output: 
+- the natural log of `M`
 """
 function ps_matrix_log(M::MatElem{<: Generic.AbsSeriesElem{<: Generic.FieldElem}})
     const_term = ps_matrix_const_term(M)
@@ -127,9 +135,10 @@ end
     ps_matrix_homlinear_de(A, Y0, prec)
 
 Input:
-    - A - a square matrix with entries in a univariate power series ring
-    - Y0 - a square invertible matrix over the base field
-Output: matrix Y such that Y' = AY up to precision of A - 1 and Y(0) = Y0
+- `A` - a square matrix with entries in a univariate power series ring
+- `Y0` - a square invertible matrix over the base field
+Output: 
+- matrix `Y` such that `Y' = AY` up to precision of `A - 1` and `Y(0) = Y0`
 """
 function ps_matrix_homlinear_de(
         A::MatElem{<: Generic.AbsSeriesElem{T}},
@@ -171,9 +180,11 @@ end
     ps_matrix_linear_de(A, B, Y0, prec)
 
 Input:
-    - A, B - square matrices with entries in a univariate power series ring
-    - Y0 - a matrix over the base field with the rows number the same as A
-Output: matrix Y such that Y' = AY + B up to precision of A - 1 and Y(0) = Y0
+- `A`, `B` - square matrices with entries in a univariate power series ring
+- `Y0` - a matrix over the base field with the rows number the same as `A`
+
+Output:
+- matrix `Y` such that `Y' = AY + B` up to precision of `A - 1` and `Y(0) = Y0`
 """
 function ps_matrix_linear_de(
         A::MatElem{<: Generic.AbsSeriesElem{T}},
@@ -194,14 +205,15 @@ end
 """
     ps_ode_solution(equations, ic, inputs, prec)
 
-Input
-    - equations - a system of the form A(x, u, mu)x' - B(x, u, mu) = 0,
-                  where A is a generically nonsingular square matrix
-    - ic - initial conditions for x's (dictionary)
-    - inputs - power series for inputs represented as arrays (dictionary)
-    - prec - precision of the solution
-    Assumption: A is nonzero at zero
-Output: power series solution of the system
+Input:
+- `equations` - a system of the form ``A(x, u, mu)x' - B(x, u, mu) = 0``,
+                where A is a generically nonsingular square matrix. *Assumption*: `A` is nonzero at zero
+- `ic` - initial conditions for x's (dictionary)
+- `inputs` - power series for inputs represented as arrays (dictionary)
+- `prec` - precision of the solution
+    
+Output: 
+- power series solution of the system
 """
 function ps_ode_solution(
         equations::Array{P, 1},

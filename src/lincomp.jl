@@ -16,7 +16,7 @@
 """
     linear_compartment_model(graph, inputs, outputs, leaks)
 
-Input: defines a linear compartment model with nodes numbered from 1 to n by
+Input: defines a linear compartment model with nodes numbered from 1 to `n` by
 - `graph` - and array of integer arrays representing the adjacency lists of the graph
 - `inputs` - array of input nodes
 - `outputs` - array of output nodes

@@ -16,11 +16,13 @@
 """
     differentiate_solution(ode, params, ic, inputs, prec)
 
-Input: the same as for power_series_solutions
-Output: a tuple consisting of the power series solution and 
-        a dictionary of the form (u, v) => power series, where u is a state variable
-        v is a state or parameter, and the power series is the partial derivative of
-        the function u w.r.t. v evaluated at the solution
+Input: 
+- the same as for `power_series_solutions`
+
+Output: 
+- a tuple consisting of the power series solution and a dictionary of the form `(u, v) => power series`, where `u` is a state variable 
+  `v` is a state or parameter, and the power series is the partial derivative of
+  the function `u` w.r.t. `v` evaluated at the solution
 """
 function differentiate_solution(
         ode::ODE{P},
@@ -73,8 +75,9 @@ end
 """
     differentiate_output(ode, params, ic, inputs, prec)
 
-Similar to differentiate_solution but computes partial derivatives of a prescribed outputs
-returns a dict from y's to dictionalries from vars to dy / dvar
+Similar to `differentiate_solution` but computes partial derivatives of a prescribed outputs
+returns a dictionary of the form `y_function => Dict(var => dy/dvar)` where `dy/dvar` is the derivative
+of `y_function` with respect to `var`.
 """
 function differentiate_output(
         ode::ODE{P},
@@ -111,8 +114,8 @@ end
 """
     get_degree_and_coeffsize(f)
 
-for f being a polynomial/rational function over QQ returns a tuple
-(degree, max_coef_size)
+for `f` being a polynomial/rational function over rationals (`QQ`) returns a tuple
+`(degree, max_coef_size)`
 """
 function get_degree_and_coeffsize(f::MPolyElem{Nemo.fmpq})
     if length(f) == 0
