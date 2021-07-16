@@ -33,7 +33,7 @@ function diff_sol_Lie_derivatives(ode::ODE, params, ic, inputs, prec::Int)
         for i in 1:prec
             push!(
                 Lie_derivatives[y],
-                sum([derivative(Lie_derivatives[y][end], v) * get(derivation, v, 0) for v in gens(new_ring)])
+                sum(derivative(Lie_derivatives[y][end], v) * get(derivation, v, 0) for v in gens(new_ring))
             )
         end
     end
