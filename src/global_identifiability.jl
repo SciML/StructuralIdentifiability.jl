@@ -153,7 +153,7 @@ Input:
 - `ode` - the ODE model
 - `p` - probability of correctness
 - `var_change` - a policy for variable change (`:default`, `:yes`, `:no`), affects only the runtime
-- `gb_method` - library used for Groebner bases (`GroebnerBasis`, `Singular`)
+- `gb_method` - library used for Groebner bases (`:GroebnerBasis`, `:Singular`)
 
 Output: 
 - a dictionary mapping each parameter to a boolean.
@@ -182,7 +182,7 @@ Input:
 - `p` - probability of correctness
 - `var_change` - a policy for variable change (`:default`, `:yes`, `:no`),
                 affects only the runtime
-- `gb_method` - library used for Groebner bases (GroebnerBasis, Singular)
+- `gb_method` - library used for Groebner bases (`:GroebnerBasis`, `:Singular`)
 
 Output: 
 - array of length `length(funcs_to_check)` with true/false values for global identifiability
