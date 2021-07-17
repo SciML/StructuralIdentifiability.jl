@@ -1,4 +1,4 @@
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 function check_primality_zerodim(J::Singular.sideal{Singular.spoly{Singular.n_Q}})
     J = Singular.std(J)
@@ -17,13 +17,13 @@ function check_primality_zerodim(J::Singular.sideal{Singular.spoly{Singular.n_Q}
         end
         push!(matrices, M)
     end
-    generic_multiplication = sum([rand(1:100) * M for M in matrices])
+    generic_multiplication = sum(rand(1:100) * M for M in matrices)
     return isirreducible(Nemo.charpoly(generic_multiplication))
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-function check_primality(polys::Dict{fmpq_mpoly, fmpq_mpoly}, extra_relations::Array{fmpq_mpoly, 1})
+function check_primality(polys::Dict{fmpq_mpoly,fmpq_mpoly}, extra_relations::Array{fmpq_mpoly,1})
     leaders = collect(keys(polys))
     ring = parent(leaders[1])
 
@@ -35,10 +35,10 @@ function check_primality(polys::Dict{fmpq_mpoly, fmpq_mpoly}, extra_relations::A
     return check_primality_zerodim(zerodim_ideal)
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-function check_primality(polys::Dict{fmpq_mpoly, fmpq_mpoly})
-    return check_primality(polys, Array{fmpq_mpoly, 1}())
+function check_primality(polys::Dict{fmpq_mpoly,fmpq_mpoly})
+    return check_primality(polys, Array{fmpq_mpoly,1}())
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
