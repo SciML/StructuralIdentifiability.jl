@@ -212,8 +212,8 @@ function find_ioequations(
                     end
                 end
             end  
-                        end
-                        
+        end
+   
         # Eliminate var_elim from the system
         delete!(x_equations, var_elim)
         @debug "Elimination in states"
@@ -265,4 +265,4 @@ function find_ioequations(
         sampling_range = 2 * sampling_range
     end
     return io_equations
-        end
+end
