@@ -3,18 +3,17 @@
 function generator_var_change(generator, var::P, numer::P, denom::P) where P <: MPolyElem
     return IterTools.imap(
         point -> begin
-        result = copy(point)
-        result[var] = eval_at_dict(numer, point) // eval_at_dict(denom, point)
-        return result
-    end,
-        Iterators.filter(point -> eval_at_dict(denom, point) != 0, generator)
+            result = copy(point)
+            result[var] = eval_at_dict(numer, point) // eval_at_dict(denom, point)
+            return result
+    end, Iterators.filter(point -> eval_at_dict(denom, point) != 0, generator)
     )
 end
 
 # ------------------------------------------------------------------------------
 
 function diff_poly(poly::P, derivation::Dict{P,P}) where P <: MPolyElem
-return sum(derivative(poly, x) * xd for (x, xd) in derivation)
+    return sum(derivative(poly, x) * xd for (x, xd) in derivation)
 end
 
 # ------------------------------------------------------------------------------
@@ -37,7 +36,7 @@ function generate_io_equation_problem(ode::ODE{P}) where P <: MPolyElem{<: Field
     derivation = Dict{P,P}()
     for x in ode.x_vars
         derivation[switch_ring(x, ring)] = str_to_var(var_to_str(x) * "_dot", ring)
-        end
+    end
     for i in 0:(dim_x - 1)
         for y in ode.y_vars
             derivation[str_to_var(var_to_str(y) * "_$i", ring)] = str_to_var(var_to_str(y) * "_$(i + 1)", ring)
@@ -54,7 +53,7 @@ function generate_io_equation_problem(ode::ODE{P}) where P <: MPolyElem{<: Field
     new_us = [str_to_var(var_to_str(u) * "_0", ring) for u in ode.u_vars]
     function to_new_ring(p)
         return evaluate(parent_ring_change(ode.poly_ring(p), ring), old_us, new_us)
-        end
+    end
     x_equations = Dict{P,P}()
     for x in ode.x_vars
         x_lifted = parent_ring_change(x, ring)
