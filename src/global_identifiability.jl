@@ -335,7 +335,7 @@ end
 
 #------------------------------------------------------------------------------
 """
-find_identifiable_functions(ode::ODE{<: MPolyElem{fmpq}}, p::Float64=0.99)
+    find_identifiable_functions(ode::ODE{<: MPolyElem{fmpq}}, p::Float64=0.99)
 
 Input:
 - `ode` - `ODE`-system
