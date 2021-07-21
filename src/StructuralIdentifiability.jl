@@ -55,8 +55,27 @@ include("global_identifiability.jl")
 include("lincomp.jl")
 
 """
+    assess_identifiability(ode::ODE{P}, p::Float64=0.99) where P <: MPolyElem{fmpq}
+Input:
+- `ode` - the ODE model
+- `p` - probability of correctness.
+
+Assesses identifiability (both local and global) of a given ODE model (parameters detected automatically). The result is guaranteed to be correct with the probability
+at least `p`.
+
+"""
+function assess_identifiability(ode::ODE{P}, p::Float64=0.99) where P <: MPolyElem{fmpq}
+    result_list = assess_identifiability(ode, ode.parameters, p)
+    return Dict(param => res for (param, res) in zip(ode.parameters, result_list))
+end
+
+"""
     assess_identifiability(ode, [funcs_to_check, p=0.99])
 
+Input:
+- `ode` - the ODE model
+- `p` - probability of correctness.
+    
 Assesses identifiability of a given ODE model. The result is guaranteed to be correct with the probability
 at least `p`.
 
@@ -110,9 +129,5 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem, 
     return result
 end
 
-function assess_identifiability(ode::ODE{P}, p::Float64=0.99) where P <: MPolyElem{fmpq}
-    result_list = assess_identifiability(ode, ode.parameters, p)
-    return Dict(param => res for (param, res) in zip(ode.parameters, result_list))
-end
 
 end

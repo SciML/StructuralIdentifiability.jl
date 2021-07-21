@@ -16,12 +16,14 @@
 """
     linear_compartment_model(graph, inputs, outputs, leaks)
 
-    Input: defines a linear compartment model with nodes numbered from 1 to n by
-        - graph: and array of integer arrays representing the adjacency lists of the graph
-        - inputs: array of input nodes
-        - outputs: array of output nodes
-        - leaks: array of sink nodes
-    Output: the corresponding ODE system in the notation of https://doi.org/10.1007/s11538-015-0098-0
+Input: defines a linear compartment model with nodes numbered from 1 to `n` by
+- `graph` - and array of integer arrays representing the adjacency lists of the graph
+- `inputs` - array of input nodes
+- `outputs` - array of output nodes
+- `leaks` - array of sink nodes
+
+Output:
+- the corresponding ODE system in the notation of https://doi.org/10.1007/s11538-015-0098-0
 """
 function linear_compartment_model(
     graph::Vector{Vector{Int}},

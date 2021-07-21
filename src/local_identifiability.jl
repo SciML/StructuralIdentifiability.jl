@@ -16,11 +16,13 @@
 """
     differentiate_solution(ode, params, ic, inputs, prec)
 
-Input: the same as for power_series_solutions
-Output: a tuple consisting of the power series solution and 
-        a dictionary of the form (u, v) => power series, where u is a state variable
-        v is a state or parameter, and the power series is the partial derivative of
-        the function u w.r.t. v evaluated at the solution
+Input: 
+- the same as for `power_series_solutions`
+
+Output: 
+- a tuple consisting of the power series solution and a dictionary of the form `(u, v) => power series`, where `u` is a state variable 
+  `v` is a state or parameter, and the power series is the partial derivative of
+  the function `u` w.r.t. `v` evaluated at the solution
 """
 function differentiate_solution(
         ode::ODE{P},
@@ -73,8 +75,9 @@ end
 """
     differentiate_output(ode, params, ic, inputs, prec)
 
-Similar to differentiate_solution but computes partial derivatives of a prescribed outputs
-returns a dict from y's to dictionalries from vars to dy / dvar
+Similar to `differentiate_solution` but computes partial derivatives of a prescribed outputs
+returns a dictionary of the form `y_function => Dict(var => dy/dvar)` where `dy/dvar` is the derivative
+of `y_function` with respect to `var`.
 """
 function differentiate_output(
         ode::ODE{P},
@@ -111,8 +114,8 @@ end
 """
     get_degree_and_coeffsize(f)
 
-for f being a polynomial/rational function over QQ returns a tuple
-(degree, max_coef_size)
+for `f` being a polynomial/rational function over rationals (`QQ`) returns a tuple
+`(degree, max_coef_size)`
 """
 function get_degree_and_coeffsize(f::MPolyElem{Nemo.fmpq})
     if length(f) == 0
@@ -132,19 +135,50 @@ function get_degree_and_coeffsize(f::Generic.Frac{<: MPolyElem{Nemo.fmpq}})
 end
 
 
-# ------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+"""
+    assess_local_identifiability(ode::ODE{P}, p::Float64 = 0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
+
+Input:
+- `ode` - the ODE model
+- `p` - probability of correctness
+- `type` - identifiability type (`:SE` for single-experiment, `:ME` for multi-experiment)
+
+Output: 
+- for `type=:SE`, the result is a dictionary from each parameter to boolean;
+- for `type=:ME`, the result is a tuple with the dictionary as in `:SE` case and array of number of experiments.
+
+The main entrypoint for local identifiability checks. 
+Call this function to automatically take care of local identifiability of all parameters and initial conditions.
+The result is correct with probability at least `p`.
+
+`type` can be either `:SE` (single-experiment identifiability) or `:ME` (multi-experiment identifiability).
+The return value is a tuple consisting of the array of bools and the number of experiments to be performed.
+"""
+function assess_local_identifiability(ode::ODE{P}, p::Float64 = 0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
+    funcs_to_check = ode.parameters
+    if type == :SE
+        funcs_to_check = vcat(funcs_to_check, ode.x_vars)
+    end
+    result = assess_local_identifiability(ode, funcs_to_check, p, type)
+    if type == :SE
+        return Dict(a => b for (a, b) in zip(funcs_to_check, result))
+    end
+    return (
+        Dict(a => b for (a, b) in zip(funcs_to_check, result[1])),
+        result[2]
+    )
+end
 
 """
-    assess_local_identifiability(ode, funcs_to_check, p, type)
+    assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any, 1}, p::Float64=0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
 
-Checks the local identifiability/observability of the functions in funcs_to_check
-The result is correct with probability at least p
+Checks the local identifiability/observability of the functions in `funcs_to_check`. The result is correct with probability at least `p`.
 
-type can be either `:SE` (single-experiment identifiability) or 
-`:ME` (multi-experiment identifiability).
-The the type is ME, states are not allowed to appear in the `funcs_to_check`
-and the return value is a typle consisting of the array of bools 
-and the number of experiments to be performed
+Call this function if you have a specific collection of parameters of which you would like to check local identifiability.
+
+`type` can be either `:SE` (single-experiment identifiability) or `:ME` (multi-experiment identifiability).
+If the type is `:ME`, states are not allowed to appear in the `funcs_to_check`.
 """
 function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,1}, p::Float64=0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
 
@@ -259,19 +293,5 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
     return (result, num_exp)
 end
 
-function assess_local_identifiability(ode::ODE{P}, p::Float64=0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
-    funcs_to_check = ode.parameters
-    if type == :SE
-        funcs_to_check = vcat(funcs_to_check, ode.x_vars)
-    end
-    result = assess_local_identifiability(ode, funcs_to_check, p, type)
-    if type == :SE
-        return Dict(a => b for (a, b) in zip(funcs_to_check, result))
-    end
-    return (
-        Dict(a => b for (a, b) in zip(funcs_to_check, result[1])),
-        result[2]
-    )
-end
 
 # ------------------------------------------------------------------------------

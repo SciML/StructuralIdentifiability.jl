@@ -7,11 +7,13 @@ import Base.push!
 
 Compresses an input-output equation for the rank computation
 Input: 
-    - io_equation - input-output equation
-    - ode - the corresponding ode model
-Output: pair (coeffs, terms) such that
-    - sum of coeffs[i] * terms[i] = io_equation
-    - coeffs involve only parameters, terms involve only inputs and outputs
+- `io_equation` - input-output equation
+- `ode` - the corresponding ODE model
+
+Output: 
+- pair (coeffs, terms) such that:
+    - sum of `coeffs[i] * terms[i] = io_equation`
+    - `coeffs` involve only parameters, `terms` involve only inputs and outputs
     - length of the representation is the smallest possible
 """
 function monomial_compress(io_equation, ode::ODE)
@@ -84,10 +86,11 @@ end
     get_max_below(t, vect)
 
 Input:
-    - t - a trie with exponent vectors
-    - vect -yet another exponent vector
-Output: a pair d, v, where v is a vector in the trie which is
-    componenwise <= vect and the difference d is as small as possible
+- `t` - a trie with exponent vectors
+- `vect` - yet another exponent vector
+
+Output: 
+- a pair `(d, v)` where `v` is a vector in the trie which is componenwise ≤ `vect` and the difference `d` is as small as possible
 """
 function get_max_below(t::ExpVectTrie, vect::Array{Int, 1})
     if t.depth == 0
@@ -115,13 +118,16 @@ end
 """
     massive_eval(polys, eval_dict)
 
+Input:
+- `polys` - a list of polynomials
+- `eval_dict` - dictionary from variables to the values. Missing values are treated as zeroes
+
+Output: 
+- a list of values of the polynomials
+
 Evaluates a list of polynomails at a point. Assumes that multiplications are relatively expensive
 (like in truncated power series) so all the monomials are precomputed first and the values of monomials
 of lower degree are cached and used to compute the values of the monomials of higher degree
-Input:
-    - polys - a list of polynomials
-    - eval_dict - dictionary from variables to the values. Missing are treated as zeroes
-Output: a list of values of the polynomials
 """
 function massive_eval(polys, eval_dict)
     R = parent(first(values(eval_dict)))
@@ -177,11 +183,14 @@ end
 """
     wronskian(io_equations, ode)
 
-Computes the wronskians of io_equations
 Input:
-    - io_equations - a set of io-equations in the form of the Dict as returned by find_ioequations
-    - ode - the ode object
-Output: a list of wronskians evaluated at a point modulo prime
+- `io_equations` - a set of io-equations in the form of the `Dict` as returned by `find_ioequations`
+- `ode` - the `ODE` object
+
+Output: 
+- a list of wronskians evaluated at a point modulo prime
+
+Computes the wronskians of io_equations
 """
 function wronskian(io_equations::Dict{P, P}, ode::ODE{P}) where P <: MPolyElem
     @debug "Compressing monomials"

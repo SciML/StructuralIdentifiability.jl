@@ -1,4 +1,11 @@
 # P is the type of polynomials in the rhs of the ODE system
+"""
+The main structure that represents input ODE system.
+
+Stores information about states (`x_vars`), outputs (`y_vars`), inputs (`u_vars`), parameters (`parameters`) and the equations.
+
+This structure is constructed via `@ODEmodel` macro.
+"""
 struct ODE{P}
     poly_ring::MPolyRing
     x_vars::Array{P, 1}
@@ -47,9 +54,11 @@ end
     set_parameter_values(ode, param_values)
 
 Input:
-    - ode, an ODE as above
-    - param_values, values for (some of) the parameters as dictionary parameter => value
-Output: new ode with the parameters in param_values plugged with the given numbers
+- `ode` - an ODE as above
+- `param_values` - values for (possibly, some of) the parameters as dictionary `parameter` => `value`
+
+Output: 
+- new ode with the parameters in param_values plugged with the given numbers
 """
 function set_parameter_values(ode::ODE{P}, param_values::Dict{P, T}) where {T <: FieldElem, P <: MPolyElem{T}}
     new_vars = map(var_to_str, [v for v in gens(ode.poly_ring) if !(v in keys(param_values))])
@@ -70,14 +79,14 @@ end
     power_series_solution(ode, param_values, initial_conditions, input_values, prec)
 
 Input:
-    - ode, an ode to solve
-    - param_values, initial_conditions - parameter values and initial conditions to plug in
-      both are dictionaries variable => value
-    - input_values - power series for the inpiuts presented as a dictionary
-      variable => list of coefficients
-    - prec, the precision
-Output: computes a power series solution with precision prec presented as a dictionary
-        variable => corresponding coordiante of the solution
+- `ode` - an ode to solve
+- `param_values` - parameter values, must be a dictionary mapping parameter to a value
+- `initial_conditions` - initial conditions of `ode`, must be a dictionary mapping state variable to a value
+- `input_values` - power series for the inpiuts presented as a dictionary variable => list of coefficients
+- `prec` - the precision of solutions
+
+Output: 
+- computes a power series solution with precision prec presented as a dictionary variable => corresponding coordiante of the solution
 """
 function power_series_solution(
         ode::ODE{P},
@@ -223,9 +232,17 @@ end
 
 #------------------------------------------------------------------------------
 
-"""
-Macros for creating an ODE from a list of equations
-Also injects all variables into the global scope
+""" 
+Macro for creating an ODE from a list of equations.
+Also injects all variables into the global scope.
+
+This macro accepts a sybolically written ODE system and generates an `ODE` structure instance:
+```julia
+ode = @ODEmodel(
+    x1'(t) = -k1 * x1(t),
+    y1(t) = x1(t)
+)
+```
 """
 macro ODEmodel(ex::Expr...)
     equations = [ex...]

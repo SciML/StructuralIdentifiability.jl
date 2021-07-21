@@ -12,8 +12,8 @@ Pkg.add("StructuralIdentifiability")
 ## Citation
 
 ## Feature Summary
-
-### Feature List
+`StructuralIdentifiability.jl` can assess local and global identifiability of ODE models. 
+## Feature List
 
 ## Contributing
 
