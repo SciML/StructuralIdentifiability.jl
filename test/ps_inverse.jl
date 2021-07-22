@@ -5,7 +5,7 @@
     for d in 1:5
         S = Nemo.MatrixSpace(T, d, d)
         for case in 1:20
-            M = S([random_ps(T) for i in 1:d, j in 1:d]) 
+            M = 1+S([random_ps(T) for i in 1:d, j in 1:d])
             invM = ps_matrix_inv(M)
             prod = invM * M
             @test prod == one(S)
