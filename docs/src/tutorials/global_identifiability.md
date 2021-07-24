@@ -1,4 +1,4 @@
-# Local Identifiability of Differential Models
+# Global Identifiability of Differential Models
 
 In this tutorial, let us cover an example problem of querying the ODE for globally identifiable parameters.
 
