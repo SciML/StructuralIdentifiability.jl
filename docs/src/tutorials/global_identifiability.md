@@ -4,7 +4,7 @@ In this tutorial, let us cover an example problem of querying the ODE for global
 
 ## Input System
 
-Let us consider the following model with two outputs and a system of four ordinary differential equations:
+Let us consider the following four-dimensional model with two outputs:
 
 $\begin{cases}x'(t) = lm - d * x(t) - beta * x(t) * v(t),\\
     y'(t) = beta * x(t) * v(t) - a * y(t),\\
