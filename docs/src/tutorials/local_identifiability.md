@@ -53,11 +53,9 @@ As you can see, for this new model with an additional output, all parameters are
 ## Note on Probability of Correctness
 We set the probability of correctness $p$ to be `0.99`. Why would we ever want a lower value? Great question! The underlying algorithm relies on operations being modulo a large enough prime characteristic $\mathcal{P}\geq \kappa p$ where $\kappa$ is determined by the algorithm internally.
 
-The algorithm's complexity is proportional to the size of operands (see proposition 3.1 in [[1]](#local)) and hence high probability of correctness may lead to higher size of coefficients during computation for some systems hence one may wish to lower $p$ to save on runtime (though in practice this is _very_ rare).
+The algorithm's complexity is proportional to the size of operands (see proposition 3.1 in the main paper[^1]) and hence high probability of correctness may lead to higher size of coefficients during computation for some systems hence one may wish to lower $p$ to save on runtime (though in practice this is _very_ rare).
 
-## References
 
-<a id="local">[1]</a> A. Sedoglavic,
-[*A probabilistic algorithm to test local algebraic observability in polynomial time*](https://doi.org/10.1006/jsco.2002.0532),
-Journal of Symbolic Computation, 2002.
+[^1]: 
+	> A. Sedoglavic, [*A probabilistic algorithm to test local algebraic observability in polynomial time*](https://doi.org/10.1006/jsco.2002.0532), Journal of Symbolic Computation, 2002.
 

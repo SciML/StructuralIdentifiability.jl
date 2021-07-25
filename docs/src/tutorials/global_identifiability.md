@@ -14,7 +14,9 @@ $\begin{cases}x'(t) = lm - d * x(t) - beta * x(t) * v(t),\\
     y_1(t) = w(t),\\
     y_2(t) = z(t)\end{cases}$
 
-This model comes from [[1]](#hiv), describing HIV dynamics. Let us run a global identifiability check on this model to get the result with probability of correctness being `p=0.999`.
+This model describes HIV dynamics[^1]. Let us run a global identifiability check on this model to get the result with probability of correctness being `p=0.999`. To do this, we will use `assess_identifiability(ode, p)` function.
+
+Global identifiability needs information about local identifiability first, hence the function we chose here will take care of that extra step for us.
 
 ```@repl
 using StructuralIdentifiability
@@ -28,7 +30,7 @@ ode = @ODEmodel(
     y1(t) = w(t),
     y2(t) = z(t)
 )
-@time global_id = assess_global_identifiability(ode, 0.999)
+@time global_id = assess_identifiability(ode, 0.999)
 ```
 
 Now let us compare the same system but with probability being `p=0.99`. We will see a reduction in runtime:
@@ -45,14 +47,10 @@ ode = @ODEmodel(
     y1(t) = w(t),
     y2(t) = z(t)
 )
-@time global_id = assess_global_identifiability(ode, 0.99)
+@time global_id = assess_identifiability(ode, 0.99)
 ```
 
 Indeed, notice how much quicker we obtained the result with 99% correctness guarantee! This illustrates the fact that you may sometimes sacrifice probability slightly to get results much faster.
 
-## References
-
-<a id="hiv">[1]</a> Wodarz, D., Nowak, M.,
-[*Specific therapy regimes could lead to long-term immunological control of HIV*](https://doi.org/10.1073/pnas.96.25.14464),
-Proceedings of the National Academy of Sciences Dec 1999, 96 (25)
-
+[^1]:
+    > D. Wodarz, M. Nowak, [*Specific therapy regimes could lead to long-term immunological control of HIV*](https://doi.org/10.1073/pnas.96.25.14464), PNAS December 7, 1999 96 (25) 14464-14469;
