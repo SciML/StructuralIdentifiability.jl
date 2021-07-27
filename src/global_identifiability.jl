@@ -222,6 +222,7 @@ function assess_global_identifiability(
     end
 
     @info "Assessing global identifiability using the coefficients of the io-equations"
+    @debug "Variable `io_equations` contains: $io_equations"
     check_time = @elapsed result = check_identifiability(collect(values(io_equations)), ode.parameters, funcs_to_check, p; method=gb_method)
     @info "Computed in $check_time seconds" :check_time check_time
     _runtime_logger[:check_time] = check_time
