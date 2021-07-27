@@ -1,5 +1,9 @@
 # StructuralIdentifiability.jl
 
+`StructuralIdentifiability.jl` is a comprehensive toolbox for assessing identifiability parameters.
+
+This documentation contains information about the functionality of the package as well as examples of use cases.
+
 ## Installation
 
 To install StructuralIdentifiability.jl, use the Julia package manager:
@@ -10,11 +14,20 @@ Pkg.add("StructuralIdentifiability")
 ```
 
 ## Citation
-
+```latex
+@article{structidjl,
+  author  = {Dong, R. and Goodbrake, C. and Harrington, H. and Pogudin G.},
+  title   = {Structural identifiability via input-output projections},
+  journal = {Manuscript in preparation},
+  year    = {2021}
+}
+```
 ## Feature Summary
-`StructuralIdentifiability.jl` can assess local and global identifiability of ODE models. 
+`StructuralIdentifiability.jl` can assess local and global identifiability of ODE models. In addition to these straightforward identifiability queries on individual parameters, the package is able to distinguish between single- and multi-experiment identifiability.
 ## Feature List
-
+* Local identifiability checks
+* Global identifiability checks
+* Assessment of identifiable functions of parameters
 ## Contributing
 
 - Please refer to the
