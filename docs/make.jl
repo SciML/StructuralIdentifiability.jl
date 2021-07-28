@@ -11,7 +11,8 @@ makedocs(
     pages=[
         "Home" => "index.md",
         "Tutorials" => Any[
-            "tutorials/local_identifiability.md"
+            "tutorials/local_identifiability.md",
+            "tutorials/global_identifiability.md"
         ],
         "Basics" => Any[
             "input/input.md",
