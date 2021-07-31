@@ -333,3 +333,24 @@ function Base.show(io::IO, ode::ODE)
 end
 
 #------------------------------------------------------------------------------
+function PreprocessODE(eqs, outputs, x, y, u, θ, t)
+	D = Differential(t)
+	@parameters x_dot[1:length(x)]
+    
+	input_symbols = vcat(x_dot, x, u, y, θ)
+	generators = string.(input_symbols)
+	R, gens_ = AbstractAlgebra.PolynomialRing(AbstractAlgebra.QQ, generators)
+    
+	state_eqn_dict = Dict([x[i] => substitute(eqs[i].lhs - eqs[i].rhs, D.(x) .=> x_dot) for i in 1:length(eqs)])
+	state_eqn_dict = Dict(substitute(value(k), input_symbols .=> gens_) => substitute(value(v), input_symbols .=> gens_) for (k, v) in state_eqn_dict)
+    
+	out_eqn_dict = Dict([y[i] => substitute(value(outputs[i].lhs), input_symbols .=> gens_) - substitute(value(outputs[i].rhs), input_symbols .=> gens_) for i in 1:length(outputs)])
+	out_eqn_dict = Dict(substitute(value(k), input_symbols .=> gens_) => substitute(value(v), input_symbols .=> gens_) for (k, v) in out_eqn_dict)
+    
+	states = [substitute(value(each),  input_symbols .=> gens_) for each in x]
+	params = [substitute(value(each),  input_symbols .=> gens_) for each in θ]
+	inputs = [substitute(value(each),  input_symbols .=> gens_) for each in u]
+	outputs = [substitute(value(each),  input_symbols .=> gens_) for each in y] 
+    
+	return (state_eqn_dict, out_eqn_dict, states, params, inputs, outputs)
+end
