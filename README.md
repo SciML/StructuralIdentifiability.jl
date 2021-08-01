@@ -15,7 +15,7 @@ For an introduction to structural identifiability, we refer to [[2]](#review).
 The package can be installed from this repository by
 ```julia
 > using Pkg
-> Pkg.Add("StructuralIdentifiability.jl")
+> Pkg.add("StructuralIdentifiability.jl")
 ```
 
 ## How to use
