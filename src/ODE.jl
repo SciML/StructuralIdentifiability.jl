@@ -332,8 +332,20 @@ function Base.show(io::IO, ode::ODE)
 end
 
 #------------------------------------------------------------------------------
-function PreprocessODE(eqs, outputs, x, y, u, θ, t)
-	D = Differential(t)
+"""
+    function PreprocessODE(eqs, outputs, x, y, u, θ)
+    
+Input:
+- `eqs` - array of ModelingToolkit differential equations
+- `outputs` - array of output equations
+- `x` - array of state variables
+- `y` - array of output function names
+- `θ` - array of parameter names
+
+Output: 
+- `ODE` object containing required data for identifiability assessment
+"""
+function PreprocessODE(eqs, outputs, x, y, u, θ)
 	@parameters x_dot[1:length(x)]
     
 	input_symbols = vcat(x_dot, x, u, y, θ)
@@ -346,10 +358,8 @@ function PreprocessODE(eqs, outputs, x, y, u, θ, t)
 	out_eqn_dict = Dict([outputs[i].lhs => outputs[i].lhs - outputs[i].rhs for i in 1:length(outputs)])
 	out_eqn_dict = Dict(substitute(k, input_symbols .=> gens_) => substitute(v, input_symbols .=> gens_) for (k, v) in out_eqn_dict)
     
-	states = [substitute(each,  input_symbols .=> gens_) for each in x]
-	params = [substitute(each,  input_symbols .=> gens_) for each in θ]
 	inputs = [substitute(each,  input_symbols .=> gens_) for each in u]
-	outputs = [substitute(each,  input_symbols .=> gens_) for each in y] 
     
-	return (state_eqn_dict, out_eqn_dict, states, params, inputs, outputs)
+	return ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(state_eqn_dict, out_eqn_dict, inputs)
+    #(state_eqn_dict, out_eqn_dict, states, params, inputs, outputs)
 end

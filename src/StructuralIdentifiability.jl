@@ -23,7 +23,7 @@ using MacroTools
 using ModelingToolkit
 
 # defining a model
-export ODE, @ODEmodel
+export ODE, @ODEmodel, PreprocessODE
 
 # assessing identifiability
 export assess_local_identifiability, assess_global_identifiability, assess_identifiability
