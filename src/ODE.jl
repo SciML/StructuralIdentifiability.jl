@@ -333,33 +333,37 @@ end
 
 #------------------------------------------------------------------------------
 """
-    function PreprocessODE(eqs, outputs, x, y, u, θ)
+    function PreprocessODE(diff_eqs, out_eqs, states, outputs, inputs, parameters)
     
 Input:
-- `eqs` - array of ModelingToolkit differential equations
-- `outputs` - array of output equations
-- `x` - array of state variables
-- `y` - array of output function names
-- `θ` - array of parameter names
+- `diff_eqs` - array of ModelingToolkit differential equations
+- `out_eqs` - array of output equations
+- `states` - array of state variables
+- `outputs` - array of output function names
+- `inputs` - array of input function names
+- `parameters` - array of parameter names
 
 Output: 
 - `ODE` object containing required data for identifiability assessment
 """
-function PreprocessODE(eqs, outputs, x, y, u, θ, t)
-    D = Differential(t)
+function PreprocessODE(diff_eqs, out_eqs, state_vars, outputs, inputs, params)# , t)
+    # D = Differential(t)
     
-	input_symbols = vcat(x, u, y, θ)
+	input_symbols = vcat(state_vars, outputs, inputs, params)
 	generators = string.(input_symbols)
+    generators = map(g->replace(g, "(t)"=>""), generators)
 	R, gens_ = Nemo.PolynomialRing(Nemo.QQ, generators)
     
-	state_eqn_dict = Dict([x[i] => eqs[i].rhs for i in 1:length(eqs)])
+	state_eqn_dict = Dict([state_vars[i] => diff_eqs[i].rhs for i in 1:length(diff_eqs)])
 	state_eqn_dict = Dict(substitute(k, input_symbols .=> gens_) => substitute(v, input_symbols .=> gens_) for (k, v) in state_eqn_dict)
-    
-	out_eqn_dict = Dict([outputs[i].lhs => outputs[i].rhs for i in 1:length(outputs)])
+
+	out_eqn_dict = Dict([out_eqs[i].lhs => out_eqs[i].rhs for i in 1:length(out_eqs)])
 	out_eqn_dict = Dict(substitute(k, input_symbols .=> gens_) => substitute(v, input_symbols .=> gens_) for (k, v) in out_eqn_dict)
     
-	inputs = [substitute(each,  input_symbols .=> gens_) for each in u]
-    
-	return ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(state_eqn_dict, out_eqn_dict, inputs)
+	inputs_ = [substitute(each,  input_symbols .=> gens_) for each in inputs]
+    if isequal(length(inputs_), 0)
+        inputs_ = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}()
+    end
+	return (ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(state_eqn_dict, out_eqn_dict, inputs_), input_symbols, gens_)
     #(state_eqn_dict, out_eqn_dict, states, params, inputs, outputs)
 end

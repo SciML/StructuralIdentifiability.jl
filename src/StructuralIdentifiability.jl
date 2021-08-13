@@ -130,5 +130,18 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem, 
     return result
 end
 
+function assess_identifiability(ode::ModelingToolkit.ODESystem, output_eqs, inputs, funcs_to_check, p::Float64=0.99)
+    diff_eqs = equations(ode)
+    params = ModelingToolkit.parameters(ode)
+    state_vars = ModelingToolkit.states(ode)
+    y_functions = [each.lhs for each in output_eqs]
+    ode, syms, gens = PreprocessODE(diff_eqs, output_eqs, state_vars, y_functions, inputs, params)
+    if length(funcs_to_check)>0
+        funcs_to_check = [substitute(x, syms .=> gens) for x in funcs_to_check]
+        return assess_identifiability(ode, funcs_to_check, p)
+    else
+        return assess_identifiability(ode, p)
+    end
+end
 
 end
