@@ -62,7 +62,7 @@ Output:
 - `polynomial` - result of substitution
 """
 function make_substitution(f::P, var_sub::P, val_numer::P, val_denom::P) where P <: MPolyElem
-    d = degree(f, var_sub)
+    d = Nemo.degree(f, var_sub)
 
     result = 0
     @debug "Substitution in a polynomial of degree $d"
@@ -149,7 +149,7 @@ function uncertain_factorization(f::MPolyElem{fmpq})
         return Array{Tuple{typeof(f),Bool},1}()
     end
     main_var = vars_f[end]
-    d = degree(f, main_var)
+    d = Nemo.degree(f, main_var)
     lc_f = coeff(f, [main_var], [d])
     gcd_coef = lc_f
     for i in  (d - 1):-1:0

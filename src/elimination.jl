@@ -57,8 +57,8 @@ Output:
 """
 function Bezout_matrix(f::P, g::P, var_elim::P) where P <: MPolyElem
     parent_ring = parent(f)
-    deg_f = degree(f, var_elim)
-    deg_g = degree(g, var_elim)
+    deg_f = Nemo.degree(f, var_elim)
+    deg_g = Nemo.degree(g, var_elim)
     n = max(deg_f, deg_g)
     coeffs_f = [coeff(f, [var_elim], [i]) for i in 0:n]
     coeffs_g = [coeff(g, [var_elim], [i]) for i in 0:n]
@@ -87,8 +87,8 @@ Output:
 """
 function Sylvester_matrix(f::P, g::P, var_elim::P) where P <: MPolyElem
     parent_ring = parent(f)
-    deg_f = degree(f, var_elim)
-    deg_g = degree(g, var_elim)
+    deg_f = Nemo.degree(f, var_elim)
+    deg_g = Nemo.degree(g, var_elim)
     n = deg_f + deg_g
     GL = AbstractAlgebra.MatrixSpace(parent_ring, n, n)
     M = zero(GL)
@@ -284,20 +284,20 @@ Output:
 function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P <: MPolyElem{<: FieldElem}
     # Linear comb
     while f != 0 && g != 0
-        if degree(f, var_elim) > degree(g, var_elim)
+        if Nemo.degree(f, var_elim) > Nemo.degree(g, var_elim)
             f, g = g, f
         end
-        lf = coeff(f, [var_elim], [degree(f, var_elim)])
-        lg = coeff(g, [var_elim], [degree(g, var_elim)])
+        lf = coeff(f, [var_elim], [Nemo.degree(f, var_elim)])
+        lg = coeff(g, [var_elim], [Nemo.degree(g, var_elim)])
         (flag, q) = divides(lg, lf)
         if flag
-            @debug "\t Decreasing degree with linear combination $(Dates.now())"
+            @debug "\t Decreasing Nemo.degree with linear combination $(Dates.now())"
             flush(stdout)
-            g = g - q * f * var_elim^(degree(g, var_elim) - degree(f, var_elim))
-        elseif (degree(g, var_elim) == degree(f, var_elim))
+            g = g - q * f * var_elim^(Nemo.degree(g, var_elim) - Nemo.degree(f, var_elim))
+        elseif (Nemo.degree(g, var_elim) == Nemo.degree(f, var_elim))
             (flag, q) = divides(lf, lg)
             if flag
-                @debug "\t Decreasing degree with linear combination $(Dates.now())"
+                @debug "\t Decreasing Nemo.degree with linear combination $(Dates.now())"
                 flush(stdout)
                 f = f - q * g
             else
@@ -314,12 +314,12 @@ function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P
 
     # Case (f(v^d), g(v^d)):
     list_deg = []
-    for d in 0:degree(f, var_elim)
+    for d in 0:Nemo.degree(f, var_elim)
         if coeff(f, [var_elim], [d]) != 0
             push!(list_deg, d)
         end
     end
-    for d in 0:degree(g, var_elim)
+    for d in 0:Nemo.degree(g, var_elim)
         if coeff(g, [var_elim], [d]) != 0
             push!(list_deg, d) 
         end
@@ -329,16 +329,16 @@ function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P
         gcd_deg = gcd(gcd_deg, ele)
     end
     if gcd_deg > 1
-        f = sum(coeff(f, [var_elim], [gcd_deg * i]) * (var_elim^i) for i in 0:(degree(f, var_elim) ÷ gcd_deg))
-        g = sum(coeff(g, [var_elim], [gcd_deg * i]) * (var_elim^i) for i in 0:(degree(g, var_elim) ÷ gcd_deg))
+        f = sum(coeff(f, [var_elim], [gcd_deg * i]) * (var_elim^i) for i in 0:(Nemo.degree(f, var_elim) ÷ gcd_deg))
+        g = sum(coeff(g, [var_elim], [gcd_deg * i]) * (var_elim^i) for i in 0:(Nemo.degree(g, var_elim) ÷ gcd_deg))
     end
 
     resultant = undef
     matrix_factors = []
-    if degree(f, var_elim) == 0
+    if Nemo.degree(f, var_elim) == 0
         resultant = f
     else
-        if degree(f, var_elim) > 1
+        if Nemo.degree(f, var_elim) > 1
             @debug "Calculating Bezout Matrix $(Dates.now())"
             flush(stdout)
             M = Bezout_matrix(f, g, var_elim)
