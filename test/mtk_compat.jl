@@ -1,4 +1,4 @@
-@testset "Check identifiability of `ODESystem` object"
+@testset "Check identifiability of `ODESystem` object" begin
     @parameters a01 a21 a12 
     @variables t x0(t) x1(t) y1(t)
     D = Differential(t)
@@ -35,7 +35,7 @@
     correct = [true for _ in funcs_to_check] 
     @test isequal(, assess_local_identifiability(de, output_eqs, inputs, funcs_to_check, 0.99, :ME)) 
 
-    
+
     #--------------------------------------------------------------------------
 
 end
