@@ -33,7 +33,7 @@
     # checking ME identifiability
     funcs_to_check = [μ, bi, bw, a, ξ, γ, μ, γ + μ, k]
     correct = [true for _ in funcs_to_check] 
-    @test isequal(, assess_local_identifiability(de, output_eqs, inputs, funcs_to_check, 0.99, :ME)) 
+    @test isequal((correct, 1), assess_local_identifiability(de, output_eqs, inputs, funcs_to_check, 0.99, :ME)) 
 
 
     #--------------------------------------------------------------------------
