@@ -291,13 +291,13 @@ function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P
         lg = coeff(g, [var_elim], [Nemo.degree(g, var_elim)])
         (flag, q) = divides(lg, lf)
         if flag
-            @debug "\t Decreasing Nemo.degree with linear combination $(Dates.now())"
+            @debug "\t Decreasing degree with linear combination $(Dates.now())"
             flush(stdout)
             g = g - q * f * var_elim^(Nemo.degree(g, var_elim) - Nemo.degree(f, var_elim))
         elseif (Nemo.degree(g, var_elim) == Nemo.degree(f, var_elim))
             (flag, q) = divides(lf, lg)
             if flag
-                @debug "\t Decreasing Nemo.degree with linear combination $(Dates.now())"
+                @debug "\t Decreasing degree with linear combination $(Dates.now())"
                 flush(stdout)
                 f = f - q * g
             else
