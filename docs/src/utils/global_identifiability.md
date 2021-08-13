@@ -12,5 +12,5 @@ StructuralIdentifiability.extract_identifiable_functions
 StructuralIdentifiability.check_field_membership
 StructuralIdentifiability.find_identifiable_functions
 StructuralIdentifiability.simplify_field_generators
-StructuralIdentifiability.get_Nemo.degree_and_coeffsize
+StructuralIdentifiability.get_degree_and_coeffsize
 ```
