@@ -347,8 +347,6 @@ Output:
 - `ODE` object containing required data for identifiability assessment
 """
 function PreprocessODE(diff_eqs, out_eqs, state_vars, outputs, inputs, params)# , t)
-    # D = Differential(t)
-    
 	input_symbols = vcat(state_vars, outputs, inputs, params)
 	generators = string.(input_symbols)
     generators = map(g->replace(g, "(t)"=>""), generators)

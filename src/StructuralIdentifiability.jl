@@ -135,7 +135,7 @@ function assess_identifiability(ode::ModelingToolkit.ODESystem, inputs, funcs_to
     params = ModelingToolkit.parameters(ode)
     state_vars = ModelingToolkit.states(ode)
     y_functions = [each.lhs for each in ModelingToolkit.observed(ode)]
-    output_eqs =ModelingToolkit.observed(ode) 
+    output_eqs = ModelingToolkit.observed(ode) 
     ode, syms, gens = PreprocessODE(diff_eqs, output_eqs, state_vars, y_functions, inputs, params)
     if length(funcs_to_check)>0
         funcs_to_check = [substitute(x, syms .=> gens) for x in funcs_to_check]
