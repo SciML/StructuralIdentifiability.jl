@@ -365,5 +365,4 @@ function PreprocessODE(diff_eqs, out_eqs, state_vars, outputs, inputs, params)# 
         inputs_ = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}()
     end
 	return (ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(state_eqn_dict, out_eqn_dict, inputs_), input_symbols, gens_)
-    #(state_eqn_dict, out_eqn_dict, states, params, inputs, outputs)
 end
