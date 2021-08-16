@@ -242,7 +242,7 @@ function extract_coefficients(poly::P, variables::Array{P,1}) where P <: MPolyEl
 
     result = Dict{Array{Int,1},Dict{Array{Int,1},FieldType}}()
 
-    for (monom, coef) in zip(exponent_vectors(poly), coeffs(poly))
+    for (monom, coef) in zip(exponent_vectors(poly), coefficients(poly))
         var_slice = [monom[i] for i in indices]
         if !haskey(result, var_slice)
             result[var_slice] = Dict{Array{Int,1},FieldType}()
