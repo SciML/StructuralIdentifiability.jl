@@ -272,11 +272,11 @@ function simplify_field_generators(generators::Array{<: Array{<: MPolyElem,1},1}
 
     for (i, component) in enumerate(generators)
         pivot = pivots[i]
-        pivot_base = parent_ring_change(pivot, ring_sing)
+        pivot_base = parent_ring_change(pivot, ring_sing; matching=:byindex)
         pivot_coef = eval_at_dict(pivot_base, base_to_coef)
         @debug "\tPivot polynomial is $(pivots)"
         for p in component
-            p_base = parent_ring_change(p, ring_sing)
+            p_base = parent_ring_change(p, ring_sing; matching=:byindex)
             p_coef = eval_at_dict(p_base, base_to_coef)
             push!(eqs_sing, p_base * pivot_coef - p_coef * pivot_base)
         end

@@ -78,14 +78,6 @@ end
 
 # ------------------------------------------------------------------------------
 
-function (F::Nemo.GaloisField)(a::fmpq)
-    den = denominator(a)
-    if F(den) == 0
-        throw(Base.ArgumentError("Denominator of $a vanishes in $F"))
-    end
-    return F(numerator(a)) // den
-end
-
 """
     parent_ring_change(poly, new_ring)
 
@@ -97,18 +89,28 @@ Input
 Output:
 - a polynomial in `new_ring` "equal" to `poly`
 """
-function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing)
+function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching=:byname)
     old_ring = parent(poly)
     # construct a mapping for the variable indices
     var_mapping = Array{Any,1}()
-    for u in symbols(old_ring)
-        push!(
-            var_mapping,
-            findfirst(v -> (string(u) == string(v)), symbols(new_ring))
-        )
+
+    if matching == :byname
+        for u in symbols(old_ring)
+            push!(
+                var_mapping,
+                findfirst(v -> (string(u) == string(v)), symbols(new_ring))
+            )
+        end
+    elseif matching == :byindex
+        append!(var_mapping, 1:length(symbols(new_ring)))
+        if length(symbols(new_ring)) < length(symbols(old_ring))
+            append!(var_mapping, Array{Any, 1}[nothing, length(symbols(old_ring)) - length(symbols(new_ring))])
+        end
+    else
+        throw(Base.ArgumentError("Unknown matching type: $matching"))
     end
     builder = MPolyBuildCtx(new_ring)
-    for term in zip(exponent_vectors(poly), coeffs(poly))
+    for term in zip(exponent_vectors(poly), coefficients(poly))
         exp, coef = term
         new_exp = [0 for _ in gens(new_ring)]
         for i in 1:length(exp)
@@ -125,9 +127,9 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing)
     return finish(builder)
 end
 
-function parent_ring_change(f::Generic.Frac{<: MPolyElem}, new_ring::MPolyRing)
+function parent_ring_change(f::Generic.Frac{<: MPolyElem}, new_ring::MPolyRing; matching=:byname)
     n, d = unpack_fraction(f)
-    return parent_ring_change(n, new_ring) // parent_ring_change(d, new_ring)
+    return parent_ring_change(n, new_ring; matching=matching) // parent_ring_change(d, new_ring; matching=matching)
 end
  
 # ------------------------------------------------------------------------------
