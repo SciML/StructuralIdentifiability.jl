@@ -6,7 +6,7 @@ using StructuralIdentifiability.TestSetExtensions
 using StructuralIdentifiability.AbstractAlgebra
 using StructuralIdentifiability.Nemo
 using StructuralIdentifiability.Singular
-
+using StructuralIdentifiability.ModelingToolkit
 using StructuralIdentifiability: check_field_membership, check_identifiability, check_primality_zerodim,
                                  det_minor_expansion, ExpVectTrie, get_max_below, ps_ode_solution, 
                                  power_series_solution, ps_diff, ps_integrate, ps_matrix_inv,

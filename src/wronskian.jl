@@ -216,7 +216,7 @@ function wronskian(io_equations::Dict{P, P}, ode::ODE{P}) where P <: MPolyElem
         ord
     )
     @debug "Computing the derivatives of the solution"
-    ps_ext = Dict{MPolyElem, AbsSeriesElem}()
+    ps_ext = Dict{MPolyElem, Nemo.gfp_abs_series}()# Generic.AbsSeries}()
     for v in vcat(ode_red.y_vars, ode_red.u_vars)
         cur_ps = ps[v]
         for i in 0:length(ode_red.x_vars)
