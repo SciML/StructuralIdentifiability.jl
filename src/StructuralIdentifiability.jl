@@ -22,7 +22,6 @@ using TestSetExtensions
 using IterTools
 using MacroTools
 using ModelingToolkit
-using ModelingToolkit.Symbolics:value
 
 # defining a model
 export ODE, @ODEmodel, PreprocessODE

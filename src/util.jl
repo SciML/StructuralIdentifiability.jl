@@ -289,7 +289,7 @@ end
 # ------------------------------------------------------------------------------
 function check_eq_coeffs(eq)
     q = Deque{Dict}()
-    push!(q, value(eq.rhs.dict))
+    push!(q, ModelingToolkit.Symbolics.value(eq.rhs.dict))
     while !isempty(q)
         d = pop!(q)
         all_ints = all(typeof(v)<: Int for v in values(d))
