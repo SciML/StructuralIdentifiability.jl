@@ -347,10 +347,7 @@ Output:
 - `ODE` object containing required data for identifiability assessment
 """
 function PreprocessODE(diff_eqs, out_eqs, state_vars, outputs, inputs, params)# , t)
-    for eq in diff_eqs
-        check_equations(eq)
-    end
-    for eq in out_eqs
+    for eq in vcat(diff_eqs,out_eqs)
         check_equations(eq)
     end
 	input_symbols = vcat(state_vars, outputs, inputs, params)
