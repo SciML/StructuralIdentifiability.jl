@@ -287,3 +287,19 @@ function switch_ring(v::MPolyElem, ring::MPolyRing)
 end
 
 # ------------------------------------------------------------------------------
+function check_eq_coeffs(eq)
+    q = Deque{Dict}()
+    push!(q, value(eq.rhs.dict))
+    while !isempty(q)
+        d = pop!(q)
+        all_ints = all(typeof(v)<: Int for v in values(d))
+        if !all_ints
+            throw(DomainError(eq, "coefficients must be integers.")
+        end
+        for each in keys(d)
+            if !(typeof(each) <: Union{Term, Sym})
+                push!(q, each.dict)
+            end
+        end
+    end
+end

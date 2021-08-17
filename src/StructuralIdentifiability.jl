@@ -8,12 +8,14 @@ using LinearAlgebra
 using Logging
 using MacroTools
 using Primes
+using DataStructures
 
 # Algebra packages
 using AbstractAlgebra
 using Nemo
 using GroebnerBasis
 using Singular
+using Symbolics:value
 
 # For testing (TODO: move to the test-specific dependencies)
 using Test
@@ -86,7 +88,7 @@ and return a list of the same length with each element being one of `:nonidentif
 If `funcs_to_check` are not given, the function will assess identifiability of the parameters, and the result will
 be a dictionary from the parameters to their identifiability properties (again, one of `:nonidentifiable`, `:locally`, `:globally`).
 """
-function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem, 1}, p::Float64=0.99) where P <: MPolyElem{fmpq} 
+function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem,1}, p::Float64=0.99) where P <: MPolyElem{fmpq} 
     p_glob = 1 - (1 - p) * 0.9
     p_loc = 1 - (1 - p) * 0.1
 
@@ -100,7 +102,7 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem, 
         @debug "Bound: $bound"
     end
 
-    locally_identifiable = Array{Any, 1}()
+    locally_identifiable = Array{Any,1}()
     for (loc, f) in zip(local_result, funcs_to_check)
         if loc
             push!(locally_identifiable, f)
@@ -112,7 +114,7 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem, 
     @info "Global identifiability assessed in $runtime seconds" 
     _runtime_logger[:glob_time] = runtime
 
-    result = Array{Symbol, 1}()
+    result = Array{Symbol,1}()
     glob_ind = 1
     for i in 1:length(funcs_to_check)
         if !local_result[i]
@@ -137,7 +139,7 @@ function assess_identifiability(ode::ModelingToolkit.ODESystem, inputs, funcs_to
     y_functions = [each.lhs for each in ModelingToolkit.observed(ode)]
     output_eqs = ModelingToolkit.observed(ode) 
     ode, syms, gens_ = PreprocessODE(diff_eqs, output_eqs, state_vars, y_functions, inputs, params)
-    if length(funcs_to_check)>0
+    if length(funcs_to_check) > 0
         funcs_to_check = [substitute(x, syms .=> gens_) for x in funcs_to_check]
         return assess_identifiability(ode, funcs_to_check, p)
     else
