@@ -73,7 +73,7 @@
     @variables t S(t) I(t) W(t) R(t) y(t)
 
     eqs = [
-        D(S) ~ μ - bi * S * I - bw * S * W - μ * S + a * R/(R+1/(I+(W-1/R)/(S*R)))),
+        D(S) ~ μ - bi * S * I - bw * S * W - μ * S + a * R/(R+1/(I+(W-1/R)/(S*R))),
         D(I) ~ bw * S * W + bi * S * I - (γ + μ) * I,
         D(W) ~ ξ * (I - W),
         D(R) ~ γ * I - (μ + a) * R
