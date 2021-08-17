@@ -294,7 +294,7 @@ function check_eq_coeffs(eq)
         d = pop!(q)
         all_ints = all(typeof(v)<: Int for v in values(d))
         if !all_ints
-            throw(DomainError(eq, "coefficients must be integers.")
+            throw(DomainError(eq, "coefficients must be integers."))
         end
         for each in keys(d)
             if !(typeof(each) <: Union{Term, Sym})
