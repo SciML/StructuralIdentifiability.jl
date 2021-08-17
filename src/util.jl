@@ -288,18 +288,24 @@ end
 
 # ------------------------------------------------------------------------------
 function check_eq_coeffs(eq)
-    q = Deque{Dict}()
-    push!(q, ModelingToolkit.Symbolics.value(eq.rhs.dict))
+    q = Deque{Any}()
+    numbers = []
+    for each in ModelingToolkit.SymbolicUtils.arguments(ModelingToolkit.Symbolics.value(eq.rhs))
+        push!(q, each)
+    end
     while !isempty(q)
         d = pop!(q)
-        all_ints = all(typeof(v)<: Int for v in values(d))
-        if !all_ints
-            throw(DomainError(eq, "coefficients must be integers."))
-        end
-        for each in keys(d)
-            if !(typeof(each) <: Union{Term, Sym})
-                push!(q, each.dict)
+        if (typeof(d) <: Number)
+            push!(numbers, d)
+        else 
+            for each in ModelingToolkit.SymbolicUtils.arguments(ModelingToolkit.Symbolics.value(d))
+                if !(typeof(each) <: Union{Term, Sym})
+                    push!(q, each)
+                end
             end
         end
+    end
+    if !all(typeof(each)<: Int for each in numbers)
+        throw(DomainError(eq, "coefficients must be integers"))
     end
 end
