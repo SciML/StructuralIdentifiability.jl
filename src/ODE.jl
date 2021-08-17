@@ -348,7 +348,10 @@ Output:
 """
 function PreprocessODE(diff_eqs, out_eqs, state_vars, outputs, inputs, params)# , t)
     for eq in diff_eqs
-        check_eq_coeffs(eq)
+        check_equations(eq)
+    end
+    for eq in out_eqs
+        check_equations(eq)
     end
 	input_symbols = vcat(state_vars, outputs, inputs, params)
 	generators = string.(input_symbols)

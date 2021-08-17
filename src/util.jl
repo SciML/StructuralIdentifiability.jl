@@ -287,17 +287,22 @@ function switch_ring(v::MPolyElem, ring::MPolyRing)
 end
 
 # ------------------------------------------------------------------------------
-function check_eq_coeffs(eq)
+function check_equations(eq)
     q = Deque{Any}()
     numbers = []
     for each in ModelingToolkit.SymbolicUtils.arguments(ModelingToolkit.Symbolics.value(eq.rhs))
-        push!(q, each)
+        if !(typeof(each) <: Union{Term, Sym})
+            push!(q, each)
+        end
     end
     while !isempty(q)
         d = pop!(q)
         if (typeof(d) <: Number)
             push!(numbers, d)
-        else 
+        else
+            if ModelingToolkit.Symbolics.degree(d) < 0
+                throw(DomainError(eq, "rational functions are not supported in ODESystem mode"))
+            end
             for each in ModelingToolkit.SymbolicUtils.arguments(ModelingToolkit.Symbolics.value(d))
                 if !(typeof(each) <: Union{Term, Sym})
                     push!(q, each)
