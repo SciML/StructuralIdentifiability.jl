@@ -48,7 +48,7 @@
     funcs_to_check = [μ, bi, bw, a, ξ, γ, μ, γ + μ, k, S, I, W, R]
     correct = [true for _ in funcs_to_check]
     inputs = []
-    @test isequal(correct, assess_local_identifiability(de, inputs, funcs_to_check))
+    @test_throws DomainError assess_local_identifiabilityy(de, inputs, funcs_to_check)
 
     # checking ME identifiability
     funcs_to_check = [μ, bi, bw, a, ξ, γ, μ, γ + μ, k]
