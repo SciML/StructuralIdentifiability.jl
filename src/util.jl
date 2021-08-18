@@ -304,6 +304,9 @@ function check_equations(eq)
                 throw(DomainError(eq, "rational functions are not supported in ODESystem mode"))
             end
             for each in ModelingToolkit.SymbolicUtils.arguments(ModelingToolkit.Symbolics.value(d))
+                if (typeof(each) <: Term{Real, Nothing})
+                    throw(DomainError(eq, "cannot contain special functions: $d"))
+                end
                 if !(typeof(each) <: Union{Term, Sym})
                     push!(q, each)
                 end
