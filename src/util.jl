@@ -314,6 +314,6 @@ function check_equations(eq)
         end
     end
     if !all(typeof(each)<: Int for each in numbers)
-        throw(DomainError(eq, "coefficients must be integers"))
+        throw(DomainError(eq, "coefficients must be integers or rationals"))
     end
 end
