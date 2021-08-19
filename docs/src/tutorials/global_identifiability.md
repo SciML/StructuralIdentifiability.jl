@@ -6,11 +6,11 @@ In this tutorial, let us cover an example problem of querying the ODE for global
 
 Let us consider the following four-dimensional model with two outputs:
 
-$\begin{cases}x'(t) = lm - d * x(t) - beta * x(t) * v(t),\\
-    y'(t) = beta * x(t) * v(t) - a * y(t),\\
-    v'(t) = k * y(t) - u * v(t),\\
-    w'(t) = c * x(t) * y(t) * w(t) - c * q * y(t) * w(t) - b * w(t),\\
-    z'(t) = c * q * y(t) * w(t) - h * z(t),\\
+$\begin{cases}x'(t) = lm - d \, x(t) - \beta \, x(t) \, v(t),\\
+    y'(t) = \beta \, x(t) \, v(t) - a \, y(t),\\
+    v'(t) = k \, y(t) - u \, v(t),\\
+    w'(t) = c \, x(t) \, y(t) \, w(t) - c \, q \, y(t) \, w(t) - b \, w(t),\\
+    z'(t) = c \, q \, y(t) \, w(t) - h \, z(t),\\
     y_1(t) = w(t),\\
     y_2(t) = z(t)\end{cases}$
 
