@@ -45,12 +45,14 @@
     de = ODESystem(eqs, t, [S, I, W, R], [μ, bi, bw, a, ξ, γ, k], observed=[y ~ k * I], name=:TestSIWR)
     funcs_to_check = [μ, bi, bw, a, ξ, γ, μ, γ + μ, k, S, I, W, R]
     inputs = []
-    @test_throws DomainError assess_local_identifiability(de, inputs, funcs_to_check)
+    @test isequal(correct, assess_local_identifiability(de, inputs, funcs_to_check))
 
     # checking ME identifiability
     funcs_to_check = [μ, bi, bw, a, ξ, γ, μ, γ + μ, k]
-    @test_throws DomainError assess_local_identifiability(de, inputs, funcs_to_check, 0.99, :ME) 
-    
+    correct = [true for _ in funcs_to_check] 
+    @test isequal((correct, 1), assess_local_identifiability(de, inputs, funcs_to_check, 0.99, :ME))
+
+    @test_logs (:warn, "Floating points are not allowed, value 2.0 will be will be converted to a rational.") (:warn, "Floating points are not allowed, value 0.6 will be will be converted to a rational.")  assess_local_identifiability(de, inputs, funcs_to_check, 0.99, :ME) 
     # -----------
     
     @parameters μ bi bw a ξ γ k
@@ -65,37 +67,6 @@
     de = ODESystem(eqs, t, [S, I, W, R], [μ, bi, bw, a, ξ, γ, k], observed=[y ~ 1.57*k * I], name=:TestSIWR)
     funcs_to_check = [μ, bi, bw, a, ξ, γ, μ, γ + μ, k, S, I, W, R]
     inputs = []
-    @test_throws DomainError assess_local_identifiability(de, inputs, funcs_to_check, 0.99, :ME) 
+    @test_logs (:warn, "Floating points are not allowed, value 1.57 will be will be converted to a rational.")assess_local_identifiability(de, inputs, funcs_to_check, 0.99, :ME) 
 
-    # -------
-
-    @parameters μ bi bw a ξ γ k
-    @variables t S(t) I(t) W(t) R(t) y(t)
-
-    eqs = [
-        D(S) ~ μ - bi * S * I - bw * S * W - μ * S + a * R/(R+1/(I+(W-1/R)/(S*R))),
-        D(I) ~ bw * S * W + bi * S * I - (γ + μ) * I,
-        D(W) ~ ξ * (I - W),
-        D(R) ~ γ * I - (μ + a) * R
-    ]
-    de = ODESystem(eqs, t, [S, I, W, R], [μ, bi, bw, a, ξ, γ, k], observed=[y ~ k * I], name=:TestSIWR)
-    funcs_to_check = [μ, bi, bw, a, ξ, γ, μ, γ + μ, k, S, I, W, R]
-    inputs = []
-    @test_throws DomainError assess_local_identifiability(de, inputs, funcs_to_check, 0.99, :ME) 
-
-    # --------
-    @parameters μ bi bw a ξ γ k
-    @variables t S(t) I(t) W(t) R(t) y(t)
-
-    eqs = [
-        D(S) ~ μ - bi * S * I - bw * S * W - μ * S + a * R,
-        D(I) ~ bw * S * W + bi * S * I - (γ + μ) * I,
-        D(W) ~ ξ * (I - W),
-        D(R) ~ γ * I - (μ + a) * R
-    ]
-    de = ODESystem(eqs, t, [S, I, W, R], [μ, bi, bw, a, ξ, γ, k], observed=[y ~ k * I/(R+S+W)], name=:TestSIWR)
-    funcs_to_check = [μ, bi, bw, a, ξ, γ, μ, γ + μ, k, S, I, W, R]
-    inputs = []
-    @test_throws DomainError assess_local_identifiability(de, inputs, funcs_to_check, 0.99, :ME) 
- 
 end

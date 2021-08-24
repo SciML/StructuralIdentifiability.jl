@@ -287,33 +287,36 @@ function switch_ring(v::MPolyElem, ring::MPolyRing)
 end
 
 # ------------------------------------------------------------------------------
-function check_equations(eq)
-    q = Deque{Any}()
-    numbers = []
-    for each in ModelingToolkit.SymbolicUtils.arguments(ModelingToolkit.Symbolics.value(eq.rhs))
-        if !(typeof(each) <: Union{Term, Sym})
-            push!(q, each)
+
+function eval_at_nemo(e, vals::Dict) #::Union{ModelingToolkit.Symbolics.Add, ModelingToolkit.Symbolics.Mul,ModelingToolkit.Symbolics.Pow}
+    if ModelingToolkit.Symbolics.istree(e)
+        args = map(a -> eval_at_nemo(a, vals), ModelingToolkit.Symbolics.arguments(e))
+        if ModelingToolkit.Symbolics.operation(e) in [+, -, *]
+            return ModelingToolkit.Symbolics.operation(e)(args...)
         end
-    end
-    while !isempty(q)
-        d = pop!(q)
-        if (typeof(d) <: Number)
-            push!(numbers, d)
-        else
-            if ModelingToolkit.Symbolics.degree(d) < 0
-                throw(DomainError(eq, "rational functions are not supported in ODESystem mode"))
+        if ModelingToolkit.Symbolics.operation(e) === ^
+            if args[2] >= 0
+                return args[1]^args[2]
             end
-            for each in ModelingToolkit.SymbolicUtils.arguments(ModelingToolkit.Symbolics.value(d))
-                if (typeof(each) <: Term{Real, Nothing})
-                    throw(DomainError(eq, "cannot contain special functions: $d"))
-                end
-                if !(typeof(each) <: Union{Term, Sym})
-                    push!(q, each)
-                end
-            end
+            return 1 // args[1]^(-args[2])
         end
+        throw(Base.ArgumentError("Function $(ModelingToolkit.Symbolics.operation(e)) is not yet available"))
     end
-    if !all(typeof(each)<: Int for each in numbers)
-        throw(DomainError(eq, "coefficients must be integers or rationals"))
+end
+
+function eval_at_nemo(e::Union{ModelingToolkit.Symbolics.Sym,ModelingToolkit.Symbolics.Term}, vals::Dict)
+    return get(vals, e, e)
+end
+
+function eval_at_nemo(e::Union{Integer,Rational}, vals::Dict)
+    return e
+end
+
+function eval_at_nemo(e::Union{Float16,Float32,Float64}, vals::Dict)
+    @warn "Floating points are not allowed, value $e will be converted to a rational."
+    if isequal(e%1, 0)
+        return Int(e)
+    else
+        return rationalize(e)
     end
 end
