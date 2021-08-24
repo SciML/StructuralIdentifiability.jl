@@ -122,7 +122,7 @@ function get_degree_and_coeffsize(f::MPolyElem{Nemo.fmpq})
         return (0, 1)
     end
     max_coef = 1
-    for c in coeffs(f)
+    for c in coefficients(f)
         max_coef = max(max_coef, 2 * height_bits(c))
     end
     return (total_degree(f), max_coef)
