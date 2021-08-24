@@ -300,11 +300,14 @@ function eval_at_nemo(e, vals::Dict) #::Union{ModelingToolkit.Symbolics.Add, Mod
             end
             return 1 // args[1]^(-args[2])
         end
-        throw(Base.ArgumentError("Function $(ModelingToolkit.Symbolics.operation(e)) is not yet available"))
+        throw(Base.ArgumentError("Function $(ModelingToolkit.Symbolics.operation(e)) is not supported"))
     end
 end
 
 function eval_at_nemo(e::Union{ModelingToolkit.Symbolics.Sym,ModelingToolkit.Symbolics.Term}, vals::Dict)
+    if typeof(e)<:ModelingToolkit.Symbolics.Term{Real, Nothing}
+        throw(Base.ArgumentError("Function $(ModelingToolkit.Symbolics.operation(e)) is not supported"))
+    end
     return get(vals, e, e)
 end
 

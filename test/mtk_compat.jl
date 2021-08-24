@@ -46,13 +46,13 @@
     funcs_to_check = [μ, bi, bw, a, ξ, γ, μ, γ + μ, k, S, I, W, R]
     inputs = []
     @test isequal(correct, assess_local_identifiability(de, inputs, funcs_to_check))
-
+    @test_logs (:warn, "Floating points are not allowed, value 2.0 will be will be converted to a rational.") (:warn, "Floating points are not allowed, value 0.6 will be will be converted to a rational.") assess_local_identifiability(de, inputs, funcs_to_check)
+    
     # checking ME identifiability
     funcs_to_check = [μ, bi, bw, a, ξ, γ, μ, γ + μ, k]
     correct = [true for _ in funcs_to_check] 
     @test isequal((correct, 1), assess_local_identifiability(de, inputs, funcs_to_check, 0.99, :ME))
-
-    @test_logs (:warn, "Floating points are not allowed, value 2.0 will be will be converted to a rational.") (:warn, "Floating points are not allowed, value 0.6 will be will be converted to a rational.")  assess_local_identifiability(de, inputs, funcs_to_check, 0.99, :ME) 
+    @test_logs (:warn, "Floating points are not allowed, value 2.0 will be will be converted to a rational.") (:warn, "Floating points are not allowed, value 0.6 will be will be converted to a rational.") assess_local_identifiability(de, inputs, funcs_to_check, 0.99, :ME) 
     # -----------
     
     @parameters μ bi bw a ξ γ k
@@ -68,5 +68,18 @@
     funcs_to_check = [μ, bi, bw, a, ξ, γ, μ, γ + μ, k, S, I, W, R]
     inputs = []
     @test_logs (:warn, "Floating points are not allowed, value 1.57 will be will be converted to a rational.")assess_local_identifiability(de, inputs, funcs_to_check, 0.99, :ME) 
+    # ----------
 
+    @parameters a01 a21 a12 
+    @variables t x0(t) x1(t) y1(t)
+    D = Differential(t)
+    using SpecialFunctions
+
+    eqs = [D(x0) ~ -(a01 + a21) * SpecialFunctions.erfc(x0) + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1]
+
+    de = ODESystem(eqs, t, [x0, x1], [a01, a21, a12], observed=[y1~x0], name=:Test)
+    inputs = []
+    funcs_to_check = [a01, a21, a12, a01 * a12, a01 + a12 + a21]
+    correct = [:nonidentifiable, :nonidentifiable, :nonidentifiable, :globally, :globally]
+    @test_throws ArgumentError assess_identifiability(de, inputs, funcs_to_check)
 end
