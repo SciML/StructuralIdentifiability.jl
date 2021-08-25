@@ -96,5 +96,4 @@
     to_check = [a, b, c]
     @test isequal(correct, assess_identifiability(de, inputs, to_check))
 
-
 end
