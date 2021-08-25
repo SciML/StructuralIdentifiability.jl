@@ -132,7 +132,6 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem,1
 end
 
 function assess_identifiability(de::ModelingToolkit.ODESystem, inputs=[], funcs_to_check=[], p::Float64=0.99)
-    @info "Preproccessing `ModelingToolkit.ODESystem` object"
     ode, syms, gens_ = PreprocessODE(de, inputs)
     if length(funcs_to_check) > 0
         funcs_to_check = [substitute(x, syms .=> gens_) for x in funcs_to_check]

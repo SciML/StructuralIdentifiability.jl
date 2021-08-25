@@ -347,6 +347,7 @@ Output:
 - `ODE` object containing required data for identifiability assessment
 """
 function PreprocessODE(de::ModelingToolkit.ODESystem, inputs)
+    @info "Preproccessing `ModelingToolkit.ODESystem` object"
     diff_eqs = equations(de)
     params = ModelingToolkit.parameters(de)
     state_vars = ModelingToolkit.states(de)
