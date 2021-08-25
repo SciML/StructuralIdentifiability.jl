@@ -134,18 +134,18 @@ function get_degree_and_coeffsize(f::Generic.Frac{<: MPolyElem{Nemo.fmpq}})
     return (max(num_deg, den_deg), max(num_coef, den_coef))
 end
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 function assess_local_identifiability(ode::ModelingToolkit.ODESystem, inputs=[], funcs_to_check=[], p::Float64=0.99, type=:SE)
     @info "Preproccessing `ModelingToolkit.ODESystem` object"
     ode, syms, gens_ = PreprocessODE(ode, inputs)
-    if length(funcs_to_check)>0
+    if length(funcs_to_check) > 0
         funcs_to_check = [substitute(x, syms .=> gens_) for x in funcs_to_check]
         return assess_local_identifiability(ode, funcs_to_check, p, type)
     else
         return assess_local_identifiability(ode, p, type)
     end
 end
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 """
     assess_local_identifiability(ode::ODE{P}, p::Float64 = 0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
 
@@ -165,7 +165,7 @@ The result is correct with probability at least `p`.
 `type` can be either `:SE` (single-experiment identifiability) or `:ME` (multi-experiment identifiability).
 The return value is a tuple consisting of the array of bools and the number of experiments to be performed.
 """
-function assess_local_identifiability(ode::ODE{P}, p::Float64 = 0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
+function assess_local_identifiability(ode::ODE{P}, p::Float64=0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
     funcs_to_check = ode.parameters
     if type == :SE
         funcs_to_check = vcat(funcs_to_check, ode.x_vars)
