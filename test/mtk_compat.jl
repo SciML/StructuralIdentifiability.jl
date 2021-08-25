@@ -44,6 +44,7 @@
     ]
     de = ODESystem(eqs, t, [S, I, W, R], [μ, bi, bw, a, ξ, γ, k], observed=[y ~ k * I], name=:TestSIWR)
     funcs_to_check = [μ, bi, bw, a, ξ, γ, μ, γ + μ, k, S, I, W, R]
+    correct = [true for _ in funcs_to_check]
     inputs = []
     @test isequal(correct, assess_local_identifiability(de, inputs, funcs_to_check))
     # @test_logs (:warn, "Floating points are not allowed, value 2.0 will be will be converted to 2//1.") (:warn, "Floating points are not allowed, value -0.6 will be will be converted to -3//5.") assess_local_identifiability(de, inputs, funcs_to_check)
