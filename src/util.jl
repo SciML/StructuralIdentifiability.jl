@@ -302,6 +302,7 @@ function eval_at_nemo(e, vals::Dict)
         end
         throw(Base.ArgumentError("Function $(ModelingToolkit.Symbolics.operation(e)) is not supported"))
     end
+    
 end
 
 function eval_at_nemo(e::Union{ModelingToolkit.Symbolics.Sym,ModelingToolkit.Symbolics.Term}, vals::Dict)
