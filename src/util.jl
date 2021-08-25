@@ -288,7 +288,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-function eval_at_nemo(e, vals::Dict) #::Union{ModelingToolkit.Symbolics.Add, ModelingToolkit.Symbolics.Mul,ModelingToolkit.Symbolics.Pow}
+function eval_at_nemo(e, vals::Dict)
     if ModelingToolkit.Symbolics.istree(e)
         args = map(a -> eval_at_nemo(a, vals), ModelingToolkit.Symbolics.arguments(e))
         if ModelingToolkit.Symbolics.operation(e) in [+, -, *]
@@ -316,7 +316,7 @@ function eval_at_nemo(e::Union{Integer,Rational}, vals::Dict)
 end
 
 function eval_at_nemo(e::Union{Float16,Float32,Float64}, vals::Dict)
-    @warn "Floating points are not allowed, value $e will be converted to a rational."
+    @warn "Floating points are not allowed, value $e will be converted to $(rationalize(e))."
     if isequal(e%1, 0)
         return Int(e)
     else
