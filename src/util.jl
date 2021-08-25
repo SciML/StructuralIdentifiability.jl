@@ -316,10 +316,11 @@ function eval_at_nemo(e::Union{Integer,Rational}, vals::Dict)
 end
 
 function eval_at_nemo(e::Union{Float16,Float32,Float64}, vals::Dict)
-    @warn "Floating points are not allowed, value $e will be converted to $(rationalize(e))."
     if isequal(e%1, 0)
-        return Int(e)
+        out = Int(e)
     else
-        return rationalize(e)
+        out = rationalize(e)
     end
+    @warn "Floating points are not allowed, value $e will be converted to $(out)."
+    return out
 end
