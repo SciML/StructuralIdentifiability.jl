@@ -287,9 +287,12 @@ function switch_ring(v::MPolyElem, ring::MPolyRing)
 end
 
 # ------------------------------------------------------------------------------
+function eval_at_nemo(e::Num, vals::Dict)
+    e = ModelingToolkit.Symbolics.value(e)
+    return eval_at_nemo(e, vals)
+end
 
 function eval_at_nemo(e, vals::Dict)
-    e = ModelingToolkit.Symbolics.value(e)
     if ModelingToolkit.Symbolics.istree(e)
         args = map(a -> eval_at_nemo(a, vals), ModelingToolkit.Symbolics.arguments(e))
         if ModelingToolkit.Symbolics.operation(e) in [+, -, *]
@@ -302,8 +305,6 @@ function eval_at_nemo(e, vals::Dict)
             return 1 // args[1]^(-args[2])
         end
         throw(Base.ArgumentError("Function $(ModelingToolkit.Symbolics.operation(e)) is not supported"))
-    else
-        return vals[e]
     end
 end
 
