@@ -14,7 +14,6 @@ struct ODE{P}
     parameters::Array{P, 1}
     x_equations::Dict{P, <: Union{P, Generic.Frac{P}}}
     y_equations::Dict{P, <: Union{P, Generic.Frac{P}}}
-    
     function ODE{P}(
             x_eqs::Dict{P, <: Union{P, Generic.Frac{P}}}, 
             y_eqs::Dict{P, <: Union{P, Generic.Frac{P}}},    
@@ -30,7 +29,7 @@ struct ODE{P}
         y_vars = collect(keys(y_eqs))
         u_vars = inputs
         parameters = filter(v -> (!(v in x_vars) && !(v in u_vars) && !(v in y_vars)), gens(poly_ring))
-        new(poly_ring, x_vars, y_vars, u_vars, parameters, x_eqs, y_eqs)
+        new{P}(poly_ring, x_vars, y_vars, u_vars, parameters, x_eqs, y_eqs)
     end
 end
 
@@ -333,3 +332,46 @@ function Base.show(io::IO, ode::ODE)
 end
 
 #------------------------------------------------------------------------------
+"""
+    function PreprocessODE(de::ModelingToolkit.ODESystem, inputs)
+    
+Input:
+- `diff_eqs` - array of ModelingToolkit differential equations
+- `out_eqs` - array of output equations
+- `states` - array of state variables
+- `outputs` - array of output function names
+- `inputs` - array of input function names
+- `parameters` - array of parameter names
+
+Output: 
+- `ODE` object containing required data for identifiability assessment
+"""
+function PreprocessODE(de::ModelingToolkit.ODESystem, inputs)
+    @info "Preproccessing `ModelingToolkit.ODESystem` object"
+    diff_eqs = equations(de)
+    params = ModelingToolkit.parameters(de)
+    state_vars = ModelingToolkit.states(de)
+    out_eqs = ModelingToolkit.observed(de)
+    y_functions = [each.lhs for each in out_eqs] 
+    
+    input_symbols = vcat(state_vars, y_functions, inputs, params)
+    generators = string.(input_symbols)
+    generators = map(g->replace(g, "(t)"=>""), generators)
+    R, gens_ = Nemo.PolynomialRing(Nemo.QQ, generators)
+    
+    state_eqn_dict = Dict{StructuralIdentifiability.Nemo.fmpq_mpoly,Union{StructuralIdentifiability.Nemo.fmpq_mpoly,StructuralIdentifiability.Nemo.Generic.Frac{fmpq_mpoly}}}()
+    out_eqn_dict = Dict{StructuralIdentifiability.Nemo.fmpq_mpoly,Union{StructuralIdentifiability.Nemo.fmpq_mpoly,StructuralIdentifiability.Nemo.Generic.Frac{fmpq_mpoly}}}()
+    
+    for i in 1:length(diff_eqs)
+        state_eqn_dict[substitute(state_vars[i], input_symbols.=>gens_)] = eval_at_nemo(diff_eqs[i].rhs, Dict(input_symbols.=>gens_))
+    end
+    for i in 1:length(out_eqs)
+        out_eqn_dict[substitute(y_functions[i], input_symbols.=> gens_)] = eval_at_nemo(out_eqs[i].rhs, Dict(input_symbols.=>gens_))
+    end
+    
+    inputs_ = [substitute(each,  input_symbols .=> gens_) for each in inputs]
+    if isequal(length(inputs_), 0)
+        inputs_ = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}()
+    end
+    return (ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(state_eqn_dict, out_eqn_dict, inputs_), input_symbols, gens_)
+end

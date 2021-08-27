@@ -293,8 +293,8 @@ function simplify_field_generators(generators::Array{<: Array{<: MPolyElem,1},1}
     result = Set()
 
     for poly in gens(gb)
-        denom = first(coeffs(poly))
-        for c in coeffs(poly)
+        denom = first(coefficients(poly))
+        for c in coefficients(poly)
             if !(-c // denom in result)
                 push!(result, c // denom)
             end

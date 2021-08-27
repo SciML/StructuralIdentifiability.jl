@@ -31,7 +31,7 @@ function monomial_compress(io_equation, params::Array{<: MPolyElem, 1})
     for (c, p) in zip(coeffs, termlist)
         for i in 1:length(echelon_form)
             basis_c = echelon_form[i][1]
-            coef = coeff(c, lm(basis_c)) // lc(basis_c)
+            coef = coeff(c, leading_monomial(basis_c)) // leading_coefficient(basis_c)
             if coef != 0
                 c = c - coef * basis_c
                 echelon_form[i][2] += coef * p
@@ -216,7 +216,7 @@ function wronskian(io_equations::Dict{P, P}, ode::ODE{P}) where P <: MPolyElem
         ord
     )
     @debug "Computing the derivatives of the solution"
-    ps_ext = Dict{MPolyElem, AbsSeriesElem}()
+    ps_ext = Dict{MPolyElem, Nemo.gfp_abs_series}()# Generic.AbsSeries}()
     for v in vcat(ode_red.y_vars, ode_red.u_vars)
         cur_ps = ps[v]
         for i in 0:length(ode_red.x_vars)

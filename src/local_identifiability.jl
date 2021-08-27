@@ -122,7 +122,7 @@ function get_degree_and_coeffsize(f::MPolyElem{Nemo.fmpq})
         return (0, 1)
     end
     max_coef = 1
-    for c in coeffs(f)
+    for c in coefficients(f)
         max_coef = max(max_coef, 2 * height_bits(c))
     end
     return (total_degree(f), max_coef)
@@ -134,8 +134,17 @@ function get_degree_and_coeffsize(f::Generic.Frac{<: MPolyElem{Nemo.fmpq}})
     return (max(num_deg, den_deg), max(num_coef, den_coef))
 end
 
-
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+function assess_local_identifiability(ode::ModelingToolkit.ODESystem, inputs=[], funcs_to_check=[], p::Float64=0.99, type=:SE)
+    ode, syms, gens_ = PreprocessODE(ode, inputs)
+    if length(funcs_to_check) > 0
+        funcs_to_check = [substitute(x, syms .=> gens_) for x in funcs_to_check]
+        return assess_local_identifiability(ode, funcs_to_check, p, type)
+    else
+        return assess_local_identifiability(ode, p, type)
+    end
+end
+# ------------------------------------------------------------------------------
 """
     assess_local_identifiability(ode::ODE{P}, p::Float64 = 0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
 
@@ -155,7 +164,7 @@ The result is correct with probability at least `p`.
 `type` can be either `:SE` (single-experiment identifiability) or `:ME` (multi-experiment identifiability).
 The return value is a tuple consisting of the array of bools and the number of experiments to be performed.
 """
-function assess_local_identifiability(ode::ODE{P}, p::Float64 = 0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
+function assess_local_identifiability(ode::ODE{P}, p::Float64=0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
     funcs_to_check = ode.parameters
     if type == :SE
         funcs_to_check = vcat(funcs_to_check, ode.x_vars)
@@ -293,5 +302,8 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
     return (result, num_exp)
 end
 
-
 # ------------------------------------------------------------------------------
+
+function mtk_to_rational(func, subst_map)
+
+end

@@ -104,7 +104,7 @@ function find_ioequations(
     y_orders = Dict(y => 0 for y in keys(y_equations))
  
     while true        
-        var_degs = [(y, [degree(eq, x) for x in keys(x_equations) if degree(eq, x) > 0]) for (y, eq) in y_equations]
+        var_degs = [(y, [Nemo.degree(eq, x) for x in keys(x_equations) if Nemo.degree(eq, x) > 0]) for (y, eq) in y_equations]
         filter!(d -> length(d[2]) > 0, var_degs)
         if isempty(var_degs)
             break
@@ -152,7 +152,7 @@ function find_ioequations(
         end
         
         # Choose variable to eliminate
-        var_degs_next = [(degree(y_equations[y_prolong], x), degree(next_y_equation, x), x) for x in keys(x_equations) if degree(y_equations[y_prolong], x) > 0]
+        var_degs_next = [(Nemo.degree(y_equations[y_prolong], x), Nemo.degree(next_y_equation, x), x) for x in keys(x_equations) if Nemo.degree(y_equations[y_prolong], x) > 0]
         our_choice = sort(var_degs_next)[1]
         var_elim_deg, var_elim = our_choice[1], our_choice[3]
         
@@ -163,7 +163,7 @@ function find_ioequations(
         if auto_var_change && (var_elim_deg == 1)
             Ay_plus_B = coeff(y_equations[y_prolong], [var_elim], [1])
             for x in setdiff(keys(x_equations), [var_elim])
-                if degree(Ay_plus_B, x) == 1                      
+                if Nemo.degree(Ay_plus_B, x) == 1                      
                     A, B = divrem(Ay_plus_B, x)
                     A, B = simplify_frac(A, B)
                     if isempty(filter!(v -> (v in keys(x_equations)), vars(A))) && (B != 0) # && (length(coeffs(A))==1) 
