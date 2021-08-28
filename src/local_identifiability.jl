@@ -138,7 +138,7 @@ end
 function assess_local_identifiability(ode::ModelingToolkit.ODESystem, inputs=[], funcs_to_check=[], p::Float64=0.99, type=:SE)
     ode, syms, gens_ = PreprocessODE(ode, inputs)
     if length(funcs_to_check) > 0
-        funcs_to_check = [substitute(x, syms .=> gens_) for x in funcs_to_check]
+        funcs_to_check = [eval_at_nemo(x, syms .=> gens_) for x in funcs_to_check]
         return assess_local_identifiability(ode, funcs_to_check, p, type)
     else
         return assess_local_identifiability(ode, p, type)
