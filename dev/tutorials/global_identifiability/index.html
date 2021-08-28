@@ -25,26 +25,26 @@ w&#39;(t) = -b*w(t) + c*w(t)*x(t)*y(t) - c*w(t)*q*y(t)
 y&#39;(t) = x(t)*v(t)*beta - a*y(t)
 y2(t) = z(t)
 y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @time global_id = assess_identifiability(ode, 0.999)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 5.880840685 seconds
+[ Info: Local identifiability assessed in 6.008057673 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 9.474175419 seconds
+┌ Info: Computed in 10.173817466 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 9.474175419
+└   ioeq_time = 10.173817466
 [ Info: Computing Wronskians
-┌ Info: Computed in 3.533608431 seconds
+┌ Info: Computed in 3.436463564 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 3.533608431
+└   wrnsk_time = 3.436463564
 [ Info: Dimensions of the wronskians [18, 40]
-┌ Info: Ranks of the Wronskians computed in 0.026727673 seconds
+┌ Info: Ranks of the Wronskians computed in 0.028532106 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.026727673
+└   rank_times = 0.028532106
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 1.361827212 seconds
+┌ Info: Computed in 1.408724115 seconds
 │   :check_time = :check_time
-└   check_time = 1.361827212
-[ Info: Global identifiability assessed in 15.032381915 seconds
- 48.860548 seconds (85.30 M allocations: 5.310 GiB, 4.34% gc time)
+└   check_time = 1.408724115
+[ Info: Global identifiability assessed in 15.694216269 seconds
+ 50.045032 seconds (85.15 M allocations: 5.275 GiB, 3.66% gc time)
 Dict{Nemo.fmpq_mpoly, Symbol} with 10 entries:
   c    =&gt; :nonidentifiable
   lm   =&gt; :nonidentifiable
@@ -75,26 +75,26 @@ w&#39;(t) = -b*w(t) + c*w(t)*x(t)*y(t) - c*w(t)*q*y(t)
 y&#39;(t) = x(t)*v(t)*beta - a*y(t)
 y2(t) = z(t)
 y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @time global_id = assess_identifiability(ode, 0.99)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.071084197 seconds
+[ Info: Local identifiability assessed in 0.079896898 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.047627369 seconds
+┌ Info: Computed in 0.0532906 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.047627369
+└   ioeq_time = 0.0532906
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.049293492 seconds
+┌ Info: Computed in 0.151832749 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.049293492
+└   wrnsk_time = 0.151832749
 [ Info: Dimensions of the wronskians [18, 40]
-┌ Info: Ranks of the Wronskians computed in 0.000133502 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000143108 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000133502
+└   rank_times = 0.000143108
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.16030685 seconds
+┌ Info: Computed in 0.027002421 seconds
 │   :check_time = :check_time
-└   check_time = 0.16030685
-[ Info: Global identifiability assessed in 0.258020921 seconds
-  0.329443 seconds (1.96 M allocations: 158.370 MiB, 22.79% gc time, 5.80% compilation time)
+└   check_time = 0.027002421
+[ Info: Global identifiability assessed in 0.232905013 seconds
+  0.313116 seconds (1.95 M allocations: 158.256 MiB, 22.00% gc time, 6.71% compilation time)
 Dict{Nemo.fmpq_mpoly, Symbol} with 10 entries:
   c    =&gt; :nonidentifiable
   lm   =&gt; :nonidentifiable
@@ -105,4 +105,4 @@ Dict{Nemo.fmpq_mpoly, Symbol} with 10 entries:
   beta =&gt; :nonidentifiable
   b    =&gt; :globally
   k    =&gt; :nonidentifiable
-  d    =&gt; :globally</code></pre><p>Indeed, notice how much quicker we obtained the result with 99% correctness guarantee! This illustrates the fact that you may sometimes sacrifice probability slightly to get results much faster.</p><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>D. Wodarz, M. Nowak, <a href="https://doi.org/10.1073/pnas.96.25.14464"><em>Specific therapy regimes could lead to long-term immunological control of HIV</em></a>, PNAS December 7, 1999 96 (25) 14464-14469;</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../local_identifiability/">« Local Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../../input/input/">Parsing input ODE system »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.5 on <span class="colophon-date" title="Saturday 28 August 2021 09:31">Saturday 28 August 2021</span>. Using Julia version 1.6.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  d    =&gt; :globally</code></pre><p>Indeed, notice how much quicker we obtained the result with 99% correctness guarantee! This illustrates the fact that you may sometimes sacrifice probability slightly to get results much faster.</p><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>D. Wodarz, M. Nowak, <a href="https://doi.org/10.1073/pnas.96.25.14464"><em>Specific therapy regimes could lead to long-term immunological control of HIV</em></a>, PNAS December 7, 1999 96 (25) 14464-14469;</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../local_identifiability/">« Local Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../../input/input/">Parsing input ODE system »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.5 on <span class="colophon-date" title="Saturday 28 August 2021 09:32">Saturday 28 August 2021</span>. Using Julia version 1.6.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
