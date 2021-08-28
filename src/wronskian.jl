@@ -31,7 +31,7 @@ function monomial_compress(io_equation, params::Array{<: MPolyElem, 1})
     for (c, p) in zip(coeffs, termlist)
         for i in 1:length(echelon_form)
             basis_c = echelon_form[i][1]
-            coef = coeff(c, leading_monomial(basis_c)) // leading_coefficient(basis_c)
+            coef = coeff(c, lm(basis_c)) // lm(basis_c)
             if coef != 0
                 c = c - coef * basis_c
                 echelon_form[i][2] += coef * p
