@@ -131,14 +131,19 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem,1
     return result
 end
 
-function assess_identifiability(de::ModelingToolkit.ODESystem, inputs=[], funcs_to_check=[], p::Float64=0.99)
-    ode, syms, gens_ = PreprocessODE(de, inputs)
+function assess_identifiability(de::ModelingToolkit.ODESystem, p::Float64=0.99)
+    ode, syms, gens_ = PreprocessODE(de)
+    return assess_identifiability(ode, p)
+end
+
+
+function assess_identifiability(de::ModelingToolkit.ODESystem, funcs_to_check=[], p::Float64=0.99)
+    ode, syms, gens_ = PreprocessODE(de)
     if length(funcs_to_check) > 0
         funcs_to_check = [eval_at_nemo(each, Dict(syms.=>gens_)) for each in funcs_to_check]
-        # funcs_to_check = [substitute(x, syms .=> gens_) for x in funcs_to_check]
         return assess_identifiability(ode, funcs_to_check, p)
     else
-        return assess_identifiability(ode, p)
+        return assess_identifiability(ode, ode.parameters, p) 
     end
 end
 
