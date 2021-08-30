@@ -334,6 +334,31 @@ function extract_identifiable_functions(
 end
 
 #------------------------------------------------------------------------------
+
+"""
+    extract_identifiable_functions_raw(io_equations, parameters)
+
+For the io_equation and the list of all parameter variables, returns a set of *raw* *generators of a field of all functions of parameters
+"""
+function extract_identifiable_functions_raw(
+    io_equations::Array{P,1}, 
+    parameters::Array{P,1}, 
+) where P <: MPolyElem{fmpq}
+    @debug "Extracting coefficients"
+    flush(stdout)
+    nonparameters = filter(v -> !(var_to_str(v) in map(var_to_str, parameters)), gens(parent(io_equations[1])))
+    result = []
+    for eq in io_equations
+        coeffs = sort(collect(values(extract_coefficients(eq, nonparameters))), by = total_degree)
+        append!(result, [c // first(coeffs) for c in coeffs[2:end]])
+    end
+
+    return result
+end
+
+
+#------------------------------------------------------------------------------
+
 """
     find_identifiable_functions(ode::ODE{<: MPolyElem{fmpq}}, p::Float64=0.99)
 

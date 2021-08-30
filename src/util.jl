@@ -104,7 +104,7 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching=:byna
     elseif matching == :byindex
         append!(var_mapping, 1:length(symbols(new_ring)))
         if length(symbols(new_ring)) < length(symbols(old_ring))
-            append!(var_mapping, Array{Any, 1}[nothing, length(symbols(old_ring)) - length(symbols(new_ring))])
+            append!(var_mapping, Array{Any,1}[nothing, length(symbols(old_ring)) - length(symbols(new_ring))])
         end
     else
         throw(Base.ArgumentError("Unknown matching type: $matching"))
@@ -287,3 +287,44 @@ function switch_ring(v::MPolyElem, ring::MPolyRing)
 end
 
 # ------------------------------------------------------------------------------
+function eval_at_nemo(e::Num, vals::Dict)
+    e = ModelingToolkit.Symbolics.value(e)
+    return eval_at_nemo(e, vals)
+end
+
+function eval_at_nemo(e, vals::Dict)
+    if ModelingToolkit.Symbolics.istree(e)
+        args = map(a -> eval_at_nemo(a, vals), ModelingToolkit.Symbolics.arguments(e))
+        if ModelingToolkit.Symbolics.operation(e) in [+, -, *]
+            return ModelingToolkit.Symbolics.operation(e)(args...)
+        end
+        if ModelingToolkit.Symbolics.operation(e) === ^
+            if args[2] >= 0
+                return args[1]^args[2]
+            end
+            return 1 // args[1]^(-args[2])
+        end
+        throw(Base.ArgumentError("Function $(ModelingToolkit.Symbolics.operation(e)) is not supported"))
+    end
+end
+
+function eval_at_nemo(e::Union{ModelingToolkit.Symbolics.Sym,ModelingToolkit.Symbolics.Term}, vals::Dict)
+    if typeof(e) <: ModelingToolkit.Symbolics.Term{Real,Nothing}
+        throw(Base.ArgumentError("Function $(ModelingToolkit.Symbolics.operation(e)) is not supported"))
+    end
+    return get(vals, e, e)
+end
+
+function eval_at_nemo(e::Union{Integer,Rational}, vals::Dict)
+    return e
+end
+
+function eval_at_nemo(e::Union{Float16,Float32,Float64}, vals::Dict)
+    if isequal(e % 1, 0)
+        out = Int(e)
+    else
+        out = rationalize(e)
+    end
+    @warn "Floating points are not allowed, value $e will be converted to $(out)."
+    return out
+end
