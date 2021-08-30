@@ -116,7 +116,7 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching=:byna
         for i in 1:length(exp)
             if exp[i] != 0
                 if var_mapping[i] == nothing
-                    throw(Base.ArgumentError("The polynomial contains a variable not present in the new ring $poly"))
+                    throw(Base.ArgumentError("The polynomial contains a variable $(gens(old_ring)[i]) not present in the new ring $poly"))
                 else
                     new_exp[var_mapping[i]] = exp[i]
                 end

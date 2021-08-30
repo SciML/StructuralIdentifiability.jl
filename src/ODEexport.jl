@@ -74,6 +74,15 @@ end
 
 #------------------------------------------------------------------------------
 
+function _rhs_to_str(lhs)
+    num, den = unpack_fraction(lhs)
+    rslt = string(num)
+    if den != 1
+         rslt = "($rslt) / ($den)"
+    end
+    return rslt
+end
+
 """
     print_for_DAISY(ode)
 
@@ -96,20 +105,11 @@ function print_for_DAISY(ode::ODE)
 
     eqs = []
 
-    function _lhs_to_str(lhs)
-        num, den = unpack_fraction(lhs)
-        rslt = string(num)
-        if den != 1
-             rslt = "($rslt) / ($den)"
-        end
-        return rslt
-    end
-
     for (x, f) in ode.x_equations
-        push!(eqs, "df($(var_to_str(x)), t) = " * _lhs_to_str(f))
+        push!(eqs, "df($(var_to_str(x)), t) = " * _rhs_to_str(f))
     end
     for (y, g) in ode.y_equations
-        push!(eqs, "$(var_to_str(y)) = " * _lhs_to_str(g))
+        push!(eqs, "$(var_to_str(y)) = " * _rhs_to_str(g))
     end
 
     result = result * "C_:={" * join(eqs, ",\n") * "}\$\n"
@@ -119,3 +119,53 @@ function print_for_DAISY(ode::ODE)
     result = replace(result, "//" => "/")
     return result
 end
+
+#-------------------------------------------------------------------------------
+
+"""
+    print_for_GenSSI(ode)
+
+Prints the ODE in the format accepted by GenSSI 2.0 (https://github.com/genssi-developer/GenSSI)
+"""
+function print_for_GenSSI(ode::ODE)
+    result = "function model = SMTH()\n"
+
+    result *= "syms " * join(var_to_str.(ode.x_vars)," ") * "\n"
+    result *= "syms " * join(var_to_str.(ode.parameters), " ") * "\n"
+    result *= "syms " * join(map(v -> var_to_str(v) * "0", ode.x_vars), " ") * "\n"
+    if length(ode.u_vars) > 0
+        result *= "syms " * join(var_to_str.(ode.u_vars), " ") * "\n"
+    end
+
+    result *= "model.sym.p = [" * join(var_to_str.(ode.parameters), "; ") * "; "
+    result *= join(map(v -> var_to_str(v) * "0", ode.x_vars), "; ") * "];\n"
+
+    result *= "model.sym.x = [" * join(var_to_str.(ode.x_vars), "; ") * "];\n"
+    result *= "model.sym.g = [" * join(var_to_str.(ode.u_vars), "; ") * "];\n"
+
+    result *= "model.sym.x0 = [" * join(map(v -> var_to_str(v) * "0", ode.x_vars), "; ") * "];\n"
+
+    result *= "model.sym.xdot = ["
+
+    eqs = []
+    for x in ode.x_vars
+        f = ode.x_equations[x]
+        push!(eqs, _rhs_to_str(f))
+    end
+    result *= join(eqs, "\n") * "];\n"
+
+    result *= "model.sym.y = ["
+    eqs = []
+    for y in ode.y_vars
+        g = ode.y_equations[y]
+        push!(eqs, _rhs_to_str(g))
+    end
+    result *= join(eqs, "\n") * "];\n"
+
+    result *= "end"
+
+    result = replace(result, "//" => "/")
+    return result
+end
+
+
