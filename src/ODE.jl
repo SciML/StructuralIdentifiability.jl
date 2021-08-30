@@ -358,7 +358,10 @@ function PreprocessODE(de::ModelingToolkit.ODESystem, inputs)
     generators = string.(input_symbols)
     generators = map(g->replace(g, "(t)"=>""), generators)
     R, gens_ = Nemo.PolynomialRing(Nemo.QQ, generators)
-    
+    if !all(isascii.(generators))
+        nonascii_chars = filter(g->!isascii(g), generators)
+        @warn "Non-ascii characters are not supported by Singular: $(join(nonascii_chars, ", "))"
+    end
     state_eqn_dict = Dict{StructuralIdentifiability.Nemo.fmpq_mpoly,Union{StructuralIdentifiability.Nemo.fmpq_mpoly,StructuralIdentifiability.Nemo.Generic.Frac{fmpq_mpoly}}}()
     out_eqn_dict = Dict{StructuralIdentifiability.Nemo.fmpq_mpoly,Union{StructuralIdentifiability.Nemo.fmpq_mpoly,StructuralIdentifiability.Nemo.Generic.Frac{fmpq_mpoly}}}()
     
