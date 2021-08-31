@@ -25,7 +25,7 @@ struct ODE{P}
 
         num, den = unpack_fraction(collect(values(x_eqs))[1])
         poly_ring = parent(num)
-        if !all(isascii.(string.(gens(poly_rung)))
+        if !all(isascii.(string.(gens(poly_ring)))
             nonascii_chars = filter(g->!isascii(g), string.(gens(poly_ring)))
             @warn "Non-ascii characters are not supported by Singular: $(join(nonascii_chars, ", "))"
         end
