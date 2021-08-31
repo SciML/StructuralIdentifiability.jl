@@ -1,7 +1,7 @@
 using Printf
 
 using StructuralIdentifiability
-using StructuralIdentifiability: ODE, print_for_DAISY, print_for_maple
+using StructuralIdentifiability: ODE, print_for_DAISY, print_for_COMBOS, print_for_maple
 
 include("benchmarks.jl")
 
@@ -24,6 +24,11 @@ formats = [
     Dict(
         :name => "DAISY",
         :function => print_for_DAISY,
+        :extension => ".txt"
+    ),
+    Dict(
+        :name => "COMBOS",
+        :function => print_for_COMBOS,
         :extension => ".txt"
     )
 ]
