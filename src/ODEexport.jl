@@ -168,4 +168,43 @@ function print_for_GenSSI(ode::ODE)
     return result
 end
 
+#------------------------------------------------------------------------------
 
+"""
+    print_for_COMBOS(ode)
+
+Prints the ODE in the format accepted by COMBOS (http://biocyb1.cs.ucla.edu/combos/)
+"""
+function print_for_COMBOS(ode::ODE)
+    varstr = Dict(x => "x" * string(ind) for (ind, x) in enumerate(ode.x_vars))
+    merge!(varstr, Dict(u => "u" * string(ind) for (ind, u) in enumerate(ode.u_vars)))
+    merge!(varstr, Dict(y => "y" * string(ind) for (ind, y) in enumerate(ode.y_vars)))
+    merge!(varstr, Dict(p => var_to_str(p) for p in ode.parameters))
+    R_print, vars_print = Nemo.PolynomialRing(base_ring(ode.poly_ring), [varstr[v] for v in gens(ode.poly_ring)])
+    
+    result = ""
+
+    eqs = []
+    
+    function _lhs_to_str(lhs)
+        num, den = unpack_fraction(lhs)
+        res = string(evaluate(num, vars_print))
+        if den != 1
+             res = "($res) / ($(evaluate(den, vars_print)))"
+        end
+        return res
+    end    
+
+    for (x, f) in ode.x_equations
+        push!(eqs, "d$(varstr[x])/dt = " * _lhs_to_str(f))
+    end
+    for (y, g) in ode.y_equations
+        push!(eqs, "$(varstr[y]) = " * _lhs_to_str(g))
+    end
+
+    result = result * join(eqs, "; ")
+
+    result = replace(result, "//" => "/")
+    result = replace(result, "_" => ",")
+    return result
+end
