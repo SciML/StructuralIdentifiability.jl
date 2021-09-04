@@ -27,7 +27,8 @@ struct ODE{P}
         poly_ring = parent(num)
         if !all(isascii.(string.(gens(poly_ring)))
             nonascii_chars = filter(g->!isascii(g), string.(gens(poly_ring)))
-            @warn "Non-ascii characters are not supported by Singular: $(join(nonascii_chars, ", "))"
+            st = join(nonascii_chars, ", ")
+            @warn "Non-ascii characters are not supported by Singular: " * st
         end
         x_vars = collect(keys(x_eqs))
         y_vars = collect(keys(y_eqs))
