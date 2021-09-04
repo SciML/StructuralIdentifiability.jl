@@ -141,7 +141,7 @@ function assess_identifiability(de::ModelingToolkit.ODESystem, funcs_to_check=[]
     ode, syms, gens_ = PreprocessODE(de)
     if length(funcs_to_check) > 0
         funcs_to_check = [eval_at_nemo(each, Dict(syms.=>gens_)) for each in funcs_to_check]
-        return Dict(param => res for (param, res) in zip(ode.parameters, assess_identifiability(ode, funcs_to_check, p)))
+        return Dict(param => res for (param, res) in zip(funcs_to_check, assess_identifiability(ode, funcs_to_check, p)))
     else
         return Dict(param => res for (param, res) in zip(ode.parameters, assess_identifiability(ode, ode.parameters, p)))
     end
