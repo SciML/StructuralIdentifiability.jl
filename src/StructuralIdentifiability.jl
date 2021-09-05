@@ -133,17 +133,34 @@ end
 
 function assess_identifiability(de::ModelingToolkit.ODESystem, p::Float64=0.99)
     ode, syms, gens_ = PreprocessODE(de)
-    return Dict(param => res for (param, res) in zip(ode.parameters, assess_identifiability(ode, ode.parameters, p)))
+    out_dict = Dict()
+    tmp = Dict(param => res for (param, res) in zip(ode.parameters, assess_identifiability(ode, ode.parameters, p)))
+    nemo2mtk = Dict(gens_.=>syms)
+    for (par, res) in pairs(tmp)
+        out_dict[nemo2mtk[par]] = res
+    end
+    return out_dict
 end
 
 
 function assess_identifiability(de::ModelingToolkit.ODESystem, funcs_to_check=[], p::Float64=0.99)
     ode, syms, gens_ = PreprocessODE(de)
     if length(funcs_to_check) > 0
-        funcs_to_check = [eval_at_nemo(each, Dict(syms.=>gens_)) for each in funcs_to_check]
-        return Dict(param => res for (param, res) in zip(funcs_to_check, assess_identifiability(ode, funcs_to_check, p)))
+        funcs_to_check_ = [eval_at_nemo(each, Dict(syms.=>gens_)) for each in funcs_to_check]
+        tmp = Dict(param => res for (param, res) in zip(funcs_to_check, assess_identifiability(ode, funcs_to_check_, p)))
+        nemo2mtk = Dict(funcs_to_check_.=>funcs_to_check)
+        for (func, res) in pairs(tmp)
+            out_dict[nemo2mtk[func]] = res
+        end
+        return out_dict
     else
-        return Dict(param => res for (param, res) in zip(ode.parameters, assess_identifiability(ode, ode.parameters, p)))
+        out_dict = Dict()
+        tmp = Dict(param => res for (param, res) in zip(ode.parameters, assess_identifiability(ode, ode.parameters, p)))
+        nemo2mtk = Dict(gens_.=>syms)
+        for (par, res) in pairs(tmp)
+            out_dict[nemo2mtk[par]] = res
+        end
+        return out_dict
     end
 end
 
