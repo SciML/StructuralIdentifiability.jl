@@ -143,22 +143,10 @@ end
 function assess_local_identifiability(ode::ModelingToolkit.ODESystem, funcs_to_check=[], p::Float64=0.99, type=:SE)
     ode, syms, gens_ = PreprocessODE(ode)
     if length(funcs_to_check) > 0
-        out_dict = Dict()
-        funcs_to_check_ = [eval_at_nemo(x, Dict(syms .=> gens_)) for x in funcs_to_check]
-        tmp = assess_local_identifiability(ode, funcs_to_check_, p, type)
-        nemo2mtk = Dict(funcs_to_check_.=>funcs_to_check)
-        for (func, res) in pairs(tmp)
-            out_dict[nemo2mtk[func]] = res
-        end
-        return out_dict 
+        funcs_to_check = [eval_at_nemo(x, Dict(syms .=> gens_)) for x in funcs_to_check]
+        return assess_local_identifiability(ode, funcs_to_check, p, type) 
     else
-        out_dict = Dict()
-        nemo2mtk = Dict(gens_.=>syms)
-        tmp = assess_local_identifiability(ode, ode.parameters, p, type)
-        for (par, res) in pairs(tmp)
-            out_dict[nemo2mtk[par]] = res
-        end
-        return out_dict
+        return assess_local_identifiability(ode, ode.parameters, p, type)
     end
 end
 # ------------------------------------------------------------------------------
