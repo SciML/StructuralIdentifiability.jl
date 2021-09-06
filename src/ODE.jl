@@ -25,6 +25,11 @@ struct ODE{P}
 
         num, den = unpack_fraction(collect(values(x_eqs))[1])
         poly_ring = parent(num)
+        if !all(isascii.(string.(gens(poly_ring))))
+            nonascii_chars = filter(g->!isascii(g), string.(gens(poly_ring)))
+            st = join(nonascii_chars, ", ")
+            @warn "Non-ascii characters are not supported by Singular: " * st
+        end
         x_vars = collect(keys(x_eqs))
         y_vars = collect(keys(y_eqs))
         u_vars = inputs
@@ -358,7 +363,6 @@ function PreprocessODE(de::ModelingToolkit.ODESystem, inputs)
     generators = string.(input_symbols)
     generators = map(g->replace(g, "(t)"=>""), generators)
     R, gens_ = Nemo.PolynomialRing(Nemo.QQ, generators)
-    
     state_eqn_dict = Dict{StructuralIdentifiability.Nemo.fmpq_mpoly,Union{StructuralIdentifiability.Nemo.fmpq_mpoly,StructuralIdentifiability.Nemo.Generic.Frac{fmpq_mpoly}}}()
     out_eqn_dict = Dict{StructuralIdentifiability.Nemo.fmpq_mpoly,Union{StructuralIdentifiability.Nemo.fmpq_mpoly,StructuralIdentifiability.Nemo.Generic.Frac{fmpq_mpoly}}}()
     
