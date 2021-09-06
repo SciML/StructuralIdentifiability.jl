@@ -140,14 +140,10 @@ function assess_local_identifiability(ode::ModelingToolkit.ODESystem, p::Float64
     return assess_local_identifiability(ode, ode.parameters, p, type)
 end
 
-function assess_local_identifiability(ode::ModelingToolkit.ODESystem, funcs_to_check=[], p::Float64=0.99, type=:SE)
+function assess_local_identifiability(ode::ModelingToolkit.ODESystem, funcs_to_check::Array, p::Float64=0.99, type=:SE)
     ode, syms, gens_ = PreprocessODE(ode)
-    if length(funcs_to_check) > 0
-        funcs_to_check = [eval_at_nemo(x, Dict(syms .=> gens_)) for x in funcs_to_check]
-        return assess_local_identifiability(ode, funcs_to_check, p, type) 
-    else
-        return assess_local_identifiability(ode, ode.parameters, p, type)
-    end
+    funcs_to_check = [eval_at_nemo(x, Dict(syms .=> gens_)) for x in funcs_to_check]
+    return assess_local_identifiability(ode, funcs_to_check, p, type) 
 end
 # ------------------------------------------------------------------------------
 """
