@@ -136,7 +136,6 @@ end
 
 # ------------------------------------------------------------------------------
 function assess_local_identifiability(ode::ModelingToolkit.ODESystem, p::Float64=0.99, type=:SE)
-    ode, syms, gens_ = PreprocessODE(ode)
     return assess_local_identifiability(ode, ode.parameters, p, type)
 end
 
