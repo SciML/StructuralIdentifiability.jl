@@ -131,15 +131,21 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem,1
     return result
 end
 
-function assess_identifiability(de::ModelingToolkit.ODESystem, inputs=[], funcs_to_check=[], p::Float64=0.99)
-    ode, syms, gens_ = PreprocessODE(de, inputs)
-    if length(funcs_to_check) > 0
-        funcs_to_check = [eval_at_nemo(each, Dict(syms.=>gens_)) for each in funcs_to_check]
-        # funcs_to_check = [substitute(x, syms .=> gens_) for x in funcs_to_check]
-        return assess_identifiability(ode, funcs_to_check, p)
-    else
-        return assess_identifiability(ode, p)
+function assess_identifiability(de::ModelingToolkit.ODESystem, p::Float64=0.99)
+    return assess_identifiability(de, ModelingToolkit.parameters(de), p)
+end
+
+
+function assess_identifiability(de::ModelingToolkit.ODESystem, funcs_to_check::Array, p::Float64=0.99)
+    ode, syms, gens_ = PreprocessODE(de)
+    out_dict = Dict{Num, Symbol}()
+    funcs_to_check_ = [eval_at_nemo(each, Dict(syms.=>gens_)) for each in funcs_to_check]
+    tmp = Dict(param => res for (param, res) in zip(funcs_to_check_, assess_identifiability(ode, funcs_to_check_, p)))
+    nemo2mtk = Dict(funcs_to_check_.=>funcs_to_check)
+    for (func, res) in pairs(tmp)
+        out_dict[nemo2mtk[func]] = res
     end
+    return out_dict
 end
 
 end

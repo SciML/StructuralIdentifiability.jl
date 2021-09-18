@@ -135,14 +135,14 @@ function get_degree_and_coeffsize(f::Generic.Frac{<: MPolyElem{Nemo.fmpq}})
 end
 
 # ------------------------------------------------------------------------------
-function assess_local_identifiability(ode::ModelingToolkit.ODESystem, inputs=[], funcs_to_check=[], p::Float64=0.99, type=:SE)
-    ode, syms, gens_ = PreprocessODE(ode, inputs)
-    if length(funcs_to_check) > 0
-        funcs_to_check = [eval_at_nemo(x, Dict(syms .=> gens_)) for x in funcs_to_check]
-        return assess_local_identifiability(ode, funcs_to_check, p, type)
-    else
-        return assess_local_identifiability(ode, p, type)
-    end
+function assess_local_identifiability(ode::ModelingToolkit.ODESystem, p::Float64=0.99, type=:SE)
+    return assess_local_identifiability(ode, ModelingToolkit.parameters(ode), p, type)
+end
+
+function assess_local_identifiability(ode::ModelingToolkit.ODESystem, funcs_to_check::Array, p::Float64=0.99, type=:SE)
+    ode, syms, gens_ = PreprocessODE(ode)
+    funcs_to_check = [eval_at_nemo(x, Dict(syms .=> gens_)) for x in funcs_to_check]
+    return assess_local_identifiability(ode, funcs_to_check, p, type) 
 end
 # ------------------------------------------------------------------------------
 """

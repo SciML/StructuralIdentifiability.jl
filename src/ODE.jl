@@ -351,13 +351,14 @@ Input:
 Output: 
 - `ODE` object containing required data for identifiability assessment
 """
-function PreprocessODE(de::ModelingToolkit.ODESystem, inputs)
+function PreprocessODE(de::ModelingToolkit.ODESystem)
     @info "Preproccessing `ModelingToolkit.ODESystem` object"
-    diff_eqs = equations(de)
-    params = ModelingToolkit.parameters(de)
-    state_vars = ModelingToolkit.states(de)
-    out_eqs = ModelingToolkit.observed(de)
-    y_functions = [each.lhs for each in out_eqs] 
+    diff_eqs = filter(eq->!(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
+    out_eqs = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
+    y_functions = [each.lhs for each in out_eqs]
+    inputs = filter(v->ModelingToolkit.isinput(v), ModelingToolkit.states(de))
+    state_vars = filter(s->!(ModelingToolkit.isinput(s) || ModelingToolkit.isoutput(s)), ModelingToolkit.states(de))
+    params = ModelingToolkit.parameters(de) 
     
     input_symbols = vcat(state_vars, y_functions, inputs, params)
     generators = string.(input_symbols)
