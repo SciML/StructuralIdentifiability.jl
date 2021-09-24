@@ -5,7 +5,7 @@ syms x150 x130 x70 x90 x20 x80 x140 x50 x40 x120 x60 x10 x100 x110 x30
 syms u
 model.sym.p = [e2a; i1; i1a; c5; k_deg; k2; t2; c3a; k3; k1; c4a; k_prod; t1; x150; x130; x70; x90; x20; x80; x140; x50; x40; x120; x60; x10; x100; x110; x30];
 model.sym.x = [x15; x13; x7; x9; x2; x8; x14; x5; x4; x12; x6; x1; x10; x11; x3];
-model.sym.g = [u];
+model.sym.g = [0; 0; 0; 0; 0; 0; 0; 0; 0; 0; 0; -k1 * x1; 0; 0; 0];
 model.sym.x0 = [x150; x130; x70; x90; x20; x80; x140; x50; x40; x120; x60; x10; x100; x110; x30];
 model.sym.xdot = [-1/2500*x15 + 1/2000000*x7
 e2a*x14 + 1/2*x10*x6 - x2*x13 - 1/50000*x13
