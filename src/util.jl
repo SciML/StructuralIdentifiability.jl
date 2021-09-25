@@ -297,6 +297,8 @@ function eval_at_nemo(e, vals::Dict)
         args = map(a -> eval_at_nemo(a, vals), ModelingToolkit.Symbolics.arguments(e))
         if ModelingToolkit.Symbolics.operation(e) in [+, -, *]
             return ModelingToolkit.Symbolics.operation(e)(args...)
+        elseif isequal(ModelingToolkit.Symbolics.operation(e), /)
+            return //(args...)
         end
         if ModelingToolkit.Symbolics.operation(e) === ^
             if args[2] >= 0
