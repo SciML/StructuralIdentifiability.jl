@@ -206,7 +206,10 @@ function fast_factor(poly::MPolyElem{fmpq})
     prelim_factors = uncertain_factorization(poly)
     cert_factors = map(pair -> pair[1], filter(f -> f[2], prelim_factors))
     uncert_factors = map(pair -> pair[1], filter(f -> !f[2], prelim_factors))
-    append!(cert_factors, factor_via_singular(uncert_factors))
+    for p in uncert_factors
+        factors = Nemo.factor(p)
+        append!(cert_factors, factors[1])
+    end
     return cert_factors
 end
 
