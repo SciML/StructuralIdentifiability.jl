@@ -181,32 +181,15 @@ end
 
 # ------------------------------------------------------------------------------
 
-function factor_via_singular(polys::Array{<: MPolyElem{fmpq},1})
-    if isempty(polys)
-        return []
-    end
-    original_ring = parent(polys[1])
-    R_sing, var_sing = Singular.PolynomialRing(Singular.QQ, map(string, symbols(original_ring)))
-    result = Array{typeof(polys[1]),1}()
-    for p in polys
-        @debug "\t Factoring with Singular a polynomial of size $(length(p))"
-        @debug p
-        p_sing = parent_ring_change(p, R_sing)
-        for f in Singular.factor(p_sing)
-            @debug f
-            push!(result, parent_ring_change(f[1], original_ring))
-        end
-    end
-    return result
-end
-
-# ------------------------------------------------------------------------------
-
 function fast_factor(poly::MPolyElem{fmpq})
     prelim_factors = uncertain_factorization(poly)
     cert_factors = map(pair -> pair[1], filter(f -> f[2], prelim_factors))
     uncert_factors = map(pair -> pair[1], filter(f -> !f[2], prelim_factors))
-    append!(cert_factors, factor_via_singular(uncert_factors))
+    for p in uncert_factors
+		for f in Nemo.factor(p)
+            push!(cert_factors, f[1])
+        end 
+    end
     return cert_factors
 end
 
