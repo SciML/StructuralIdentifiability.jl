@@ -207,9 +207,9 @@ function fast_factor(poly::MPolyElem{fmpq})
     cert_factors = map(pair -> pair[1], filter(f -> f[2], prelim_factors))
     uncert_factors = map(pair -> pair[1], filter(f -> !f[2], prelim_factors))
     for p in uncert_factors
-        for (f, e) in Nemo.factor(p)
-            append!(cert_factors, f)
-        end
+		for f in Nemo.factor(p)
+            push!(cert_factors, f[1])
+        end 
     end
     return cert_factors
 end
