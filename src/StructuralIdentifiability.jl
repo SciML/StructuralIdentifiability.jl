@@ -14,6 +14,7 @@ using DataStructures
 using AbstractAlgebra
 using Nemo
 # using GroebnerBasis
+using Oscar
 using Singular
 
 # For testing (TODO: move to the test-specific dependencies)
