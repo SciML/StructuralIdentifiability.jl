@@ -13,7 +13,7 @@ using DataStructures
 # Algebra packages
 using AbstractAlgebra
 using Nemo
-using GroebnerBasis
+# using GroebnerBasis
 using Singular
 
 # For testing (TODO: move to the test-specific dependencies)
