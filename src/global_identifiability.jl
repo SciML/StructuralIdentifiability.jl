@@ -82,12 +82,10 @@ function check_field_membership(
     if method == :Singular
         gb = Singular.std(Singular.Ideal(ring_sing, eqs_sing))
     elseif method == :GroebnerBasis
-        gb = Oscar.f4(Singular.Ideal(ring_sing, eqs_sing))
-
+        gb = Oscar.msolve(Oscar.ideal(ring_sing, eqs_sing))
     else
         throw(Base.ArgumentError("Unknown method $method"))
     end
-    # @debug gens(gb)
 
     @debug "Producing the result"
     flush(stdout)
