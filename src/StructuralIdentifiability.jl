@@ -42,7 +42,7 @@ export print_for_maple, print_for_DAISY
 export linear_compartment_model
 
 # structure for storing the io-equations for doing reductions further
-export PBRepresentation
+export PBRepresentation, diffreduce
 
 # would be great to merge with the Julia logger
 _runtime_logger = Dict()
