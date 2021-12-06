@@ -41,6 +41,9 @@ export print_for_maple, print_for_DAISY
 # function for creating linear compartment models
 export linear_compartment_model
 
+# structure for storing the io-equations for doing reductions further
+export PBRepresentation
+
 # would be great to merge with the Julia logger
 _runtime_logger = Dict()
 
@@ -55,6 +58,7 @@ include("primality_check.jl")
 include("io_equation.jl")
 include("global_identifiability.jl")
 include("lincomp.jl")
+include("pb_representation.jl")
 
 """
     assess_identifiability(ode::ODE{P}, p::Float64=0.99) where P <: MPolyElem{fmpq}
