@@ -92,7 +92,11 @@ function common_ring(poly::MPolyElem, pbr::PBRepresentation)
         append!(varnames, ["$(y)_$h" for h in 0:(max_offset + pbr.profile[y])])
     end
     for u in pbr.u_names
-        append!(varnames, ["$(u)_$h" for h in 0:max(max_ords[u], max_offset + max(values(pbr.profile)...))])
+        append!(
+                varnames, 
+                ["$(u)_$h" for h in 0:max(max_ords[u], 
+                max_offset + max([difforder(p, u) for p in values(pbr.projections)]...))]
+        )
     end
     append!(varnames, pbr.param_names)
     append!(varnames, new_params)
@@ -202,4 +206,33 @@ function diffreduce(diffpoly::MPolyElem, pbr::PBRepresentation)
         reducer = diff(ext_projections[var], der, ord - pbr.profile[var])
         result = pseudodivision(result, reducer, lead)
     end
+end
+
+# -----------------------------------------------------------------------------
+
+"""
+    io_switch(pbr)
+
+In a single-output pb-representation `pbr` makes the leading variable to be the first of the inputs
+"""
+function io_switch!(pbr::PBRepresentation)
+    if length(pbr.y_names) > 1
+        throw(ArgumentError("Not implemented for multiple outputs"))
+    end
+    diffpoly = first(values(pbr.projections))
+    u = first(pbr.u_names)
+    ordu = -1
+    for v in vars(diffpoly)
+        d = decompose_derivative(var_to_str(v), [u])
+        if d != nothing
+            ordu = max(d[2], ordu)
+        end
+    end
+    y = first(pbr.y_names)
+    pbr.u_names[1] = y
+    pbr.y_names[1] = u
+    pbr.projections[u] = diffpoly
+    delete!(pbr.projections, y)
+    pbr.profile[u] = ordu
+    delete!(pbr.profile, y)
 end

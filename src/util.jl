@@ -331,3 +331,23 @@ function decompose_derivative(varname::String, prefixes::Array{String})
         end
     end
 end
+
+# -----------------------------------------------------------------------------
+
+"""
+    difforder(diffpoly, prefix)
+
+Finds the order of a differential polynomial `diffpoly` in a variable `prefix`,
+returns -1 is the variable does not appear
+"""
+
+function difforder(diffpoly::MPolyElem, prefix::String)
+    orders = [-1]
+    for v in vars(diffpoly)
+        d = decompose_derivative(var_to_str(v), [prefix])
+        if d != nothing
+            push!(orders, d[2])
+        end
+    end
+    return max(orders...)
+end
