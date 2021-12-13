@@ -270,6 +270,7 @@ function switch_ring(v::MPolyElem, ring::MPolyRing)
 end
 
 # ------------------------------------------------------------------------------
+
 function eval_at_nemo(e::Num, vals::Dict)
     e = ModelingToolkit.Symbolics.value(e)
     return eval_at_nemo(e, vals)
@@ -312,4 +313,41 @@ function eval_at_nemo(e::Union{Float16,Float32,Float64}, vals::Dict)
     end
     @warn "Floating points are not allowed, value $e will be converted to $(out)."
     return out
+end
+
+# -----------------------------------------------------------------------------
+
+"""
+    decompose_derivative(varname, prefixes)
+
+Determines if it is possible to represent the `varname` as `a_number` where `a` is an element of `prefixes`
+"""
+function decompose_derivative(varname::String, prefixes::Array{String})
+    for pr in prefixes
+        if startswith(varname, pr) && length(varname) > length(pr) + 1
+            if varname[length(pr) + 1] == '_' && all(map(isdigit, collect(varname[length(pr) + 2:end])))
+                return (pr, parse(Int, varname[length(pr) + 2:end])) 
+            end
+        end
+    end
+end
+
+# -----------------------------------------------------------------------------
+
+"""
+    difforder(diffpoly, prefix)
+
+Finds the order of a differential polynomial `diffpoly` in a variable `prefix`,
+returns -1 is the variable does not appear
+"""
+
+function difforder(diffpoly::MPolyElem, prefix::String)
+    orders = [-1]
+    for v in vars(diffpoly)
+        d = decompose_derivative(var_to_str(v), [prefix])
+        if d != nothing
+            push!(orders, d[2])
+        end
+    end
+    return max(orders...)
 end
