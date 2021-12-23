@@ -135,13 +135,15 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem,1
     return result
 end
 
-function assess_identifiability(de::ModelingToolkit.ODESystem, p::Float64=0.99)
-    return assess_identifiability(de, ModelingToolkit.parameters(de), p)
+function assess_identifiability(de::ModelingToolkit.ODESystem, data_series::Array{ModelingToolkit.Equation}=nothing, p::Float64=0.99)
+    return assess_identifiability(de, data_series, ModelingToolkit.parameters(de), p)
 end
 
 
-function assess_identifiability(de::ModelingToolkit.ODESystem, funcs_to_check::Array, p::Float64=0.99)
-    ode, syms, gens_ = PreprocessODE(de)
+function assess_identifiability(de::ModelingToolkit.ODESystem, data_series::Array{ModelingToolkit.Equation}=nothing,  funcs_to_check::Array, p::Float64=0.99)
+    if isequal(length(data_series), nothing)
+        throw(ArgumentError("Output series (functions) must be provided"))
+    ode, syms, gens_ = PreprocessODE(de, data_series)
     out_dict = Dict{Num, Symbol}()
     funcs_to_check_ = [eval_at_nemo(each, Dict(syms.=>gens_)) for each in funcs_to_check]
     tmp = Dict(param => res for (param, res) in zip(funcs_to_check_, assess_identifiability(ode, funcs_to_check_, p)))

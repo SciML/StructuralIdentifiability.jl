@@ -351,11 +351,10 @@ Input:
 Output: 
 - `ODE` object containing required data for identifiability assessment
 """
-function PreprocessODE(de::ModelingToolkit.ODESystem)
+function PreprocessODE(de::ModelingToolkit.ODESystem, data_series::Array{ModelingToolkit.Equation})
     @info "Preproccessing `ModelingToolkit.ODESystem` object"
     diff_eqs = filter(eq->!(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
-    out_eqs = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
-    y_functions = [each.lhs for each in out_eqs]
+    y_functions = [each.lhs for each in data_series]
     inputs = filter(v->ModelingToolkit.isinput(v), ModelingToolkit.states(de))
     state_vars = filter(s->!(ModelingToolkit.isinput(s) || ModelingToolkit.isoutput(s)), ModelingToolkit.states(de))
     params = ModelingToolkit.parameters(de) 
@@ -370,8 +369,8 @@ function PreprocessODE(de::ModelingToolkit.ODESystem)
     for i in 1:length(diff_eqs)
         state_eqn_dict[substitute(state_vars[i], input_symbols.=>gens_)] = eval_at_nemo(diff_eqs[i].rhs, Dict(input_symbols.=>gens_))
     end
-    for i in 1:length(out_eqs)
-        out_eqn_dict[substitute(y_functions[i], input_symbols.=> gens_)] = eval_at_nemo(out_eqs[i].rhs, Dict(input_symbols.=>gens_))
+    for i in 1:length(data_series)
+        out_eqn_dict[substitute(y_functions[i], input_symbols.=> gens_)] = eval_at_nemo(data_series[i].rhs, Dict(input_symbols.=>gens_))
     end
     
     inputs_ = [substitute(each,  input_symbols .=> gens_) for each in inputs]
