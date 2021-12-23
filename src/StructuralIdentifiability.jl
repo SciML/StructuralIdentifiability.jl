@@ -135,13 +135,13 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<: RingElem,1
     return result
 end
 
-function assess_identifiability(de::ModelingToolkit.ODESystem, data_series::Array{ModelingToolkit.Equation}=nothing, p::Float64=0.99)
+function assess_identifiability(de::ModelingToolkit.ODESystem, data_series::Array{ModelingToolkit.Equation}, p::Float64=0.99)
     return assess_identifiability(de, data_series, ModelingToolkit.parameters(de), p)
 end
 
 
-function assess_identifiability(de::ModelingToolkit.ODESystem, data_series::Array{ModelingToolkit.Equation}=nothing,  funcs_to_check::Array, p::Float64=0.99)
-    if isequal(length(data_series), nothing)
+function assess_identifiability(de::ModelingToolkit.ODESystem, data_series::Array{ModelingToolkit.Equation},  funcs_to_check::Array, p::Float64=0.99)
+    if length(data_series) data_series[1] === 
         throw(ArgumentError("Output series (functions) must be provided"))
     ode, syms, gens_ = PreprocessODE(de, data_series)
     out_dict = Dict{Num, Symbol}()
