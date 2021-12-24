@@ -141,8 +141,6 @@ end
 
 
 function assess_identifiability(de::ModelingToolkit.ODESystem, data_series::Array{ModelingToolkit.Equation},  funcs_to_check::Array, p::Float64=0.99)
-    if length(data_series) data_series[1] === 
-        throw(ArgumentError("Output series (functions) must be provided"))
     ode, syms, gens_ = PreprocessODE(de, data_series)
     out_dict = Dict{Num, Symbol}()
     funcs_to_check_ = [eval_at_nemo(each, Dict(syms.=>gens_)) for each in funcs_to_check]
@@ -152,6 +150,7 @@ function assess_identifiability(de::ModelingToolkit.ODESystem, data_series::Arra
         out_dict[nemo2mtk[func]] = res
     end
     return out_dict
+    end
 end
 
 end
