@@ -358,8 +358,9 @@ function PreprocessODE(de::ModelingToolkit.ODESystem, data_series::Array{Modelin
     inputs = filter(v->ModelingToolkit.isinput(v), ModelingToolkit.states(de))
     state_vars = filter(s->!(ModelingToolkit.isinput(s)), ModelingToolkit.states(de))
     params = ModelingToolkit.parameters(de)
-    params_from_data_series = filter(par->!(par in params), ModelingToolkit.parameters(ModelingToolkit.ODESystem(data_series, t, name=:DataSeries)))
-    append!(params, params_from_data_series)
+    t = ModelingToolkit.arguments(data_series[1].lhs)[1]
+    params_from_data_series = ModelingToolkit.parameters(ModelingToolkit.ODESystem(data_series, t, name=:DataSeries))
+    params = union(params, params_from_data_series)
     
     input_symbols = vcat(state_vars, y_functions, inputs, params)
     generators = string.(input_symbols)
