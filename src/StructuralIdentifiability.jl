@@ -151,7 +151,8 @@ function assess_identifiability(de::ModelingToolkit.ODESystem, data_series::Arra
         out_dict[nemo2mtk[func]] = res
     end
     return out_dict
-    end
+end
+
 end
 
 # end
