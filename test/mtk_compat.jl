@@ -7,11 +7,11 @@
         D(x0) ~ -(a01 + a21) * x0 + a12 * x1,
         D(x1) ~ a21 * x0 - a12 * x1
     ]
-    data_series = [y1 ~ x0]
+    measured_quantities = [y1 ~ x0]
     de = ODESystem(eqs, t, name=:Test)
     funcs_to_check = [a01, a21, a12, a01 * a12, a01 + a12 + a21]
     correct = Dict(a12 => :nonidentifiable, a01 + a12 + a21 => :globally, a01 * a12 => :globally, a21 => :nonidentifiable, a01 => :nonidentifiable)
-    @test isequal(correct, assess_identifiability(de, data_series, funcs_to_check))
+    @test isequal(correct, assess_identifiability(de, measured_quantities, funcs_to_check))
 
     # --------------------------------------------------------------------------
     @parameters mu bi bw a xi gm k
@@ -24,19 +24,19 @@
         D(R) ~ gm * I - (mu + a) * R
     ]
     de = ODESystem(eqs, t, name=:TestSIWR)
-    data_series = [y ~ k * I]
+    measured_quantities = [y ~ k * I]
     # check all parameters (default)
-    @test isequal(true, all(assess_local_identifiability(de, data_series)))
+    @test isequal(true, all(assess_local_identifiability(de, measured_quantities)))
 
     # check specific parameters
     funcs_to_check = [mu, bi, bw, a, xi, gm, gm + mu, k, S, I, W, R]
     correct = [true for _ in funcs_to_check]
-    @test isequal(correct, assess_local_identifiability(de, data_series, funcs_to_check))
+    @test isequal(correct, assess_local_identifiability(de, measured_quantities, funcs_to_check))
 
     # checking ME identifiability
     funcs_to_check = [mu, bi, bw, a, xi, gm, gm + mu, k]
     correct = [true for _ in funcs_to_check] 
-    @test isequal((correct, 1), assess_local_identifiability(de, data_series, funcs_to_check, 0.99, :ME)) 
+    @test isequal((correct, 1), assess_local_identifiability(de, measured_quantities, funcs_to_check, 0.99, :ME)) 
 
     # --------------------------------------------------------------------------
     @parameters mu bi bw a xi gm k
@@ -49,15 +49,15 @@
         D(R) ~ gm * I - (mu + a) * R,
     ]
     de = ODESystem(eqs, t, name=:TestSIWR)
-    data_series = [y ~ 1.57 * I * k]
+    measured_quantities = [y ~ 1.57 * I * k]
     funcs_to_check = [mu, bi, bw, a, xi, gm, mu, gm + mu, k, S, I, W, R]
     correct = [true for _ in funcs_to_check]
-    @test isequal(correct, assess_local_identifiability(de, data_series, funcs_to_check))
+    @test isequal(correct, assess_local_identifiability(de, measured_quantities, funcs_to_check))
 
     # checking ME identifiability
     funcs_to_check = [bi, bw, a, xi, gm, mu, gm + mu, k]
     correct = [true for _ in funcs_to_check] 
-    @test isequal((correct, 1), assess_local_identifiability(de, data_series, funcs_to_check, 0.99, :ME))
+    @test isequal((correct, 1), assess_local_identifiability(de, measured_quantities, funcs_to_check, 0.99, :ME))
     
     # ----------
 
@@ -72,10 +72,10 @@
     ]
 
     de = ODESystem(eqs, t, name=:Test)
-    data_series = [y1 ~ x0]
+    measured_quantities = [y1 ~ x0]
     funcs_to_check = [a01, a21, a12, a01 * a12, a01 + a12 + a21]
     correct = Dict(a01 => :nonidentifiable, a21 => :nonidentifiable, a12 => :nonidentifiable, a01 * a12 => :globally, a01 + a12 + a21 => :globally)
-    @test_throws ArgumentError assess_identifiability(de, data_series,  funcs_to_check)
+    @test_throws ArgumentError assess_identifiability(de, measured_quantities,  funcs_to_check)
     # ----------
     @parameters a b c 
     @variables t x1(t) x2(t) y(t)
@@ -86,8 +86,8 @@
         D(x2) ~ x2 * c^2 + x1
     ]
     de = ODESystem(eqs, t, name=:Test)
-    data_series = [y ~ x2]
+    measured_quantities = [y ~ x2]
     correct = Dict(a => :globally, b => :globally, c => :locally)
     to_check = [a, b, c]
-    @test isequal(correct, assess_identifiability(de, data_series, to_check))
+    @test isequal(correct, assess_identifiability(de, measured_quantities, to_check))
 end

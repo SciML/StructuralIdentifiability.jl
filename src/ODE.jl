@@ -351,16 +351,16 @@ Input:
 Output: 
 - `ODE` object containing required data for identifiability assessment
 """
-function PreprocessODE(de::ModelingToolkit.ODESystem, data_series::Array{ModelingToolkit.Equation})
+function PreprocessODE(de::ModelingToolkit.ODESystem, measured_quantities::Array{ModelingToolkit.Equation})
     @info "Preproccessing `ModelingToolkit.ODESystem` object"
     diff_eqs = filter(eq->!(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
-    y_functions = [each.lhs for each in data_series]
+    y_functions = [each.lhs for each in measured_quantities]
     inputs = filter(v->ModelingToolkit.isinput(v), ModelingToolkit.states(de))
     state_vars = filter(s->!(ModelingToolkit.isinput(s)), ModelingToolkit.states(de))
     params = ModelingToolkit.parameters(de)
-    t = ModelingToolkit.arguments(data_series[1].lhs)[1]
-    params_from_data_series = ModelingToolkit.parameters(ModelingToolkit.ODESystem(data_series, t, name=:DataSeries))
-    params = union(params, params_from_data_series)
+    t = ModelingToolkit.arguments(measured_quantities[1].lhs)[1]
+    params_from_measured_quantities = ModelingToolkit.parameters(ModelingToolkit.ODESystem(measured_quantities, t, name=:DataSeries))
+    params = union(params, params_from_measured_quantities)
     
     input_symbols = vcat(state_vars, y_functions, inputs, params)
     generators = string.(input_symbols)
@@ -372,8 +372,8 @@ function PreprocessODE(de::ModelingToolkit.ODESystem, data_series::Array{Modelin
     for i in 1:length(diff_eqs)
         state_eqn_dict[substitute(state_vars[i], input_symbols.=>gens_)] = eval_at_nemo(diff_eqs[i].rhs, Dict(input_symbols.=>gens_))
     end
-    for i in 1:length(data_series)
-        out_eqn_dict[substitute(y_functions[i], input_symbols.=> gens_)] = eval_at_nemo(data_series[i].rhs, Dict(input_symbols.=>gens_))
+    for i in 1:length(measured_quantities)
+        out_eqn_dict[substitute(y_functions[i], input_symbols.=> gens_)] = eval_at_nemo(measured_quantities[i].rhs, Dict(input_symbols.=>gens_))
     end
     
     inputs_ = [substitute(each,  input_symbols .=> gens_) for each in inputs]
