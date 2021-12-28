@@ -136,7 +136,7 @@ end
 
 # ------------------------------------------------------------------------------
 function assess_local_identifiability(ode::ModelingToolkit.ODESystem, data_series::Array{ModelingToolkit.Equation}, p::Float64=0.99, type=:SE)
-    return assess_local_identifiability(ode, data_series::Array{ModelingToolkit.Equation}, ModelingToolkit.parameters(ode), p, type)
+    return assess_local_identifiability(ode, data_series, ModelingToolkit.parameters(ode), p, type)
 end
 
 function assess_local_identifiability(ode::ModelingToolkit.ODESystem, data_series::Array{ModelingToolkit.Equation}, funcs_to_check::Array, p::Float64=0.99, type=:SE)

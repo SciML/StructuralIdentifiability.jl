@@ -356,15 +356,17 @@ function PreprocessODE(de::ModelingToolkit.ODESystem, data_series::Array{Modelin
     diff_eqs = filter(eq->!(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
     y_functions = [each.lhs for each in data_series]
     inputs = filter(v->ModelingToolkit.isinput(v), ModelingToolkit.states(de))
-    state_vars = filter(s->!(ModelingToolkit.isinput(s) || ModelingToolkit.isoutput(s)), ModelingToolkit.states(de))
-    params = ModelingToolkit.parameters(de) 
+    state_vars = filter(s->!(ModelingToolkit.isinput(s)), ModelingToolkit.states(de))
+    params = ModelingToolkit.parameters(de)
+    params_from_data_series = filter(par->!(par in params), ModelingToolkit.parameters(ModelingToolkit.ODESystem(data_series, t, name=:DataSeries)))
+    append!(params, params_from_data_series)
     
     input_symbols = vcat(state_vars, y_functions, inputs, params)
     generators = string.(input_symbols)
     generators = map(g->replace(g, "(t)"=>""), generators)
     R, gens_ = Nemo.PolynomialRing(Nemo.QQ, generators)
-    state_eqn_dict = Dict{StructuralIdentifiability.Nemo.fmpq_mpoly,Union{StructuralIdentifiability.Nemo.fmpq_mpoly,StructuralIdentifiability.Nemo.Generic.Frac{fmpq_mpoly}}}()
-    out_eqn_dict = Dict{StructuralIdentifiability.Nemo.fmpq_mpoly,Union{StructuralIdentifiability.Nemo.fmpq_mpoly,StructuralIdentifiability.Nemo.Generic.Frac{fmpq_mpoly}}}()
+    state_eqn_dict = Dict{StructuralIdentifiability.Nemo.fmpq_mpoly,Union{StructuralIdentifiability.Nemo.fmpq_mpoly,StructuralIdentifiability.Nemo.Generic.Frac{StructuralIdentifiability.Nemo.fmpq_mpoly}}}()
+    out_eqn_dict = Dict{StructuralIdentifiability.Nemo.fmpq_mpoly,Union{StructuralIdentifiability.Nemo.fmpq_mpoly,StructuralIdentifiability.Nemo.Generic.Frac{StructuralIdentifiability.Nemo.fmpq_mpoly}}}()
     
     for i in 1:length(diff_eqs)
         state_eqn_dict[substitute(state_vars[i], input_symbols.=>gens_)] = eval_at_nemo(diff_eqs[i].rhs, Dict(input_symbols.=>gens_))
