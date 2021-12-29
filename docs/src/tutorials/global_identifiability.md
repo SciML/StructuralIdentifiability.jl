@@ -34,7 +34,7 @@ ode = @ODEmodel(
 @btime global_id = assess_identifiability(ode, 0.99)
 ```
 
-One can play with parameter `p` to obtain greater probability of correctness. For example, let us assess identifiability for the same system with `p=0.9999`
+We also note that it's usually inexpensive to obtain the result with higher probability of correctness. Take, for example, the previous system with `p=0.9999`
 
 ```@repl
 using BenchmarkTools
