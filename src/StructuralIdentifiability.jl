@@ -141,7 +141,10 @@ function assess_identifiability(de::ModelingToolkit.ODESystem, measured_quantiti
 end
 
 function assess_identifiability(de::ModelingToolkit.ODESystem, p::Float64 = 0.99)
-    measured_quantities = ModelingToolkit.outputs(de)
+    measured_quantities = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
+    if length(measured_quantities)==0
+        throw(error("Measured quantities not provided."))
+    end
     return assess_identifiability(de, measured_quantities, ModelingToolkit.parameters(de), p)
 end
 
