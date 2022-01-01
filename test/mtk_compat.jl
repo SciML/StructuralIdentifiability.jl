@@ -88,6 +88,33 @@
 
     # --------------------------------------------------------------------------
     @parameters mu bi bw a xi gm k
+    @variables t S(t) I(t) W(t) R(t) y(t) [output=true]
+
+    eqs = [
+        D(S) ~ mu - bi * S * I - bw * S * W - mu * S + a * R,
+        D(I) ~ bw * S * W + bi * S * I - (gm + mu) * I,
+        D(W) ~ xi * (I - W),
+        D(R) ~ gm * I - (mu + a) * R,
+        y ~ k * I
+    ]
+    de = ODESystem(eqs, t, name=:TestSIWR)
+    # check all parameters (default)
+    @test isequal(true, all(assess_local_identifiability(de)))
+
+    @test isequal(true, all(assess_local_identifiability(de, [y~k*I])))
+
+    # check specific parameters
+    funcs_to_check = [mu, bi, bw, a, xi, gm, gm + mu, k, S, I, W, R]
+    correct = [true for _ in funcs_to_check]
+    @test isequal(correct, assess_local_identifiability(de, funcs_to_check))
+
+    # checking ME identifiability
+    funcs_to_check = [mu, bi, bw, a, xi, gm, gm + mu, k]
+    correct = [true for _ in funcs_to_check] 
+    @test isequal((correct, 1), assess_local_identifiability(de, funcs_to_check, 0.99, :ME)) 
+    
+    # --------------------------------------------------------------------------
+    @parameters mu bi bw a xi gm k
     @variables t S(t) I(t) W(t) R(t) y(t)
 
     eqs = [

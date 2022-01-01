@@ -135,6 +135,22 @@ function get_degree_and_coeffsize(f::Generic.Frac{<: MPolyElem{Nemo.fmpq}})
 end
 
 # ------------------------------------------------------------------------------
+function assess_local_identifiability(ode::ModelingToolkit.ODESystem, p::Float64=0.99, type=:SE)
+    measured_quantities = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(ode))
+    if length(measured_quantities)==0
+        throw(error("Measured quantities not provided."))
+    end
+    return assess_local_identifiability(ode, measured_quantities, ModelingToolkit.parameters(ode), p, type)
+end
+
+function assess_local_identifiability(ode::ModelingToolkit.ODESystem, funcs_to_check::Array{ModelingToolkit.Num}, p::Float64=0.99, type=:SE)
+    measured_quantities = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(ode))
+    if length(measured_quantities)==0
+        throw(error("Measured quantities not provided."))
+    end 
+    return assess_local_identifiability(ode, measured_quantities, funcs_to_check, p, type)
+end
+
 function assess_local_identifiability(ode::ModelingToolkit.ODESystem, measured_quantities::Array{ModelingToolkit.Equation}, p::Float64=0.99, type=:SE)
     return assess_local_identifiability(ode, measured_quantities, ModelingToolkit.parameters(ode), p, type)
 end
