@@ -1,5 +1,53 @@
 @testset "Check identifiability of `ODESystem` object" begin
     @parameters a01 a21 a12 
+    @variables t x0(t) x1(t) y1(t) [output=true]
+    D = Differential(t)
+
+    eqs = [
+        D(x0) ~ -(a01 + a21) * x0 + a12 * x1,
+        D(x1) ~ a21 * x0 - a12 * x1,
+        y1 ~ x0
+    ]
+    de = ODESystem(eqs, t, name=:Test)
+
+    correct = Dict(a01 => :nonidentifiable, a21 => :nonidentifiable, a12 => :nonidentifiable)
+
+    @test isequal(correct, assess_identifiability(de, [y1~x0]))
+    # --------------------------------------------------------------------------
+    @parameters a01 a21 a12 
+    @variables t x0(t) x1(t) y1(t) [output=true]
+    D = Differential(t)
+
+    eqs = [
+        D(x0) ~ -(a01 + a21) * x0 + a12 * x1,
+        D(x1) ~ a21 * x0 - a12 * x1,
+        y1 ~ x0
+    ]
+    de = ODESystem(eqs, t, name=:Test)
+
+    correct = Dict(a01 => :nonidentifiable, a21 => :nonidentifiable, a12 => :nonidentifiable)
+
+    @test isequal(correct, assess_identifiability(de))
+
+    # --------------------------------------------------------------------------
+
+    @parameters a01 a21 a12 
+    @variables t x0(t) x1(t) y1(t) [output=true]
+    D = Differential(t)
+
+    eqs = [
+        D(x0) ~ -(a01 + a21) * x0 + a12 * x1,
+        D(x1) ~ a21 * x0 - a12 * x1,
+        y1 ~ x0
+    ]
+    de = ODESystem(eqs, t, name=:Test)
+    funcs_to_check = [a01, a21, a12, a01 * a12, a01 + a12 + a21]
+    correct = Dict(a12 => :nonidentifiable, a01 + a12 + a21 => :globally, a01 * a12 => :globally, a21 => :nonidentifiable, a01 => :nonidentifiable)
+    @test isequal(correct, assess_identifiability(de, funcs_to_check))
+
+    # --------------------------------------------------------------------------
+
+    @parameters a01 a21 a12 
     @variables t x0(t) x1(t) y1(t)
     D = Differential(t)
 
