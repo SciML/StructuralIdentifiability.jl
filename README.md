@@ -114,7 +114,7 @@ Maintained by Gleb Pogudin (<gleb.pogudin@polytechnique.edu>)
 
 <a id="global">[1]</a> 
 Ruiwen Dong, Christian Goodbrake, Heather Harrington, and Gleb Pogudin,
-[*Computing input-output projections of dynamical models with applications to structural identifiability*](https://arxiv.org/abs/2111.00991),
+[*Differential elimination for dynamical models via projections with applications to structural identifiability*](https://arxiv.org/abs/2111.00991),
 preprint, 2021.
 
 <a id="review">[2]</a> 
