@@ -54,7 +54,7 @@ function check_field_membership(
     @debug "Constructing the equations"
     eqs_sing = Array{Singular.spoly{Singular.n_Q},1}()
     ring_sing, vars_sing = Singular.PolynomialRing(
-                               GF(2^31-1), #Singular.QQ, 
+                               Singluar.GF(2^31-1), #Singular.QQ, 
                                vcat(map(var_to_str, gens(ring)), ["sat_aux$i" for i in 1:length(generators)]);
                                # vcat(map(var_to_str, gens(ring)), ["sat_aux"]);
                                ordering=:degrevlex
