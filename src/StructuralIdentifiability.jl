@@ -137,19 +137,19 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
 end
 
 
-function assess_identifiability(de::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], p = 0.99)
+function assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], p = 0.99)
     if length(measured_quantities)==0 
-        if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(de))
+        if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
             @info "Measured quantities are not provided, trying to find the outputs in input ODE."
-            measured_quantities = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
+            measured_quantities = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(ode))
         else
             throw(error("Measured quantities (output functions) were not provided and no outputs were found."))
         end
     end
     if length(funcs_to_check) == 0
-        funcs_to_check = ModelingToolkit.parameters(de)
+        funcs_to_check = ModelingToolkit.parameters(ode)
     end
-    ode, syms, gens_ = PreprocessODE(de, measured_quantities)
+    ode, syms, gens_ = PreprocessODE(ode, measured_quantities)
     out_dict = Dict{Num,Symbol}()
     funcs_to_check_ = [eval_at_nemo(each, Dict(syms .=> gens_)) for each in funcs_to_check]
     tmp = Dict(param => res for (param, res) in zip(funcs_to_check_, assess_identifiability(ode, funcs_to_check_, p)))
