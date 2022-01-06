@@ -84,7 +84,7 @@
     # checking ME identifiability
     funcs_to_check = [mu, bi, bw, a, xi, gm, gm + mu, k]
     correct = [true for _ in funcs_to_check] 
-    @test isequal((correct, 1), assess_local_identifiability(de, 0.99, :ME;  measured_quantities=measured_quantities, funcs_to_check=funcs_to_check)) 
+    @test isequal((correct, 1), assess_local_identifiability(de;  measured_quantities=measured_quantities, funcs_to_check=funcs_to_check, p=0.99, type=:ME)) 
 
     # --------------------------------------------------------------------------
     @parameters mu bi bw a xi gm k
@@ -111,7 +111,7 @@
     # checking ME identifiability
     funcs_to_check = [mu, bi, bw, a, xi, gm, gm + mu, k]
     correct = [true for _ in funcs_to_check] 
-    @test isequal((correct, 1), assess_local_identifiability(de, 0.99, :ME; funcs_to_check=funcs_to_check)) 
+    @test isequal((correct, 1), assess_local_identifiability(de; funcs_to_check=funcs_to_check, p=0.99, type=:ME)) 
     
     # --------------------------------------------------------------------------
     @parameters mu bi bw a xi gm k
@@ -132,7 +132,7 @@
     # checking ME identifiability
     funcs_to_check = [bi, bw, a, xi, gm, mu, gm + mu, k]
     correct = [true for _ in funcs_to_check] 
-    @test isequal((correct, 1), assess_local_identifiability(de, 0.99, :ME; measured_quantities=measured_quantities, funcs_to_check=funcs_to_check))
+    @test isequal((correct, 1), assess_local_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=funcs_to_check, p=0.99, type=:ME))
     
     # ----------
 
