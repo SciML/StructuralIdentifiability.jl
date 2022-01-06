@@ -136,9 +136,9 @@ end
 
 # ------------------------------------------------------------------------------
 
-function assess_local_identifiability(ode::ModelingToolkit.ODESystem, p::Float64=0.99, type=:SE; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[] )
+function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], p::Float64=0.99, type=:SE)
     if length(measured_quantities)==0 
-        if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(de)):
+        if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(de))
             @info "Measured quantities are not provided, trying to find the outputs in input ODE."
             measured_quantities = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
         else
@@ -311,6 +311,3 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
 end
 
 # ------------------------------------------------------------------------------
-
-
-end

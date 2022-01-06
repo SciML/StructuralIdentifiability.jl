@@ -137,9 +137,9 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
 end
 
 
-function assess_identifiability(de::ModelingToolkit.ODESystem, p::Float64 = 0.99; measured_quantities::Array{ModelingToolkit.Equation}=[], funcs_to_check::Array=[])
+function assess_identifiability(de::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], p = 0.99)
     if length(measured_quantities)==0 
-        if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(de)):
+        if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(de))
             @info "Measured quantities are not provided, trying to find the outputs in input ODE."
             measured_quantities = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
         else
