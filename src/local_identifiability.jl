@@ -135,27 +135,19 @@ function get_degree_and_coeffsize(f::Generic.Frac{<: MPolyElem{Nemo.fmpq}})
 end
 
 # ------------------------------------------------------------------------------
-function assess_local_identifiability(ode::ModelingToolkit.ODESystem, p::Float64=0.99, type=:SE)
-    measured_quantities = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(ode))
-    if length(measured_quantities)==0
-        throw(error("Measured quantities not provided."))
+
+function assess_local_identifiability(ode::ModelingToolkit.ODESystem, p::Float64=0.99, type=:SE; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[] )
+    if length(measured_quantities)==0 
+        if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(de)):
+            @info "Measured quantities are not provided, trying to find the outputs in input ODE."
+            measured_quantities = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
+        else
+            throw(error("Measured quantities (output functions) were not provided and no outputs were found."))
+        end
     end
-    return assess_local_identifiability(ode, measured_quantities, ModelingToolkit.parameters(ode), p, type)
-end
-
-function assess_local_identifiability(ode::ModelingToolkit.ODESystem, funcs_to_check::Array{ModelingToolkit.Num}, p::Float64=0.99, type=:SE)
-    measured_quantities = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(ode))
-    if length(measured_quantities)==0
-        throw(error("Measured quantities not provided."))
-    end 
-    return assess_local_identifiability(ode, measured_quantities, funcs_to_check, p, type)
-end
-
-function assess_local_identifiability(ode::ModelingToolkit.ODESystem, measured_quantities::Array{ModelingToolkit.Equation}, p::Float64=0.99, type=:SE)
-    return assess_local_identifiability(ode, measured_quantities, ModelingToolkit.parameters(ode), p, type)
-end
-
-function assess_local_identifiability(ode::ModelingToolkit.ODESystem, measured_quantities::Array{ModelingToolkit.Equation}, funcs_to_check::Array, p::Float64=0.99, type=:SE)
+    if length(funcs_to_check) == 0
+        funcs_to_check = ModelingToolkit.parameters(de)
+    end
     ode, syms, gens_ = PreprocessODE(ode, measured_quantities)
     funcs_to_check = [eval_at_nemo(x, Dict(syms .=> gens_)) for x in funcs_to_check]
     return assess_local_identifiability(ode, funcs_to_check, p, type) 
@@ -320,6 +312,5 @@ end
 
 # ------------------------------------------------------------------------------
 
-function mtk_to_rational(func, subst_map)
 
 end
