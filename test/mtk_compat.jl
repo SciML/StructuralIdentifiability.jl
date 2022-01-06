@@ -164,5 +164,5 @@
     measured_quantities = [y ~ x2]
     correct = Dict(a => :globally, b => :globally, c => :locally)
     to_check = [a, b, c]
-    @test isequal(correct, assess_identifiability(de; measured_quantities=measured_quantities, to_check=to_check))
+    @test isequal(correct, assess_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=to_check))
 end
