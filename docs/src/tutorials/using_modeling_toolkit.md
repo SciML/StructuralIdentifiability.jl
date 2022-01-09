@@ -61,6 +61,11 @@ measured_quantities = [y1 ~ C, y2 ~ N_inv]
 Let us put all of the code above together:
 
 ```@repl
+using StructuralIdentifiability, ModelingToolkit
+
+@parameters b q N_inv k r alpha g1 g2
+@variables t S(t) E(t) A(t) I(t) J(t) C(t) y1(t) y2(t)
+
 D = Differential(t)
 
 eqs = [
@@ -77,7 +82,16 @@ ode = ODESystem(eqs, t, name = :SEIAJRCmodel)
 measured_quantities = [y1 ~ C, y2 ~ N_inv]
 @time global_id = assess_identifiability(ode, measured_quantities=measured_quantities)
 ```
-
+<!-- Dict{Num, Symbol} with 8 entries:
+  k     => :globally
+  b     => :globally
+  alpha => :globally
+  g1    => :globally
+  g2    => :globally
+  r     => :nonidentifiable
+  q     => :nonidentifiable
+  N_inv => :globally -->
+  
 <!-- Indeed, notice how much quicker we obtained the result with 99% correctness guarantee! This illustrates the fact that you may sometimes sacrifice probability slightly to get results much faster. -->
 
 [^1]:
