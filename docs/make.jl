@@ -12,7 +12,8 @@ makedocs(
         "Home" => "index.md",
         "Tutorials" => Any[
             "tutorials/local_identifiability.md",
-            "tutorials/global_identifiability.md"
+            "tutorials/global_identifiability.md",
+            "tutorials/using_modeling_toolkit.md"
         ],
         "Basics" => Any[
             "input/input.md",
