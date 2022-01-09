@@ -54,7 +54,7 @@ function check_field_membership(
     @debug "Constructing the equations"
     eqs_sing = Array{Singular.spoly{Singular.n_Q},1}()
     ring_sing, vars_sing = Singular.PolynomialRing(
-                               Singular.GF(2^31-1), #Singular.QQ, 
+                               Oscar.FiniteField(2^31-1), #Singular.QQ, 
                                vcat(map(var_to_str, gens(ring)), ["sat_aux$i" for i in 1:length(generators)]);
                                # vcat(map(var_to_str, gens(ring)), ["sat_aux"]);
                                ordering=:degrevlex
@@ -82,7 +82,7 @@ function check_field_membership(
     if method == :Singular
         gb = Singular.std(Singular.Ideal(ring_sing, eqs_sing))
     elseif method == :GroebnerBasis
-        gb = Oscar.msolve(Oscar.ideal(ring_sing, eqs_sing))
+        gb = Oscar.f4(Oscar.ideal(ring_sing, eqs_sing))
     else
         throw(Base.ArgumentError("Unknown method $method"))
     end
