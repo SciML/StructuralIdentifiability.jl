@@ -82,17 +82,7 @@ ode = ODESystem(eqs, t, name = :SEIAJRCmodel)
 measured_quantities = [y1 ~ C, y2 ~ N_inv]
 @time global_id = assess_identifiability(ode, measured_quantities=measured_quantities)
 ```
-<!-- Dict{Num, Symbol} with 8 entries:
-  k     => :globally
-  b     => :globally
-  alpha => :globally
-  g1    => :globally
-  g2    => :globally
-  r     => :nonidentifiable
-  q     => :nonidentifiable
-  N_inv => :globally -->
-  
-<!-- Indeed, notice how much quicker we obtained the result with 99% correctness guarantee! This illustrates the fact that you may sometimes sacrifice probability slightly to get results much faster. -->
+
 
 [^1]:
     > K. Roosa and G. Chowell. [*Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models*](https://doi.org/10.1186/s12976-018-0097-6), Theor Biol Med Model 16, 1 (2019)
