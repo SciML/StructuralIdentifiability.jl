@@ -69,26 +69,26 @@ Parameters (8):
  y1(t) ~ C(t)
  y2(t) ~ N_inv</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @time global_id = assess_identifiability(ode, measured_quantities=measured_quantities)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Preproccessing `ModelingToolkit.ODESystem` object
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.202736427 seconds
+[ Info: Local identifiability assessed in 0.106456424 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 43.916088271 seconds
+┌ Info: Computed in 40.629688237 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 43.916088271
+└   ioeq_time = 40.629688237
 [ Info: Computing Wronskians
-┌ Info: Computed in 23.515579554 seconds
+┌ Info: Computed in 23.442153679 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 23.515579554
+└   wrnsk_time = 23.442153679
 [ Info: Dimensions of the wronskians [2, 1282]
-┌ Info: Ranks of the Wronskians computed in 0.591154329 seconds
+┌ Info: Ranks of the Wronskians computed in 0.705240996 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.591154329
+└   rank_times = 0.705240996
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 35.624100169 seconds
+┌ Info: Computed in 32.436854944 seconds
 │   :check_time = :check_time
-└   check_time = 35.624100169
-[ Info: Global identifiability assessed in 104.393004267 seconds
-134.703816 seconds (316.47 M allocations: 20.889 GiB, 12.44% gc time, 35.41% compilation time)
+└   check_time = 32.436854944
+[ Info: Global identifiability assessed in 97.896677954 seconds
+127.237687 seconds (318.65 M allocations: 21.142 GiB, 12.84% gc time, 37.00% compilation time)
 Dict{Symbolics.Num, Symbol} with 8 entries:
   alpha =&gt; :globally
   q     =&gt; :nonidentifiable
@@ -97,4 +97,4 @@ Dict{Symbolics.Num, Symbol} with 8 entries:
   N_inv =&gt; :globally
   r     =&gt; :nonidentifiable
   b     =&gt; :globally
-  g2    =&gt; :globally</code></pre><p>&lt;!– Dict{Num, Symbol} with 8 entries:   k     =&gt; :globally   b     =&gt; :globally   alpha =&gt; :globally   g1    =&gt; :globally   g2    =&gt; :globally   r     =&gt; :nonidentifiable   q     =&gt; :nonidentifiable   N_inv =&gt; :globally –&gt;</p><p>&lt;!– Indeed, notice how much quicker we obtained the result with 99% correctness guarantee! This illustrates the fact that you may sometimes sacrifice probability slightly to get results much faster. –&gt;</p><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>K. Roosa and G. Chowell. <a href="https://doi.org/10.1186/s12976-018-0097-6"><em>Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models</em></a>, Theor Biol Med Model 16, 1 (2019)</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../global_identifiability/">« Global Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../../input/input/">Parsing input ODE system »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.10 on <span class="colophon-date" title="Sunday 9 January 2022 17:31">Sunday 9 January 2022</span>. Using Julia version 1.7.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  g2    =&gt; :globally</code></pre><p>&lt;!– Dict{Num, Symbol} with 8 entries:   k     =&gt; :globally   b     =&gt; :globally   alpha =&gt; :globally   g1    =&gt; :globally   g2    =&gt; :globally   r     =&gt; :nonidentifiable   q     =&gt; :nonidentifiable   N_inv =&gt; :globally –&gt;</p><p>&lt;!– Indeed, notice how much quicker we obtained the result with 99% correctness guarantee! This illustrates the fact that you may sometimes sacrifice probability slightly to get results much faster. –&gt;</p><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>K. Roosa and G. Chowell. <a href="https://doi.org/10.1186/s12976-018-0097-6"><em>Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models</em></a>, Theor Biol Med Model 16, 1 (2019)</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../global_identifiability/">« Global Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../../input/input/">Parsing input ODE system »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.10 on <span class="colophon-date" title="Monday 10 January 2022 07:30">Monday 10 January 2022</span>. Using Julia version 1.7.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
