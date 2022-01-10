@@ -7,13 +7,13 @@ In this tutorial, we will cover examples of solving identifiability problems for
 Let us consider the following ODE model with two outputs:
 
 $\begin{cases}
-    \dot{S} = -b \, S \, (I + J + q \, A) \, N_{inv},
-    \dot{E} = b \, S \, (I + J + q \, A) \, N_{inv} - k \, E,
-    \dot{A} = k \, (1 - r) \, E - g_1 \, A,
-    \dot{I} = k \, r \, E - (\alpha + g_1) \, I,
-    \dot{J} = \alpha \, I - g_2 \, J,
-    \dot{C} = \alpha \, I,
-    y_1 = C,
+    \dot{S} = -b \, S \, (I + J + q \, A) \, N_{inv},\\
+    \dot{E} = b \, S \, (I + J + q \, A) \, N_{inv} - k \, E,\\
+    \dot{A} = k \, (1 - r) \, E - g_1 \, A,\\
+    \dot{I} = k \, r \, E - (\alpha + g_1) \, I,\\
+    \dot{J} = \alpha \, I - g_2 \, J,\\
+    \dot{C} = \alpha \, I,\\
+    y_1 = C,\\
     y_2 = N_{inv}
 \end{cases}$
 
