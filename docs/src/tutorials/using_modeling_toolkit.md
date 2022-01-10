@@ -17,6 +17,8 @@ $\begin{cases}
     y_2 = N_{inv}
 \end{cases}$
 
+This is an infectious desease model defined in [^1].
+
 The main difference between the input formats in `ModelingToolkit.jl` and `StructuralIdentifiability.jl` is that the output (measured values/functions) must be specified separately in `ModelingToolkit.jl`. In this example, measured quantities are presented by $y_1$, $y_2$.
 
 First, let us define the ODE. We will use `@parameters` and `@variables` macro to define parameters and time-depended functions in the ODE.
