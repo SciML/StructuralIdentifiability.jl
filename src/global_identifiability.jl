@@ -52,9 +52,9 @@ function check_field_membership(
     @debug "\tPoint is $point"
 
     @debug "Constructing the equations"
-    eqs_sing = Array{Singular.spoly{Singular.n_Q},1}()
-    ring_sing, vars_sing = Singular.PolynomialRing(
-                               Oscar.FiniteField(2^31-1), #Singular.QQ, 
+    eqs_sing = Array{Nemo.gfp_mpoly,1}()
+    ring_sing, vars_sing = Oscar.PolynomialRing(
+                               Oscar.FiniteField(536870909), #Singular.QQ, 
                                vcat(map(var_to_str, gens(ring)), ["sat_aux$i" for i in 1:length(generators)]);
                                # vcat(map(var_to_str, gens(ring)), ["sat_aux"]);
                                ordering=:degrevlex
@@ -94,7 +94,7 @@ function check_field_membership(
         num, den = unpack_fraction(f)
         poly = num * evaluate(den, point) - den * evaluate(num, point)
         poly_sing = parent_ring_change(poly, ring_sing)
-        push!(result, iszero(Singular.reduce(poly_sing, gb)))
+        push!(result, iszero(Oscar.reduce(poly_sing, gb)))
     end
     return result
 end
