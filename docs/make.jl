@@ -1,4 +1,5 @@
 using Documenter, StructuralIdentifiability
+using BenchmarkTools
 
 makedocs(
     sitename="StructuralIdentifiability.jl",
@@ -32,7 +33,7 @@ makedocs(
         "Export" => Any[
             "export/export.md"
         ],
-        
+
     ]
 )
 
