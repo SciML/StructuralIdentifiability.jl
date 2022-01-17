@@ -21,6 +21,7 @@ Global identifiability needs information about local identifiability first, henc
 ```@repl
 using BenchmarkTools
 using StructuralIdentifiability
+using Logging; global_logger(Logging.ConsoleLogger(stderr, Logging.Warn))
 
 ode = @ODEmodel(
     x'(t) = lm - d * x(t) - beta * x(t) * v(t),
@@ -39,6 +40,7 @@ We also note that it's usually inexpensive to obtain the result with higher prob
 ```@repl
 using BenchmarkTools
 using StructuralIdentifiability
+using Logging; global_logger(Logging.ConsoleLogger(stderr, Logging.Warn))
 
 ode = @ODEmodel(
     x'(t) = lm - d * x(t) - beta * x(t) * v(t),
