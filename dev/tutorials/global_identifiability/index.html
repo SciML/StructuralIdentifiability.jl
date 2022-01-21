@@ -25,786 +25,626 @@ v&#39;(t) = k*y(t) - v(t)*u
 w&#39;(t) = -b*w(t) + c*w(t)*x(t)*y(t) - c*w(t)*q*y(t)
 y2(t) = z(t)
 y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @btime global_id = assess_identifiability(ode, 0.99)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 5.695268286 seconds
+[ Info: Local identifiability assessed in 7.334171251 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 9.247576924 seconds
+┌ Info: Computed in 11.351170342 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 9.247576924
+└   ioeq_time = 11.351170342
 [ Info: Computing Wronskians
-┌ Info: Computed in 3.159062573 seconds
+┌ Info: Computed in 3.665071587 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 3.159062573
+└   wrnsk_time = 3.665071587
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.026613322 seconds
+┌ Info: Ranks of the Wronskians computed in 0.033855402 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.026613322
+└   rank_times = 0.033855402
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 1.067116295 seconds
+┌ Info: Computed in 1.233832262 seconds
 │   :check_time = :check_time
-└   check_time = 1.067116295
-[ Info: Global identifiability assessed in 14.076537715 seconds
+└   check_time = 1.233832262
+[ Info: Global identifiability assessed in 17.097417539 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.07609582 seconds
+[ Info: Local identifiability assessed in 0.177406758 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.181492593 seconds
+┌ Info: Computed in 0.067103401 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.181492593
+└   ioeq_time = 0.067103401
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.045874855 seconds
+┌ Info: Computed in 0.060408261 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045874855
+└   wrnsk_time = 0.060408261
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000131901 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000128701 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000131901
+└   rank_times = 0.000128701
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.024888101 seconds
+┌ Info: Computed in 0.184968104 seconds
 │   :check_time = :check_time
-└   check_time = 0.024888101
-[ Info: Global identifiability assessed in 0.253120059 seconds
+└   check_time = 0.184968104
+[ Info: Global identifiability assessed in 0.313492171 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.090898598 seconds
+[ Info: Local identifiability assessed in 0.112077569 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.030120164 seconds
+┌ Info: Computed in 0.037009821 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030120164
+└   ioeq_time = 0.037009821
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.139132681 seconds
+┌ Info: Computed in 0.158751348 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.139132681
+└   wrnsk_time = 0.158751348
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000141402 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000194701 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000141402
+└   rank_times = 0.000194701
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.024741599 seconds
+┌ Info: Computed in 0.032305693 seconds
 │   :check_time = :check_time
-└   check_time = 0.024741599
-[ Info: Global identifiability assessed in 0.194879355 seconds
+└   check_time = 0.032305693
+[ Info: Global identifiability assessed in 0.229209968 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.168133532 seconds
+[ Info: Local identifiability assessed in 0.193891857 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.028892649 seconds
+┌ Info: Computed in 0.037248923 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.028892649
+└   ioeq_time = 0.037248923
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.044644439 seconds
+┌ Info: Computed in 0.060828162 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.044644439
+└   wrnsk_time = 0.060828162
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000138602 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000163801 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000138602
+└   rank_times = 0.000163801
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025162604 seconds
+┌ Info: Computed in 0.028383969 seconds
 │   :check_time = :check_time
-└   check_time = 0.025162604
-[ Info: Global identifiability assessed in 0.099406702 seconds
+└   check_time = 0.028383969
+[ Info: Global identifiability assessed in 0.12733686 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.200470423 seconds
+[ Info: Local identifiability assessed in 0.235398405 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029077352 seconds
+┌ Info: Computed in 0.035222711 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029077352
+└   ioeq_time = 0.035222711
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.046009256 seconds
+┌ Info: Computed in 0.057679444 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.046009256
+└   wrnsk_time = 0.057679444
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000138402 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000135801 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000138402
+└   rank_times = 0.000135801
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025820412 seconds
+┌ Info: Computed in 0.028684371 seconds
 │   :check_time = :check_time
-└   check_time = 0.025820412
-[ Info: Global identifiability assessed in 0.101656929 seconds
+└   check_time = 0.028684371
+[ Info: Global identifiability assessed in 0.122438631 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.210514744 seconds
+[ Info: Local identifiability assessed in 0.229366468 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029131152 seconds
+┌ Info: Computed in 0.034731807 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029131152
+└   ioeq_time = 0.034731807
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.045797653 seconds
+┌ Info: Computed in 0.057406242 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045797653
+└   wrnsk_time = 0.057406242
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000131101 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000130201 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000131101
+└   rank_times = 0.000130201
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.157423103 seconds
+┌ Info: Computed in 0.029810478 seconds
 │   :check_time = :check_time
-└   check_time = 0.157423103
-[ Info: Global identifiability assessed in 0.233150018 seconds
+└   check_time = 0.029810478
+[ Info: Global identifiability assessed in 0.122766233 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.062011149 seconds
+[ Info: Local identifiability assessed in 0.232729689 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.02896185 seconds
+┌ Info: Computed in 0.039250934 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.02896185
+└   ioeq_time = 0.039250934
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.181163189 seconds
+┌ Info: Computed in 0.057558743 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.181163189
+└   wrnsk_time = 0.057558743
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000154902 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000197601 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000154902
+└   rank_times = 0.000197601
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.027128228 seconds
+┌ Info: Computed in 0.158986049 seconds
 │   :check_time = :check_time
-└   check_time = 0.027128228
-[ Info: Global identifiability assessed in 0.238082677 seconds
+└   check_time = 0.158986049
+[ Info: Global identifiability assessed in 0.256969234 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.062212051 seconds
+[ Info: Local identifiability assessed in 0.073839241 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.030136864 seconds
+┌ Info: Computed in 0.036170816 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030136864
+└   ioeq_time = 0.036170816
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.180800985 seconds
+┌ Info: Computed in 0.201920305 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.180800985
+└   wrnsk_time = 0.201920305
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000140801 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000211102 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000140801
+└   rank_times = 0.000211102
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.024225893 seconds
+┌ Info: Computed in 0.035441211 seconds
 │   :check_time = :check_time
-└   check_time = 0.024225893
-[ Info: Global identifiability assessed in 0.235979252 seconds
+└   check_time = 0.035441211
+[ Info: Global identifiability assessed in 0.274518838 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.064036974 seconds
+[ Info: Local identifiability assessed in 0.073613539 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.163656378 seconds
+┌ Info: Computed in 0.036028815 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.163656378
+└   ioeq_time = 0.036028815
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.045982556 seconds
+┌ Info: Computed in 0.193072652 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045982556
+└   wrnsk_time = 0.193072652
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000137402 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000175301 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000137402
+└   rank_times = 0.000175301
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025053303 seconds
+┌ Info: Computed in 0.030402682 seconds
 │   :check_time = :check_time
-└   check_time = 0.025053303
-[ Info: Global identifiability assessed in 0.235480245 seconds
+└   check_time = 0.030402682
+[ Info: Global identifiability assessed in 0.260295753 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.192871431 seconds
+[ Info: Local identifiability assessed in 0.076156954 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.03065227 seconds
+┌ Info: Computed in 0.169600012 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.03065227
+└   ioeq_time = 0.169600012
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.044972544 seconds
+┌ Info: Computed in 0.059285254 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.044972544
+└   wrnsk_time = 0.059285254
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000136501 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000129901 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000136501
+└   rank_times = 0.000129901
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025635909 seconds
+┌ Info: Computed in 0.02857137 seconds
 │   :check_time = :check_time
-└   check_time = 0.025635909
-[ Info: Global identifiability assessed in 0.101983933 seconds
+└   check_time = 0.02857137
+[ Info: Global identifiability assessed in 0.258294042 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.205814287 seconds
+[ Info: Local identifiability assessed in 0.20771784 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029377855 seconds
+┌ Info: Computed in 0.035006909 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029377855
+└   ioeq_time = 0.035006909
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.045395448 seconds
+┌ Info: Computed in 0.056068235 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045395448
+└   wrnsk_time = 0.056068235
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000137902 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000155101 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000137902
+└   rank_times = 0.000155101
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025577209 seconds
+┌ Info: Computed in 0.029065273 seconds
 │   :check_time = :check_time
-└   check_time = 0.025577209
-[ Info: Global identifiability assessed in 0.101058121 seconds
+└   check_time = 0.029065273
+[ Info: Global identifiability assessed in 0.120911822 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.2068848 seconds
+[ Info: Local identifiability assessed in 0.220501395 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029176951 seconds
+┌ Info: Computed in 0.035562808 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029176951
+└   ioeq_time = 0.035562808
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.04581245 seconds
+┌ Info: Computed in 0.057196535 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.04581245
+└   wrnsk_time = 0.057196535
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000134702 seconds
+┌ Info: Ranks of the Wronskians computed in 0.0001324 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000134702
+└   rank_times = 0.0001324
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.024990899 seconds
+┌ Info: Computed in 0.028280766 seconds
 │   :check_time = :check_time
-└   check_time = 0.024990899
-[ Info: Global identifiability assessed in 0.100676909 seconds
+└   check_time = 0.028280766
+[ Info: Global identifiability assessed in 0.121862915 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.214537074 seconds
+[ Info: Local identifiability assessed in 0.22009209 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029544554 seconds
+┌ Info: Computed in 0.033110094 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029544554
+└   ioeq_time = 0.033110094
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.047013564 seconds
+┌ Info: Computed in 0.057776938 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.047013564
+└   wrnsk_time = 0.057776938
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000133201 seconds
+┌ Info: Ranks of the Wronskians computed in 0.0001452 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000133201
+└   rank_times = 0.0001452
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.16079333 seconds
+┌ Info: Computed in 0.028068765 seconds
 │   :check_time = :check_time
-└   check_time = 0.16079333
-[ Info: Global identifiability assessed in 0.238138658 seconds
+└   check_time = 0.028068765
+[ Info: Global identifiability assessed in 0.119690001 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.061430937 seconds
+[ Info: Local identifiability assessed in 0.224508516 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029468754 seconds
+┌ Info: Computed in 0.033092894 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029468754
+└   ioeq_time = 0.033092894
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.185738628 seconds
+┌ Info: Computed in 0.061614361 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.185738628
+└   wrnsk_time = 0.061614361
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000158602 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000163801 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000158602
+└   rank_times = 0.000163801
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.028151137 seconds
+┌ Info: Computed in 0.031733386 seconds
 │   :check_time = :check_time
-└   check_time = 0.028151137
-[ Info: Global identifiability assessed in 0.24418743 seconds
+└   check_time = 0.031733386
+[ Info: Global identifiability assessed in 0.127398846 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.063238759 seconds
+[ Info: Local identifiability assessed in 0.243463327 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.030284463 seconds
+┌ Info: Computed in 0.033953699 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030284463
+└   ioeq_time = 0.033953699
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.176919223 seconds
+┌ Info: Computed in 0.057004534 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.176919223
+└   wrnsk_time = 0.057004534
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000131002 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000144701 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000131002
+└   rank_times = 0.000144701
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.023859986 seconds
+┌ Info: Computed in 0.167017179 seconds
 │   :check_time = :check_time
-└   check_time = 0.023859986
-[ Info: Global identifiability assessed in 0.231842982 seconds
+└   check_time = 0.167017179
+[ Info: Global identifiability assessed in 0.258887717 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.063525362 seconds
+[ Info: Local identifiability assessed in 0.075666543 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.164391273 seconds
+┌ Info: Computed in 0.034859604 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.164391273
+└   ioeq_time = 0.034859604
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.046279655 seconds
+┌ Info: Computed in 0.201524281 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.046279655
+└   wrnsk_time = 0.201524281
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000139301 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000137201 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000139301
+└   rank_times = 0.000137201
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.024956599 seconds
+┌ Info: Computed in 0.035427108 seconds
 │   :check_time = :check_time
-└   check_time = 0.024956599
-[ Info: Global identifiability assessed in 0.236423137 seconds
+└   check_time = 0.035427108
+[ Info: Global identifiability assessed in 0.272643098 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.199945599 seconds
+[ Info: Local identifiability assessed in 0.081428778 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.030704269 seconds
+┌ Info: Computed in 0.036664015 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030704269
+└   ioeq_time = 0.036664015
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.045986152 seconds
+┌ Info: Computed in 0.197618659 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045986152
+└   wrnsk_time = 0.197618659
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000136302 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000193801 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000136302
+└   rank_times = 0.000193801
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025164702 seconds
+┌ Info: Computed in 0.029827875 seconds
 │   :check_time = :check_time
-└   check_time = 0.025164702
-[ Info: Global identifiability assessed in 0.102574731 seconds
+└   check_time = 0.029827875
+[ Info: Global identifiability assessed in 0.265074953 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.210146021 seconds
+[ Info: Local identifiability assessed in 0.115472776 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029694756 seconds
+┌ Info: Computed in 0.034486402 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029694756
+└   ioeq_time = 0.034486402
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.046613759 seconds
+┌ Info: Computed in 0.152131692 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.046613759
+└   wrnsk_time = 0.152131692
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000146401 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000135701 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000146401
+└   rank_times = 0.000135701
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025809009 seconds
+┌ Info: Computed in 0.030350778 seconds
 │   :check_time = :check_time
-└   check_time = 0.025809009
-[ Info: Global identifiability assessed in 0.102937635 seconds
+└   check_time = 0.030350778
+[ Info: Global identifiability assessed in 0.217894977 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.211582339 seconds
+[ Info: Local identifiability assessed in 0.19795006 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029044549 seconds
+┌ Info: Computed in 0.041143441 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029044549
+└   ioeq_time = 0.041143441
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.045758249 seconds
+┌ Info: Computed in 0.05978985 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045758249
+└   wrnsk_time = 0.05978985
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000134901 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000176201 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000134901
+└   rank_times = 0.000176201
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.0249991 seconds
+┌ Info: Computed in 0.02902937 seconds
 │   :check_time = :check_time
-└   check_time = 0.0249991
-[ Info: Global identifiability assessed in 0.100535206 seconds
+└   check_time = 0.02902937
+[ Info: Global identifiability assessed in 0.130859467 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.218212219 seconds
+[ Info: Local identifiability assessed in 0.220425592 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.02915085 seconds
+┌ Info: Computed in 0.033216495 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.02915085
+└   ioeq_time = 0.033216495
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.04747017 seconds
+┌ Info: Computed in 0.056539432 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.04747017
+└   wrnsk_time = 0.056539432
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000140001 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000169301 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000140001
+└   rank_times = 0.000169301
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.159254311 seconds
+┌ Info: Computed in 0.036711315 seconds
 │   :check_time = :check_time
-└   check_time = 0.159254311
-[ Info: Global identifiability assessed in 0.23668234 seconds
+└   check_time = 0.036711315
+[ Info: Global identifiability assessed in 0.127260246 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.061534639 seconds
+[ Info: Local identifiability assessed in 0.222531905 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029815558 seconds
+┌ Info: Computed in 0.040721039 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029815558
+└   ioeq_time = 0.040721039
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.189547874 seconds
+┌ Info: Computed in 0.058561443 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.189547874
+└   wrnsk_time = 0.058561443
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000144502 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000135001 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000144502
+└   rank_times = 0.000135001
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.027447429 seconds
+┌ Info: Computed in 0.031063682 seconds
 │   :check_time = :check_time
-└   check_time = 0.027447429
-[ Info: Global identifiability assessed in 0.247656471 seconds
+└   check_time = 0.031063682
+[ Info: Global identifiability assessed in 0.131098468 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.062994356 seconds
+[ Info: Local identifiability assessed in 0.233977671 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.030735169 seconds
+┌ Info: Computed in 0.035135605 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030735169
+└   ioeq_time = 0.035135605
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.176858122 seconds
+┌ Info: Computed in 0.058144641 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.176858122
+└   wrnsk_time = 0.058144641
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000136402 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000182701 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000136402
+└   rank_times = 0.000182701
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.023958787 seconds
+┌ Info: Computed in 0.158862731 seconds
 │   :check_time = :check_time
-└   check_time = 0.023958787
-[ Info: Global identifiability assessed in 0.232328888 seconds
+└   check_time = 0.158862731
+[ Info: Global identifiability assessed in 0.252995083 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.063819065 seconds
+[ Info: Local identifiability assessed in 0.076601349 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.168473921 seconds
+┌ Info: Computed in 0.031778887 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.168473921
+└   ioeq_time = 0.031778887
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.047014865 seconds
+┌ Info: Computed in 0.202309586 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.047014865
+└   wrnsk_time = 0.202309586
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000136002 seconds
+┌ Info: Ranks of the Wronskians computed in 0.0001284 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000136002
+└   rank_times = 0.0001284
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025145402 seconds
+┌ Info: Computed in 0.032159988 seconds
 │   :check_time = :check_time
-└   check_time = 0.025145402
-[ Info: Global identifiability assessed in 0.241422297 seconds
+└   check_time = 0.032159988
+[ Info: Global identifiability assessed in 0.267127066 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.093987628 seconds
+[ Info: Local identifiability assessed in 0.074748838 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029718557 seconds
+┌ Info: Computed in 0.035475208 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029718557
+└   ioeq_time = 0.035475208
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.141128294 seconds
+┌ Info: Computed in 0.195811748 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.141128294
+└   wrnsk_time = 0.195811748
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000135402 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000172501 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000135402
+└   rank_times = 0.000172501
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.024506394 seconds
+┌ Info: Computed in 0.03080758 seconds
 │   :check_time = :check_time
-└   check_time = 0.024506394
-[ Info: Global identifiability assessed in 0.196165654 seconds
+└   check_time = 0.03080758
+[ Info: Global identifiability assessed in 0.262962041 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.168224319 seconds
+[ Info: Local identifiability assessed in 0.074520236 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029881859 seconds
+┌ Info: Computed in 0.168079285 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029881859
+└   ioeq_time = 0.168079285
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.044877939 seconds
+┌ Info: Computed in 0.062592967 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.044877939
+└   wrnsk_time = 0.062592967
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000141802 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000134601 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000141802
+└   rank_times = 0.000134601
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025446106 seconds
+┌ Info: Computed in 0.028668068 seconds
 │   :check_time = :check_time
-└   check_time = 0.025446106
-[ Info: Global identifiability assessed in 0.100937411 seconds
+└   check_time = 0.028668068
+[ Info: Global identifiability assessed in 0.260268625 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.201229214 seconds
+[ Info: Local identifiability assessed in 0.211828041 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.02919505 seconds
+┌ Info: Computed in 0.035436707 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.02919505
+└   ioeq_time = 0.035436707
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.045941852 seconds
+┌ Info: Computed in 0.054866622 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045941852
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000137901 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000137901
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025901811 seconds
-│   :check_time = :check_time
-└   check_time = 0.025901811
-[ Info: Global identifiability assessed in 0.101767921 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.209629216 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.029283852 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029283852
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.046391656 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.046391656
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000136501 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000136501
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.16079943 seconds
-│   :check_time = :check_time
-└   check_time = 0.16079943
-[ Info: Global identifiability assessed in 0.237245647 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.062322748 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.029343652 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029343652
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.184816118 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.184816118
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000149602 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000149602
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.028014936 seconds
-│   :check_time = :check_time
-└   check_time = 0.028014936
-[ Info: Global identifiability assessed in 0.243017216 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.062353548 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.030293564 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030293564
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.187121245 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.187121245
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000137202 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000137202
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.024562294 seconds
-│   :check_time = :check_time
-└   check_time = 0.024562294
-[ Info: Global identifiability assessed in 0.242769813 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.063879066 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.166334096 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.166334096
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.047954175 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.047954175
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000138601 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000138601
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025333604 seconds
-│   :check_time = :check_time
-└   check_time = 0.025333604
-[ Info: Global identifiability assessed in 0.240411085 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.196775861 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.031092573 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.031092573
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.045583247 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045583247
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000140901 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000140901
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.02582201 seconds
-│   :check_time = :check_time
-└   check_time = 0.02582201
-[ Info: Global identifiability assessed in 0.103261939 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.210539864 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.029453842 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029453842
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.045321526 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045321526
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000135502 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000135502
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025633497 seconds
-│   :check_time = :check_time
-└   check_time = 0.025633497
-[ Info: Global identifiability assessed in 0.101140474 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.210315042 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.028702733 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.028702733
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.045609429 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045609429
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000138102 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000138102
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025188892 seconds
-│   :check_time = :check_time
-└   check_time = 0.025188892
-[ Info: Global identifiability assessed in 0.100244364 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.215797205 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.02925314 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.02925314
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.046760242 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.046760242
+└   wrnsk_time = 0.054866622
 [ Info: Dimensions of the wronskians [40, 18]
 ┌ Info: Ranks of the Wronskians computed in 0.000138201 seconds
 │   :rank_time = :rank_time
 └   rank_times = 0.000138201
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.16618583 seconds
+┌ Info: Computed in 0.028633868 seconds
 │   :check_time = :check_time
-└   check_time = 0.16618583
-[ Info: Global identifiability assessed in 0.242978921 seconds
+└   check_time = 0.028633868
+[ Info: Global identifiability assessed in 0.119649802 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.061913419 seconds
+[ Info: Local identifiability assessed in 0.2217801 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029726545 seconds
+┌ Info: Computed in 0.034701704 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029726545
+└   ioeq_time = 0.034701704
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.189110196 seconds
+┌ Info: Computed in 0.058056841 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.189110196
+└   wrnsk_time = 0.058056841
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000155201 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000140501 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000155201
+└   rank_times = 0.000140501
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.028111627 seconds
+┌ Info: Computed in 0.028942869 seconds
 │   :check_time = :check_time
-└   check_time = 0.028111627
-[ Info: Global identifiability assessed in 0.247778576 seconds
+└   check_time = 0.028942869
+[ Info: Global identifiability assessed in 0.122566219 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.063009731 seconds
+[ Info: Local identifiability assessed in 0.223642711 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029969748 seconds
+┌ Info: Computed in 0.03579411 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029969748
+└   ioeq_time = 0.03579411
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.182398318 seconds
+┌ Info: Computed in 0.05623693 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.182398318
+└   wrnsk_time = 0.05623693
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000135202 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000148601 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000135202
+└   rank_times = 0.000148601
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.024164181 seconds
+┌ Info: Computed in 0.030235177 seconds
 │   :check_time = :check_time
-└   check_time = 0.024164181
-[ Info: Global identifiability assessed in 0.237319655 seconds
+└   check_time = 0.030235177
+[ Info: Global identifiability assessed in 0.123121422 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.063613838 seconds
+[ Info: Local identifiability assessed in 0.227038431 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.167334943 seconds
+┌ Info: Computed in 0.034992206 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.167334943
+└   ioeq_time = 0.034992206
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.047732854 seconds
+┌ Info: Computed in 0.056161531 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.047732854
+└   wrnsk_time = 0.056161531
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000136502 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000130701 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000136502
+└   rank_times = 0.000130701
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025125292 seconds
+┌ Info: Computed in 0.030356178 seconds
 │   :check_time = :check_time
-└   check_time = 0.025125292
-[ Info: Global identifiability assessed in 0.240968798 seconds
+└   check_time = 0.030356178
+[ Info: Global identifiability assessed in 0.12228872 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.206545998 seconds
+[ Info: Local identifiability assessed in 0.229629851 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.032819581 seconds
+┌ Info: Computed in 0.034121301 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.032819581
+└   ioeq_time = 0.034121301
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.046794043 seconds
+┌ Info: Computed in 0.058112642 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.046794043
+└   wrnsk_time = 0.058112642
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000141702 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000187602 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000141702
+└   rank_times = 0.000187602
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025961601 seconds
+┌ Info: Computed in 0.168074589 seconds
 │   :check_time = :check_time
-└   check_time = 0.025961601
-[ Info: Global identifiability assessed in 0.106325335 seconds
+└   check_time = 0.168074589
+[ Info: Global identifiability assessed in 0.261313537 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.212663469 seconds
+[ Info: Local identifiability assessed in 0.077918059 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029083838 seconds
+┌ Info: Computed in 0.033106695 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029083838
+└   ioeq_time = 0.033106695
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.045817432 seconds
+┌ Info: Computed in 0.201747487 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045817432
+└   wrnsk_time = 0.201747487
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000135402 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000239102 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000135402
+└   rank_times = 0.000239102
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025552897 seconds
+┌ Info: Computed in 0.037593021 seconds
 │   :check_time = :check_time
-└   check_time = 0.025552897
-[ Info: Global identifiability assessed in 0.101194375 seconds
-  269.432 ms (1942627 allocations: 147.83 MiB)
+└   check_time = 0.037593021
+[ Info: Global identifiability assessed in 0.27353081 seconds
+  329.178 ms (1942626 allocations: 147.84 MiB)
 Dict{Nemo.fmpq_mpoly, Symbol} with 10 entries:
   d    =&gt; :globally
   k    =&gt; :nonidentifiable
@@ -835,766 +675,606 @@ v&#39;(t) = k*y(t) - v(t)*u
 w&#39;(t) = -b*w(t) + c*w(t)*x(t)*y(t) - c*w(t)*q*y(t)
 y2(t) = z(t)
 y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @btime global_id = assess_identifiability(ode, 0.9999)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.072584743 seconds
+[ Info: Local identifiability assessed in 0.192331332 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.02928894 seconds
+┌ Info: Computed in 0.044522762 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.02928894
+└   ioeq_time = 0.044522762
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.180070691 seconds
+┌ Info: Computed in 0.075661145 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.180070691
+└   wrnsk_time = 0.075661145
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000149602 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000188501 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000149602
+└   rank_times = 0.000188501
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.02751812 seconds
+┌ Info: Computed in 0.031105283 seconds
 │   :check_time = :check_time
-└   check_time = 0.02751812
-[ Info: Global identifiability assessed in 0.23770606 seconds
+└   check_time = 0.031105283
+[ Info: Global identifiability assessed in 0.152136096 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.063624138 seconds
+[ Info: Local identifiability assessed in 0.264701557 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.162642989 seconds
+┌ Info: Computed in 0.045424668 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.162642989
+└   ioeq_time = 0.045424668
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.049000069 seconds
+┌ Info: Computed in 0.067410496 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.049000069
+└   wrnsk_time = 0.067410496
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000137101 seconds
+┌ Info: Ranks of the Wronskians computed in 0.0001276 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000137101
+└   rank_times = 0.0001276
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.024787688 seconds
+┌ Info: Computed in 0.036119813 seconds
 │   :check_time = :check_time
-└   check_time = 0.024787688
-[ Info: Global identifiability assessed in 0.237255755 seconds
+└   check_time = 0.036119813
+[ Info: Global identifiability assessed in 0.149814882 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.096829325 seconds
+[ Info: Local identifiability assessed in 0.129566462 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029961248 seconds
+┌ Info: Computed in 0.038187425 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029961248
+└   ioeq_time = 0.038187425
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.147066907 seconds
+┌ Info: Computed in 0.170000201 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.147066907
+└   wrnsk_time = 0.170000201
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000142602 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000184801 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000142602
+└   rank_times = 0.000184801
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025147892 seconds
+┌ Info: Computed in 0.032810493 seconds
 │   :check_time = :check_time
-└   check_time = 0.025147892
-[ Info: Global identifiability assessed in 0.202983256 seconds
+└   check_time = 0.032810493
+[ Info: Global identifiability assessed in 0.241884224 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.170989686 seconds
+[ Info: Local identifiability assessed in 0.193928941 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.030732657 seconds
+┌ Info: Computed in 0.043101153 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030732657
+└   ioeq_time = 0.043101153
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.045730431 seconds
+┌ Info: Computed in 0.065269184 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045730431
+└   wrnsk_time = 0.065269184
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000139201 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000166901 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000139201
+└   rank_times = 0.000166901
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025360794 seconds
+┌ Info: Computed in 0.032654992 seconds
 │   :check_time = :check_time
-└   check_time = 0.025360794
-[ Info: Global identifiability assessed in 0.10255639 seconds
+└   check_time = 0.032654992
+[ Info: Global identifiability assessed in 0.141972135 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.203927868 seconds
+[ Info: Local identifiability assessed in 0.241507821 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029536643 seconds
+┌ Info: Computed in 0.037593121 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029536643
+└   ioeq_time = 0.037593121
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.045973934 seconds
+┌ Info: Computed in 0.05777574 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045973934
+└   wrnsk_time = 0.05777574
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000139702 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000161001 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000139702
+└   rank_times = 0.000161001
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.026117003 seconds
+┌ Info: Computed in 0.03062238 seconds
 │   :check_time = :check_time
-└   check_time = 0.026117003
-[ Info: Global identifiability assessed in 0.102360388 seconds
+└   check_time = 0.03062238
+[ Info: Global identifiability assessed in 0.126945547 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.210867348 seconds
+[ Info: Local identifiability assessed in 0.2378935 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029108438 seconds
+┌ Info: Computed in 0.034875905 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029108438
+└   ioeq_time = 0.034875905
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.046099735 seconds
+┌ Info: Computed in 0.058877447 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.046099735
+└   wrnsk_time = 0.058877447
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000135601 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000219201 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000135601
+└   rank_times = 0.000219201
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.163753501 seconds
+┌ Info: Computed in 0.029849775 seconds
 │   :check_time = :check_time
-└   check_time = 0.163753501
-[ Info: Global identifiability assessed in 0.239746483 seconds
+└   check_time = 0.029849775
+[ Info: Global identifiability assessed in 0.124433732 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.063809941 seconds
+[ Info: Local identifiability assessed in 0.242593628 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029509143 seconds
+┌ Info: Computed in 0.0338452 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029509143
+└   ioeq_time = 0.0338452
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.190211409 seconds
+┌ Info: Computed in 0.060142553 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.190211409
+└   wrnsk_time = 0.060142553
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000152501 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000190801 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000152501
+└   rank_times = 0.000190801
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.028346529 seconds
+┌ Info: Computed in 0.174882429 seconds
 │   :check_time = :check_time
-└   check_time = 0.028346529
-[ Info: Global identifiability assessed in 0.24891209 seconds
+└   check_time = 0.174882429
+[ Info: Global identifiability assessed in 0.269805088 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.062709628 seconds
+[ Info: Local identifiability assessed in 0.080182771 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.030009848 seconds
+┌ Info: Computed in 0.035617909 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030009848
+└   ioeq_time = 0.035617909
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.188452588 seconds
+┌ Info: Computed in 0.219874894 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.188452588
+└   wrnsk_time = 0.219874894
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000140201 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000193301 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000140201
+└   rank_times = 0.000193301
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.024782687 seconds
+┌ Info: Computed in 0.039646433 seconds
 │   :check_time = :check_time
-└   check_time = 0.024782687
-[ Info: Global identifiability assessed in 0.244039133 seconds
+└   check_time = 0.039646433
+[ Info: Global identifiability assessed in 0.296087142 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.064401248 seconds
+[ Info: Local identifiability assessed in 0.080241272 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.169006462 seconds
+┌ Info: Computed in 0.037877823 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.169006462
+└   ioeq_time = 0.037877823
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.047929956 seconds
+┌ Info: Computed in 0.206682517 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.047929956
+└   wrnsk_time = 0.206682517
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000142802 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000190801 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000142802
+└   rank_times = 0.000190801
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025604197 seconds
+┌ Info: Computed in 0.032047589 seconds
 │   :check_time = :check_time
-└   check_time = 0.025604197
-[ Info: Global identifiability assessed in 0.243338526 seconds
+└   check_time = 0.032047589
+[ Info: Global identifiability assessed in 0.277580434 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.201184336 seconds
+[ Info: Local identifiability assessed in 0.080312172 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.031365164 seconds
+┌ Info: Computed in 0.183159677 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.031365164
+└   ioeq_time = 0.183159677
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.045790331 seconds
+┌ Info: Computed in 0.064150977 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045790331
+└   wrnsk_time = 0.064150977
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000136101 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000148701 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000136101
+└   rank_times = 0.000148701
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025700099 seconds
+┌ Info: Computed in 0.030808382 seconds
 │   :check_time = :check_time
-└   check_time = 0.025700099
-[ Info: Global identifiability assessed in 0.103571003 seconds
+└   check_time = 0.030808382
+[ Info: Global identifiability assessed in 0.279025942 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.21253102 seconds
+[ Info: Local identifiability assessed in 0.220542598 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029618654 seconds
+┌ Info: Computed in 0.039312132 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029618654
+└   ioeq_time = 0.039312132
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.045804747 seconds
+┌ Info: Computed in 0.060816658 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045804747
+└   wrnsk_time = 0.060816658
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000135301 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000190901 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000135301
+└   rank_times = 0.000190901
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025773307 seconds
+┌ Info: Computed in 0.030066077 seconds
 │   :check_time = :check_time
-└   check_time = 0.025773307
-[ Info: Global identifiability assessed in 0.101941017 seconds
+└   check_time = 0.030066077
+[ Info: Global identifiability assessed in 0.131137872 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.215179269 seconds
+[ Info: Local identifiability assessed in 0.239127908 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029152448 seconds
+┌ Info: Computed in 0.036666416 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029152448
+└   ioeq_time = 0.036666416
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.045881648 seconds
+┌ Info: Computed in 0.05776644 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045881648
+└   wrnsk_time = 0.05776644
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000134402 seconds
+┌ Info: Ranks of the Wronskians computed in 0.0001398 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000134402
+└   rank_times = 0.0001398
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.0251455 seconds
+┌ Info: Computed in 0.029797376 seconds
 │   :check_time = :check_time
-└   check_time = 0.0251455
-[ Info: Global identifiability assessed in 0.100906305 seconds
+└   check_time = 0.029797376
+[ Info: Global identifiability assessed in 0.125123336 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.225508193 seconds
+[ Info: Local identifiability assessed in 0.235775076 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029815656 seconds
+┌ Info: Computed in 0.035065803 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029815656
+└   ioeq_time = 0.035065803
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.047844571 seconds
+┌ Info: Computed in 0.060830852 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.047844571
+└   wrnsk_time = 0.060830852
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000142401 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000137401 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000142401
+└   rank_times = 0.000137401
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.168166609 seconds
+┌ Info: Computed in 0.030278875 seconds
 │   :check_time = :check_time
-└   check_time = 0.168166609
-[ Info: Global identifiability assessed in 0.246629046 seconds
+└   check_time = 0.030278875
+[ Info: Global identifiability assessed in 0.127005835 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.063183755 seconds
+[ Info: Local identifiability assessed in 0.248557639 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.03010356 seconds
+┌ Info: Computed in 0.034422499 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.03010356
+└   ioeq_time = 0.034422499
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.196954752 seconds
+┌ Info: Computed in 0.055640922 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.196954752
+└   wrnsk_time = 0.055640922
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000153202 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000143401 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000153202
+└   rank_times = 0.000143401
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.028900445 seconds
+┌ Info: Computed in 0.030125074 seconds
 │   :check_time = :check_time
-└   check_time = 0.028900445
-[ Info: Global identifiability assessed in 0.256824867 seconds
+└   check_time = 0.030125074
+[ Info: Global identifiability assessed in 0.121113901 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.063543558 seconds
+[ Info: Local identifiability assessed in 0.25216686 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.030557165 seconds
+┌ Info: Computed in 0.035106104 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030557165
+└   ioeq_time = 0.035106104
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.184272401 seconds
+┌ Info: Computed in 0.05874334 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.184272401
+└   wrnsk_time = 0.05874334
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000154601 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000151101 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000154601
+└   rank_times = 0.000151101
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.024759995 seconds
+┌ Info: Computed in 0.17442111 seconds
 │   :check_time = :check_time
-└   check_time = 0.024759995
-[ Info: Global identifiability assessed in 0.240409071 seconds
+└   check_time = 0.17442111
+[ Info: Global identifiability assessed in 0.269215059 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.064732573 seconds
+[ Info: Local identifiability assessed in 0.082625778 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.170083831 seconds
+┌ Info: Computed in 0.0344147 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.170083831
+└   ioeq_time = 0.0344147
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.047774571 seconds
+┌ Info: Computed in 0.212885933 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.047774571
+└   wrnsk_time = 0.212885933
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000138502 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000197901 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000138502
+└   rank_times = 0.000197901
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.024828396 seconds
+┌ Info: Computed in 0.038500323 seconds
 │   :check_time = :check_time
-└   check_time = 0.024828396
-[ Info: Global identifiability assessed in 0.243474807 seconds
+└   check_time = 0.038500323
+[ Info: Global identifiability assessed in 0.286779361 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.20601046 seconds
+[ Info: Local identifiability assessed in 0.080633667 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.032263686 seconds
+┌ Info: Computed in 0.036788813 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.032263686
+└   ioeq_time = 0.036788813
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.047662069 seconds
+┌ Info: Computed in 0.208304307 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.047662069
+└   wrnsk_time = 0.208304307
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000140001 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000176401 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000140001
+└   rank_times = 0.000176401
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025520005 seconds
+┌ Info: Computed in 0.030504277 seconds
 │   :check_time = :check_time
-└   check_time = 0.025520005
-[ Info: Global identifiability assessed in 0.106233869 seconds
+└   check_time = 0.030504277
+[ Info: Global identifiability assessed in 0.276480601 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.214862865 seconds
+[ Info: Local identifiability assessed in 0.123623116 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029599053 seconds
+┌ Info: Computed in 0.036829714 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029599053
+└   ioeq_time = 0.036829714
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.046310753 seconds
+┌ Info: Computed in 0.18147535 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.046310753
+└   wrnsk_time = 0.18147535
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000134002 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000184301 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000134002
+└   rank_times = 0.000184301
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025181401 seconds
+┌ Info: Computed in 0.036719312 seconds
 │   :check_time = :check_time
-└   check_time = 0.025181401
-[ Info: Global identifiability assessed in 0.101788916 seconds
+└   check_time = 0.036719312
+[ Info: Global identifiability assessed in 0.255939382 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.218440908 seconds
+[ Info: Local identifiability assessed in 0.195637233 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029186848 seconds
+┌ Info: Computed in 0.037028614 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029186848
+└   ioeq_time = 0.037028614
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.045935249 seconds
+┌ Info: Computed in 0.060003248 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.045935249
+└   wrnsk_time = 0.060003248
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000138302 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000330302 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000138302
+└   rank_times = 0.000330302
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025207001 seconds
+┌ Info: Computed in 0.03108238 seconds
 │   :check_time = :check_time
-└   check_time = 0.025207001
-[ Info: Global identifiability assessed in 0.101077607 seconds
+└   check_time = 0.03108238
+[ Info: Global identifiability assessed in 0.129078947 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.22361477 seconds
+[ Info: Local identifiability assessed in 0.238702082 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029467152 seconds
+┌ Info: Computed in 0.03812162 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029467152
+└   ioeq_time = 0.03812162
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.047061062 seconds
+┌ Info: Computed in 0.05870604 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.047061062
+└   wrnsk_time = 0.05870604
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000137102 seconds
+┌ Info: Ranks of the Wronskians computed in 0.0001421 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000137102
+└   rank_times = 0.0001421
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.162905045 seconds
+┌ Info: Computed in 0.032400987 seconds
 │   :check_time = :check_time
-└   check_time = 0.162905045
-[ Info: Global identifiability assessed in 0.240226068 seconds
+└   check_time = 0.032400987
+[ Info: Global identifiability assessed in 0.130132754 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.062066641 seconds
+[ Info: Local identifiability assessed in 0.235902266 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029476252 seconds
+┌ Info: Computed in 0.034187398 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029476252
+└   ioeq_time = 0.034187398
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.195519835 seconds
+┌ Info: Computed in 0.055879623 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.195519835
+└   wrnsk_time = 0.055879623
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000146002 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000185801 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000146002
+└   rank_times = 0.000185801
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.030262161 seconds
+┌ Info: Computed in 0.031491983 seconds
 │   :check_time = :check_time
-└   check_time = 0.030262161
-[ Info: Global identifiability assessed in 0.256077258 seconds
+└   check_time = 0.031491983
+[ Info: Global identifiability assessed in 0.122355108 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.063921763 seconds
+[ Info: Local identifiability assessed in 0.252896864 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.030264462 seconds
+┌ Info: Computed in 0.040948337 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030264462
+└   ioeq_time = 0.040948337
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.183488691 seconds
+┌ Info: Computed in 0.063967871 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.183488691
+└   wrnsk_time = 0.063967871
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000140202 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000140101 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000140202
+└   rank_times = 0.000140101
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.024469992 seconds
+┌ Info: Computed in 0.183821064 seconds
 │   :check_time = :check_time
-└   check_time = 0.024469992
-[ Info: Global identifiability assessed in 0.239025254 seconds
+└   check_time = 0.183821064
+[ Info: Global identifiability assessed in 0.289675277 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.064599671 seconds
+[ Info: Local identifiability assessed in 0.078877457 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.179910348 seconds
+┌ Info: Computed in 0.034785202 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.179910348
+└   ioeq_time = 0.034785202
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.049219688 seconds
+┌ Info: Computed in 0.211221223 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.049219688
+└   wrnsk_time = 0.211221223
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000139202 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000189001 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000139202
+└   rank_times = 0.000189001
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025888609 seconds
+┌ Info: Computed in 0.03636691 seconds
 │   :check_time = :check_time
-└   check_time = 0.025888609
-[ Info: Global identifiability assessed in 0.255790155 seconds
+└   check_time = 0.03636691
+[ Info: Global identifiability assessed in 0.28325174 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.100249097 seconds
+[ Info: Local identifiability assessed in 0.077999052 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.030363962 seconds
+┌ Info: Computed in 0.035925708 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030363962
+└   ioeq_time = 0.035925708
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.149681188 seconds
+┌ Info: Computed in 0.201129564 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.149681188
+└   wrnsk_time = 0.201129564
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000149902 seconds
+┌ Info: Ranks of the Wronskians computed in 0.0001423 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000149902
+└   rank_times = 0.0001423
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025675306 seconds
+┌ Info: Computed in 0.029855773 seconds
 │   :check_time = :check_time
-└   check_time = 0.025675306
-[ Info: Global identifiability assessed in 0.206546967 seconds
+└   check_time = 0.029855773
+[ Info: Global identifiability assessed in 0.267718451 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.176984013 seconds
+[ Info: Local identifiability assessed in 0.080888068 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.031685778 seconds
+┌ Info: Computed in 0.182783159 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.031685778
+└   ioeq_time = 0.182783159
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.047017062 seconds
+┌ Info: Computed in 0.064989776 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.047017062
+└   wrnsk_time = 0.064989776
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000137502 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000172201 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000137502
+└   rank_times = 0.000172201
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025545405 seconds
+┌ Info: Computed in 0.030279675 seconds
 │   :check_time = :check_time
-└   check_time = 0.025545405
-[ Info: Global identifiability assessed in 0.105007854 seconds
+└   check_time = 0.030279675
+[ Info: Global identifiability assessed in 0.278973016 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.211503425 seconds
+[ Info: Local identifiability assessed in 0.218567266 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.030265961 seconds
+┌ Info: Computed in 0.039912031 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030265961
+└   ioeq_time = 0.039912031
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.046767258 seconds
+┌ Info: Computed in 0.061394856 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.046767258
+└   wrnsk_time = 0.061394856
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000148602 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000211401 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000148602
+└   rank_times = 0.000211401
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.026371415 seconds
+┌ Info: Computed in 0.029168468 seconds
 │   :check_time = :check_time
-└   check_time = 0.026371415
-[ Info: Global identifiability assessed in 0.104173744 seconds
+└   check_time = 0.029168468
+[ Info: Global identifiability assessed in 0.13131816 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.221249442 seconds
+[ Info: Local identifiability assessed in 0.234493757 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029086648 seconds
+┌ Info: Computed in 0.038539923 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029086648
+└   ioeq_time = 0.038539923
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.046439654 seconds
+┌ Info: Computed in 0.059806046 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.046439654
+└   wrnsk_time = 0.059806046
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000137302 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000164601 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000137302
+└   rank_times = 0.000164601
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.169811728 seconds
+┌ Info: Computed in 0.030089774 seconds
 │   :check_time = :check_time
-└   check_time = 0.169811728
-[ Info: Global identifiability assessed in 0.246133439 seconds
+└   check_time = 0.030089774
+[ Info: Global identifiability assessed in 0.129257948 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.065791086 seconds
+[ Info: Local identifiability assessed in 0.247725134 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.029596354 seconds
+┌ Info: Computed in 0.035822907 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029596354
+└   ioeq_time = 0.035822907
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.193207607 seconds
+┌ Info: Computed in 0.060804252 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.193207607
+└   wrnsk_time = 0.060804252
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000150202 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000135901 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000150202
+└   rank_times = 0.000135901
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.029875157 seconds
+┌ Info: Computed in 0.031004079 seconds
 │   :check_time = :check_time
-└   check_time = 0.029875157
-[ Info: Global identifiability assessed in 0.253525127 seconds
+└   check_time = 0.031004079
+[ Info: Global identifiability assessed in 0.128414944 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.063261455 seconds
+[ Info: Local identifiability assessed in 0.246665428 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.030734867 seconds
+┌ Info: Computed in 0.035623307 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030734867
+└   ioeq_time = 0.035623307
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.191707689 seconds
+┌ Info: Computed in 0.059121942 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.191707689
+└   wrnsk_time = 0.059121942
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000138502 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000251301 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000138502
+└   rank_times = 0.000251301
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025206401 seconds
+┌ Info: Computed in 0.032431288 seconds
 │   :check_time = :check_time
-└   check_time = 0.025206401
-[ Info: Global identifiability assessed in 0.248437567 seconds
+└   check_time = 0.032431288
+[ Info: Global identifiability assessed in 0.128217143 seconds
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.064744573 seconds
+[ Info: Local identifiability assessed in 0.254193173 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 0.172387677 seconds
+┌ Info: Computed in 0.035943009 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.172387677
+└   ioeq_time = 0.035943009
 [ Info: Computing Wronskians
-┌ Info: Computed in 0.049280063 seconds
+┌ Info: Computed in 0.061387656 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.049280063
+└   wrnsk_time = 0.061387656
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000139102 seconds
+┌ Info: Ranks of the Wronskians computed in 0.000158101 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.000139102
+└   rank_times = 0.000158101
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025443991 seconds
+┌ Info: Computed in 0.186960884 seconds
 │   :check_time = :check_time
-└   check_time = 0.025443991
-[ Info: Global identifiability assessed in 0.24786834 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.202771219 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.031944365 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.031944365
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.046856636 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.046856636
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000137402 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000137402
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025829095 seconds
-│   :check_time = :check_time
-└   check_time = 0.025829095
-[ Info: Global identifiability assessed in 0.105353604 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.218548798 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.030854453 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030854453
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.046514432 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.046514432
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000140701 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000140701
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025885996 seconds
-│   :check_time = :check_time
-└   check_time = 0.025885996
-[ Info: Global identifiability assessed in 0.103986189 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.220332619 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.029527538 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029527538
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.046106927 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.046106927
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000139502 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000139502
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025175688 seconds
-│   :check_time = :check_time
-└   check_time = 0.025175688
-[ Info: Global identifiability assessed in 0.101565161 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.227844306 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.029490337 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029490337
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.047140139 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.047140139
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000140002 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000140002
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.170324448 seconds
-│   :check_time = :check_time
-└   check_time = 0.170324448
-[ Info: Global identifiability assessed in 0.247744332 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.063111021 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.029549438 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.029549438
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.198723472 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.198723472
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000153602 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000153602
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.030352447 seconds
-│   :check_time = :check_time
-└   check_time = 0.030352447
-[ Info: Global identifiability assessed in 0.259474767 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.064577738 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.030882653 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.030882653
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.191847993 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.191847993
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000150802 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000150802
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.02534659 seconds
-│   :check_time = :check_time
-└   check_time = 0.02534659
-[ Info: Global identifiability assessed in 0.248921746 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.065267746 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.177764533 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.177764533
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.049957071 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.049957071
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000140801 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000140801
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025316489 seconds
-│   :check_time = :check_time
-└   check_time = 0.025316489
-[ Info: Global identifiability assessed in 0.253887703 seconds
-[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.21429375 seconds
-[ Info: Assessing global identifiability
-[ Info: Computing IO-equations
-┌ Info: Computed in 0.033224379 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 0.033224379
-[ Info: Computing Wronskians
-┌ Info: Computed in 0.048452554 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 0.048452554
-[ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.000139601 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.000139601
-[ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 0.025580793 seconds
-│   :check_time = :check_time
-└   check_time = 0.025580793
-[ Info: Global identifiability assessed in 0.108017335 seconds
-  282.261 ms (1942627 allocations: 148.03 MiB)
+└   check_time = 0.186960884
+[ Info: Global identifiability assessed in 0.285229354 seconds
+  325.011 ms (1942627 allocations: 148.03 MiB)
 Dict{Nemo.fmpq_mpoly, Symbol} with 10 entries:
   d    =&gt; :globally
   k    =&gt; :nonidentifiable
@@ -1605,4 +1285,4 @@ Dict{Nemo.fmpq_mpoly, Symbol} with 10 entries:
   lm   =&gt; :nonidentifiable
   b    =&gt; :globally
   c    =&gt; :nonidentifiable
-  h    =&gt; :globally</code></pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>D. Wodarz, M. Nowak, <a href="https://doi.org/10.1073/pnas.96.25.14464"><em>Specific therapy regimes could lead to long-term immunological control of HIV</em></a>, PNAS December 7, 1999 96 (25) 14464-14469;</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../local_identifiability/">« Local Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../using_modeling_toolkit/">Using <code>ModelingToolkit.jl</code> With <code>StructuralIdentifiability.jl</code> »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.12 on <span class="colophon-date" title="Wednesday 19 January 2022 23:18">Wednesday 19 January 2022</span>. Using Julia version 1.7.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  h    =&gt; :globally</code></pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>D. Wodarz, M. Nowak, <a href="https://doi.org/10.1073/pnas.96.25.14464"><em>Specific therapy regimes could lead to long-term immunological control of HIV</em></a>, PNAS December 7, 1999 96 (25) 14464-14469;</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../local_identifiability/">« Local Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../using_modeling_toolkit/">Using <code>ModelingToolkit.jl</code> With <code>StructuralIdentifiability.jl</code> »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.12 on <span class="colophon-date" title="Friday 21 January 2022 14:05">Friday 21 January 2022</span>. Using Julia version 1.7.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
