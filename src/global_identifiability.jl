@@ -310,6 +310,8 @@ end
     extract_identifiable_functions(io_equations, parameters)
 
 For the io_equation and the list of all parameter variables, returns a set of generators of a field of all functions of parameters
+
+Note: an experimental functionality at the moment, may fail be inefficient
 """
 function extract_identifiable_functions(
     io_equations::Array{P,1}, 
