@@ -37,13 +37,13 @@ export set_parameter_values
 export find_ioequations, find_identifiable_functions
 
 # exporting to other formats
-export print_for_maple, print_for_DAISY
+export print_for_maple, print_for_DAISY, print_for_COMBOS, print_for_GenSSI
 
 # function for creating linear compartment models
 export linear_compartment_model
 
 # structure for storing the io-equations for doing reductions further
-export PBRepresentation, diffreduce
+export PBRepresentation, diffreduce, io_switch!, pseudodivision
 
 # would be great to merge with the Julia logger
 _runtime_logger = Dict()

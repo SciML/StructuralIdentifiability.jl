@@ -2,14 +2,9 @@
 
 Here we put some helpful utilities to export you code to other identifiability software.
 
-## Maple
-
 ```@docs
 print_for_maple
-```
-
-## DAISY
-
-```@docs
 print_for_DAISY
+print_for_GenSSI
+print_for_COMBOS
 ```

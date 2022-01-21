@@ -1,6 +1,12 @@
 """
 The structure for storing a projection-based representation of differential ideal
-(see Section https://arxiv.org/abs/2111.00991)
+(see Section 2.3 https://arxiv.org/abs/2111.00991).
+Contains the following fields:
+-  `y_names` - the names of the variables with finite order in the profile (typically, outputs)
+-  `u_names` - the names of the variables with infinite order in the profile (typically, inputs)
+-  `param_names` - the names of the parameters
+-  `profile` - the profile of the PB-representation (see Definiton 2.13) as a dict from `y_names` with finite orders to the orders
+-  `projections` - the corresponding projections (see Definition 2.15) as a dict from `y_names` to the projections
 """
 struct PBRepresentation
     y_names::Array{String} # variables with finite orders in the profile
@@ -150,6 +156,12 @@ end
     pseudodivision(f, g, x)
 
 Computes the result of pseudodivision of `f` by `g` as univariate polynomials in `x`
+Input:
+-  `f` - the polynomail to be divided
+-  `g` - the polynomial to divide by
+-  `x` - the variable for the division
+
+Output: the pseudoreminder of `f` divided by `g` w.r.t. `x`
 """
 function pseudodivision(f::MPolyElem, g::MPolyElem, x::MPolyElem)
     result = f
@@ -184,6 +196,11 @@ end
 
 Computes the result of differential reduction of a differential polynomial
 `diffpoly` with respect to the charset defined by a PB-representation `pbr`
+Input:
+-  `diffpoly` - a polynomial representing a differential polynomial to be reduced
+-  `pbr` - a projection-based representation
+
+Output: the result of differential reduction of `diffpoly` by `pbr` considered as a characteristic set (see Remark 2.20 in the paper)
 """
 function diffreduce(diffpoly::MPolyElem, pbr::PBRepresentation)
     (ring, der) = common_ring(diffpoly, pbr)

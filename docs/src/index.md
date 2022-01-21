@@ -17,8 +17,9 @@ Pkg.add("StructuralIdentifiability")
 ```latex
 @article{structidjl,
   author  = {Dong, R. and Goodbrake, C. and Harrington, H. and Pogudin G.},
-  title   = {Structural identifiability via input-output projections},
-  journal = {Manuscript in preparation},
+  title   = {Differential elimination for dynamical models via projections with applications to structural identifiability},
+  journal = {preprint},
+  url     = {https://arxiv.org/abs/2111.00991},
   year    = {2021}
 }
 ```
