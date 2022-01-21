@@ -136,7 +136,18 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
     return result
 end
 
+"""
+    assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], p = 0.99)
+Input:
+- `ode` - the ModelingToolkit.ODESystem object that defines the model
+- `measured_quantities` - the output functions of the model
+- `funcs_to_check` - functions of parameters for which to check the identifiability
+- `p` - probability of correctness.
 
+Assesses identifiability (both local and global) of a given ODE model (parameters detected automatically). The result is guaranteed to be correct with the probability
+at least `p`.
+
+"""
 function assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], p = 0.99)
     if length(measured_quantities)==0 
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
