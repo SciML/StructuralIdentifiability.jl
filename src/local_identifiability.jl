@@ -135,7 +135,28 @@ function get_degree_and_coeffsize(f::Generic.Frac{<: MPolyElem{Nemo.fmpq}})
 end
 
 # ------------------------------------------------------------------------------
+"""
+    assess_local_identifiability(function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], p::Float64=0.99, type=:SE)
 
+Input:
+- `ode` - the ODESystem object from ModelingToolkit
+- `measured_quantities` - the measureable outputs of the model
+- `funcs_to_check` - functions of parameters for which to check identifiability
+- `p` - probability of correctness
+- `type` - identifiability type (`:SE` for single-experiment, `:ME` for multi-experiment)
+
+Output: 
+- for `type=:SE`, the result is a dictionary from each parameter to boolean;
+- for `type=:ME`, the result is a tuple with the dictionary as in `:SE` case and array of number of experiments.
+
+The function determines local identifiability of parameters in `funcs_to_check` or all possible parameters if `funcs_to_check` is empty
+    
+The result is correct with probability at least `p`.
+
+`type` can be either `:SE` (single-experiment identifiability) or `:ME` (multi-experiment identifiability).
+The return value is a tuple consisting of the array of bools and the number of experiments to be performed.
+"
+"""
 function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], p::Float64=0.99, type=:SE)
     if length(measured_quantities)==0 
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
