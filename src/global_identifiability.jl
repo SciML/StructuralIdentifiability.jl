@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------------------
 """
-    check_field_membership(generators, rat_funcs, p, [method=:GroebnerBasis])
+    check_field_membership(generators, rat_funcs, p)
 
 Checks whether given rational function belogn to a given field of rational functions
 
@@ -10,15 +10,15 @@ Inputs:
 - `rat_funcs` - list rational functions
 - `p` - a real number between 0 and 1, the probability of correctness
 
-Output: 
+Output:
 - a list `L[i]` of bools of length `length(rat_funcs)` such that `L[i]` is true iff
    the i-th function belongs to ``F``. The whole result is correct with probability at least p
 """
 function check_field_membership(
-        generators::Array{<: Array{<: MPolyElem,1},1},
+        generators::Array{<: Array{T,1},1},
         rat_funcs::Array{<: Any,1},
-        p::Float64;
-        method=:GroebnerBasis)
+        p::Float64) where {T<: MPolyElem}
+
     @debug "Finding pivot polynomials"
     pivots = map(plist -> plist[findmin(map(total_degree, plist))[2]], generators)
     @debug "\tDegrees are $(map(total_degree, pivots))"
@@ -40,8 +40,8 @@ function check_field_membership(
     end
     @debug "\tBound for the degrees is $degree"
     total_vars = foldl(
-        union, 
-        map(plist -> foldl(union, map(poly -> Set(vars(poly)), plist)), generators)
+        union,
+        map(plist -> foldl(union, map(poly -> Set(vars(poly)), plist)), generators) # 0_o
     )
     @debug "\tThe total number of variables in $(length(total_vars))"
 
@@ -52,15 +52,8 @@ function check_field_membership(
     @debug "\tPoint is $point"
 
     @debug "Constructing the equations"
-    eqs_sing = Array{Singular.spoly{Singular.n_Q},1}()
-    ring_sing, vars_sing = Singular.PolynomialRing(
-                               Singular.QQ, 
-                               vcat(map(var_to_str, gens(ring)), ["sat_aux$i" for i in 1:length(generators)]);
-                               # vcat(map(var_to_str, gens(ring)), ["sat_aux"]);
-                               ordering=:degrevlex
-                           )
-
-    common_pivot = one(ring_sing)
+    all_eqs = Vector{T}()
+    common_pivot = one(ring)
     for (i, component) in enumerate(generators)
         pivot = pivots[i]
         @debug "\tPivot polynomial is $(pivots)"
@@ -68,10 +61,10 @@ function check_field_membership(
         for poly in component
             push!(eqs, poly * evaluate(ring(pivot), point) - evaluate(ring(poly), point) * pivot)
         end
-        append!(eqs_sing, map(p -> parent_ring_change(p, ring_sing), eqs))
+        append!(all_eqs, eqs)
         push!(
-            eqs_sing,
-            parent_ring_change(pivot, ring_sing) * vars_sing[end - i + 1] - 1
+            all_eqs,
+            pivot * total_vars[end - i + 1] - 1
         )
         # common_pivot = lcm(parent_ring_change(pivot, ring_sing), common_pivot)
     end
@@ -79,13 +72,7 @@ function check_field_membership(
 
     @debug "Computing Groebner basis ($(length(eqs_sing)) equations)"
     flush(stdout)
-    if method == :Singular
-        gb = Singular.std(Singular.Ideal(ring_sing, eqs_sing))
-    elseif method == :GroebnerBasis
-        gb = GroebnerBasis.f4(Singular.Ideal(ring_sing, eqs_sing))
-    else
-        throw(Base.ArgumentError("Unknown method $method"))
-    end
+    gb = groebner(all_eqs)
     # @debug gens(gb)
 
     @debug "Producing the result"
@@ -94,8 +81,7 @@ function check_field_membership(
     for f in rat_funcs
         num, den = unpack_fraction(f)
         poly = num * evaluate(den, point) - den * evaluate(num, point)
-        poly_sing = parent_ring_change(poly, ring_sing)
-        push!(result, iszero(Singular.reduce(poly_sing, gb)))
+        push!(result, iszero(normalform(gb, poly)))
     end
     return result
 end
@@ -105,11 +91,10 @@ end
 
 
 function check_identifiability(
-        io_equations::Array{P,1}, 
+        io_equations::Array{P,1},
         parameters::Array{P,1},
         funcs_to_check::Array{<: Any,1},
-        p::Float64=0.99;
-        method=:GroebnerBasis
+        p::Float64=0.99
     ) where P <: MPolyElem{fmpq}
     @debug "Extracting coefficients"
     flush(stdout)
@@ -124,49 +109,45 @@ function check_identifiability(
     ring = parent(first(first(coeff_lists)))
     funcs_to_check = map(f -> parent_ring_change(f, ring), funcs_to_check)
 
-    return check_field_membership(coeff_lists, funcs_to_check, p; method=method)
+    return check_field_membership(coeff_lists, funcs_to_check, p)
 end
 
 function check_identifiability(
         io_equation::P,
-        parameters::Array{P,1}, 
-        funcs_to_check::Array{<: Any,1}, 
-        p::Float64=0.99; 
-        method=:GroebnerBasis
-    ) where P <: MPolyElem{fmpq}
-    return check_identifiability([io_equation], parameters, funcs_to_check, p; method=method)
+        parameters::Array{P,1},
+        funcs_to_check::Array{<: Any,1},
+        p::Float64=0.99) where P <: MPolyElem{fmpq}
+    return check_identifiability([io_equation], parameters, funcs_to_check, p)
 end
 
-function check_identifiability(io_equations::Array{P,1}, parameters::Array{P,1}, p::Float64=0.99; method=:GroebnerBasis) where P <: MPolyElem{fmpq}
-    check_identifiability(io_equations, parameters, parameters, p; method=method)
+function check_identifiability(io_equations::Array{P,1}, parameters::Array{P,1}, p::Float64=0.99) where P <: MPolyElem{fmpq}
+    check_identifiability(io_equations, parameters, parameters, p)
 end
 
-function check_identifiability(io_equation::P, parameters::Array{P,1}, p::Float64=0.99; method=:GroebnerBasis) where P <: MPolyElem{fmpq}
-    return check_identifiability([io_equation], parameters, p; method=method)
+function check_identifiability(io_equation::P, parameters::Array{P,1}, p::Float64=0.99) where P <: MPolyElem{fmpq}
+    return check_identifiability([io_equation], parameters, p)
 end
 
 #------------------------------------------------------------------------------
 """
-    assess_global_identifiability(ode::ODE{P}, p::Float64=0.99; var_change=:default, gb_method=:GroebnerBasis) where P <: MPolyElem{fmpq}
+    assess_global_identifiability(ode::ODE{P}, p::Float64=0.99; var_change=:default) where P <: MPolyElem{fmpq}
 
 Input:
 - `ode` - the ODE model
 - `p` - probability of correctness
 - `var_change` - a policy for variable change (`:default`, `:yes`, `:no`), affects only the runtime
-- `gb_method` - library used for Groebner bases (`:GroebnerBasis`, `:Singular`)
 
-Output: 
+Output:
 - a dictionary mapping each parameter to a boolean.
 
 Checks global identifiability for a parameters of the model provided in `ode`. Call this function to check global identifiability of all parameters automatically.
 """
 function assess_global_identifiability(
         ode::ODE{P},
-        p::Float64=0.99; 
-        var_change=:default,
-        gb_method=:GroebnerBasis
+        p::Float64=0.99;
+        var_change=:default
     ) where P <: MPolyElem{fmpq}
-    result_list = assess_global_identifiability(ode, ode.parameters, p; var_change=var_change, gb_method=gb_method)
+    result_list = assess_global_identifiability(ode, ode.parameters, p; var_change=var_change)
 
     return Dict([param => val for (param, val) in zip(ode.parameters, result_list)])
 end
@@ -174,7 +155,7 @@ end
 #------------------------------------------------------------------------------
 
 """
-    assess_global_identifiability(ode, [funcs_to_check, p=0.99, var_change=:default, gb_method=:GroebnerBasis])
+    assess_global_identifiability(ode, [funcs_to_check, p=0.99, var_change=:default])
 
 Input:
 - `ode` - the ODE model
@@ -182,9 +163,8 @@ Input:
 - `p` - probability of correctness
 - `var_change` - a policy for variable change (`:default`, `:yes`, `:no`),
                 affects only the runtime
-- `gb_method` - library used for Groebner bases (`:GroebnerBasis`, `:Singular`)
 
-Output: 
+Output:
 - array of length `length(funcs_to_check)` with true/false values for global identifiability
         or dictionary `param => Bool` if `funcs_to_check` are not given
 
@@ -195,7 +175,6 @@ function assess_global_identifiability(
         funcs_to_check::Array{<: Any,1},
         p::Float64=0.99;
         var_change=:default,
-        gb_method=:GroebnerBasis
     ) where P <: MPolyElem{fmpq}
     @info "Computing IO-equations"
     ioeq_time = @elapsed io_equations = find_ioequations(ode; var_change_policy=var_change)
@@ -222,7 +201,7 @@ function assess_global_identifiability(
     end
 
     @info "Assessing global identifiability using the coefficients of the io-equations"
-    check_time = @elapsed result = check_identifiability(collect(values(io_equations)), ode.parameters, funcs_to_check, p; method=gb_method)
+    check_time = @elapsed result = check_identifiability(collect(values(io_equations)), ode.parameters, funcs_to_check, p)
     @info "Computed in $check_time seconds" :check_time check_time
     _runtime_logger[:check_time] = check_time
 
@@ -231,6 +210,8 @@ end
 
 #------------------------------------------------------------------------------
 # Experimental functionality
+#
+# Alex: To be moved to RationalFunctionFields or something?
 
 function (F::Singular.N_FField)(a::fmpq)
     return F(numerator(a)) // F(denominator(a))
@@ -251,7 +232,7 @@ function simplify_field_generators(generators::Array{<: Array{<: MPolyElem,1},1}
     @debug "\tDegrees are $(map(total_degree, pivots))"
 
     total_vars = foldl(
-        union, 
+        union,
         map(plist -> foldl(union, map(poly -> Set(map(var_to_str, vars(poly))), plist)), generators)
     )
     total_vars = collect(total_vars)
@@ -259,9 +240,14 @@ function simplify_field_generators(generators::Array{<: Array{<: MPolyElem,1},1}
 
     @debug "Constructing the equations"
     F, Fvars = Singular.FunctionField(Singular.QQ, total_vars)
+    #=
+        Alex: Solution for Groebner.jl: compute a basis saturated by common denominator
+
+        What do you think ?
+    =#
     eqs_sing = Array{Singular.spoly{Singular.n_transExt},1}()
     ring_sing, vars_sing = Singular.PolynomialRing(
-                               F, 
+                               F,
                                vcat(
                                     total_vars,
                                     ["sat_aux$i" for i in 1:length(generators)]
@@ -289,7 +275,7 @@ function simplify_field_generators(generators::Array{<: Array{<: MPolyElem,1},1}
     @debug "Computing Groebner basis ($(length(eqs_sing)) equations)"
     flush(stdout)
     gb = Singular.std(Singular.Ideal(ring_sing, eqs_sing))
-    
+
     result = Set()
 
     for poly in gens(gb)
@@ -314,8 +300,8 @@ For the io_equation and the list of all parameter variables, returns a set of ge
 Note: an experimental functionality at the moment, may fail be inefficient
 """
 function extract_identifiable_functions(
-    io_equations::Array{P,1}, 
-    parameters::Array{P,1}, 
+    io_equations::Array{P,1},
+    parameters::Array{P,1},
     known_functions::Array{P,1}
 ) where P <: MPolyElem{fmpq}
     @debug "Extracting coefficients"
@@ -343,8 +329,8 @@ end
 For the io_equation and the list of all parameter variables, returns a set of *raw* *generators of a field of all functions of parameters
 """
 function extract_identifiable_functions_raw(
-    io_equations::Array{P,1}, 
-    parameters::Array{P,1}, 
+    io_equations::Array{P,1},
+    parameters::Array{P,1},
 ) where P <: MPolyElem{fmpq}
     @debug "Extracting coefficients"
     flush(stdout)
@@ -371,7 +357,7 @@ Input:
 Output:
 - returns a set of generators of the field of all functions of parameters
 
-Find identifiable functions of parameters for a given `ode`. 
+Find identifiable functions of parameters for a given `ode`.
 """
 function find_identifiable_functions(ode::ODE{<: MPolyElem{fmpq}}, p::Float64=0.99)
     @debug "Computing IO-equations"

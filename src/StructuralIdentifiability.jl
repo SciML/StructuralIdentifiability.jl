@@ -13,8 +13,7 @@ using DataStructures
 # Algebra packages
 using AbstractAlgebra
 using Nemo
-using GroebnerBasis
-using Singular
+using Groebner
 
 # For testing (TODO: move to the test-specific dependencies)
 using Test
@@ -82,7 +81,7 @@ end
 Input:
 - `ode` - the ODE model
 - `p` - probability of correctness.
-    
+
 Assesses identifiability of a given ODE model. The result is guaranteed to be correct with the probability
 at least `p`.
 
@@ -149,7 +148,7 @@ at least `p`.
 
 """
 function assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], p = 0.99)
-    if length(measured_quantities)==0 
+    if length(measured_quantities)==0
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
             @info "Measured quantities are not provided, trying to find the outputs in input ODE."
             measured_quantities = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(ode))
