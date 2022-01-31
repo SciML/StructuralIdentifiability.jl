@@ -322,7 +322,7 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
 
     @debug "Computing the result"
     base_rank = LinearAlgebra.rank(Jac)
-    result = Array{Pair{Nemo.fmpq_mpoly, Bool},1}()
+    result = Array{Pair{Any, Bool},1}()
     for i in 1:length(funcs_to_check)
         for (k, p) in enumerate(ode_red.parameters)
             Jac[k, 1] = coeff(output_derivatives[str_to_var("loc_aux_$i", ode_red.poly_ring)][p], 0)
