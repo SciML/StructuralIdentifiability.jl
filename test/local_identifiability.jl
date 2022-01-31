@@ -13,7 +13,7 @@
     push!(test_cases, Dict(
         :ode => ode,
         :funcs => funcs_to_test,
-        :correct => correct
+        :correct => Dict(funcs_to_test .=> correct)
     ))
 
     #--------------------------------------------------------------------------
@@ -28,7 +28,7 @@
     push!(test_cases, Dict(
         :ode => ode,
         :funcs => funcs_to_test,
-        :correct => correct
+        :correct => Dict(funcs_to_test .=> correct)
     ))
 
     #--------------------------------------------------------------------------
@@ -45,7 +45,7 @@
     push!(test_cases, Dict(
         :ode => ode,
         :funcs => funcs_to_test,
-        :correct => correct
+        :correct => Dict(funcs_to_test .=> correct)
     ))
 
     #--------------------------------------------------------------------------

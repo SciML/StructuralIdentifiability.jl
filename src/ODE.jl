@@ -338,15 +338,11 @@ end
 
 #------------------------------------------------------------------------------
 """
-    function PreprocessODE(de::ModelingToolkit.ODESystem, inputs)
+    function PreprocessODE(de::ModelingToolkit.ODESystem, measured_quantities::Array{ModelingToolkit.Equation})
     
 Input:
-- `diff_eqs` - array of ModelingToolkit differential equations
-- `out_eqs` - array of output equations
-- `states` - array of state variables
-- `outputs` - array of output function names
-- `inputs` - array of input function names
-- `parameters` - array of parameter names
+- `de` - ModelingToolkit.ODESystem, a system for identifiability query
+- `measured_quantities` - array of output functions
 
 Output: 
 - `ODE` object containing required data for identifiability assessment
