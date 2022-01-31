@@ -199,7 +199,7 @@ end
         y3(t) = N
     )
     funcs_to_test = [b, nu, d, a]
-    correct = [true, true, true, true]
+    correct = Dict([b=>true, nu=>true, d=>true, a=>true])
         push!(test_cases, Dict(
         :ode => ode,
         :funcs => funcs_to_test,
