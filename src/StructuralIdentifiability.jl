@@ -98,6 +98,7 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
 
     @info "Assessing local identifiability"
     runtime = @elapsed local_result, bound = assess_local_identifiability(ode, funcs_to_check, p_loc, :ME)
+    println(local_result)
     @info "Local identifiability assessed in $runtime seconds"
     _runtime_logger[:loc_time] = runtime
 
@@ -106,8 +107,9 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
         @debug "Bound: $bound"
     end
 
+    loc_id = [local_result[each] for each in funcs_to_check]
     locally_identifiable = Array{Any,1}()
-    for (loc, f) in zip(local_result, funcs_to_check)
+    for (loc, f) in zip(loc_id, funcs_to_check)
         if loc
             push!(locally_identifiable, f)
         end
@@ -121,7 +123,7 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
     result = Array{Symbol,1}()
     glob_ind = 1
     for i in 1:length(funcs_to_check)
-        if !local_result[i]
+        if !local_result[funcs_to_check[i]]
             push!(result, :nonidentifiable)
         else
             if global_result[glob_ind]

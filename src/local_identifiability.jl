@@ -136,7 +136,7 @@ end
 
 # ------------------------------------------------------------------------------
 """
-    assess_local_identifiability(function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], p::Float64=0.99, type=:SE)
+    function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], p::Float64=0.99, type=:SE)
 
 Input:
 - `ode` - the ODESystem object from ModelingToolkit
@@ -314,7 +314,7 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
 
     @debug "Computing the result"
     base_rank = LinearAlgebra.rank(Jac)
-    result = Array{Bool,1}()
+    result = Array{Pair{Nemo.fmpq_mpoly, Bool},1}()
     for i in 1:length(funcs_to_check)
         for (k, p) in enumerate(ode_red.parameters)
             Jac[k, 1] = coeff(output_derivatives[str_to_var("loc_aux_$i", ode_red.poly_ring)][p], 0)
@@ -322,13 +322,13 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
         for (k, x) in enumerate(ode_red.x_vars)
             Jac[end - k + 1, 1] = coeff(output_derivatives[str_to_var("loc_aux_$i", ode_red.poly_ring)][x], 0)
         end
-        push!(result, LinearAlgebra.rank(Jac) == base_rank)
+        push!(result, funcs_to_check[i]=>LinearAlgebra.rank(Jac) == base_rank)
     end
 
     if type == :SE
         return result
     end
-    return (result, num_exp)
+    return (Dict(result), num_exp)
 end
 
 # ------------------------------------------------------------------------------
