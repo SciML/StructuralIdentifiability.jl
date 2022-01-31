@@ -170,8 +170,15 @@ function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_q
         funcs_to_check = ModelingToolkit.parameters(ode)
     end
     ode, syms, gens_ = PreprocessODE(ode, measured_quantities)
-    funcs_to_check = [eval_at_nemo(x, Dict(syms .=> gens_)) for x in funcs_to_check]
-    return assess_local_identifiability(ode, funcs_to_check, p, type) 
+    funcs_to_check_ = [eval_at_nemo(x, Dict(syms .=> gens_)) for x in funcs_to_check]
+    
+    if isequal(type, :SE)
+        result = assess_local_identifiability(ode, funcs_to_check_, p, type)
+    elseif isequal(type, :ME)
+        result, bd = assess_local_identifiability(ode, funcs_to_check_, p, type) 
+    nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
+    out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
+    return out_dict
 end
 # ------------------------------------------------------------------------------
 """

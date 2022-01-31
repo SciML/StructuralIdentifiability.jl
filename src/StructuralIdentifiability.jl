@@ -165,11 +165,9 @@ function assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantit
     ode, syms, gens_ = PreprocessODE(ode, measured_quantities)
     out_dict = Dict{Num,Symbol}()
     funcs_to_check_ = [eval_at_nemo(each, Dict(syms .=> gens_)) for each in funcs_to_check]
-    tmp = Dict(param => res for (param, res) in zip(funcs_to_check_, assess_identifiability(ode, funcs_to_check_, p)))
+    result = assess_identifiability(ode, funcs_to_check_, p)
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
-    for (func, res) in pairs(tmp)
-        out_dict[nemo2mtk[func]] = res
-    end
+    out_dict = Dict(nemo2mtk[param] => result[res] for param in funcs_to_check_)
     return out_dict
 end
 
