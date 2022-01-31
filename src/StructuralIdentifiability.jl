@@ -98,7 +98,6 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
 
     @info "Assessing local identifiability"
     runtime = @elapsed local_result, bound = assess_local_identifiability(ode, funcs_to_check, p_loc, :ME)
-    println(local_result)
     @info "Local identifiability assessed in $runtime seconds"
     _runtime_logger[:loc_time] = runtime
 
