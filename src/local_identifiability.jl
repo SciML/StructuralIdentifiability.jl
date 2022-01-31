@@ -176,6 +176,7 @@ function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_q
         result = assess_local_identifiability(ode, funcs_to_check_, p, type)
     elseif isequal(type, :ME)
         result, bd = assess_local_identifiability(ode, funcs_to_check_, p, type) 
+    end
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     return out_dict
