@@ -136,7 +136,7 @@ end
 
 # ------------------------------------------------------------------------------
 """
-    assess_local_identifiability(function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], p::Float64=0.99, type=:SE)
+    function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], p::Float64=0.99, type=:SE)
 
 Input:
 - `ode` - the ODESystem object from ModelingToolkit
@@ -170,8 +170,19 @@ function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_q
         funcs_to_check = ModelingToolkit.parameters(ode)
     end
     ode, syms, gens_ = PreprocessODE(ode, measured_quantities)
-    funcs_to_check = [eval_at_nemo(x, Dict(syms .=> gens_)) for x in funcs_to_check]
-    return assess_local_identifiability(ode, funcs_to_check, p, type) 
+    funcs_to_check_ = [eval_at_nemo(x, Dict(syms .=> gens_)) for x in funcs_to_check]
+    
+    if isequal(type, :SE)
+        result = assess_local_identifiability(ode, funcs_to_check_, p, type)
+        nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
+        out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
+        return out_dict
+    elseif isequal(type, :ME)
+        result, bd = assess_local_identifiability(ode, funcs_to_check_, p, type) 
+        nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
+        out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
+        return (out_dict, bd)
+    end
 end
 # ------------------------------------------------------------------------------
 """
@@ -200,10 +211,10 @@ function assess_local_identifiability(ode::ODE{P}, p::Float64=0.99, type=:SE) wh
     end
     result = assess_local_identifiability(ode, funcs_to_check, p, type)
     if type == :SE
-        return Dict(a => b for (a, b) in zip(funcs_to_check, result))
+        return Dict(a => result[a] for a in funcs_to_check)
     end
     return (
-        Dict(a => b for (a, b) in zip(funcs_to_check, result[1])),
+        Dict(a => result[1][a] for a in funcs_to_check),
         result[2]
     )
 end
@@ -314,7 +325,7 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
 
     @debug "Computing the result"
     base_rank = LinearAlgebra.rank(Jac)
-    result = Array{Bool,1}()
+    result = Dict{Any, Bool}()
     for i in 1:length(funcs_to_check)
         for (k, p) in enumerate(ode_red.parameters)
             Jac[k, 1] = coeff(output_derivatives[str_to_var("loc_aux_$i", ode_red.poly_ring)][p], 0)
@@ -322,13 +333,13 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
         for (k, x) in enumerate(ode_red.x_vars)
             Jac[end - k + 1, 1] = coeff(output_derivatives[str_to_var("loc_aux_$i", ode_red.poly_ring)][x], 0)
         end
-        push!(result, LinearAlgebra.rank(Jac) == base_rank)
+        result[funcs_to_check[i]] = LinearAlgebra.rank(Jac) == base_rank
     end
 
     if type == :SE
-        return result
+        return Dict(result)
     end
-    return (result, num_exp)
+    return (Dict(result), num_exp)
 end
 
 # ------------------------------------------------------------------------------

@@ -106,8 +106,9 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
         @debug "Bound: $bound"
     end
 
+    loc_id = [local_result[each] for each in funcs_to_check]
     locally_identifiable = Array{Any,1}()
-    for (loc, f) in zip(local_result, funcs_to_check)
+    for (loc, f) in zip(loc_id, funcs_to_check)
         if loc
             push!(locally_identifiable, f)
         end
@@ -118,22 +119,22 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
     @info "Global identifiability assessed in $runtime seconds"
     _runtime_logger[:glob_time] = runtime
 
-    result = Array{Symbol,1}()
+    result = Dict{Any, Symbol}()
     glob_ind = 1
     for i in 1:length(funcs_to_check)
-        if !local_result[i]
-            push!(result, :nonidentifiable)
+        if !local_result[funcs_to_check[i]]
+            result[funcs_to_check[i]] = :nonidentifiable
         else
             if global_result[glob_ind]
-                push!(result, :globally)
+                result[funcs_to_check[i]] = :globally
             else
-                push!(result, :locally)
+                result[funcs_to_check[i]] = :locally
             end
             glob_ind += 1
         end
     end
 
-    return result
+    return Dict(result)
 end
 
 """
@@ -163,11 +164,9 @@ function assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantit
     ode, syms, gens_ = PreprocessODE(ode, measured_quantities)
     out_dict = Dict{Num,Symbol}()
     funcs_to_check_ = [eval_at_nemo(each, Dict(syms .=> gens_)) for each in funcs_to_check]
-    tmp = Dict(param => res for (param, res) in zip(funcs_to_check_, assess_identifiability(ode, funcs_to_check_, p)))
+    result = assess_identifiability(ode, funcs_to_check_, p)
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
-    for (func, res) in pairs(tmp)
-        out_dict[nemo2mtk[func]] = res
-    end
+    out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     return out_dict
 end
 
