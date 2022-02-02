@@ -119,16 +119,16 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
     @info "Global identifiability assessed in $runtime seconds"
     _runtime_logger[:glob_time] = runtime
 
-    result = Array{Pair{Any, Symbol},1}()
+    result = Dict{Any, Symbol}()
     glob_ind = 1
     for i in 1:length(funcs_to_check)
         if !local_result[funcs_to_check[i]]
-            push!(result, funcs_to_check[i] => :nonidentifiable)
+            result[funcs_to_check[i]] = :nonidentifiable
         else
             if global_result[glob_ind]
-                push!(result, funcs_to_check[i] => :globally)
+                result[funcs_to_check[i]] = :globally
             else
-                push!(result, funcs_to_check[i] => :locally)
+                result[funcs_to_check[i]] = :locally
             end
             glob_ind += 1
         end
