@@ -72,8 +72,8 @@ at least `p`.
 
 """
 function assess_identifiability(ode::ODE{P}, p::Float64 = 0.99) where {P<:MPolyElem{fmpq}}
-    result_list = assess_identifiability(ode, ode.parameters, p)
-    return Dict(param => res for (param, res) in zip(ode.parameters, result_list))
+    result = assess_identifiability(ode, ode.parameters, p)
+    return result #Dict(param => res for (param, res) in zip(ode.parameters, result_list))
 end
 
 """
@@ -134,7 +134,7 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
         end
     end
 
-    return Dict(result)
+    return result
 end
 
 """
