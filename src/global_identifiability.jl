@@ -168,7 +168,7 @@ function assess_global_identifiability(
     ) where P <: MPolyElem{fmpq}
     result_list = assess_global_identifiability(ode, ode.parameters, p; var_change=var_change, gb_method=gb_method)
 
-    return Dict([param => val for (param, val) in zip(ode.parameters, result_list)])
+    return Dict(param => val for (param, val) in zip(ode.parameters, result_list))
 end
 
 #------------------------------------------------------------------------------
