@@ -25,25 +25,25 @@ v&#39;(t) = k*y(t) - v(t)*u
 w&#39;(t) = -b*w(t) + c*w(t)*x(t)*y(t) - c*w(t)*q*y(t)
 y2(t) = z(t)
 y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; global_id = assess_identifiability(ode, 0.99)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 5.710586064 seconds
+[ Info: Local identifiability assessed in 7.946289015 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
-┌ Info: Computed in 9.223676221 seconds
+┌ Info: Computed in 13.197412351 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 9.223676221
+└   ioeq_time = 13.197412351
 [ Info: Computing Wronskians
-┌ Info: Computed in 2.947590208 seconds
+┌ Info: Computed in 4.428840337 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 2.947590208
+└   wrnsk_time = 4.428840337
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.025827143 seconds
+┌ Info: Ranks of the Wronskians computed in 0.033123823 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.025827143
+└   rank_times = 0.033123823
 [ Info: Assessing global identifiability using the coefficients of the io-equations
-┌ Info: Computed in 1.079015184 seconds
+┌ Info: Computed in 1.429708024 seconds
 │   :check_time = :check_time
-└   check_time = 1.079015184
-[ Info: Global identifiability assessed in 13.830879514 seconds
+└   check_time = 1.429708024
+[ Info: Global identifiability assessed in 19.88694932 seconds
 Dict{Any, Symbol} with 10 entries:
   d    =&gt; :globally
   k    =&gt; :nonidentifiable
@@ -54,4 +54,4 @@ Dict{Any, Symbol} with 10 entries:
   lm   =&gt; :nonidentifiable
   b    =&gt; :globally
   c    =&gt; :nonidentifiable
-  h    =&gt; :globally</code></pre><p>We also note that it&#39;s usually inexpensive to obtain the result with higher probability of correctness. For example, taking <code>p=0.9999</code> in the system above will result only in a slight slowdown.</p><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>D. Wodarz, M. Nowak, <a href="https://doi.org/10.1073/pnas.96.25.14464"><em>Specific therapy regimes could lead to long-term immunological control of HIV</em></a>, PNAS December 7, 1999 96 (25) 14464-14469;</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../local_identifiability/">« Local Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../using_modeling_toolkit/">Using <code>ModelingToolkit.jl</code> With <code>StructuralIdentifiability.jl</code> »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.14 on <span class="colophon-date" title="Friday 4 March 2022 00:19">Friday 4 March 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  h    =&gt; :globally</code></pre><p>We also note that it&#39;s usually inexpensive to obtain the result with higher probability of correctness. For example, taking <code>p=0.9999</code> in the system above will result only in a slight slowdown.</p><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>D. Wodarz, M. Nowak, <a href="https://doi.org/10.1073/pnas.96.25.14464"><em>Specific therapy regimes could lead to long-term immunological control of HIV</em></a>, PNAS December 7, 1999 96 (25) 14464-14469;</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../local_identifiability/">« Local Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../using_modeling_toolkit/">Using <code>ModelingToolkit.jl</code> With <code>StructuralIdentifiability.jl</code> »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.14 on <span class="colophon-date" title="Friday 4 March 2022 00:21">Friday 4 March 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
