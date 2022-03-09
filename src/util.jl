@@ -302,14 +302,16 @@ function eval_at_nemo(e::Union{ModelingToolkit.Symbolics.Sym,ModelingToolkit.Sym
 end
 
 function eval_at_nemo(e::Union{Integer,Rational}, vals::Dict)
-    return e
+    R = Nemo.parent(first(vals)[2])
+    return Nemo.fmpq_mpoly(R, e)
 end
 
 function eval_at_nemo(e::Union{Float16,Float32,Float64}, vals::Dict)
+    R = Nemo.parent(first(vals)[2])
     if isequal(e % 1, 0)
-        out = Int(e)
+        out = Nemo.fmpq_mpoly(R, Int(e))
     else
-        out = rationalize(e)
+        out = Nemo.fmpq_mpoly(R, rationalize(e))
     end
     @warn "Floating points are not allowed, value $e will be converted to $(out)."
     return out
