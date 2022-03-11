@@ -165,4 +165,19 @@
     correct = Dict(a => :globally, b => :globally, c => :locally)
     to_check = [a, b, c]
     @test isequal(correct, assess_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=to_check))
+    # ----------
+    @parameters a b  
+    @variables t c(t) x1(t) x2(t) y1(t) y2(t)
+    D = Differential(t)
+
+    eqs = [
+        D(x1) ~ -a * x1 + x2 * b / (x1 + b / (c^2 - x2)),
+        D(x2) ~ x2 * c^2 + x1,
+        D(c) ~ 0
+    ]
+    de = ODESystem(eqs, t, name=:Test)
+    measured_quantities = [y1 ~ x2, y2~c]
+    correct = Dict(a => :globally, b => :globally)
+    to_check = [a, b]
+    @test isequal(correct, assess_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=to_check))
 end
