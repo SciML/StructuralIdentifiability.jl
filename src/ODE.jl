@@ -366,7 +366,11 @@ function PreprocessODE(de::ModelingToolkit.ODESystem, measured_quantities::Array
     out_eqn_dict = Dict{StructuralIdentifiability.Nemo.fmpq_mpoly,Union{StructuralIdentifiability.Nemo.fmpq_mpoly,StructuralIdentifiability.Nemo.Generic.Frac{StructuralIdentifiability.Nemo.fmpq_mpoly}}}()
     
     for i in 1:length(diff_eqs)
-        state_eqn_dict[substitute(state_vars[i], input_symbols.=>gens_)] = eval_at_nemo(diff_eqs[i].rhs, Dict(input_symbols.=>gens_))
+        if !(typeof(diff_eqs[i].rhs) <: Number)
+            state_eqn_dict[substitute(state_vars[i], input_symbols.=>gens_)] = eval_at_nemo(diff_eqs[i].rhs, Dict(input_symbols.=>gens_))
+        else
+            state_eqn_dict[substitute(state_vars[i], input_symbols.=>gens_)] = R(diff_eqs[i].rhs) 
+        end
     end
     for i in 1:length(measured_quantities)
         out_eqn_dict[substitute(y_functions[i], input_symbols.=> gens_)] = eval_at_nemo(measured_quantities[i].rhs, Dict(input_symbols.=>gens_))
