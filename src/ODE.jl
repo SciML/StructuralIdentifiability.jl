@@ -380,5 +380,5 @@ function PreprocessODE(de::ModelingToolkit.ODESystem, measured_quantities::Array
     if isequal(length(inputs_), 0)
         inputs_ = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}()
     end
-    return (ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(state_eqn_dict, out_eqn_dict, inputs_), input_symbols, gens_)
+    return (StructuralIdentifiability.ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(state_eqn_dict, out_eqn_dict, inputs_), input_symbols, gens_)
 end
