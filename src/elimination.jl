@@ -219,12 +219,12 @@ function Base.iterate(gpg::ODEPointGenerator{P}, i::Int=1) where P <: MPolyElem{
             result = Dict{P,gpg.number_type}(switch_ring(p, gpg.big_ring) => base_field(c) for (p, c) in param_values)
             for u in gpg.ode.u_vars
                 for i in 0:(gpg.precision - 1)
-                    result[str_to_var(var_to_str(u) * "_$i", gpg.big_ring)] = coeff(ps_solution[u], i) * factorial(i)
+                    result[str_to_var(var_to_str(u) * "_$i", gpg.big_ring)] = coeff(ps_solution[u], i) * factorial(big(i))
                 end
             end
             for y in gpg.ode.y_vars
                 for j in 0:(gpg.precision - 1)
-                    result[str_to_var(var_to_str(y) * "_$j", gpg.big_ring)] = coeff(ps_solution[y], j) * factorial(j)
+                    result[str_to_var(var_to_str(y) * "_$j", gpg.big_ring)] = coeff(ps_solution[y], j) * factorial(big(j))
                 end
             end
             for x in gpg.ode.x_vars
