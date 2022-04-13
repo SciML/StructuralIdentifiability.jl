@@ -332,6 +332,8 @@ function extract_identifiable_functions(
         @debug sort(map(total_degree, p))
     end
 
+    @debug "Resulting Coefficient List: $coeff_lists"
+    
     return simplify_field_generators(coeff_lists)
 end
 
