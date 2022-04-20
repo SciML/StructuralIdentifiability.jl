@@ -87,6 +87,11 @@ function check_field_membership(
         throw(Base.ArgumentError("Unknown method $method"))
     end
     # @debug gens(gb)
+    if isequal(Singular.Ideal(ring_sing, [one(ring_sing)]), gb)
+        @error "The Groebner basis computation resulted in the unit ideal. This is an incorrect result, 
+        please, run the code again. Sorry for the inconvenience"
+        throw("GB problem")
+    end
 
     @debug "Producing the result"
     flush(stdout)
