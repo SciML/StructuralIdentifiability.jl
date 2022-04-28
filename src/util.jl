@@ -167,9 +167,12 @@ function uncertain_factorization(f::MPolyElem{fmpq})
             f_sub = evaluate(f, vars_f[1:end - 1], plugin)
             uni_ring, var_uni = Nemo.PolynomialRing(base_ring(f), string(main_var))
             f_uni = to_univariate(uni_ring, f_sub)
-            if !issquarefree(f_uni)
+            # if !issquarefree(f_uni)
+            if !isone(gcd(f, derivative(f, main_var)))
+                @debug "GCD is $(gcd(f, derivative(f, main_var)))"
                 f = divexact(f, gcd(f, derivative(f, main_var)))
             end
+            # end
             is_irr = isirreducible(f_uni)
             break
         end

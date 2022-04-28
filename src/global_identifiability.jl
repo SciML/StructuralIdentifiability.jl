@@ -52,42 +52,37 @@ function check_field_membership(
     @debug "\tPoint is $point"
 
     @debug "Constructing the equations"
-    eqs_sing = Array{Singular.spoly{Singular.n_Q},1}()
-    ring_sing, vars_sing = Singular.PolynomialRing(
-                               Singular.QQ, 
-                               vcat(map(var_to_str, gens(ring)), ["sat_aux$i" for i in 1:length(generators)]);
-                               # vcat(map(var_to_str, gens(ring)), ["sat_aux"]);
-                               ordering=:degrevlex
-                           )
+    eqs = Array{Any, 1}()
+    ring_ext, vars_ext = Nemo.PolynomialRing(
+        Nemo.QQ, 
+        vcat(map(var_to_str, gens(ring)), ["sat_aux$i" for i in 1:length(generators)]);
+        # vcat(map(var_to_str, gens(ring)), ["sat_aux"]);
+        ordering=:degrevlex
+    )
 
-    common_pivot = one(ring_sing)
+    # common_pivot = one(ring_sing)
     for (i, component) in enumerate(generators)
         pivot = pivots[i]
-        @debug "\tPivot polynomial is $(pivots)"
-        eqs = []
+        @debug "\tPivot polynomial is $(pivot)"
+        eqs_comp = []
         for poly in component
-            push!(eqs, poly * evaluate(ring(pivot), point) - evaluate(ring(poly), point) * pivot)
+            push!(eqs_comp, poly * evaluate(ring(pivot), point) - evaluate(ring(poly), point) * pivot)
         end
-        append!(eqs_sing, map(p -> parent_ring_change(p, ring_sing), eqs))
+        append!(eqs, map(p -> parent_ring_change(p, ring_ext), eqs_comp))
         push!(
-            eqs_sing,
-            parent_ring_change(pivot, ring_sing) * vars_sing[end - i + 1] - 1
+            eqs,
+            parent_ring_change(pivot, ring_ext) * vars_ext[end - i + 1] - 1
         )
         # common_pivot = lcm(parent_ring_change(pivot, ring_sing), common_pivot)
     end
+    eqs = [a for a in eqs if !iszero(a)]
     # push!(eqs_sing, common_pivot * vars_sing[end] - 1)
 
-    @debug "Computing Groebner basis ($(length(eqs_sing)) equations)"
+    @debug "Computing Groebner basis ($(length(eqs)) equations)"
     flush(stdout)
-    if method == :Singular
-        gb = Singular.std(Singular.Ideal(ring_sing, eqs_sing))
-    elseif method == :GroebnerBasis
-        gb = GroebnerBasis.f4(Singular.Ideal(ring_sing, eqs_sing))
-    else
-        throw(Base.ArgumentError("Unknown method $method"))
-    end
-    # @debug gens(gb)
-    if isequal(Singular.Ideal(ring_sing, [one(ring_sing)]), gb)
+    gb = groebner(eqs)
+    @debug gb
+    if isequal(one(ring_ext), gb[1])
         @error "The Groebner basis computation resulted in the unit ideal. This is an incorrect result, 
         please, run the code again. Sorry for the inconvenience"
         throw("GB problem")
@@ -99,8 +94,8 @@ function check_field_membership(
     for f in rat_funcs
         num, den = unpack_fraction(f)
         poly = num * evaluate(den, point) - den * evaluate(num, point)
-        poly_sing = parent_ring_change(poly, ring_sing)
-        push!(result, iszero(Singular.reduce(poly_sing, gb)))
+        poly_ext = parent_ring_change(poly, ring_ext)
+        push!(result, iszero(normalform(gb, poly_ext)))
     end
     return result
 end

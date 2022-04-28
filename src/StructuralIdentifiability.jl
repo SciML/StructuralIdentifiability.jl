@@ -12,8 +12,9 @@ using DataStructures
 
 # Algebra packages
 using AbstractAlgebra
+using Hecke
 using Nemo
-using GroebnerBasis
+using Groebner
 using Singular
 
 # For testing (TODO: move to the test-specific dependencies)
