@@ -82,7 +82,37 @@
     ))
 
     #--------------------------------------------------------------------------
+ 
+     ode = @ODEmodel(
+        x1'(t) = -a1 * x1(t) + a21 * x2(t),
+        x2'(t) = -a2 * x2(t) - a21 * x2(t),
+        y1(t) = x1(t)
+    )
+    funcs_to_test = [a1, a2, a21]
+    correct = [:locally, :nonidentifiable, :nonidentifiable]
+    push!(test_cases, Dict(
+        :ode => ode,
+        :funcs => funcs_to_test,
+        :correct => Dict(funcs_to_test .=>correct)
+    ))
 
+    #--------------------------------------------------------------------------
+    
+     ode = @ODEmodel(
+        x1'(t) = -a1 * x1(t) + a21 * x2(t),
+        x2'(t) = -a2 * x2(t) - a21 * x2(t) + u(t),
+        y1(t) = x1(t)
+    )
+    funcs_to_test = [a1, a2, a21, a2 + a1, a2 * (a1 - a21)]
+    correct = [:locally, :locally, :globally, :globally, :globally]
+    push!(test_cases, Dict(
+        :ode => ode,
+        :funcs => funcs_to_test,
+        :correct => Dict(funcs_to_test .=>correct)
+    ))
+
+    #-------------------------------------------------------------------------- 
+ 
     for case in test_cases
         result = assess_identifiability(case[:ode], case[:funcs])
         @test result == case[:correct]
