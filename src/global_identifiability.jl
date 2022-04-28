@@ -80,7 +80,7 @@ function check_field_membership(
 
     @debug "Computing Groebner basis ($(length(eqs)) equations)"
     flush(stdout)
-    gb = groebner(eqs)
+    gb = groebner(eqs; certify=true)
     @debug gb
     if isequal(one(ring_ext), gb[1])
         @error "The Groebner basis computation resulted in the unit ideal. This is an incorrect result, 
