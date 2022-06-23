@@ -12,7 +12,15 @@ global_logger(logger)
 include("benchmarks.jl")
 
 runtimes = Dict()
-TIME_CATEGORIES = [:loc_time, :glob_time, :ioeq_time, :wrnsk_time, :rank_time, :check_time, :total]
+TIME_CATEGORIES = [
+    :loc_time,
+    :glob_time,
+    :ioeq_time,
+    :wrnsk_time,
+    :rank_time,
+    :check_time,
+    :total,
+]
 NUM_RUNS = 5
 
 for bmark in benchmarks
@@ -22,10 +30,10 @@ for bmark in benchmarks
         continue
     end
     @info "Processing $name"
-    runtimes[bmark[:name]] = Dict(c => 0. for c in TIME_CATEGORIES)
+    runtimes[bmark[:name]] = Dict(c => 0.0 for c in TIME_CATEGORIES)
     for _ in 1:NUM_RUNS
         runtimes[name][:total] += @elapsed assess_identifiability(bmark[:ode])
-        for cat in TIME_CATEGORIES[1:end - 1]
+        for cat in TIME_CATEGORIES[1:(end - 1)]
             runtimes[name][cat] += _runtime_logger[cat]
         end
     end
@@ -59,7 +67,6 @@ for (s, uid) in stid_info.dependencies
         global resulting_md *= "* $s : $(deps[uid].version)\n"
     end
 end
-
 
 open("benchmark_result.md", "w") do io
     write(io, resulting_md)

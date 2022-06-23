@@ -6,31 +6,21 @@ using StructuralIdentifiability: ODE, print_for_DAISY, print_for_COMBOS, print_f
 include("benchmarks.jl")
 
 formats = [
-    Dict(
-        :name => "SIAN",
-        :function => ode -> print_for_maple(ode, :SIAN),
-        :extension => ".mpl"
-    ),
-    Dict(
-        :name => "RosenfeldGroebner",
-        :function => ode -> print_for_maple(ode, :DifferentialAlgebra),
-        :extension => ".mpl"
-    ),
-    Dict(
-        :name => "DifferentialThomas",
-        :function => ode -> print_for_maple(ode, :DifferentialThomas),
-        :extension => ".mpl"
-    ),
-    Dict(
-        :name => "DAISY",
-        :function => print_for_DAISY,
-        :extension => ".txt"
-    ),
-    Dict(
-        :name => "COMBOS",
-        :function => print_for_COMBOS,
-        :extension => ".txt"
-    )
+    Dict(:name => "SIAN",
+         :function => ode -> print_for_maple(ode, :SIAN),
+         :extension => ".mpl"),
+    Dict(:name => "RosenfeldGroebner",
+         :function => ode -> print_for_maple(ode, :DifferentialAlgebra),
+         :extension => ".mpl"),
+    Dict(:name => "DifferentialThomas",
+         :function => ode -> print_for_maple(ode, :DifferentialThomas),
+         :extension => ".mpl"),
+    Dict(:name => "DAISY",
+         :function => print_for_DAISY,
+         :extension => ".txt"),
+    Dict(:name => "COMBOS",
+         :function => print_for_COMBOS,
+         :extension => ".txt"),
 ]
 
 for frmt in formats
