@@ -2,42 +2,40 @@
 
 PairIntTuples = Tuple{Tuple{Vararg{Int}},Tuple{Vararg{Int}}}
 
-function det_minor_expansion_inner(
-        m::MatElem{<: T}, 
-        discarded::PairIntTuples, 
-        cache::Dict{PairIntTuples,T}
-    ) where T <: RingElem
-    n = size(m, 1);
+function det_minor_expansion_inner(m::MatElem{<:T},
+                                   discarded::PairIntTuples,
+                                   cache::Dict{PairIntTuples,T}) where {T<:RingElem}
+    n = size(m, 1)
     if length(discarded[1]) == n
-        return 1;
+        return 1
     end
     if discarded in keys(cache)
-        return cache[discarded];
+        return cache[discarded]
     end
-    result = 0;
-    row = minimum(setdiff(Set(1:n), Set(discarded[1])));
-    dis_rows = Tuple(sort([[i for i in discarded[1]]; row]));
-    sign = 1;
-    for col = 1:n
+    result = 0
+    row = minimum(setdiff(Set(1:n), Set(discarded[1])))
+    dis_rows = Tuple(sort([[i for i in discarded[1]]; row]))
+    sign = 1
+    for col in 1:n
         if !(col in discarded[2])
-            dis_cols = Tuple(sort([[i for i in discarded[2]]; col]));
-            result += sign * m[row, col] * det_minor_expansion_inner(m, (dis_rows, dis_cols), cache);
-            sign = -1 * sign;
+            dis_cols = Tuple(sort([[i for i in discarded[2]]; col]))
+            result += sign * m[row, col] * det_minor_expansion_inner(m, (dis_rows, dis_cols), cache)
+            sign = -1 * sign
         end
     end
     if length(discarded[1]) > 1
-        cache[discarded] = result;
+        cache[discarded] = result
     end
     if length(discarded[1]) < 3
         @debug "Discarded: $discarded; $(Dates.now())"
         flush(stdout)
     end
-    return result;
+    return result
 end
 
-function det_minor_expansion(m::MatElem{T}) where T <: RingElem
-    cache = Dict{PairIntTuples,T}();
-    return det_minor_expansion_inner(m, (Tuple{}(), Tuple{}()), cache);
+function det_minor_expansion(m::MatElem{T}) where {T<:RingElem}
+    cache = Dict{PairIntTuples,T}()
+    return det_minor_expansion_inner(m, (Tuple{}(), Tuple{}()), cache)
 end
 
 # ------------------------------------------------------------------------------
@@ -55,7 +53,7 @@ Inputs:
 Output:
 - `M::MatrixElem` - The Bezout matrix
 """
-function Bezout_matrix(f::P, g::P, var_elim::P) where P <: MPolyElem
+function Bezout_matrix(f::P, g::P, var_elim::P) where {P<:MPolyElem}
     parent_ring = parent(f)
     deg_f = Nemo.degree(f, var_elim)
     deg_g = Nemo.degree(g, var_elim)
@@ -66,7 +64,8 @@ function Bezout_matrix(f::P, g::P, var_elim::P) where P <: MPolyElem
     M = zero(GL)
     for i in 1:n
         for j in 1:n
-            M[i, j] = sum(coeffs_f[j + k + 1] * coeffs_g[i - k] - coeffs_g[j + k + 1] * coeffs_f[i - k] for k in 0:min(i - 1, n - j))
+            M[i, j] = sum(coeffs_f[j + k + 1] * coeffs_g[i - k] -
+                          coeffs_g[j + k + 1] * coeffs_f[i - k] for k in 0:min(i - 1, n - j))
         end
     end
     return M
@@ -85,7 +84,7 @@ Inputs:
 Output:
 - `M::MatrixElem` - The Sylvester matrix
 """
-function Sylvester_matrix(f::P, g::P, var_elim::P) where P <: MPolyElem
+function Sylvester_matrix(f::P, g::P, var_elim::P) where {P<:MPolyElem}
     parent_ring = parent(f)
     deg_f = Nemo.degree(f, var_elim)
     deg_g = Nemo.degree(g, var_elim)
@@ -120,7 +119,7 @@ Output:
 - `M::MatrixElem` - Simplified matrix
 - `extra_factors::Vector{AbstractAlgebra.MPolyElem}` - array of GCDs eliminated from `M`.
 """
-function simplify_matrix(M::MatElem{P}) where P <: MPolyElem
+function simplify_matrix(M::MatElem{P}) where {P<:MPolyElem}
     """
     An auxiliary function taking a list of coordinates of cells
     and dividing them by their gcd.
@@ -179,10 +178,10 @@ mutable struct ODEPointGenerator{P} <: PointGenerator{P}
     ode::ODE{P}
     big_ring::MPolyRing
     precision::Int
-    cached_points::Array{Dict{P,<: FieldElem},1}
+    cached_points::Array{Dict{P,<:FieldElem},1}
     number_type::Type
 
-    function ODEPointGenerator{P}(ode::ODE{P}, big_ring::MPolyRing) where P <: MPolyElem
+    function ODEPointGenerator{P}(ode::ODE{P}, big_ring::MPolyRing) where {P<:MPolyElem}
         prec = length(ode.x_vars) + 1
         number_type = typeof(one(base_ring(big_ring)))
         return new(ode, big_ring, prec, Array{Dict{P,number_type}}[], number_type)
@@ -191,7 +190,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-function Base.iterate(gpg::ODEPointGenerator{P}, i::Int=1) where P <: MPolyElem{<: FieldElem}
+function Base.iterate(gpg::ODEPointGenerator{P}, i::Int = 1) where {P<:MPolyElem{<:FieldElem}}
     if i > length(gpg.cached_points)
         @debug "Generating new point on the variety"
         sample_max = i * 50
@@ -202,12 +201,14 @@ function Base.iterate(gpg::ODEPointGenerator{P}, i::Int=1) where P <: MPolyElem{
             base_field = base_ring(gpg.big_ring)
             param_values = Dict{P,Int}(p => rand(1:sample_max) for p in gpg.ode.parameters)
             initial_conditions = Dict{P,Int}(x => rand(1:sample_max) for x in gpg.ode.x_vars)
-            input_values = Dict{P,Array{Int,1}}(u => [rand(1:sample_max) for _ in 1:gpg.precision] for u in gpg.ode.u_vars)
+            input_values = Dict{P,Array{Int,1}}(u => [rand(1:sample_max) for _ in 1:(gpg.precision)]
+                                                for u in gpg.ode.u_vars)
             @debug "Computing a power series solution"
             flush(stdout)
             ps_solution = undef
             try
-                ps_solution = power_series_solution(gpg.ode, param_values, initial_conditions, input_values, gpg.precision)
+                ps_solution = power_series_solution(gpg.ode, param_values, initial_conditions,
+                                                    input_values, gpg.precision)
             catch e
                 @debug "$e"
                 flush(stdout)
@@ -216,15 +217,20 @@ function Base.iterate(gpg::ODEPointGenerator{P}, i::Int=1) where P <: MPolyElem{
 
             @debug "Constructing the point"
             flush(stdout)
-            result = Dict{P,gpg.number_type}(switch_ring(p, gpg.big_ring) => base_field(c) for (p, c) in param_values)
+            result = Dict{P,gpg.number_type}(switch_ring(p, gpg.big_ring) => base_field(c)
+                                             for (p, c) in param_values)
             for u in gpg.ode.u_vars
                 for i in 0:(gpg.precision - 1)
-                    result[str_to_var(var_to_str(u) * "_$i", gpg.big_ring)] = coeff(ps_solution[u], i) * factorial(big(i))
+                    result[str_to_var(var_to_str(u) * "_$i", gpg.big_ring)] = coeff(ps_solution[u],
+                                                                                    i) *
+                                                                              factorial(big(i))
                 end
             end
             for y in gpg.ode.y_vars
                 for j in 0:(gpg.precision - 1)
-                    result[str_to_var(var_to_str(y) * "_$j", gpg.big_ring)] = coeff(ps_solution[y], j) * factorial(big(j))
+                    result[str_to_var(var_to_str(y) * "_$j", gpg.big_ring)] = coeff(ps_solution[y],
+                                                                                    j) *
+                                                                              factorial(big(j))
                 end
             end
             for x in gpg.ode.x_vars
@@ -238,7 +244,6 @@ function Base.iterate(gpg::ODEPointGenerator{P}, i::Int=1) where P <: MPolyElem{
     return (gpg.cached_points[i], i + 1)
 end
 
-
 # ------------------------------------------------------------------------------
 
 """
@@ -251,7 +256,7 @@ Input:
 Output:
 - the polynomial that vanishes at the `generic_point_generator`
 """
-function choose(polys::Array{P,1}, generic_point_generator) where P <: MPolyElem{<: FieldElem}
+function choose(polys::Array{P,1}, generic_point_generator) where {P<:MPolyElem{<:FieldElem}}
     vars = gens(parent(polys[1]))
     for p in generic_point_generator
         if length(polys) <= 1
@@ -281,7 +286,8 @@ Input:
 Output:
 - `polynomial` - the desired factor of the resultant of `f` and `g`
 """
-function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P <: MPolyElem{<: FieldElem}
+function eliminate_var(f::P, g::P, var_elim::P,
+                       generic_point_generator) where {P<:MPolyElem{<:FieldElem}}
     # Linear comb
     while f != 0 && g != 0
         if Nemo.degree(f, var_elim) > Nemo.degree(g, var_elim)
@@ -307,7 +313,7 @@ function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P
             break
         end
     end
-    
+
     if f == 0 || g == 0
         return f + g
     end
@@ -321,7 +327,7 @@ function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P
     end
     for d in 0:Nemo.degree(g, var_elim)
         if coeff(g, [var_elim], [d]) != 0
-            push!(list_deg, d) 
+            push!(list_deg, d)
         end
     end
     gcd_deg = list_deg[1]
@@ -329,8 +335,10 @@ function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P
         gcd_deg = gcd(gcd_deg, ele)
     end
     if gcd_deg > 1
-        f = sum(coeff(f, [var_elim], [gcd_deg * i]) * (var_elim^i) for i in 0:(Nemo.degree(f, var_elim) ÷ gcd_deg))
-        g = sum(coeff(g, [var_elim], [gcd_deg * i]) * (var_elim^i) for i in 0:(Nemo.degree(g, var_elim) ÷ gcd_deg))
+        f = sum(coeff(f, [var_elim], [gcd_deg * i]) * (var_elim^i)
+                for i in 0:(Nemo.degree(f, var_elim) ÷ gcd_deg))
+        g = sum(coeff(g, [var_elim], [gcd_deg * i]) * (var_elim^i)
+                for i in 0:(Nemo.degree(g, var_elim) ÷ gcd_deg))
     end
 
     resultant = undef
@@ -354,7 +362,7 @@ function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P
         M_size = zero(Nemo.MatrixSpace(Nemo.ZZ, ncols(M_simp), ncols(M_simp)))
         for i in 1:ncols(M_simp)
             for j in 1:ncols(M_simp)
-                M_size[i,j] = length(M_simp[i,j])
+                M_size[i, j] = length(M_simp[i, j])
             end
         end
         @debug "\t Matrix size: \n $M_size"

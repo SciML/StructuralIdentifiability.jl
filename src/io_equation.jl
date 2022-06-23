@@ -1,35 +1,32 @@
 # ------------------------------------------------------------------------------
 
-function generator_var_change(generator, var::P, numer::P, denom::P) where P <: MPolyElem
-    return IterTools.imap(
-        point -> begin
-            result = copy(point)
-            result[var] = eval_at_dict(numer, point) // eval_at_dict(denom, point)
-            return result
-    end, Iterators.filter(point -> eval_at_dict(denom, point) != 0, generator)
-    )
+function generator_var_change(generator, var::P, numer::P, denom::P) where {P<:MPolyElem}
+    return IterTools.imap(point -> begin
+                              result = copy(point)
+                              result[var] = eval_at_dict(numer, point) // eval_at_dict(denom, point)
+                              return result
+                          end,
+                          Iterators.filter(point -> eval_at_dict(denom, point) != 0, generator))
 end
 
 # ------------------------------------------------------------------------------
 
-function diff_poly(poly::P, derivation::Dict{P,P}) where P <: MPolyElem
+function diff_poly(poly::P, derivation::Dict{P,P}) where {P<:MPolyElem}
     return sum(derivative(poly, x) * xd for (x, xd) in derivation)
 end
 
 # ------------------------------------------------------------------------------
 
-function generate_io_equation_problem(ode::ODE{P}) where P <: MPolyElem{<: FieldElem}
+function generate_io_equation_problem(ode::ODE{P}) where {P<:MPolyElem{<:FieldElem}}
     dim_x = length(ode.x_vars)
 
     # Creating a ring
     old_vars = map(string, gens(ode.poly_ring))
-    var_names = vcat(
-        old_vars,
-        [var_to_str(x) * "_dot" for x in ode.x_vars],
-        [var_to_str(y) * "_$i" for i in 0:dim_x for y in ode.y_vars],
-        [var_to_str(u) * "_$i" for i in 0:dim_x for u in ode.u_vars],
-        ["rand_proj_var"]
-    )
+    var_names = vcat(old_vars,
+                     [var_to_str(x) * "_dot" for x in ode.x_vars],
+                     [var_to_str(y) * "_$i" for i in 0:dim_x for y in ode.y_vars],
+                     [var_to_str(u) * "_$i" for i in 0:dim_x for u in ode.u_vars],
+                     ["rand_proj_var"])
     ring, ring_vars = Nemo.PolynomialRing(base_ring(ode.poly_ring), var_names)
 
     # Definiting a (partial) derivation on it
@@ -39,12 +36,14 @@ function generate_io_equation_problem(ode::ODE{P}) where P <: MPolyElem{<: Field
     end
     for i in 0:(dim_x - 1)
         for y in ode.y_vars
-            derivation[str_to_var(var_to_str(y) * "_$i", ring)] = str_to_var(var_to_str(y) * "_$(i + 1)", ring)
+            derivation[str_to_var(var_to_str(y) * "_$i", ring)] = str_to_var(var_to_str(y) *
+                                                                             "_$(i + 1)", ring)
         end
     end
     for u in ode.u_vars
         for i in 0:(dim_x - 1)
-            derivation[str_to_var(var_to_str(u) * "_$i", ring)] = str_to_var(var_to_str(u) * "_$(i + 1)", ring)
+            derivation[str_to_var(var_to_str(u) * "_$i", ring)] = str_to_var(var_to_str(u) *
+                                                                             "_$(i + 1)", ring)
         end
     end
 
@@ -85,10 +84,8 @@ Input:
 Output:
 - a dictionary from "leaders" to the corresponding input-output equations
 """
-function find_ioequations(
-        ode::ODE{P}; 
-        var_change_policy=:default
-    ) where P <: MPolyElem{<: FieldElem}
+function find_ioequations(ode::ODE{P};
+                          var_change_policy = :default) where {P<:MPolyElem{<:FieldElem}}
     # Setting the var_change policy
     if (var_change_policy == :yes) || (var_change_policy == :default && length(ode.y_vars) < 3)
         auto_var_change = true
@@ -102,9 +99,10 @@ function find_ioequations(
     # Initialization
     ring, derivation, x_equations, y_equations, point_generator = generate_io_equation_problem(ode)
     y_orders = Dict(y => 0 for y in keys(y_equations))
- 
-    while true        
-        var_degs = [(y, [Nemo.degree(eq, x) for x in keys(x_equations) if Nemo.degree(eq, x) > 0]) for (y, eq) in y_equations]
+
+    while true
+        var_degs = [(y, [Nemo.degree(eq, x) for x in keys(x_equations) if Nemo.degree(eq, x) > 0])
+                    for (y, eq) in y_equations]
         filter!(d -> length(d[2]) > 0, var_degs)
         if isempty(var_degs)
             break
@@ -114,15 +112,12 @@ function find_ioequations(
         @debug "Sizes: $(Dict(y => length(eq) for (y, eq) in y_equations))"
 
         # choosing the output to prolong
-        outputs_with_scores = [
-            (
-                min(d[2]...) * length(y_equations[d[1]]),
-                min(d[2]...),
-                -count(x -> x == min(d[2]...), d[2]) + length(y_equations[d[1]]) // 30,
-                length(y_equations[d[1]]),
-                d[1]
-            ) for d in var_degs 
-        ]
+        outputs_with_scores = [(min(d[2]...) * length(y_equations[d[1]]),
+                                min(d[2]...),
+                                -count(x -> x == min(d[2]...), d[2]) +
+                                length(y_equations[d[1]]) // 30,
+                                length(y_equations[d[1]]),
+                                d[1]) for d in var_degs]
         @debug "Scores: $outputs_with_scores"
         y_prolong = sort(outputs_with_scores)[1][end]
         y_orders[y_prolong] += 1
@@ -143,27 +138,28 @@ function find_ioequations(
                 @debug "Eliminating the leader of the equation for $y"
                 flush(stdout)
                 # an ugly way of gettin the leader, to replace
-                next_y_equation = eliminate_var(
-                    next_y_equation, eq, 
-                    str_to_var(var_to_str(y)[1:end - 2] * "_$(y_orders[y])", ring), 
-                    point_generator
-                )
+                next_y_equation = eliminate_var(next_y_equation, eq,
+                                                str_to_var(var_to_str(y)[1:(end - 2)] *
+                                                           "_$(y_orders[y])", ring),
+                                                point_generator)
             end
         end
-        
+
         # Choose variable to eliminate
-        var_degs_next = [(Nemo.degree(y_equations[y_prolong], x), Nemo.degree(next_y_equation, x), x) for x in keys(x_equations) if Nemo.degree(y_equations[y_prolong], x) > 0]
+        var_degs_next = [(Nemo.degree(y_equations[y_prolong], x), Nemo.degree(next_y_equation, x),
+                          x)
+                         for x in keys(x_equations) if Nemo.degree(y_equations[y_prolong], x) > 0]
         our_choice = sort(var_degs_next)[1]
         var_elim_deg, var_elim = our_choice[1], our_choice[3]
-        
+
         @debug "Elimination of $var_elim, $(length(x_equations)) left; $(Dates.now())"
         flush(stdout)
-        
+
         # Possible variable change for Axy + Bx + p(y) (x = var_elim)
         if auto_var_change && (var_elim_deg == 1)
             Ay_plus_B = coeff(y_equations[y_prolong], [var_elim], [1])
             for x in setdiff(keys(x_equations), [var_elim])
-                if Nemo.degree(Ay_plus_B, x) == 1                      
+                if Nemo.degree(Ay_plus_B, x) == 1
                     A, B = divrem(Ay_plus_B, x)
                     A, B = simplify_frac(A, B)
                     if isempty(filter!(v -> (v in keys(x_equations)), vars(A))) && (B != 0) # && (length(coeffs(A))==1) 
@@ -174,17 +170,18 @@ function find_ioequations(
                         dA = diff_poly(A, derivation)
                         numer_d, denom_d = simplify_frac(A * dB - dA * B, A * A)
                         # !!!push x_i_dot first, otherwise there will be problem with plugin!!!
-                        point_generator = generator_var_change(
-                            point_generator, 
-                            derivation[x], 
-                            derivation[x] * denom_d + numer_d, denom_d
-                        )
+                        point_generator = generator_var_change(point_generator,
+                                                               derivation[x],
+                                                               derivation[x] * denom_d + numer_d,
+                                                               denom_d)
                         point_generator = generator_var_change(point_generator, x, A * x + B, A)
 
                         # Change current system
                         @debug "Change in the system"
                         flush(stdout)
-                        x_equations[x] = make_substitution(x_equations[x], derivation[x], denom_d * derivation[x] - numer_d, denom_d)
+                        x_equations[x] = make_substitution(x_equations[x], derivation[x],
+                                                           denom_d * derivation[x] - numer_d,
+                                                           denom_d)
                         for xx in keys(x_equations)
                             @debug "\t Change in the equation for $xx"
                             flush(stdout)
@@ -206,16 +203,17 @@ function find_ioequations(
                         for xx in setdiff(keys(x_equations), [x])
                             @debug "\t Unmixing $xx"
                             flush(stdout)
-                            x_equations[x] = eliminate_var(x_equations[x], x_equations[xx], derivation[xx], point_generator)
+                            x_equations[x] = eliminate_var(x_equations[x], x_equations[xx],
+                                                           derivation[xx], point_generator)
                         end
                         @debug "Change of variables performed"
                         flush(stdout)
                         break
                     end
                 end
-            end  
+            end
         end
-   
+
         # Eliminate var_elim from the system
         delete!(x_equations, var_elim)
         @debug "Elimination in states"
@@ -231,18 +229,21 @@ function find_ioequations(
             if y != y_prolong
                 @debug "Elimination in the output $y"
                 flush(stdout)
-                y_equations[y] = eliminate_var(y_equations[y], y_equations[y_prolong], var_elim, point_generator)
+                y_equations[y] = eliminate_var(y_equations[y], y_equations[y_prolong], var_elim,
+                                               point_generator)
             end
         end
         @debug "\t Elimination in the prolonged equation"
         flush(stdout)
-        y_equations[y_prolong] = eliminate_var(y_equations[y_prolong], next_y_equation, var_elim, point_generator)
+        y_equations[y_prolong] = eliminate_var(y_equations[y_prolong], next_y_equation, var_elim,
+                                               point_generator)
     end
 
-    io_equations = Dict(str_to_var(var_to_str(y)[1:end - 2] * "_$(y_orders[y])", ring) => p for (y, p) in y_equations)
+    io_equations = Dict(str_to_var(var_to_str(y)[1:(end - 2)] * "_$(y_orders[y])", ring) => p
+                        for (y, p) in y_equations)
 
     @debug "Check whether the original projections are enough"
-    if length(io_equations) == 1 || check_primality(io_equations) 
+    if length(io_equations) == 1 || check_primality(io_equations)
         @debug "The projections generate an ideal with a single components of highest dimension, returning"
         return io_equations
     end

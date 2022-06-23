@@ -22,34 +22,30 @@ function rand_poly(deg, vars)
 end
 
 @testset "Power series solution for an ODE system" begin
-
     R, (x, x_dot) = Nemo.PolynomialRing(Nemo.QQ, ["x", "x_dot"])
-    exp_t = ps_ode_solution([x_dot - x], Dict{fmpq_mpoly,fmpq}(x => 1), Dict{fmpq_mpoly,Array{fmpq,1}}(), 20)[x]
+    exp_t = ps_ode_solution([x_dot - x], Dict{fmpq_mpoly,fmpq}(x => 1),
+                            Dict{fmpq_mpoly,Array{fmpq,1}}(), 20)[x]
     @test valuation(ps_diff(exp_t) - exp_t) == 19
 
     R, (x, y, x_dot, y_dot, u) = Nemo.PolynomialRing(Nemo.QQ, ["x", "y", "x_dot", "y_dot", "u"])
     prec = 100
-    eqs = [
-        x_dot - x + 3 * x * y - u,
-        y_dot + 2 * y - 4 * x * y
-    ]
+    eqs = [x_dot - x + 3 * x * y - u,
+           y_dot + 2 * y - 4 * x * y]
     u_coeff = [rand(1:5) for i in 1:prec]
     sol = ps_ode_solution(eqs, Dict(x => 0, y => -2), Dict(u => u_coeff), prec)
     @test map(e -> valuation(evaluate(e, [sol[v] for v in gens(R)])), eqs) == [prec - 1, prec - 1]
 
     F = Nemo.GF(2^31 - 1)
     prec = 100
-    
+
     # Testing the function ps_ode_solution by itself
     for i in 1:30
         # Setting up the ring
         NUMX = 5
         NUMU = 3
-        varnames = vcat(
-            ["x_$(i)_dot" for i in 1:NUMX],
-            ["x_$i" for i in 1:NUMX],
-            ["u_$i" for i in 1:NUMU],
-        )
+        varnames = vcat(["x_$(i)_dot" for i in 1:NUMX],
+                        ["x_$i" for i in 1:NUMX],
+                        ["u_$i" for i in 1:NUMU])
         R, vars = Nemo.PolynomialRing(F, varnames)
 
         # Generating the initial conditions and inputs
@@ -78,11 +74,9 @@ end
         NUMX = 3
         NUMP = 3
         NUMU = 2
-        varnames = vcat(
-            ["x_$i" for i in 1:NUMX],
-            ["p_$i" for i in 1:NUMP],
-            ["u_$i" for i in 1:NUMU],
-        )
+        varnames = vcat(["x_$i" for i in 1:NUMX],
+                        ["p_$i" for i in 1:NUMP],
+                        ["u_$i" for i in 1:NUMU])
         R, vars = Nemo.PolynomialRing(F, varnames)
         PType = gfp_mpoly
         TDict = Dict{PType,Union{PType,Generic.Frac{PType}}}
@@ -114,5 +108,4 @@ end
             @test valuation(lhs - rhs) >= prec - 1
         end
     end
-
 end

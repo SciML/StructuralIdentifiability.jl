@@ -92,12 +92,14 @@ and return a list of the same length with each element being one of `:nonidentif
 If `funcs_to_check` are not given, the function will assess identifiability of the parameters, and the result will
 be a dictionary from the parameters to their identifiability properties (again, one of `:nonidentifiable`, `:locally`, `:globally`).
 """
-function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}, p::Float64 = 0.99) where {P<:MPolyElem{fmpq}}
+function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1},
+                                p::Float64 = 0.99) where {P<:MPolyElem{fmpq}}
     p_glob = 1 - (1 - p) * 0.9
     p_loc = 1 - (1 - p) * 0.1
 
     @info "Assessing local identifiability"
-    runtime = @elapsed local_result, bound = assess_local_identifiability(ode, funcs_to_check, p_loc, :ME)
+    runtime = @elapsed local_result, bound = assess_local_identifiability(ode, funcs_to_check,
+                                                                          p_loc, :ME)
     @info "Local identifiability assessed in $runtime seconds"
     _runtime_logger[:loc_time] = runtime
 
@@ -115,11 +117,12 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
     end
 
     @info "Assessing global identifiability"
-    runtime = @elapsed global_result = assess_global_identifiability(ode, locally_identifiable, p_glob)
+    runtime = @elapsed global_result = assess_global_identifiability(ode, locally_identifiable,
+                                                                     p_glob)
     @info "Global identifiability assessed in $runtime seconds"
     _runtime_logger[:glob_time] = runtime
 
-    result = Dict{Any, Symbol}()
+    result = Dict{Any,Symbol}()
     glob_ind = 1
     for i in 1:length(funcs_to_check)
         if !local_result[funcs_to_check[i]]
@@ -149,11 +152,14 @@ Assesses identifiability (both local and global) of a given ODE model (parameter
 at least `p`.
 
 """
-function assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], p = 0.99)
-    if length(measured_quantities)==0 
+function assess_identifiability(ode::ModelingToolkit.ODESystem;
+                                measured_quantities = Array{ModelingToolkit.Equation}[],
+                                funcs_to_check = [], p = 0.99)
+    if length(measured_quantities) == 0
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
             @info "Measured quantities are not provided, trying to find the outputs in input ODE."
-            measured_quantities = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(ode))
+            measured_quantities = filter(eq -> (ModelingToolkit.isoutput(eq.lhs)),
+                                         ModelingToolkit.equations(ode))
         else
             throw(error("Measured quantities (output functions) were not provided and no outputs were found."))
         end
@@ -169,6 +175,5 @@ function assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantit
     out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     return out_dict
 end
-
 
 end
