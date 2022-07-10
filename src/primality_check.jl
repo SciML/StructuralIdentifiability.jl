@@ -18,7 +18,7 @@ function check_primality_zerodim(J::Singular.sideal{Singular.spoly{Singular.n_Q}
         push!(matrices, M)
     end
     generic_multiplication = sum(rand(1:100) * M for M in matrices)
-    return isirreducible(Nemo.charpoly(generic_multiplication))
+    return Nemo.isirreducible(Nemo.charpoly(generic_multiplication))
 end
 
 #------------------------------------------------------------------------------

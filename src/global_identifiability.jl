@@ -75,13 +75,31 @@ function check_field_membership(
         )
         # common_pivot = lcm(parent_ring_change(pivot, ring_sing), common_pivot)
     end
-    eqs = [a for a in eqs if !iszero(a)]
+   
+    # point_fmpq = [fmpq(x) for x in point]
+    # for pivot in pivots
+    #     push!(point_fmpq, 1 // evaluate(ring(pivot), point))
+    # end
+    # shift = [x - v for (x, v) in zip(vars_ext, point_fmpq)]
+
+    # @debug "Lengths $(length(shift)), $(length(vars_ext))"
+
+    # eqs = [evaluate(a, shift) for a in eqs if !iszero(a)]
     # push!(eqs_sing, common_pivot * vars_sing[end] - 1)
+
+    eqs = [e for e in eqs if !iszero(e)]
+    @debug "VARS $(vars_ext)"
+    @debug "GB $eqs"
 
     @debug "Computing Groebner basis ($(length(eqs)) equations)"
     flush(stdout)
-    gb = groebner(eqs; certify=true)
-    @debug gb
+    # to uncomment certify
+    # gb = groebner(eqs; certify=true, linalg=:prob)
+    gb_loglevel = Logging.Warn
+    if Logging.min_enabled_level(Logging.current_logger()) == Logging.Debug
+        gb_loglevel = Logging.Debug
+    end
+    gb = groebner(eqs; linalg=:prob, loglevel=gb_loglevel)
     if isequal(one(ring_ext), gb[1])
         @error "The Groebner basis computation resulted in the unit ideal. This is an incorrect result, 
         please, run the code again. Sorry for the inconvenience"
@@ -95,6 +113,7 @@ function check_field_membership(
         num, den = unpack_fraction(f)
         poly = num * evaluate(den, point) - den * evaluate(num, point)
         poly_ext = parent_ring_change(poly, ring_ext)
+	# poly_ext = evaluate(poly_ext, shift)
         push!(result, iszero(normalform(gb, poly_ext)))
     end
     return result
