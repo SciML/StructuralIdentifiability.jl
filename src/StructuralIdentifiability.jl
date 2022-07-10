@@ -15,7 +15,6 @@ using AbstractAlgebra
 using Hecke
 using Nemo
 using Groebner
-using Singular
 
 # For testing (TODO: move to the test-specific dependencies)
 using Test
