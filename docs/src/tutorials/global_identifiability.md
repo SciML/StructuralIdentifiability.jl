@@ -35,5 +35,11 @@ global_id = assess_identifiability(ode, 0.99)
 
 We also note that it's usually inexpensive to obtain the result with higher probability of correctness. For example, taking `p=0.9999` in the system above will result only in a slight slowdown.
 
+## Note on the probability of correctness
+
+Currently, the probability of correctness does not include the probability of correctness of the modular reconstruction for Groebner bases. 
+This probability is ensured by additional check modulo a large prime and can be neglected for practical purposes. However, in the future versions, we plan to 
+eliminate this possible error.
+
 [^1]:
     > D. Wodarz, M. Nowak, [*Specific therapy regimes could lead to long-term immunological control of HIV*](https://doi.org/10.1073/pnas.96.25.14464), PNAS December 7, 1999 96 (25) 14464-14469;
