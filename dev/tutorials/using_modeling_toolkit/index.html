@@ -73,7 +73,7 @@ Parameters (8):
  y1(t) ~ C(t)
  y2(t) ~ N_inv</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @time global_id = assess_identifiability(ode, measured_quantities=measured_quantities)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Preproccessing `ModelingToolkit.ODESystem` object
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.078168104 seconds
+[ Info: Local identifiability assessed in 0.071077811 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
 [ Info: Computing in lex order, result is in lex order
@@ -93,20 +93,18 @@ Parameters (8):
 [ Info: 4: selected lucky prime 2147483713
 [ Info: CRT modulo (9903520567925774155444649489, 2147483713)
 [ Info: Reconstructing modulo 21267649120981110191733715050621272657
+[ Info: Heuristic check failed.
 [ Info: 5: selected lucky prime 2147483743
 [ Info: CRT modulo (21267649120981110191733715050621272657, 2147483743)
 [ Info: Reconstructing modulo 45671930739135174346839766056203605080877915151
-[ Info: Heuristic check failed.
 [ Info: 6: selected lucky prime 2147483777
 [ Info: CRT modulo (45671930739135174346839766056203605080877915151, 2147483777)
 [ Info: Reconstructing modulo 98079730326560405919904968824172512120100095704355005327
-[ Info: Heuristic check failed.
 [ Info: 7: selected lucky prime 2147483783
 [ Info: CRT modulo (98079730326560405919904968824172512120100095704355005327, 2147483783)
 [ Info: 8: selected lucky prime 2147483813
 [ Info: CRT modulo (210624630317301765882893117451031048172285903861850336414611112041, 2147483813)
 [ Info: Reconstructing modulo 452312984225514596069828623335196996110407213751397785678981819797976892333
-[ Info: Heuristic check failed.
 [ Info: 9: selected lucky prime 2147483857
 [ Info: CRT modulo (452312984225514596069828623335196996110407213751397785678981819797976892333, 2147483857)
 [ Info: 10: selected lucky prime 2147483867
@@ -163,17 +161,17 @@ Parameters (8):
 [ Info: Using fglm: false
 [ Info: Computing in lex order, result is in lex order
 [ Info: Using fglm: false
-┌ Info: Computed in 27.095434926 seconds
+┌ Info: Computed in 25.378725949 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 27.095434926
+└   ioeq_time = 25.378725949
 [ Info: Computing Wronskians
-┌ Info: Computed in 15.77895896 seconds
+┌ Info: Computed in 15.363895524 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 15.77895896
+└   wrnsk_time = 15.363895524
 [ Info: Dimensions of the wronskians [1282, 2]
-┌ Info: Ranks of the Wronskians computed in 0.396679086 seconds
+┌ Info: Ranks of the Wronskians computed in 0.443491658 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.396679086
+└   rank_times = 0.443491658
 [ Info: Assessing global identifiability using the coefficients of the io-equations
 [ Info: Computing in degrevlex order, result is in degrevlex order
 [ Info: Using fglm: false
@@ -288,11 +286,11 @@ Parameters (8):
 [ Info: Using fglm: false
 [ Info: Computing in degrevlex order, result is in degrevlex order
 [ Info: Using fglm: false
-┌ Info: Computed in 31.782917336 seconds
+┌ Info: Computed in 29.582356083 seconds
 │   :check_time = :check_time
-└   check_time = 31.782917336
-[ Info: Global identifiability assessed in 75.054738316 seconds
- 79.978580 seconds (196.66 M allocations: 18.853 GiB, 13.12% gc time, 6.65% compilation time)
+└   check_time = 29.582356083
+[ Info: Global identifiability assessed in 70.769074915 seconds
+ 75.673982 seconds (196.49 M allocations: 18.902 GiB, 13.11% gc time, 7.03% compilation time)
 Dict{SymbolicUtils.Sym{Real, Base.ImmutableDict{DataType, Any}}, Symbol} with 8 entries:
   r     =&gt; :nonidentifiable
   N_inv =&gt; :globally
