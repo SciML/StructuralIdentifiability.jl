@@ -73,7 +73,7 @@ Parameters (8):
  y1(t) ~ C(t)
  y2(t) ~ N_inv</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @time global_id = assess_identifiability(ode, measured_quantities=measured_quantities)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Preproccessing `ModelingToolkit.ODESystem` object
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.163925825 seconds
+[ Info: Local identifiability assessed in 0.078168104 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
 [ Info: Computing in lex order, result is in lex order
@@ -96,9 +96,11 @@ Parameters (8):
 [ Info: 5: selected lucky prime 2147483743
 [ Info: CRT modulo (21267649120981110191733715050621272657, 2147483743)
 [ Info: Reconstructing modulo 45671930739135174346839766056203605080877915151
+[ Info: Heuristic check failed.
 [ Info: 6: selected lucky prime 2147483777
 [ Info: CRT modulo (45671930739135174346839766056203605080877915151, 2147483777)
 [ Info: Reconstructing modulo 98079730326560405919904968824172512120100095704355005327
+[ Info: Heuristic check failed.
 [ Info: 7: selected lucky prime 2147483783
 [ Info: CRT modulo (98079730326560405919904968824172512120100095704355005327, 2147483783)
 [ Info: 8: selected lucky prime 2147483813
@@ -161,17 +163,17 @@ Parameters (8):
 [ Info: Using fglm: false
 [ Info: Computing in lex order, result is in lex order
 [ Info: Using fglm: false
-┌ Info: Computed in 27.063786649 seconds
+┌ Info: Computed in 27.095434926 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 27.063786649
+└   ioeq_time = 27.095434926
 [ Info: Computing Wronskians
-┌ Info: Computed in 17.251496437 seconds
+┌ Info: Computed in 15.77895896 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 17.251496437
+└   wrnsk_time = 15.77895896
 [ Info: Dimensions of the wronskians [1282, 2]
-┌ Info: Ranks of the Wronskians computed in 0.41330023 seconds
+┌ Info: Ranks of the Wronskians computed in 0.396679086 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.41330023
+└   rank_times = 0.396679086
 [ Info: Assessing global identifiability using the coefficients of the io-equations
 [ Info: Computing in degrevlex order, result is in degrevlex order
 [ Info: Using fglm: false
@@ -286,11 +288,11 @@ Parameters (8):
 [ Info: Using fglm: false
 [ Info: Computing in degrevlex order, result is in degrevlex order
 [ Info: Using fglm: false
-┌ Info: Computed in 39.701544492 seconds
+┌ Info: Computed in 31.782917336 seconds
 │   :check_time = :check_time
-└   check_time = 39.701544492
-[ Info: Global identifiability assessed in 84.430997632 seconds
- 89.776435 seconds (196.04 M allocations: 18.772 GiB, 14.49% gc time, 6.36% compilation time)
+└   check_time = 31.782917336
+[ Info: Global identifiability assessed in 75.054738316 seconds
+ 79.978580 seconds (196.66 M allocations: 18.853 GiB, 13.12% gc time, 6.65% compilation time)
 Dict{SymbolicUtils.Sym{Real, Base.ImmutableDict{DataType, Any}}, Symbol} with 8 entries:
   r     =&gt; :nonidentifiable
   N_inv =&gt; :globally
@@ -299,4 +301,4 @@ Dict{SymbolicUtils.Sym{Real, Base.ImmutableDict{DataType, Any}}, Symbol} with 8 
   q     =&gt; :nonidentifiable
   g2    =&gt; :globally
   k     =&gt; :globally
-  b     =&gt; :globally</code></pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>K. Roosa and G. Chowell. <a href="https://doi.org/10.1186/s12976-018-0097-6"><em>Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models</em></a>, Theor Biol Med Model 16, 1 (2019)</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../global_identifiability/">« Global Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../../input/input/">Parsing input ODE system »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.20 on <span class="colophon-date" title="Monday 11 July 2022 23:23">Monday 11 July 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  b     =&gt; :globally</code></pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>K. Roosa and G. Chowell. <a href="https://doi.org/10.1186/s12976-018-0097-6"><em>Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models</em></a>, Theor Biol Med Model 16, 1 (2019)</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../global_identifiability/">« Global Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../../input/input/">Parsing input ODE system »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.21 on <span class="colophon-date" title="Saturday 16 July 2022 07:15">Saturday 16 July 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
