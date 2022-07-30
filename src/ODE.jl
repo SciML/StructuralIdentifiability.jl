@@ -197,13 +197,16 @@ end
 
 #------------------------------------------------------------------------------
 
-function macrohelper_extract_vars(equations::Array{Expr, 1})
+function macrohelper_extract_vars(equations::Array{Expr, 1}, ders_ok::Bool=false)
     funcs, x_vars, all_symb = Set(), Set(), Set()
     aux_symb = Set([:(+), :(-), :(=), :(*), :(^), :t, :(/), :(//)])
     for eq in equations
         MacroTools.postwalk(
             x -> begin 
-                if @capture(x, f_'(t)) 
+                if @capture(x, f_'(t))
+		    if !ders_ok
+                        throw(Base.ArgumentError("Derivative are not allowed in the right-hand side"))
+		    end
                     push!(x_vars, f)
                     push!(all_symb, f)
                 elseif @capture(x, f_(t))
@@ -250,7 +253,7 @@ ode = @ODEmodel(
 """
 macro ODEmodel(ex::Expr...)
     equations = [ex...]
-    x_vars, io_vars, all_symb = macrohelper_extract_vars(equations)
+    x_vars, io_vars, all_symb = macrohelper_extract_vars(equations; ders_ok=True)
    
     # creating the polynomial ring
     vars_list = :([$(all_symb...)])
