@@ -62,14 +62,14 @@
     @test isequal(correct, assess_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=funcs_to_check))
 
     # --------------------------------------------------------------------------
-    @parameters mu bi bw a xi gm k
+    @parameters μ bi bw a χ  γ k
     @variables t S(t) I(t) W(t) R(t) y(t)
 
     eqs = [
-        D(S) ~ mu - bi * S * I - bw * S * W - mu * S + a * R,
-        D(I) ~ bw * S * W + bi * S * I - (gm + mu) * I,
-        D(W) ~ xi * (I - W),
-        D(R) ~ gm * I - (mu + a) * R
+        D(S) ~ μ - bi * S * I - bw * S * W - μ * S + a * R,
+        D(I) ~ bw * S * W + bi * S * I - (γ + μ) * I,
+        D(W) ~ χ * (I - W),
+        D(R) ~ γ * I - (μ + a) * R
     ]
     de = ODESystem(eqs, t, name=:TestSIWR)
     measured_quantities = [y ~ k * I]
@@ -77,12 +77,12 @@
     @test isequal(true, all(values(assess_local_identifiability(de; measured_quantities=measured_quantities))))
 
     # check specific parameters
-    funcs_to_check = [mu, bi, bw, a, xi, gm, gm + mu, k, S, I, W, R]
+    funcs_to_check = [μ, bi, bw, a, χ, γ, γ + μ, k, S, I, W, R]
     correct = Dict(f=>true for f in funcs_to_check)
     @test isequal(correct, assess_local_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=funcs_to_check))
 
     # checking ME identifiability
-    funcs_to_check = [mu, bi, bw, a, xi, gm, gm + mu, k]
+    funcs_to_check = [μ, bi, bw, a, χ, γ, γ + μ, k]
     correct = Dict(f=>true for f in funcs_to_check)
     @test isequal((correct, 1), assess_local_identifiability(de;  measured_quantities=measured_quantities, funcs_to_check=funcs_to_check, p=0.99, type=:ME)) 
 

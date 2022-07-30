@@ -173,7 +173,7 @@ function uncertain_factorization(f::MPolyElem{fmpq})
                 f = divexact(f, gcd(f, derivative(f, main_var)))
             end
             # end
-            is_irr = isirreducible(f_uni)
+            is_irr = Nemo.isirreducible(f_uni)
             break
         end
     end
