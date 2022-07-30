@@ -192,24 +192,38 @@ end
 
 #------------------------------------------------------------------------------
 
+function _extract_aux!(funcs, x_vars, all_symb, eq, ders_ok=false)
+    aux_symb = Set([:(+), :(-), :(=), :(*), :(^), :t, :(/), :(//)])
+    MacroTools.postwalk(
+        x -> begin 
+            if @capture(x, f_'(t))
+    	    if !ders_ok
+                    throw(Base.ArgumentError("Derivative are not allowed in the right-hand side"))
+    	    end
+                push!(x_vars, f)
+                push!(all_symb, f)
+            elseif @capture(x, f_(t))
+                push!(funcs, f)
+            elseif (x isa Symbol) && !(x in aux_symb)
+                push!(all_symb, x)
+            end
+            return x
+        end, 
+        eq
+    ) 
+end
+
 function macrohelper_extract_vars(equations::Array{Expr, 1})
     funcs, x_vars, all_symb = Set(), Set(), Set()
     aux_symb = Set([:(+), :(-), :(=), :(*), :(^), :t, :(/), :(//)])
     for eq in equations
-        MacroTools.postwalk(
-            x -> begin 
-                if @capture(x, f_'(t)) 
-                    push!(x_vars, f)
-                    push!(all_symb, f)
-                elseif @capture(x, f_(t))
-                    push!(funcs, f)
-                elseif (x isa Symbol) && !(x in aux_symb)
-                    push!(all_symb, x)
-                end
-                return x
-            end, 
-            eq
-        )
+        if eq.head != :(=)
+            _extract_aux!(funcs, x_vars, all_symb, eq)
+        else
+            lhs, rhs = eq.args[1:2]
+            _extract_aux!(funcs, x_vars, all_symb, lhs, true)
+            _extract_aux!(funcs, x_vars, all_symb, rhs)
+        end
     end
     io_vars = setdiff(funcs, x_vars)
     all_symb = collect(all_symb)
