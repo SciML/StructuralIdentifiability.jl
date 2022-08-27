@@ -73,7 +73,7 @@ Parameters (8):
  y1(t) ~ C(t)
  y2(t) ~ N_inv</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @time global_id = assess_identifiability(ode, measured_quantities=measured_quantities)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Preproccessing `ModelingToolkit.ODESystem` object
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.089746262 seconds
+[ Info: Local identifiability assessed in 0.075108087 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
 [ Info: Computing in lex order, result is in lex order
@@ -89,23 +89,22 @@ Parameters (8):
 [ Info: 3: selected lucky prime 2147483693
 [ Info: CRT modulo (4611686039902224373, 2147483693)
 [ Info: Reconstructing modulo 9903520567925774155444649489
+[ Info: Heuristic check failed.
 [ Info: 4: selected lucky prime 2147483713
 [ Info: CRT modulo (9903520567925774155444649489, 2147483713)
 [ Info: Reconstructing modulo 21267649120981110191733715050621272657
-[ Info: Heuristic check failed.
 [ Info: 5: selected lucky prime 2147483743
 [ Info: CRT modulo (21267649120981110191733715050621272657, 2147483743)
 [ Info: Reconstructing modulo 45671930739135174346839766056203605080877915151
+[ Info: Heuristic check failed.
 [ Info: 6: selected lucky prime 2147483777
 [ Info: CRT modulo (45671930739135174346839766056203605080877915151, 2147483777)
 [ Info: Reconstructing modulo 98079730326560405919904968824172512120100095704355005327
-[ Info: Heuristic check failed.
 [ Info: 7: selected lucky prime 2147483783
 [ Info: CRT modulo (98079730326560405919904968824172512120100095704355005327, 2147483783)
 [ Info: 8: selected lucky prime 2147483813
 [ Info: CRT modulo (210624630317301765882893117451031048172285903861850336414611112041, 2147483813)
 [ Info: Reconstructing modulo 452312984225514596069828623335196996110407213751397785678981819797976892333
-[ Info: Heuristic check failed.
 [ Info: 9: selected lucky prime 2147483857
 [ Info: CRT modulo (452312984225514596069828623335196996110407213751397785678981819797976892333, 2147483857)
 [ Info: 10: selected lucky prime 2147483867
@@ -164,17 +163,17 @@ Parameters (8):
 [ Info: Using fglm: false
 [ Info: Computing in lex order, result is in lex order
 [ Info: Using fglm: false
-┌ Info: Computed in 27.631652378 seconds
+┌ Info: Computed in 22.061159752 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 27.631652378
+└   ioeq_time = 22.061159752
 [ Info: Computing Wronskians
-┌ Info: Computed in 16.869602276 seconds
+┌ Info: Computed in 15.409373478 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 16.869602276
+└   wrnsk_time = 15.409373478
 [ Info: Dimensions of the wronskians [1282, 2]
-┌ Info: Ranks of the Wronskians computed in 0.403512319 seconds
+┌ Info: Ranks of the Wronskians computed in 0.492515039 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.403512319
+└   rank_times = 0.492515039
 [ Info: Assessing global identifiability using the coefficients of the io-equations
 [ Info: Computing in degrevlex order, result is in degrevlex order
 [ Info: Using fglm: false
@@ -212,7 +211,6 @@ Parameters (8):
 [ Info: 12: selected lucky prime 2147483887
 [ Info: CRT modulo (4479492181457132340213454847299227207974448018628682717127999033421525005319580445599067818799052246163, 2147483887)
 [ Info: Reconstructing modulo 9619637281621671881834996425177135896677125027724171971067756840824299427891388292524278203091200389506200075581
-[ Info: Heuristic check failed.
 [ Info: 13: selected lucky prime 2147483893
 [ Info: CRT modulo (9619637281621671881834996425177135896677125027724171971067756840824299427891388292524278203091200389506200075581, 2147483893)
 [ Info: 14: selected lucky prime 2147483929
@@ -290,11 +288,11 @@ Parameters (8):
 [ Info: Using fglm: false
 [ Info: Computing in degrevlex order, result is in degrevlex order
 [ Info: Using fglm: false
-┌ Info: Computed in 36.962066219 seconds
+┌ Info: Computed in 31.772030906 seconds
 │   :check_time = :check_time
-└   check_time = 36.962066219
-[ Info: Global identifiability assessed in 81.867617107 seconds
- 98.400755 seconds (218.76 M allocations: 20.209 GiB, 11.61% gc time, 17.18% compilation time)
+└   check_time = 31.772030906
+[ Info: Global identifiability assessed in 69.735718884 seconds
+ 84.847761 seconds (219.25 M allocations: 20.175 GiB, 10.70% gc time, 18.24% compilation time)
 Dict{SymbolicUtils.Sym{Real, Base.ImmutableDict{DataType, Any}}, Symbol} with 8 entries:
   r     =&gt; :nonidentifiable
   N_inv =&gt; :globally
@@ -303,4 +301,4 @@ Dict{SymbolicUtils.Sym{Real, Base.ImmutableDict{DataType, Any}}, Symbol} with 8 
   q     =&gt; :nonidentifiable
   g2    =&gt; :globally
   k     =&gt; :globally
-  b     =&gt; :globally</code></pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>K. Roosa and G. Chowell. <a href="https://doi.org/10.1186/s12976-018-0097-6"><em>Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models</em></a>, Theor Biol Med Model 16, 1 (2019)</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../global_identifiability/">« Global Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../../input/input/">Parsing input ODE system »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.22 on <span class="colophon-date" title="Friday 26 August 2022 02:57">Friday 26 August 2022</span>. Using Julia version 1.8.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  b     =&gt; :globally</code></pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>K. Roosa and G. Chowell. <a href="https://doi.org/10.1186/s12976-018-0097-6"><em>Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models</em></a>, Theor Biol Med Model 16, 1 (2019)</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../global_identifiability/">« Global Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../../input/input/">Parsing input ODE system »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Saturday 27 August 2022 08:28">Saturday 27 August 2022</span>. Using Julia version 1.8.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
