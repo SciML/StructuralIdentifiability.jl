@@ -72,6 +72,23 @@ function set_parameter_values(ode::ODE{P}, param_values::Dict{P, T}) where {T <:
     )
 end
 
+function _to_rational(x::Float64)
+    s = "$x"
+    point = first(findfirst(".", s))
+    numer = parse(BigInt, s[1:(point - 1)] * s[(point + 1):end])
+    denom = 10^(length(s) - point)
+    return Nemo.QQ(numer // denom)
+end
+
+function _to_rational(x)
+    return Nemo.QQ(x)
+end
+
+function set_parameter_values(ode::ODE{P}, param_values::Dict{P, <: Number}) where {P <: MPolyElem}
+    new_values = Dict{P, fmpq}(x => _to_rational(v) for (x, v) in param_values)
+    return set_parameter_values(ode, new_values)
+end
+
 #------------------------------------------------------------------------------
 
 """
