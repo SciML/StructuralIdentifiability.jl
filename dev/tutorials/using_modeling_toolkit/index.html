@@ -3,7 +3,7 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'UA-90474609-3', {'page_path': location.pathname + location.search + location.hash});
-</script><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://si.sciml.ai/stable/tutorials/using_modeling_toolkit/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="StructuralIdentifiability.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">StructuralIdentifiability.jl</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="../local_identifiability/">Local Identifiability of Differential Models</a></li><li><a class="tocitem" href="../global_identifiability/">Global Identifiability of Differential Models</a></li><li class="is-active"><a class="tocitem" href>Using <code>ModelingToolkit.jl</code> With <code>StructuralIdentifiability.jl</code></a><ul class="internal"><li><a class="tocitem" href="#Input-System"><span>Input System</span></a></li></ul></li></ul></li><li><span class="tocitem">Basics</span><ul><li><a class="tocitem" href="../../input/input/">Parsing input ODE system</a></li><li><a class="tocitem" href="../../identifiability/identifiability/">ָFunctions to Assess Parameter Identifiability</a></li></ul></li><li><span class="tocitem">Library</span><ul><li><a class="tocitem" href="../../utils/local_identifiability/">Local Identifiability Tools</a></li><li><a class="tocitem" href="../../utils/global_identifiability/">Global Identifiability Tools</a></li><li><a class="tocitem" href="../../utils/elimination/">Elimination</a></li><li><a class="tocitem" href="../../utils/ode/">ODE Tools</a></li><li><a class="tocitem" href="../../utils/power_series_utils/">Power Series Tools</a></li><li><a class="tocitem" href="../../utils/primality/">Primality Chekcs</a></li><li><a class="tocitem" href="../../utils/wronskian/">Wronskian Tools</a></li><li><a class="tocitem" href="../../ioequations/ioequations/">Input-Output Equation tools</a></li><li><a class="tocitem" href="../../utils/util/">Other Utilities</a></li></ul></li><li><span class="tocitem">Export</span><ul><li><a class="tocitem" href="../../export/export/">Exporting to Other Systems</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Tutorials</a></li><li class="is-active"><a href>Using <code>ModelingToolkit.jl</code> With <code>StructuralIdentifiability.jl</code></a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Using <code>ModelingToolkit.jl</code> With <code>StructuralIdentifiability.jl</code></a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/StructuralIdentifiability.jl/blob/master/docs/src/tutorials/using_modeling_toolkit.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Using-ModelingToolkit.jl-With-StructuralIdentifiability.jl"><a class="docs-heading-anchor" href="#Using-ModelingToolkit.jl-With-StructuralIdentifiability.jl">Using <code>ModelingToolkit.jl</code> With <code>StructuralIdentifiability.jl</code></a><a id="Using-ModelingToolkit.jl-With-StructuralIdentifiability.jl-1"></a><a class="docs-heading-anchor-permalink" href="#Using-ModelingToolkit.jl-With-StructuralIdentifiability.jl" title="Permalink"></a></h1><p>In this tutorial, we will cover examples of solving identifiability problems for models defined with the syntax of <code>ModelingToolkit.jl</code>.</p><h2 id="Input-System"><a class="docs-heading-anchor" href="#Input-System">Input System</a><a id="Input-System-1"></a><a class="docs-heading-anchor-permalink" href="#Input-System" title="Permalink"></a></h2><p>Let us consider the following ODE model with two outputs:</p><p class="math-container">\[\begin{cases}
+</script><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://docs.sciml.ai/StructuralIdentifiability/stable/tutorials/using_modeling_toolkit/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="StructuralIdentifiability.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">StructuralIdentifiability.jl</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="../local_identifiability/">Local Identifiability of Differential Models</a></li><li><a class="tocitem" href="../global_identifiability/">Global Identifiability of Differential Models</a></li><li class="is-active"><a class="tocitem" href>Using <code>ModelingToolkit.jl</code> With <code>StructuralIdentifiability.jl</code></a><ul class="internal"><li><a class="tocitem" href="#Input-System"><span>Input System</span></a></li></ul></li></ul></li><li><span class="tocitem">Basics</span><ul><li><a class="tocitem" href="../../input/input/">Parsing input ODE system</a></li><li><a class="tocitem" href="../../identifiability/identifiability/">ָFunctions to Assess Parameter Identifiability</a></li></ul></li><li><span class="tocitem">Library</span><ul><li><a class="tocitem" href="../../utils/local_identifiability/">Local Identifiability Tools</a></li><li><a class="tocitem" href="../../utils/global_identifiability/">Global Identifiability Tools</a></li><li><a class="tocitem" href="../../utils/elimination/">Elimination</a></li><li><a class="tocitem" href="../../utils/ode/">ODE Tools</a></li><li><a class="tocitem" href="../../utils/power_series_utils/">Power Series Tools</a></li><li><a class="tocitem" href="../../utils/primality/">Primality Chekcs</a></li><li><a class="tocitem" href="../../utils/wronskian/">Wronskian Tools</a></li><li><a class="tocitem" href="../../ioequations/ioequations/">Input-Output Equation tools</a></li><li><a class="tocitem" href="../../utils/util/">Other Utilities</a></li></ul></li><li><span class="tocitem">Export</span><ul><li><a class="tocitem" href="../../export/export/">Exporting to Other Systems</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Tutorials</a></li><li class="is-active"><a href>Using <code>ModelingToolkit.jl</code> With <code>StructuralIdentifiability.jl</code></a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Using <code>ModelingToolkit.jl</code> With <code>StructuralIdentifiability.jl</code></a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/StructuralIdentifiability.jl/blob/master/docs/src/tutorials/using_modeling_toolkit.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Using-ModelingToolkit.jl-With-StructuralIdentifiability.jl"><a class="docs-heading-anchor" href="#Using-ModelingToolkit.jl-With-StructuralIdentifiability.jl">Using <code>ModelingToolkit.jl</code> With <code>StructuralIdentifiability.jl</code></a><a id="Using-ModelingToolkit.jl-With-StructuralIdentifiability.jl-1"></a><a class="docs-heading-anchor-permalink" href="#Using-ModelingToolkit.jl-With-StructuralIdentifiability.jl" title="Permalink"></a></h1><p>In this tutorial, we will cover examples of solving identifiability problems for models defined with the syntax of <code>ModelingToolkit.jl</code>.</p><h2 id="Input-System"><a class="docs-heading-anchor" href="#Input-System">Input System</a><a id="Input-System-1"></a><a class="docs-heading-anchor-permalink" href="#Input-System" title="Permalink"></a></h2><p>Let us consider the following ODE model with two outputs:</p><p class="math-container">\[\begin{cases}
     \dot{S} = -b \, S \, (I + J + q \, A) \, N_{inv},\\
     \dot{E} = b \, S \, (I + J + q \, A) \, N_{inv} - k \, E,\\
     \dot{A} = k \, (1 - r) \, E - g_1 \, A,\\
@@ -73,7 +73,7 @@ Parameters (8):
  y1(t) ~ C(t)
  y2(t) ~ N_inv</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @time global_id = assess_identifiability(ode, measured_quantities=measured_quantities)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Preproccessing `ModelingToolkit.ODESystem` object
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.137686114 seconds
+[ Info: Local identifiability assessed in 0.088718878 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
 [ Info: Computing in lex order, result is in lex order
@@ -82,22 +82,21 @@ Parameters (8):
 [ Info: 1: selected lucky prime 2147483647
 [ Info: CRT modulo (1, 2147483647)
 [ Info: Reconstructing modulo 2147483647
-[ Info: Heuristic check passed!
-[ Info: Randomized check failed.
+[ Info: Heuristic check failed.
 [ Info: 2: selected lucky prime 2147483659
 [ Info: CRT modulo (2147483647, 2147483659)
 [ Info: Reconstructing modulo 4611686039902224373
-[ Info: Heuristic check failed.
 [ Info: 3: selected lucky prime 2147483693
 [ Info: CRT modulo (4611686039902224373, 2147483693)
 [ Info: Reconstructing modulo 9903520567925774155444649489
+[ Info: Heuristic check failed.
 [ Info: 4: selected lucky prime 2147483713
 [ Info: CRT modulo (9903520567925774155444649489, 2147483713)
 [ Info: Reconstructing modulo 21267649120981110191733715050621272657
-[ Info: Heuristic check failed.
 [ Info: 5: selected lucky prime 2147483743
 [ Info: CRT modulo (21267649120981110191733715050621272657, 2147483743)
 [ Info: Reconstructing modulo 45671930739135174346839766056203605080877915151
+[ Info: Heuristic check failed.
 [ Info: 6: selected lucky prime 2147483777
 [ Info: CRT modulo (45671930739135174346839766056203605080877915151, 2147483777)
 [ Info: Reconstructing modulo 98079730326560405919904968824172512120100095704355005327
@@ -116,6 +115,7 @@ Parameters (8):
 [ Info: 12: selected lucky prime 2147483887
 [ Info: CRT modulo (4479492181457132340213454847299227207974448018628682717127999033421525005319580445599067818799052246163, 2147483887)
 [ Info: Reconstructing modulo 9619637281621671881834996425177135896677125027724171971067756840824299427891388292524278203091200389506200075581
+[ Info: Heuristic check failed.
 [ Info: 13: selected lucky prime 2147483893
 [ Info: CRT modulo (9619637281621671881834996425177135896677125027724171971067756840824299427891388292524278203091200389506200075581, 2147483893)
 [ Info: 14: selected lucky prime 2147483929
@@ -198,17 +198,17 @@ Parameters (8):
 [ Info: Using fglm: false
 [ Info: Computing in lex order, result is in lex order
 [ Info: Using fglm: false
-┌ Info: Computed in 32.437139895 seconds
+┌ Info: Computed in 25.177706991 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 32.437139895
+└   ioeq_time = 25.177706991
 [ Info: Computing Wronskians
-┌ Info: Computed in 20.8221268 seconds
+┌ Info: Computed in 15.115219931 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 20.8221268
+└   wrnsk_time = 15.115219931
 [ Info: Dimensions of the wronskians [1282, 2]
-┌ Info: Ranks of the Wronskians computed in 0.482162632 seconds
+┌ Info: Ranks of the Wronskians computed in 0.473444559 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.482162632
+└   rank_times = 0.473444559
 [ Info: Assessing global identifiability using the coefficients of the io-equations
 [ Info: Computing in degrevlex order, result is in degrevlex order
 [ Info: Using fglm: false
@@ -216,8 +216,7 @@ Parameters (8):
 [ Info: 1: selected lucky prime 2147483647
 [ Info: CRT modulo (1, 2147483647)
 [ Info: Reconstructing modulo 2147483647
-[ Info: Heuristic check passed!
-[ Info: Randomized check failed.
+[ Info: Heuristic check failed.
 [ Info: 2: selected lucky prime 2147483659
 [ Info: CRT modulo (2147483647, 2147483659)
 [ Info: Reconstructing modulo 4611686039902224373
@@ -264,6 +263,7 @@ Parameters (8):
 [ Info: 20: selected lucky prime 2147484041
 [ Info: CRT modulo (2026134238852383501221651721966775511189722802919441848842357150919550408286738322428905735729076025747015490724796841241411843757904162649282884001681435793496387299450782866691, 2147484041)
 [ Info: Reconstructing modulo 4351090942859175723685201076583819542509546642483289579016496306421962976690804699359187424571554264967420869711284739533142562778484656896803273488065100532499663316725644271175152978331
+[ Info: Heuristic check failed.
 [ Info: 21: selected lucky prime 2147484043
 [ Info: CRT modulo (4351090942859175723685201076583819542509546642483289579016496306421962976690804699359187424571554264967420869711284739533142562778484656896803273488065100532499663316725644271175152978331, 2147484043)
 [ Info: 22: selected lucky prime 2147484061
@@ -324,11 +324,11 @@ Parameters (8):
 [ Info: Using fglm: false
 [ Info: Computing in degrevlex order, result is in degrevlex order
 [ Info: Using fglm: false
-┌ Info: Computed in 50.565232969 seconds
+┌ Info: Computed in 36.292299724 seconds
 │   :check_time = :check_time
-└   check_time = 50.565232969
-[ Info: Global identifiability assessed in 104.307598404 seconds
-125.421480 seconds (220.84 M allocations: 20.279 GiB, 9.73% gc time, 16.98% compilation time)
+└   check_time = 36.292299724
+[ Info: Global identifiability assessed in 77.059398813 seconds
+ 81.860348 seconds (160.52 M allocations: 16.650 GiB, 10.08% gc time, 6.37% compilation time)
 Dict{SymbolicUtils.Sym{Real, Base.ImmutableDict{DataType, Any}}, Symbol} with 8 entries:
   r     =&gt; :nonidentifiable
   N_inv =&gt; :globally
@@ -337,4 +337,4 @@ Dict{SymbolicUtils.Sym{Real, Base.ImmutableDict{DataType, Any}}, Symbol} with 8 
   q     =&gt; :nonidentifiable
   g2    =&gt; :globally
   k     =&gt; :globally
-  b     =&gt; :globally</code></pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>K. Roosa and G. Chowell. <a href="https://doi.org/10.1186/s12976-018-0097-6"><em>Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models</em></a>, Theor Biol Med Model 16, 1 (2019)</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../global_identifiability/">« Global Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../../input/input/">Parsing input ODE system »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Monday 29 August 2022 11:45">Monday 29 August 2022</span>. Using Julia version 1.8.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  b     =&gt; :globally</code></pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>K. Roosa and G. Chowell. <a href="https://doi.org/10.1186/s12976-018-0097-6"><em>Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models</em></a>, Theor Biol Med Model 16, 1 (2019)</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../global_identifiability/">« Global Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../../input/input/">Parsing input ODE system »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Wednesday 19 October 2022 11:36">Wednesday 19 October 2022</span>. Using Julia version 1.8.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
