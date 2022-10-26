@@ -17,7 +17,7 @@ using StructuralIdentifiability: check_field_membership, check_identifiability, 
                                  assess_identifiability, monomial_compress, parent_ring_change,
                                  ps_matrix_const_term, decompose_derivative, PBRepresentation,
                                  find_leader, common_ring, lc_univariate, pseudodivision,
-                                 diffreduce, io_switch!
+                                 diffreduce, io_switch!, add_outputs
 
 function random_ps(ps_ring, range=1000)
     result = zero(ps_ring)

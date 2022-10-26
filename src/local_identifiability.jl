@@ -229,7 +229,7 @@ Call this function if you have a specific collection of parameters of which you 
 `type` can be either `:SE` (single-experiment identifiability) or `:ME` (multi-experiment identifiability).
 If the type is `:ME`, states are not allowed to appear in the `funcs_to_check`.
 """
-function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,1}, p::Float64=0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
+function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,1}, p::Float64=0.99, type=:SE, trbasis=nothing) where P <: MPolyElem{Nemo.fmpq}
 
     # Checking whether the states appear in the ME case
     if type == :ME
@@ -276,7 +276,7 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
     @debug "Reducing the system modulo prime"
     ode_red = reduce_ode_mod_p(ode_ext, prime)
 
-    @debug "Coumpting the observbaility matrix (and, if ME, the bound)"
+    @debug "Computing the observability matrix (and, if ME, the bound)"
     prec = length(ode.x_vars) + length(ode.parameters)
     
     # Parameter values are the same across all the replicas
@@ -323,6 +323,40 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
         Jac = newJac
     end
 
+    if !isnothing(trbasis)
+	@debug "Transcendence basis computation requested"
+	reverted_Jac = zero(Nemo.MatrixSpace(F, size(Jac)[2], size(Jac)[1]))
+	for i in 1:size(Jac)[1]
+	    for j in 1:size(Jac)[2]
+	        reverted_Jac[j, i] = Jac[size(Jac)[1] - i + 1, j]
+            end
+	end
+	Nemo.rref!(reverted_Jac)
+        # finding non-pivots
+	j = 1
+	h = size(reverted_Jac)[1]
+	nonpivots = []
+	for i in 1:(size(reverted_Jac)[2])
+	    to_add = true
+            for k in j:h
+	        if !iszero(reverted_Jac[k, i])
+		    j = k + 1
+		    to_add = false
+		end
+	    end
+	    if to_add
+	        push!(nonpivots, i)
+	    end
+        end
+	@debug "Jac sizes $(size(Jac)), params $(ode.parameters)"
+	# selecting the trbasis of polynomials
+	trbasis_indices = [size(Jac)[1] - i + 1 for i in nonpivots if i > size(Jac)[1] - length(ode.parameters)]
+	for i in trbasis_indices
+	    push!(trbasis, ode.parameters[i])
+	end
+	@debug "Transcendence basis $trbasis with indices $(trbasis_indices)"
+    end
+    
     @debug "Computing the result"
     base_rank = LinearAlgebra.rank(Jac)
     result = Dict{Any, Bool}()
@@ -335,6 +369,7 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
         end
         result[funcs_to_check[i]] = LinearAlgebra.rank(Jac) == base_rank
     end
+    # NB: the Jac contains now the derivatives of the last from `funcs_to_check`
 
     if type == :SE
         return Dict(result)
