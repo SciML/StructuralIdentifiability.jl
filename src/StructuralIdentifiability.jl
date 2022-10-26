@@ -97,7 +97,8 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
     p_loc = 1 - (1 - p) * 0.1
 
     @info "Assessing local identifiability"
-    runtime = @elapsed local_result, bound = assess_local_identifiability(ode, funcs_to_check, p_loc, :ME)
+    trbasis = Array{fmpq_mpoly, 1}()
+    runtime = @elapsed local_result, bound = assess_local_identifiability(ode, funcs_to_check, p_loc, :ME, trbasis)
     @info "Local identifiability assessed in $runtime seconds"
     _runtime_logger[:loc_time] = runtime
 
@@ -115,7 +116,7 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
     end
 
     @info "Assessing global identifiability"
-    runtime = @elapsed global_result = assess_global_identifiability(ode, locally_identifiable, p_glob)
+    runtime = @elapsed global_result = assess_global_identifiability(ode, locally_identifiable, trbasis, p_glob)
     @info "Global identifiability assessed in $runtime seconds"
     _runtime_logger[:glob_time] = runtime
 
