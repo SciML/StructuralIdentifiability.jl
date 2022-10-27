@@ -165,6 +165,7 @@ end
 
 Input:
 - `ode` - the ODE model
+- `known` - a list of functions in states which are assumed to be known and generic
 - `p` - probability of correctness
 - `var_change` - a policy for variable change (`:default`, `:yes`, `:no`), affects only the runtime
 
@@ -192,7 +193,7 @@ end
 Input:
 - `ode` - the ODE model
 - `funcs_to_check` - rational functions in parameters
-- `known` - function in parameters that may assumed to be known
+- `known` - function in parameters that may assumed to be known and generic
 - `p` - probability of correctness
 - `var_change` - a policy for variable change (`:default`, `:yes`, `:no`),
                 affects only the runtime
