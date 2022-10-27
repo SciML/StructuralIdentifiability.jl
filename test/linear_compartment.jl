@@ -129,13 +129,13 @@
     #--------------------------------------------------------------------------
 
     for case in test_cases
-	ode = linear_compartment_model(case[:graph], case[:inputs], case[:outputs], case[:leaks])
+	    ode = linear_compartment_model(case[:graph], case[:inputs], case[:outputs], case[:leaks])
         bring = ode.poly_ring
-	correct = Dict{fmpq_mpoly, Symbol}()
-	for (e, id) in case[:result]
+	    correct = Dict{fmpq_mpoly, Symbol}()
+	    for (e, id) in case[:result]
             correct[str_to_var("a_$(e[2])_$(e[1])", bring)] = id
         end
-	result = assess_identifiability(ode, collect(keys(correct)))
-	@test correct == result
+	    result = assess_identifiability(ode, collect(keys(correct)))
+	    @test correct == result
     end
 end

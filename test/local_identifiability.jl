@@ -87,11 +87,11 @@
 	ode = case[:ode]
         result = assess_local_identifiability(ode, case[:funcs], 0.99, :SE, trbasis)
         @test result == case[:correct]
-	for (i, p) in enumerate(trbasis)
-	    res_for_p = assess_local_identifiability(ode, [p])
-	    @test !first(values(res_for_p))
-	    ode = add_outputs(ode, Dict("YYY$i" => p))
-	end
+        for (i, p) in enumerate(trbasis)
+	        res_for_p = assess_local_identifiability(ode, [p])
+	        @test !first(values(res_for_p))
+	        ode = add_outputs(ode, Dict("YYY$i" => p))
+        end
         @test all(values(assess_local_identifiability(ode)))
     end
 end

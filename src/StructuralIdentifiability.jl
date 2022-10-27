@@ -100,6 +100,7 @@ function assess_identifiability(ode::ODE{P}, funcs_to_check::Array{<:RingElem,1}
     trbasis = Array{fmpq_mpoly, 1}()
     runtime = @elapsed local_result, bound = assess_local_identifiability(ode, funcs_to_check, p_loc, :ME, trbasis)
     @info "Local identifiability assessed in $runtime seconds"
+    @debug "Trasncendence basis to be specialized is $trbasis"
     _runtime_logger[:loc_time] = runtime
 
     if bound > 1

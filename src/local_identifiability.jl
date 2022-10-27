@@ -332,22 +332,22 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
             end
 	end
 	Nemo.rref!(reverted_Jac)
-        # finding non-pivots
+    # finding non-pivots
 	j = 1
 	h = size(reverted_Jac)[1]
 	nonpivots = []
 	for i in 1:(size(reverted_Jac)[2])
 	    to_add = true
-            for k in j:h
-	        if !iszero(reverted_Jac[k, i])
-		    j = k + 1
-		    to_add = false
-		end
+        for k in j:h
+            if !iszero(reverted_Jac[k, i])
+		        j = k + 1
+		        to_add = false
+		    end
 	    end
 	    if to_add
 	        push!(nonpivots, i)
 	    end
-        end
+    end
 	@debug "Jac sizes $(size(Jac)), params $(ode.parameters)"
 	# selecting the trbasis of polynomials
 	trbasis_indices = [size(Jac)[1] - i + 1 for i in nonpivots if i > size(Jac)[1] - length(ode.parameters)]

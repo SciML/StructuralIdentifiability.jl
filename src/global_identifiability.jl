@@ -111,7 +111,7 @@ end
 function check_identifiability(
         io_equations::Array{P,1}, 
         parameters::Array{P,1},
-	known::Array{P, 1},
+        known::Array{P, 1},
         funcs_to_check::Array{<: Any,1},
         p::Float64=0.99
     ) where P <: MPolyElem{fmpq}
@@ -138,7 +138,7 @@ end
 function check_identifiability(
         io_equation::P,
         parameters::Array{P,1},
-	known::Array{P, 1},
+        known::Array{P, 1},
         funcs_to_check::Array{<: Any,1}, 
         p::Float64=0.99 
     ) where P <: MPolyElem{fmpq}
@@ -169,7 +169,7 @@ Checks global identifiability for a parameters of the model provided in `ode`. C
 """
 function assess_global_identifiability(
         ode::ODE{P},
-	known::Array{P, 1}=Array{P, 1}(),
+        known::Array{P, 1}=Array{P, 1}(),
         p::Float64=0.99; 
         var_change=:default
     ) where P <: MPolyElem{fmpq}
@@ -200,7 +200,7 @@ Checks global identifiability of functions of parameters specified in `funcs_to_
 function assess_global_identifiability(
         ode::ODE{P},
         funcs_to_check::Array{<: Any,1},
-	known::Array{P, 1}=Array{P, 1}(),
+        known::Array{P, 1}=Array{P, 1}(),
         p::Float64=0.99;
         var_change=:default,
     ) where P <: MPolyElem{fmpq}
