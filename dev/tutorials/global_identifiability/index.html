@@ -29,7 +29,7 @@ z&#39;(t) = c*w(t)*q*y(t) - h*z(t)
 y&#39;(t) = x(t)*v(t)*beta - a*y(t)
 y2(t) = z(t)
 y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; global_id = assess_identifiability(ode, 0.99)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 5.526379738 seconds
+[ Info: Local identifiability assessed in 8.887951 seconds
 [ Info: Assessing global identifiability
 [ Info: Computing IO-equations
 [ Info: Computing in lex order, result is in lex order
@@ -38,19 +38,17 @@ y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:bl
 [ Info: 1: selected lucky prime 2147483647
 [ Info: CRT modulo (1, 2147483647)
 [ Info: Reconstructing modulo 2147483647
-[ Info: Heuristic check failed.
+[ Info: Heuristic check passed!
+[ Info: Randomized check failed.
 [ Info: 2: selected lucky prime 2147483659
 [ Info: CRT modulo (2147483647, 2147483659)
 [ Info: Reconstructing modulo 4611686039902224373
-[ Info: Heuristic check failed.
 [ Info: 3: selected lucky prime 2147483693
 [ Info: CRT modulo (4611686039902224373, 2147483693)
 [ Info: Reconstructing modulo 9903520567925774155444649489
-[ Info: Heuristic check failed.
 [ Info: 4: selected lucky prime 2147483713
 [ Info: CRT modulo (9903520567925774155444649489, 2147483713)
 [ Info: Reconstructing modulo 21267649120981110191733715050621272657
-[ Info: Heuristic check failed.
 [ Info: 5: selected lucky prime 2147483743
 [ Info: CRT modulo (21267649120981110191733715050621272657, 2147483743)
 [ Info: Reconstructing modulo 45671930739135174346839766056203605080877915151
@@ -79,17 +77,17 @@ y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:bl
 [ Info: Using fglm: false
 [ Info: Computing in lex order, result is in lex order
 [ Info: Using fglm: false
-┌ Info: Computed in 15.5462499 seconds
+┌ Info: Computed in 20.775662552 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 15.5462499
+└   ioeq_time = 20.775662552
 [ Info: Computing Wronskians
-┌ Info: Computed in 3.058909156 seconds
+┌ Info: Computed in 4.683550571 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 3.058909156
+└   wrnsk_time = 4.683550571
 [ Info: Dimensions of the wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.023843336 seconds
+┌ Info: Ranks of the Wronskians computed in 0.029459224 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.023843336
+└   rank_times = 0.029459224
 [ Info: Assessing global identifiability using the coefficients of the io-equations
 [ Info: Computing in degrevlex order, result is in degrevlex order
 [ Info: Using fglm: false
@@ -104,6 +102,7 @@ y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:bl
 [ Info: 3: selected lucky prime 2147483693
 [ Info: CRT modulo (4611686039902224373, 2147483693)
 [ Info: Reconstructing modulo 9903520567925774155444649489
+[ Info: Heuristic check failed.
 [ Info: 4: selected lucky prime 2147483713
 [ Info: CRT modulo (9903520567925774155444649489, 2147483713)
 [ Info: Reconstructing modulo 21267649120981110191733715050621272657
@@ -114,38 +113,12 @@ y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:bl
 [ Info: 6: selected lucky prime 2147483777
 [ Info: CRT modulo (45671930739135174346839766056203605080877915151, 2147483777)
 [ Info: Reconstructing modulo 98079730326560405919904968824172512120100095704355005327
+[ Info: Heuristic check failed.
 [ Info: 7: selected lucky prime 2147483783
 [ Info: CRT modulo (98079730326560405919904968824172512120100095704355005327, 2147483783)
 [ Info: 8: selected lucky prime 2147483813
 [ Info: CRT modulo (210624630317301765882893117451031048172285903861850336414611112041, 2147483813)
 [ Info: Reconstructing modulo 452312984225514596069828623335196996110407213751397785678981819797976892333
-[ Info: Heuristic check failed.
-[ Info: 9: selected lucky prime 2147483857
-[ Info: CRT modulo (452312984225514596069828623335196996110407213751397785678981819797976892333, 2147483857)
-[ Info: 10: selected lucky prime 2147483867
-[ Info: CRT modulo (971334831935788242577832613368869049061991281227475155931159242212638377544144568381, 2147483867)
-[ Info: 11: selected lucky prime 2147483869
-[ Info: CRT modulo (2085925881037261630864178029036094802896257759330662854505473835259586299281105540913875809327, 2147483869)
-[ Info: 12: selected lucky prime 2147483887
-[ Info: CRT modulo (4479492181457132340213454847299227207974448018628682717127999033421525005319580445599067818799052246163, 2147483887)
-[ Info: Reconstructing modulo 9619637281621671881834996425177135896677125027724171971067756840824299427891388292524278203091200389506200075581
-[ Info: 13: selected lucky prime 2147483893
-[ Info: CRT modulo (9619637281621671881834996425177135896677125027724171971067756840824299427891388292524278203091200389506200075581, 2147483893)
-[ Info: 14: selected lucky prime 2147483929
-[ Info: CRT modulo (20658016118784845285971654106780479009986238218584837754630069827310747864405871311604659752589335646499890885945580116833, 2147483929)
-[ Info: 15: selected lucky prime 2147483951
-[ Info: CRT modulo (44362757620113410260375536343857928604867277085576528201140520294297636327782679774913158020198714437645340777821705269480809876857, 2147483951)
-[ Info: 16: selected lucky prime 2147483993
-[ Info: CRT modulo (95268310011296503334035195531452119103056298026345647894248167227793970831147880232398299267103673085675359550297968805662169313032693822007, 2147483993)
-[ Info: 17: selected lucky prime 2147483999
-[ Info: CRT modulo (204587170789420890086711714502418553819742917389414771138112095891274737061798978614956467676528769422992752228784566390572836365393516268430023633951, 2147483999)
-[ Info: 18: selected lucky prime 2147484007
-[ Info: CRT modulo (439347675670961559937551129419800091128618245387347072993342744994866141553145580730162196416906240199037398104286443541908350538727893524799664605101605650049, 2147484007)
-[ Info: 19: selected lucky prime 2147484037
-[ Info: CRT modulo (943492107016012944277662969173807884835850261977729359411465162345954336091178275160750699321298855245933309223847255653156617041667985469306137618419668743501066266343, 2147484037)
-[ Info: 20: selected lucky prime 2147484041
-[ Info: CRT modulo (2026134238852383501221651721966775511189722802919441848842357150919550408286738322428905735729076025747015490724796841241411843757904162649282884001681435793496387299450782866691, 2147484041)
-[ Info: Reconstructing modulo 4351090942859175723685201076583819542509546642483289579016496306421962976690804699359187424571554264967420869711284739533142562778484656896803273488065100532499663316725644271175152978331
 [ Info: Heuristic check passed!
 [ Info: Randomized check passed!
 [ Info: Success!
@@ -169,10 +142,10 @@ y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:bl
 [ Info: Using fglm: false
 [ Info: Computing in degrevlex order, result is in degrevlex order
 [ Info: Using fglm: false
-┌ Info: Computed in 1.039787345 seconds
+┌ Info: Computed in 1.229288137 seconds
 │   :check_time = :check_time
-└   check_time = 1.039787345
-[ Info: Global identifiability assessed in 20.264954147 seconds
+└   check_time = 1.229288137
+[ Info: Global identifiability assessed in 27.509955898 seconds
 Dict{Any, Symbol} with 10 entries:
   d    =&gt; :globally
   lm   =&gt; :nonidentifiable
@@ -183,4 +156,4 @@ Dict{Any, Symbol} with 10 entries:
   h    =&gt; :globally
   beta =&gt; :nonidentifiable
   b    =&gt; :globally
-  u    =&gt; :globally</code></pre><p>We also note that it&#39;s usually inexpensive to obtain the result with higher probability of correctness. For example, taking <code>p=0.9999</code> in the system above will result only in a slight slowdown.</p><h2 id="Note-on-the-probability-of-correctness"><a class="docs-heading-anchor" href="#Note-on-the-probability-of-correctness">Note on the probability of correctness</a><a id="Note-on-the-probability-of-correctness-1"></a><a class="docs-heading-anchor-permalink" href="#Note-on-the-probability-of-correctness" title="Permalink"></a></h2><p>Currently, the probability of correctness does not include the probability of correctness of the modular reconstruction for Groebner bases.  This probability is ensured by additional check modulo a large prime and can be neglected for practical purposes. However, in the future versions, we plan to  eliminate this possible error.</p><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>D. Wodarz, M. Nowak, <a href="https://doi.org/10.1073/pnas.96.25.14464"><em>Specific therapy regimes could lead to long-term immunological control of HIV</em></a>, PNAS December 7, 1999 96 (25) 14464-14469;</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../local_identifiability/">« Local Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../using_modeling_toolkit/">Using <code>ModelingToolkit.jl</code> With <code>StructuralIdentifiability.jl</code> »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Thursday 20 October 2022 04:29">Thursday 20 October 2022</span>. Using Julia version 1.8.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  u    =&gt; :globally</code></pre><p>We also note that it&#39;s usually inexpensive to obtain the result with higher probability of correctness. For example, taking <code>p=0.9999</code> in the system above will result only in a slight slowdown.</p><h2 id="Note-on-the-probability-of-correctness"><a class="docs-heading-anchor" href="#Note-on-the-probability-of-correctness">Note on the probability of correctness</a><a id="Note-on-the-probability-of-correctness-1"></a><a class="docs-heading-anchor-permalink" href="#Note-on-the-probability-of-correctness" title="Permalink"></a></h2><p>Currently, the probability of correctness does not include the probability of correctness of the modular reconstruction for Groebner bases.  This probability is ensured by additional check modulo a large prime and can be neglected for practical purposes. However, in the future versions, we plan to  eliminate this possible error.</p><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>D. Wodarz, M. Nowak, <a href="https://doi.org/10.1073/pnas.96.25.14464"><em>Specific therapy regimes could lead to long-term immunological control of HIV</em></a>, PNAS December 7, 1999 96 (25) 14464-14469;</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../local_identifiability/">« Local Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../using_modeling_toolkit/">Using <code>ModelingToolkit.jl</code> With <code>StructuralIdentifiability.jl</code> »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Thursday 27 October 2022 19:16">Thursday 27 October 2022</span>. Using Julia version 1.8.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
