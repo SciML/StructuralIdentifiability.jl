@@ -84,7 +84,13 @@ function check_field_membership(
     if Logging.min_enabled_level(Logging.current_logger()) == Logging.Debug
         gb_loglevel = Logging.Debug
     end
-    gb = groebner(eqs; linalg=:prob, loglevel=gb_loglevel)
+    gb = nothing
+    try
+        gb = groebner(eqs; linalg=:prob, loglevel=gb_loglevel)
+    catch AssertionError
+        @warn "Probabilistic linear algebra failed in Groebner.jl, switching to the deterministic one"
+        gb = groebner(eqs; loglevel=gb_loglevel)
+    end
     if isequal(one(ring_ext), gb[1])
         @error "The Groebner basis computation resulted in the unit ideal. This is an incorrect result, 
         please, run the code again. Sorry for the inconvenience"
