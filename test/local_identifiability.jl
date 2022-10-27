@@ -67,8 +67,31 @@
 
     #--------------------------------------------------------------------------
 
+    ode = @ODEmodel(
+        x1'(t) = a1 + a2 + a3 * a4,
+        x2'(t) = a4 * a5 + a6 + a7 - 8 * a8,
+	y(t) = x1(t) * x2(t)
+    )
+    funcs_to_test = [a1, a2, a3, a4, a5, a6, a7, a8]
+    correct = Dict(a => false for a in funcs_to_test)
+    push!(test_cases, Dict(
+        :ode => ode,
+        :funcs => funcs_to_test,
+        :correct => correct
+    ))
+
+    #--------------------------------------------------------------------------
+
     for case in test_cases
-        result = assess_local_identifiability(case[:ode], case[:funcs])
+	trbasis = []
+	ode = case[:ode]
+        result = assess_local_identifiability(ode, case[:funcs], 0.99, :SE, trbasis)
         @test result == case[:correct]
+        for (i, p) in enumerate(trbasis)
+	        res_for_p = assess_local_identifiability(ode, [p])
+	        @test !first(values(res_for_p))
+	        ode = add_outputs(ode, Dict("YYY$i" => p))
+        end
+        @test all(values(assess_local_identifiability(ode)))
     end
 end

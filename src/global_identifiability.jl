@@ -84,7 +84,13 @@ function check_field_membership(
     if Logging.min_enabled_level(Logging.current_logger()) == Logging.Debug
         gb_loglevel = Logging.Debug
     end
-    gb = groebner(eqs; linalg=:prob, loglevel=gb_loglevel)
+    gb = nothing
+    try
+        gb = groebner(eqs; linalg=:prob, loglevel=gb_loglevel)
+    catch AssertionError
+        @warn "Probabilistic linear algebra failed in Groebner.jl, switching to the deterministic one"
+        gb = groebner(eqs; loglevel=gb_loglevel)
+    end
     if isequal(one(ring_ext), gb[1])
         @error "The Groebner basis computation resulted in the unit ideal. This is an incorrect result, 
         please, run the code again. Sorry for the inconvenience"
@@ -111,6 +117,7 @@ end
 function check_identifiability(
         io_equations::Array{P,1}, 
         parameters::Array{P,1},
+        known::Array{P, 1},
         funcs_to_check::Array{<: Any,1},
         p::Float64=0.99
     ) where P <: MPolyElem{fmpq}
@@ -120,6 +127,10 @@ function check_identifiability(
     coeff_lists = Array{Array{P,1},1}()
     for eq in io_equations
         push!(coeff_lists, collect(values(extract_coefficients(eq, nonparameters))))
+    end
+    bring = parent(first(first(coeff_lists)))
+    for p in known
+        push!(coeff_lists, [one(bring), parent_ring_change(p, bring)])
     end
     for p in coeff_lists
         @debug sort(map(total_degree, p))
@@ -132,19 +143,20 @@ end
 
 function check_identifiability(
         io_equation::P,
-        parameters::Array{P,1}, 
+        parameters::Array{P,1},
+        known::Array{P, 1},
         funcs_to_check::Array{<: Any,1}, 
         p::Float64=0.99 
     ) where P <: MPolyElem{fmpq}
-    return check_identifiability([io_equation], parameters, funcs_to_check, p)
+    return check_identifiability([io_equation], parameters, known, funcs_to_check, p)
 end
 
-function check_identifiability(io_equations::Array{P,1}, parameters::Array{P,1}, p::Float64=0.99) where P <: MPolyElem{fmpq}
-    check_identifiability(io_equations, parameters, parameters, p)
+function check_identifiability(io_equations::Array{P,1}, parameters::Array{P,1}, known::Array{P, 1}, p::Float64=0.99) where P <: MPolyElem{fmpq}
+    check_identifiability(io_equations, parameters, known, parameters, p)
 end
 
-function check_identifiability(io_equation::P, parameters::Array{P,1}, p::Float64=0.99) where P <: MPolyElem{fmpq}
-    return check_identifiability([io_equation], parameters, p)
+function check_identifiability(io_equation::P, parameters::Array{P,1}, known::Array{P, 1}, p::Float64=0.99) where P <: MPolyElem{fmpq}
+    return check_identifiability([io_equation], parameters, known, p)
 end
 
 #------------------------------------------------------------------------------
@@ -153,6 +165,7 @@ end
 
 Input:
 - `ode` - the ODE model
+- `known` - a list of functions in states which are assumed to be known and generic
 - `p` - probability of correctness
 - `var_change` - a policy for variable change (`:default`, `:yes`, `:no`), affects only the runtime
 
@@ -163,10 +176,11 @@ Checks global identifiability for a parameters of the model provided in `ode`. C
 """
 function assess_global_identifiability(
         ode::ODE{P},
+        known::Array{P, 1}=Array{P, 1}(),
         p::Float64=0.99; 
         var_change=:default
     ) where P <: MPolyElem{fmpq}
-    result_list = assess_global_identifiability(ode, ode.parameters, p; var_change=var_change)
+    result_list = assess_global_identifiability(ode, ode.parameters, known, p; var_change=var_change)
 
     return Dict(param => val for (param, val) in zip(ode.parameters, result_list))
 end
@@ -179,6 +193,7 @@ end
 Input:
 - `ode` - the ODE model
 - `funcs_to_check` - rational functions in parameters
+- `known` - function in parameters that may assumed to be known and generic
 - `p` - probability of correctness
 - `var_change` - a policy for variable change (`:default`, `:yes`, `:no`),
                 affects only the runtime
@@ -192,8 +207,9 @@ Checks global identifiability of functions of parameters specified in `funcs_to_
 function assess_global_identifiability(
         ode::ODE{P},
         funcs_to_check::Array{<: Any,1},
+        known::Array{P, 1}=Array{P, 1}(),
         p::Float64=0.99;
-        var_change=:default
+        var_change=:default,
     ) where P <: MPolyElem{fmpq}
     @info "Computing IO-equations"
     ioeq_time = @elapsed io_equations = find_ioequations(ode; var_change_policy=var_change)
@@ -220,7 +236,7 @@ function assess_global_identifiability(
     end
 
     @info "Assessing global identifiability using the coefficients of the io-equations"
-    check_time = @elapsed result = check_identifiability(collect(values(io_equations)), ode.parameters, funcs_to_check, p)
+    check_time = @elapsed result = check_identifiability(collect(values(io_equations)), ode.parameters, known, funcs_to_check, p)
     @info "Computed in $check_time seconds" :check_time check_time
     _runtime_logger[:check_time] = check_time
 

@@ -7,7 +7,7 @@
 
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-function linear_compartment_model(graph, sinks)
+function _linear_compartment_model(graph, sinks)
     """
     Input: 
         - graph - graph of the model network represented via adjacency lists
@@ -140,7 +140,7 @@ end
     n_max = 8
     for case in test_cases
         for n in n_min:n_max
-            model = linear_compartment_model(case[:graph](n), [1])
+            model = _linear_compartment_model(case[:graph](n), [1])
             println(case[:name] * ", n = $n")
             @time result = assess_local_identifiability(model, 0.97, :ME)
             correct = undef
