@@ -1,17 +1,15 @@
 
 
 """
-power_series_solution(ode, param_values, initial_conditions, input_values, prec)
+    construct_graph(ode)
+
+This function creates a dictionary with all the dependencies in terms of variables expressed in the system of ODEs given.
 
 Input:
-- `ode` - an ode to solve
-- `param_values` - parameter values, must be a dictionary mapping parameter to a value
-- `initial_conditions` - initial conditions of `ode`, must be a dictionary mapping state variable to a value
-- `input_values` - power series for the inpiuts presented as a dictionary variable => list of coefficients
-- `prec` - the precision of solutions
+- `ode` - an ODEs system 
 
 Output: 
-- computes a power series solution with precision prec presented as a dictionary variable => corresponding coordiante of the solution
+- Dictionary where each key is a variable and each value is a list of variables from which the key depends
 """
 
 function construct_graph(ode) # construct a graph from given system of equations
@@ -103,6 +101,7 @@ end
 """
     find_submodels(ode)
 
+
 Input: 
 - 'ode'
 
@@ -169,17 +168,17 @@ end
 
 
 """
-    power_series_solution(ode, param_values, initial_conditions, input_values, prec)
+    visualize_graph(ode)
+        
+This function produces a plot of the system of ODEs given in terms of its graph representatinon. 
+Each node is eighter a state, an observation or a constant and each directed edge e=(i,j) indicates 
+that the lae of the variable i depends on the law of the variable j. 
 
 Input:
-- `ode` - an ode to solve
-- `param_values` - parameter values, must be a dictionary mapping parameter to a value
-- `initial_conditions` - initial conditions of `ode`, must be a dictionary mapping state variable to a value
-- `input_values` - power series for the inpiuts presented as a dictionary variable => list of coefficients
-- `prec` - the precision of solutions
+- `ode` - an ODEs system
 
 Output: 
-- computes a power series solution with precision prec presented as a dictionary variable => corresponding coordiante of the solution
+- A temporary .html file (that is opened automatically) where the graph is displayed 
 """
 
 
@@ -216,17 +215,16 @@ function visualize_graph(ode)
 end
 
 """
-    power_series_solution(ode, param_values, initial_conditions, input_values, prec)
+    find_submodels(ode)
+The function calculates and returns all valid submodels given a system of ODEs. To do that, it starts by building 
+and traversing using DFS a graph representation of the given system. Then starting from the first submodels founded
+it searches for all the possible unions of these submodel in order to span all the family of submodels
 
 Input:
-- `ode` - an ode to solve
-- `param_values` - parameter values, must be a dictionary mapping parameter to a value
-- `initial_conditions` - initial conditions of `ode`, must be a dictionary mapping state variable to a value
-- `input_values` - power series for the inpiuts presented as a dictionary variable => list of coefficients
-- `prec` - the precision of solutions
+- `ode` - an ODEs system to be studied
 
 Output: 
-- computes a power series solution with precision prec presented as a dictionary variable => corresponding coordiante of the solution
+- A list of `ode` objects (i.e. the submodels)
 """
 
 function find_submodels(ode)
