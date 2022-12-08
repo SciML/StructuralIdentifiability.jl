@@ -45,6 +45,8 @@ export linear_compartment_model
 # structure for storing the io-equations for doing reductions further
 export PBRepresentation, diffreduce, io_switch!, pseudodivision
 
+export find_submodels
+
 # would be great to merge with the Julia logger
 _runtime_logger = Dict()
 
@@ -60,6 +62,7 @@ include("io_equation.jl")
 include("global_identifiability.jl")
 include("lincomp.jl")
 include("pb_representation.jl")
+include("submodels.jl")
 
 """
     assess_identifiability(ode::ODE{P}, p::Float64=0.99) where P <: MPolyElem{fmpq}
