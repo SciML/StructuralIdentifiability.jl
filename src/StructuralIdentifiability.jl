@@ -9,7 +9,9 @@ using Logging
 using MacroTools
 using Primes
 using DataStructures
-
+using Colors
+using GraphPlot
+using Graphs
 # Algebra packages
 using AbstractAlgebra
 using Hecke
@@ -31,7 +33,7 @@ export ODE, @ODEmodel, PreprocessODE
 export assess_local_identifiability, assess_global_identifiability, assess_identifiability
 
 # auxuliary function
-export set_parameter_values, find_submodels
+export set_parameter_values
 
 # extra functionality
 export find_ioequations, find_identifiable_functions
@@ -45,6 +47,7 @@ export linear_compartment_model
 # structure for storing the io-equations for doing reductions further
 export PBRepresentation, diffreduce, io_switch!, pseudodivision
 
+# functions for finding submodels of a given model and visualization of the submodels
 export find_submodels
 
 # would be great to merge with the Julia logger

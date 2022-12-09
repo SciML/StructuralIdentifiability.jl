@@ -83,6 +83,25 @@ function search_add_unions(submodels)
     end
     return result
 end
+
+function remove_empty(submodels)
+    if [] in submodels
+        deleteat!(submodels, findfirst(x -> x == [], submodels))
+    end
+    return submodels
+end
+    
+function filter_max(ode,submodels)
+    n = length(vcat(ode.x_vars,ode.y_vars,ode.u_vars))
+    new_sub = []
+    for submodel in submodels
+        if !(length(submodel) == n)
+            push!(new_sub, submodel)
+        end
+    end
+    return new_sub
+end
+
     
 
 function ode_aux(ode, submodel)
@@ -191,8 +210,8 @@ function find_submodels(ode)
     y = collect(keys(ode.y_equations))
     raw_models = traverse_outputs(graph, y)
     submodels = find_raw_submodels(raw_models, y, graph)
-    unions = search_add_unions(submodels)
-    result = [m for m in union(sort_all(unions)) if length(m) > 0]
+    unions = (search_add_unions(submodels))
+    result = filter_max(ode,remove_empty(union(sort_all(unions))))
     back2ode = submodel2ode(ode, result)
     return back2ode
 end
