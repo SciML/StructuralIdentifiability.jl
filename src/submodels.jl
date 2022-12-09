@@ -12,14 +12,17 @@ Output:
 - Dictionary where each key is a variable and each value is a list of variables on which the key depends
 """
 
-function construct_graph(ode) 
+function construct_graph(ode) # construct a graph from given system of equations
     graph = Dict()
     for (x,f) in ode.x_equations
-        graph[x] = vars(f)
+        temp = unpack_fraction(f)
+        graph[x] = union(vars(temp[1]), vars(temp[2]))
     end
     for (y,f) in ode.y_equations
-        graph[y] = vars(f)
+        temp = unpack_fraction(f)
+        graph[y] = union(vars(temp[1]), vars(temp[2]))
     end
+    
     return graph
 end
 
@@ -47,22 +50,17 @@ function traverse_outputs(graph, ys)
 end
 
 
-function find_raw_submodels(raw_models, ys, graph)
-    result = []
-    for y1 in ys
-        for y2 in ys
-            if y1 != y2
-                if issubset(graph[y2], raw_models[y1]) && !(y2 in raw_models[y1])
-                   push!(raw_models[y1], y2)
-                end
+
+function find_raw_submodels(unions,Y, graph)
+    for element in unions
+        for y in Y
+            if issubset(graph[y], element) && !(y in element)
+                push!(element, y)
             end
         end
     end
-    for y in ys
-        push!(result, raw_models[y])
-    end
-    return result
 end
+
 
 # Gleb: why do we need this ?
 function sort_all(submodels)
@@ -206,11 +204,13 @@ Output:
 - A list of submodels represented as `ode` objects
 """
 function find_submodels(ode)
+    
     graph = construct_graph(ode)
     y = collect(keys(ode.y_equations))
     raw_models = traverse_outputs(graph, y)
-    submodels = find_raw_submodels(raw_models, y, graph)
-    unions = (search_add_unions(submodels))
+    input_unions = [raw_models[y] for y in y]
+    unions = (search_add_unions(input_unions))
+    find_raw_submodels(unions, y, graph)
     result = filter_max(ode,remove_empty(union(sort_all(unions))))
     back2ode = submodel2ode(ode, result)
     return back2ode
