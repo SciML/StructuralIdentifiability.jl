@@ -9,9 +9,7 @@ using Logging
 using MacroTools
 using Primes
 using DataStructures
-using Colors
-using GraphPlot
-using Graphs
+
 # Algebra packages
 using AbstractAlgebra
 using Hecke
