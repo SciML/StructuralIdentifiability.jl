@@ -92,7 +92,7 @@ function remove_empty(submodels)
 end
     
 function filter_max(ode,submodels)
-    n = length(vcat(ode.x_vars,ode.y_vars,ode.u_vars))
+    n = length(vcat(ode.x_vars,ode.y_vars,ode.u_vars, ode.parameters))
     new_sub = []
     for submodel in submodels
         if !(length(submodel) == n)
