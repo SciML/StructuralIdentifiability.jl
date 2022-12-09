@@ -12,7 +12,7 @@ Output:
 - Dictionary where each key is a variable and each value is a list of variables on which the key depends
 """
 
-function construct_graph(ode) # construct a graph from given system of equations
+function construct_graph(ode) 
     graph = Dict()
     for (x,f) in ode.x_equations
         temp = unpack_fraction(f)
@@ -61,8 +61,6 @@ function find_raw_submodels(unions,Y, graph)
     end
 end
 
-
-# Gleb: why do we need this ?
 function sort_all(submodels)
     sorted = []
     for submodel in submodels
@@ -141,57 +139,12 @@ Input:
 Output: 
 - A list of ODE objects, each corresponding to a certain valid submodel
 """
-# Gleb: not sure if this list comprehension has to be a separate function
+
 function submodel2ode(ode, submodels)
     return [ode_aux(ode, submodel) for submodel in submodels]
 end
 
 
-
-#"""
-#    visualize_ode(ode)
-#        
-#This function produces a plot of the system of ODEs given in terms of its graph representatinon. 
-#Each node is either a state, an observation or a constant and each directed edge e=(i,j) indicates 
-#that the law of the variable i depends on the law of the variable j. 
-#
-#Input:
-#- `ode` - an ODEs system
-#
-#Output: 
-#- A temporary .html file (that is opened automatically) where the graph is displayed 
-#"""
-#function visualize_ode(ode)
-#    graph = construct_graph(ode)
-#    y = ode.y_vars
-#    x = ode.x_vars
-#    u = ode.u_vars
-#    states = vcat(y,x,u)
-#    member_y = [1 for i in y]
-#    member_x = [2 for i in x]
-#    member_u = [3 for i in u]
-#    member = vcat(member_y, member_x, member_u)
-#    nodecolor = [colorant"lightblue", colorant"lightgreen", colorant"lightpink"]
-#    nodefillc = nodecolor[member]
-#    ind = Dict()
-#    for (i,el) in enumerate(states)
-#        ind[el] = i
-#    end
-#
-#    g = SimpleDiGraph(length(states))
-#
-#    for (x,f) in graph
-#        for node in f
-#            if (node != x && (node in states))
-#                add_edge!(g, ind[x], ind[node])
-#            end
-#        end
-#    end
-#    gplothtml(g, layout=circular_layout,nodefillc=nodefillc, nodelabel=states, arrowlengthfrac =0.05, EDGELINEWIDTH = 0.2, edgestrokec = colorant"grey", NODELABELSIZE =3)
-#end
-
-
-# TODO: add an example to this docstring
 """
     find_submodels(ode)
  
@@ -202,6 +155,14 @@ Input:
 
 Output: 
 - A list of submodels represented as `ode` objects
+Example:
+>ode = @ODEmodel(x1'(t) = x1(t)^2, x2'(t) = x1(t) * x2(t), y1(t) = x1(t), y2(t) = x2(t))
+>find_submodels(ode)
+ODE{fmpq_mpoly}[
+    x2'(t) = -x1(t)*x2(t) + x2(t)
+    x1'(t) = a(t)*x2(t)^2 + x1(t)
+    y1(t) = x1(t)
+]
 """
 function find_submodels(ode)
     
