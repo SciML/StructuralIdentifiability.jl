@@ -50,8 +50,7 @@ function traverse_outputs(graph, ys)
 end
 
 
-
-function find_raw_submodels(unions,Y, graph)
+function saturate_ys(unions,Y, graph)
     for element in unions
         for y in Y
             if issubset(graph[y], element) && !(y in element)
@@ -80,22 +79,10 @@ function search_add_unions(submodels)
     return result
 end
 
-function remove_empty(submodels)
-    if [] in submodels
-        deleteat!(submodels, findfirst(x -> x == [], submodels))
-    end
-    return submodels
-end
     
-function filter_max(ode,submodels)
-    n = length(vcat(ode.x_vars,ode.y_vars,ode.u_vars, ode.parameters))
-    new_sub = []
-    for submodel in submodels
-        if !(length(submodel) == n)
-            push!(new_sub, submodel)
-        end
-    end
-    return new_sub
+function filter_edge(ode, submodels)
+    n = sum(map(length, [ode.x_vars, ode.y_vars, ode.u_vars, ode.parameters]))
+    return [s for s in submodels  if !(length(s) in [0, n])]
 end
 
     
@@ -164,15 +151,15 @@ ODE{fmpq_mpoly}[
     y1(t) = x1(t)
 ]
 """
+# The example above should use ``` to be properly rendered in Markdown
 function find_submodels(ode)
-    
     graph = construct_graph(ode)
-    y = collect(keys(ode.y_equations))
-    raw_models = traverse_outputs(graph, y)
-    input_unions = [raw_models[y] for y in y]
+    ys = ode.y_vars
+    raw_models = traverse_outputs(graph, ys)
+    input_unions = [raw_models[y] for y in ys]
     unions = (search_add_unions(input_unions))
-    find_raw_submodels(unions, y, graph)
-    result = filter_max(ode,remove_empty(union(sort_all(unions))))
+    saturate_ys(unions, ys, graph)
+    result = filter_edge(ode, union(sort_all(unions)))
     back2ode = submodel2ode(ode, result)
     return back2ode
 end
