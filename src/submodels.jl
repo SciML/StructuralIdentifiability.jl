@@ -9,7 +9,7 @@ Input:
 - `ode` - an ODEs system 
 
 Output: 
-- Dictionary where each key is a variable and each value is a list of variables from which the key depends
+- Dictionary where each key is a variable and each value is a list of variables on which the key depends
 """
 
 function construct_graph(ode) 
@@ -37,21 +37,20 @@ function dfs(graph, start, visited)
 end
 
 
-
-function traverse_outputs(graph, y)
+function traverse_outputs(graph, ys)
     raw_models = Dict()
-    for state in y
-        model = dfs(graph, state, [])
-        raw_models[state] = model
+    for y in ys
+        model = dfs(graph, y, [])
+        raw_models[y] = model
     end
     return raw_models
 end
 
 
-function find_raw_submodels(raw_models,Y, graph)
+function find_raw_submodels(raw_models, ys, graph)
     result = []
-    for y1 in Y
-        for y2 in Y
+    for y1 in ys
+        for y2 in ys
             if y1 != y2
                 if issubset(graph[y2], raw_models[y1]) && !(y2 in raw_models[y1])
                    push!(raw_models[y1], y2)
@@ -59,13 +58,13 @@ function find_raw_submodels(raw_models,Y, graph)
             end
         end
     end
-    for y in Y
+    for y in ys
         push!(result, raw_models[y])
     end
     return result
 end
 
-
+# Gleb: why do we need this ?
 function sort_all(submodels)
     sorted = []
     for submodel in submodels
@@ -78,36 +77,22 @@ end
 function search_add_unions(submodels)
     result = [[]]
     for model in submodels
-        for index in range(1,length(result))
-            candidate_model = union(result[index], model)
-            push!(result, candidate_model)
+        for index in 1:length(result)
+            push!(result, union(result[index], model))
         end
     end
     return result
 end
     
 
-function remove_empty(submodels)
-    if [] in submodels
-        deleteat!(submodels, findfirst(x -> x == [], submodels))
-    end
-    return submodels
-end
-
-
-
-
-
 function ode_aux(ode, submodel)
-
     new_y = copy(ode.y_equations)
     new_x = copy(ode.x_equations)
-    new_u = Array{fmpq_mpoly, 1}()
+    new_u = Array{fmpq_mpoly, 1}([u for u in ode.u_vars if u in submodel])
     for (x,f) in ode.x_equations
         if !(issubset(vars(x),submodel) && issubset(vars(f),submodel))
             delete!(new_x, x)
         end
-
     end
     
     for (y,f) in ode.y_equations
@@ -116,12 +101,6 @@ function ode_aux(ode, submodel)
         end
     end
 
-    for u in ode.u_vars
-        if u in submodel
-            push!(new_u, u)
-        end
-    end
-    
     sub_str = map(var_to_str, submodel)
     S, _ = Nemo.PolynomialRing(Nemo.QQ, sub_str)
     fin_x = Dict(parent_ring_change(x, S) => parent_ring_change(f, S) for (x,f) in new_x)
@@ -130,7 +109,6 @@ function ode_aux(ode, submodel)
 
     return ODE{fmpq_mpoly}(fin_x, fin_y, fin_u)
 end
-
 
 
 """
@@ -146,78 +124,75 @@ Input:
 Output: 
 - A list of ODE objects, each corresponding to a certain valid submodel
 """
-
-
+# Gleb: not sure if this list comprehension has to be a separate function
 function submodel2ode(ode, submodels)
-    return [submodel2ode_aux(ode, submodel) for submodel in submodels]
+    return [ode_aux(ode, submodel) for submodel in submodels]
 end
 
 
 
-"""
-    visualize_ode(ode)
-        
-This function produces a plot of the system of ODEs given in terms of its graph representatinon. 
-Each node is either a state, an observation or a constant and each directed edge e=(i,j) indicates 
-that the law of the variable i depends on the law of the variable j. 
+#"""
+#    visualize_ode(ode)
+#        
+#This function produces a plot of the system of ODEs given in terms of its graph representatinon. 
+#Each node is either a state, an observation or a constant and each directed edge e=(i,j) indicates 
+#that the law of the variable i depends on the law of the variable j. 
+#
+#Input:
+#- `ode` - an ODEs system
+#
+#Output: 
+#- A temporary .html file (that is opened automatically) where the graph is displayed 
+#"""
+#function visualize_ode(ode)
+#    graph = construct_graph(ode)
+#    y = ode.y_vars
+#    x = ode.x_vars
+#    u = ode.u_vars
+#    states = vcat(y,x,u)
+#    member_y = [1 for i in y]
+#    member_x = [2 for i in x]
+#    member_u = [3 for i in u]
+#    member = vcat(member_y, member_x, member_u)
+#    nodecolor = [colorant"lightblue", colorant"lightgreen", colorant"lightpink"]
+#    nodefillc = nodecolor[member]
+#    ind = Dict()
+#    for (i,el) in enumerate(states)
+#        ind[el] = i
+#    end
+#
+#    g = SimpleDiGraph(length(states))
+#
+#    for (x,f) in graph
+#        for node in f
+#            if (node != x && (node in states))
+#                add_edge!(g, ind[x], ind[node])
+#            end
+#        end
+#    end
+#    gplothtml(g, layout=circular_layout,nodefillc=nodefillc, nodelabel=states, arrowlengthfrac =0.05, EDGELINEWIDTH = 0.2, edgestrokec = colorant"grey", NODELABELSIZE =3)
+#end
 
-Input:
-- `ode` - an ODEs system
 
-Output: 
-- A temporary .html file (that is opened automatically) where the graph is displayed 
-"""
-
-
-function visualize_ode(ode)
-    graph = construct_graph(ode)
-    y = ode.y_vars
-    x = ode.x_vars
-    u = ode.u_vars
-    states = vcat(y,x,u)
-    member_y = [1 for i in y]
-    member_x = [2 for i in x]
-    member_u = [3 for i in u]
-    member = vcat(member_y, member_x, member_u)
-    nodecolor = [colorant"lightblue", colorant"lightgreen", colorant"lightpink"]
-    nodefillc = nodecolor[member]
-    ind = Dict()
-    for (i,el) in enumerate(states)
-        ind[el] = i
-    end
-
-    g = SimpleDiGraph(length(states))
-
-    for (x,f) in graph
-        for node in f
-            if (node != x && (node in states))
-                add_edge!(g, ind[x], ind[node])
-            end
-        end
-    end
-    gplothtml(g, layout=circular_layout,nodefillc=nodefillc, nodelabel=states, arrowlengthfrac =0.05, EDGELINEWIDTH = 0.2, edgestrokec = colorant"grey", NODELABELSIZE =3)
-end
-
+# TODO: add an example to this docstring
 """
     find_submodels(ode)
-The function calculates and returns all valid submodels given a system of ODEs. To do that, it starts by building 
-and traversing using DFS a graph representation of the given system. Then starting from the first submodels founded
-it searches for all the possible unions of these submodel in order to span all the family of submodels
+ 
+The function calculates and returns all valid submodels given a system of ODEs.
 
 Input:
 - `ode` - an ODEs system to be studied
 
 Output: 
-- A list of `ode` objects (i.e. the submodels)
+- A list of submodels represented as `ode` objects
 """
-
 function find_submodels(ode)
     graph = construct_graph(ode)
     y = collect(keys(ode.y_equations))
     raw_models = traverse_outputs(graph, y)
     submodels = find_raw_submodels(raw_models, y, graph)
-    unions = (search_add_unions(submodels))
-    result = remove_empty(union(sort_all(unions)))
+    unions = search_add_unions(submodels)
+    result = [m for m in union(sort_all(unions)) if length(m) > 0]
     back2ode = submodel2ode(ode, result)
     return back2ode
 end

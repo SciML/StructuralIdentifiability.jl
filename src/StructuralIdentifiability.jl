@@ -31,7 +31,7 @@ export ODE, @ODEmodel, PreprocessODE
 export assess_local_identifiability, assess_global_identifiability, assess_identifiability
 
 # auxuliary function
-export set_parameter_values
+export set_parameter_values, find_submodels
 
 # extra functionality
 export find_ioequations, find_identifiable_functions
