@@ -50,10 +50,12 @@ function traverse_outputs(graph, ys)
 end
 
 
-function saturate_ys(unions,Y, graph)
+
+function saturate_ys(unions,Y, graph, X)
     for element in unions
         for y in Y
-            if issubset(graph[y], element) && !(y in element)
+            states = [x for x in graph[y] if x in X]
+            if issubset(states, element) && !(y in element)
                 push!(element, y)
             end
         end
@@ -80,11 +82,17 @@ function search_add_unions(submodels)
 end
 
     
-function filter_edge(ode, submodels)
-    n = sum(map(length, [ode.x_vars, ode.y_vars, ode.u_vars, ode.parameters]))
-    return [s for s in submodels  if !(length(s) in [0, n])]
+function filter_max(ode,submodels)
+    n = length(ode.x_vars)
+    new_sub = []
+    for submodel in submodels
+        list_x = [x for x in submodel if x in ode.x_vars]
+        if !(length(list_x) == n)
+            push!(new_sub, submodel)
+        end
+    end
+    return new_sub
 end
-
     
 
 function ode_aux(ode, submodel)
@@ -143,6 +151,7 @@ Input:
 Output: 
 - A list of submodels represented as `ode` objects
 Example:
+```
 >ode = @ODEmodel(x1'(t) = x1(t)^2, x2'(t) = x1(t) * x2(t), y1(t) = x1(t), y2(t) = x2(t))
 >find_submodels(ode)
 ODE{fmpq_mpoly}[
@@ -150,16 +159,18 @@ ODE{fmpq_mpoly}[
     x1'(t) = a(t)*x2(t)^2 + x1(t)
     y1(t) = x1(t)
 ]
+```
 """
-# The example above should use ``` to be properly rendered in Markdown
 function find_submodels(ode)
+    
     graph = construct_graph(ode)
     ys = ode.y_vars
+    xs = ode.x_vars
     raw_models = traverse_outputs(graph, ys)
     input_unions = [raw_models[y] for y in ys]
     unions = (search_add_unions(input_unions))
-    saturate_ys(unions, ys, graph)
-    result = filter_edge(ode, union(sort_all(unions)))
+    saturate_ys(unions, ys, graph,xs)
+    result = filter_max(ode,union(sort_all(unions))[2:end])
     back2ode = submodel2ode(ode, result)
     return back2ode
 end
