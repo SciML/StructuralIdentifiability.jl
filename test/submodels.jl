@@ -42,7 +42,34 @@
                 y2(t) = x2(t)
             ),
             :submodels => Set([(Set(["x1"]), Set(["y1"]), Set{String}())])
+        ),
+        Dict(
+            :ode => @ODEmodel(
+                x1'(t) = x1(t) +a(t)*x2(t)^2,
+                x2'(t) = x2(t) - b(t)*x1(t) * x2(t) ,
+                x3'(t) = x3(t) + x1(t) + x2(t),
+                y1(t) = d(t)*x1(t),
+                y2(t) = x3(t)
+            ),
+            :submodels => Set([
+                (Set(["x1", "x2"]), Set(["y1"]), Set(["a","b","d"]))
+            ])
+        ),
+        Dict(
+            :ode => @ODEmodel(
+                x1'(t) = x1(t) ,
+                x2'(t) = x1(t) - c*a(t)*x2(t) * x2(t) ,
+                x3'(t) = x3(t) - x1(t) * x2(t) * x3(t) ,
+                y1(t) = x1(t),
+                y2(t) = x1(t) + d(t)*x2(t),
+                y3(t) = x3(t)
+            ),
+            :submodels => Set([
+                (Set(["x1", "x2"]), Set(["y1","y2"]), Set(["a","d"])),
+                (Set(["x1"]), Set(["y1"]), Set{String}())
+            ])
         )
+
     ]
 
     for c in cases
@@ -51,4 +78,5 @@
         @test submodels == c[:submodels]
     end
 end
+
 
