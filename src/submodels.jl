@@ -155,7 +155,7 @@ Example:
 >ode = @ODEmodel(x1'(t) = x1(t)^2, x2'(t) = x1(t) * x2(t), y1(t) = x1(t), y2(t) = x2(t))
 >find_submodels(ode)
 ODE{fmpq_mpoly}[
-    x2'(t) = -x1(t)*x2(t) + x2(t)
+    
     x1'(t) = a(t)*x2(t)^2 + x1(t)
     y1(t) = x1(t)
 ]
