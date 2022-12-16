@@ -211,6 +211,12 @@ function assess_global_identifiability(
         p::Float64=0.99;
         var_change=:default,
     ) where P <: MPolyElem{fmpq}
+
+    submodels = find_submodels(ode)
+    if length(submodels) > 0
+        @info "Note: the input model has nontrivial submodels. If the computation for the full model will be too heavy, you may want to try to first analyze one of the submodels. They can be produced using function `find_submodels`"
+    end
+
     @info "Computing IO-equations"
     ioeq_time = @elapsed io_equations = find_ioequations(ode; var_change_policy=var_change)
     @debug "Sizes: $(map(length, values(io_equations)))"

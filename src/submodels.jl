@@ -1,4 +1,4 @@
-
+# ------------------------------------------------------------------------------
 
 """
     construct_graph(ode)
@@ -26,6 +26,7 @@ function construct_graph(ode)
     return graph
 end
 
+# ------------------------------------------------------------------------------
 
 function dfs(graph, start, visited) 
     push!(visited, start)
@@ -39,6 +40,7 @@ function dfs(graph, start, visited)
     return visited
 end
 
+# ------------------------------------------------------------------------------
 
 function traverse_outputs(graph, ys)
     raw_models = Dict()
@@ -49,9 +51,9 @@ function traverse_outputs(graph, ys)
     return raw_models
 end
 
+# ------------------------------------------------------------------------------
 
-
-function saturate_ys(unions,Y, graph, X)
+function saturate_ys(unions, Y, graph, X)
     for element in unions
         for y in Y
             states = [x for x in graph[y] if x in X]
@@ -62,6 +64,8 @@ function saturate_ys(unions,Y, graph, X)
     end
 end
 
+# ------------------------------------------------------------------------------
+
 function sort_all(submodels)
     sorted = []
     for submodel in submodels
@@ -70,6 +74,8 @@ function sort_all(submodels)
     end
     return sorted
 end
+
+# ------------------------------------------------------------------------------
 
 function search_add_unions(submodels)
     result = [[]]
@@ -81,7 +87,8 @@ function search_add_unions(submodels)
     return result
 end
 
-    
+# ------------------------------------------------------------------------------
+   
 function filter_max(ode,submodels)
     n = length(ode.x_vars)
     new_sub = []
@@ -94,6 +101,7 @@ function filter_max(ode,submodels)
     return new_sub
 end
     
+# ------------------------------------------------------------------------------
 
 function ode_aux(ode, submodel)
     new_y = copy(ode.y_equations)
@@ -120,6 +128,7 @@ function ode_aux(ode, submodel)
     return ODE{fmpq_mpoly}(fin_x, fin_y, fin_u)
 end
 
+# ------------------------------------------------------------------------------
 
 """
     submodel2ode(ode, submodels)
@@ -139,6 +148,7 @@ function submodel2ode(ode, submodels)
     return [ode_aux(ode, submodel) for submodel in submodels]
 end
 
+# ------------------------------------------------------------------------------
 
 """
     find_submodels(ode)

@@ -256,9 +256,13 @@ function find_ioequations(
         point_generator = generator_var_change(point_generator, extra_var, extra_var_rhs, one(ring))
         extra_poly = extra_var - extra_var_rhs
         for (y, io_eq) in io_equations
+            @debug "Eliminating $y (using an equation of size $(length(io_eq)))"
             extra_poly = eliminate_var(extra_poly, io_eq, y, point_generator)
         end
+        @debug "Plugging the original expression into a result of size $(length(extra_poly))"
+        flush(stdout)
         extra_poly = evaluate(extra_poly, [extra_var], [extra_var_rhs])
+        @debug "Check primality"
         if check_primality(io_equations, [extra_poly])
             @debug "Single component of highest dimension isolated, returning"
             io_equations[extra_var] = extra_poly
