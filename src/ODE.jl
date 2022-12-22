@@ -257,6 +257,7 @@ function macrohelper_clean(ex::Expr)
     ex = MacroTools.postwalk(x -> @capture(x, f_'(t)) ? f : x, ex)
     ex = MacroTools.postwalk(x -> @capture(x, f_(t)) ? f : x, ex)
     ex = MacroTools.postwalk(x -> x == :(/) ? :(//) : x, ex)
+    ex = MacroTools.postwalk(x -> typeof(x) <: Float64 ? rationalize(x) : x, ex)
     return ex
 end
 
