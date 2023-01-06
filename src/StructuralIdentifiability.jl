@@ -12,7 +12,6 @@ using DataStructures
 
 # Algebra packages
 using AbstractAlgebra
-using Hecke
 using Nemo
 using Groebner
 

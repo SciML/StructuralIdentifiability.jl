@@ -1,5 +1,11 @@
 # ------------------------------------------------------------------------------
 
+function Nemo.vars(f::Generic.Frac{<: MPolyElem})
+    return collect(union(Set(vars(numerator(f))), Set(vars(denominator(f)))))
+end
+
+# ------------------------------------------------------------------------------
+
 """
     eval_at_dict(f, d)
 

@@ -12,7 +12,7 @@ Output:
 - Dictionary where each key is a variable and each value is a list of variables on which the key depends
 """
 
-function construct_graph(ode) 
+function construct_graph(ode::ODE) 
     graph = Dict()
     for (x,f) in ode.x_equations
         temp = unpack_fraction(f)
@@ -28,7 +28,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-function dfs(graph, start, visited) 
+function dfs(graph, start, visited::Array{fmpq_mpoly, 1})
     push!(visited, start)
     if start in keys(graph)
         for node in graph[start]
@@ -45,7 +45,7 @@ end
 function traverse_outputs(graph, ys)
     raw_models = Dict()
     for y in ys
-        model = dfs(graph, y, [])
+        model = dfs(graph, y, Array{fmpq_mpoly, 1}())
         raw_models[y] = model
     end
     return raw_models
@@ -108,13 +108,13 @@ function ode_aux(ode, submodel)
     new_x = copy(ode.x_equations)
     new_u = Array{fmpq_mpoly, 1}([u for u in ode.u_vars if u in submodel])
     for (x,f) in ode.x_equations
-        if !(issubset(vars(x),submodel) && issubset(vars(f),submodel))
+        if !(issubset(vars(x), submodel) && issubset(vars(f), submodel))
             delete!(new_x, x)
         end
     end
     
     for (y,f) in ode.y_equations
-        if !(issubset(vars(y),submodel) && issubset(vars(f),submodel))
+        if !(issubset(vars(y), submodel) && issubset(vars(f), submodel))
             delete!(new_y, y)
         end
     end

@@ -18,7 +18,8 @@ function check_primality_zerodim(J::Array{fmpq_mpoly, 1})
         push!(matrices, M)
     end
     generic_multiplication = sum(rand(1:100) * M for M in matrices)
-    return Nemo.isirreducible(Nemo.charpoly(generic_multiplication))
+    R, t = Nemo.PolynomialRing(Nemo.QQ, "t")
+    return Nemo.isirreducible(Nemo.charpoly(R, generic_multiplication))
 end
 
 #------------------------------------------------------------------------------
