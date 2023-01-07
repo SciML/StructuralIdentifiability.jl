@@ -12,8 +12,8 @@ Output:
 - Dictionary where each key is a variable and each value is a list of variables on which the key depends
 """
 
-function construct_graph(ode::ODE) 
-    graph = Dict()
+function construct_graph(ode::ODE{P}) where P <: MPolyElem
+    graph = Dict{fmpq_mpoly, Array{fmpq_mpoly, 1}}()
     for (x,f) in ode.x_equations
         temp = unpack_fraction(f)
         graph[x] = union(vars(temp[1]), vars(temp[2]))
@@ -28,7 +28,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-function dfs(graph, start, visited::Array{fmpq_mpoly, 1})
+function dfs(graph::Dict{fmpq_mpoly,Array{fmpq_mpoly,1}}, start::fmpq_mpoly, visited::Array{fmpq_mpoly, 1})
     push!(visited, start)
     if start in keys(graph)
         for node in graph[start]
@@ -42,8 +42,8 @@ end
 
 # ------------------------------------------------------------------------------
 
-function traverse_outputs(graph, ys)
-    raw_models = Dict()
+function traverse_outputs(graph::Dict{fmpq_mpoly, Array{fmpq_mpoly, 1}}, ys::Array{fmpq_mpoly, 1})
+    raw_models = Dict{fmpq_mpoly, Array{fmpq_mpoly, 1}}()
     for y in ys
         model = dfs(graph, y, Array{fmpq_mpoly, 1}())
         raw_models[y] = model
@@ -53,7 +53,11 @@ end
 
 # ------------------------------------------------------------------------------
 
-function saturate_ys(unions, Y, graph, X)
+function saturate_ys(unions::Array{Array{fmpq_mpoly, 1}, 1},
+                     Y::Array{fmpq_mpoly,1}, 
+                     graph::Dict{fmpq_mpoly,
+                     Array{fmpq_mpoly,1}}, 
+                     X::Array{fmpq_mpoly,1})
     for element in unions
         for y in Y
             states = [x for x in graph[y] if x in X]
@@ -66,8 +70,8 @@ end
 
 # ------------------------------------------------------------------------------
 
-function sort_all(submodels)
-    sorted = []
+function sort_all(submodels::Array{Array{fmpq_mpoly, 1}, 1})
+    sorted = Array{Array{fmpq_mpoly, 1}, 1}([[]])
     for submodel in submodels
         sub = sort(submodel, by = string)
         push!(sorted, sub)
@@ -77,8 +81,8 @@ end
 
 # ------------------------------------------------------------------------------
 
-function search_add_unions(submodels)
-    result = [[]]
+function search_add_unions(submodels::Array{Array{fmpq_mpoly, 1}, 1})
+    result = Array{Array{fmpq_mpoly, 1}, 1}([[]])
     for model in submodels
         for index in 1:length(result)
             push!(result, union(result[index], model))
@@ -89,9 +93,9 @@ end
 
 # ------------------------------------------------------------------------------
    
-function filter_max(ode,submodels)
+function filter_max(ode::ODE{P},submodels::Array{Array{fmpq_mpoly, 1}, 1}) where P <: MPolyElem
     n = length(ode.x_vars)
-    new_sub = []
+    new_sub = Array{Array{fmpq_mpoly, 1}, 1}([])
     for submodel in submodels
         list_x = [x for x in submodel if x in ode.x_vars]
         if !(length(list_x) == n)
@@ -103,7 +107,7 @@ end
     
 # ------------------------------------------------------------------------------
 
-function ode_aux(ode, submodel)
+function ode_aux(ode::ODE{P}, submodel::Array{fmpq_mpoly,1}) where P <: MPolyElem
     new_y = copy(ode.y_equations)
     new_x = copy(ode.x_equations)
     new_u = Array{fmpq_mpoly, 1}([u for u in ode.u_vars if u in submodel])
@@ -144,7 +148,7 @@ Output:
 - A list of ODE objects, each corresponding to a certain valid submodel
 """
 
-function submodel2ode(ode, submodels)
+function submodel2ode(ode::ODE{P}, submodels::Array{Array{fmpq_mpoly, 1}, 1}) where P <: MPolyElem
     return [ode_aux(ode, submodel) for submodel in submodels]
 end
 
@@ -162,16 +166,19 @@ Output:
 - A list of submodels represented as `ode` objects
 Example:
 ```
->ode = @ODEmodel(x1'(t) = x1(t)^2, x2'(t) = x1(t) * x2(t), y1(t) = x1(t), y2(t) = x2(t))
+>ode = @ODEmodel(x1'(t) = x1(t)^2, 
+                 x2'(t) = x1(t) * x2(t), 
+                 y1(t) = x1(t), 
+                 y2(t) = x2(t))
 >find_submodels(ode)
-ODE{fmpq_mpoly}[
-    
-    x1'(t) = a(t)*x2(t)^2 + x1(t)
-    y1(t) = x1(t)
-]
+    ODE{fmpq_mpoly}[
+        
+        x1'(t) = a(t)*x2(t)^2 + x1(t)
+        y1(t) = x1(t)
+    ]
 ```
 """
-function find_submodels(ode)
+function find_submodels(ode::ODE{P}) where P <: MPolyElem
     
     graph = construct_graph(ode)
     ys = ode.y_vars
