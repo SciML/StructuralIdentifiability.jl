@@ -13,14 +13,14 @@ Output:
 """
 
 function construct_graph(ode::ODE{P}) where P <: MPolyElem
-    graph = Dict{fmpq_mpoly, Array{fmpq_mpoly, 1}}()
+    graph = Dict{fmpq_mpoly, Set{fmpq_mpoly}}()
     for (x,f) in ode.x_equations
         temp = unpack_fraction(f)
-        graph[x] = union(vars(temp[1]), vars(temp[2]))
+        graph[x] = Set{fmpq_mpoly}(union(vars(temp[1]), vars(temp[2])))
     end
     for (y,f) in ode.y_equations
         temp = unpack_fraction(f)
-        graph[y] = union(vars(temp[1]), vars(temp[2]))
+        graph[y] = Set{fmpq_mpoly}(union(vars(temp[1]), vars(temp[2])))
     end
     
     return graph
@@ -28,7 +28,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-function dfs(graph::Dict{fmpq_mpoly,Array{fmpq_mpoly,1}}, start::fmpq_mpoly, visited::Array{fmpq_mpoly, 1})
+function dfs(graph::Dict{fmpq_mpoly, Set{fmpq_mpoly}}, start::fmpq_mpoly, visited::Set{fmpq_mpoly})
     push!(visited, start)
     if start in keys(graph)
         for node in graph[start]
@@ -42,10 +42,10 @@ end
 
 # ------------------------------------------------------------------------------
 
-function traverse_outputs(graph::Dict{fmpq_mpoly, Array{fmpq_mpoly, 1}}, ys::Array{fmpq_mpoly, 1})
-    raw_models = Dict{fmpq_mpoly, Array{fmpq_mpoly, 1}}()
+function traverse_outputs(graph::Dict{fmpq_mpoly, Set{fmpq_mpoly}}, ys::Array{fmpq_mpoly, 1})
+    raw_models = Dict{fmpq_mpoly, Set{fmpq_mpoly}}()
     for y in ys
-        model = dfs(graph, y, Array{fmpq_mpoly, 1}())
+        model = dfs(graph, y, Set{fmpq_mpoly}())
         raw_models[y] = model
     end
     return raw_models
@@ -53,10 +53,9 @@ end
 
 # ------------------------------------------------------------------------------
 
-function saturate_ys(unions::Array{Array{fmpq_mpoly, 1}, 1},
+function saturate_ys(unions::Array{Set{fmpq_mpoly}, 1},
                      Y::Array{fmpq_mpoly,1}, 
-                     graph::Dict{fmpq_mpoly,
-                     Array{fmpq_mpoly,1}}, 
+                     graph::Dict{fmpq_mpoly, Set{fmpq_mpoly}}, 
                      X::Array{fmpq_mpoly,1})
     for element in unions
         for y in Y
@@ -70,19 +69,8 @@ end
 
 # ------------------------------------------------------------------------------
 
-function sort_all(submodels::Array{Array{fmpq_mpoly, 1}, 1})
-    sorted = Array{Array{fmpq_mpoly, 1}, 1}([[]])
-    for submodel in submodels
-        sub = sort(submodel, by = string)
-        push!(sorted, sub)
-    end
-    return sorted
-end
-
-# ------------------------------------------------------------------------------
-
-function search_add_unions(submodels::Array{Array{fmpq_mpoly, 1}, 1})
-    result = Array{Array{fmpq_mpoly, 1}, 1}([[]])
+function search_add_unions(submodels::Array{Set{fmpq_mpoly}, 1})
+    result = Array{Set{fmpq_mpoly}, 1}([Set{fmpq_mpoly}()])
     for model in submodels
         for index in 1:length(result)
             push!(result, union(result[index], model))
@@ -93,9 +81,9 @@ end
 
 # ------------------------------------------------------------------------------
    
-function filter_max(ode::ODE{P},submodels::Array{Array{fmpq_mpoly, 1}, 1}) where P <: MPolyElem
+function filter_max(ode::ODE{P}, submodels::Array{Set{fmpq_mpoly}, 1}) where P <: MPolyElem
     n = length(ode.x_vars)
-    new_sub = Array{Array{fmpq_mpoly, 1}, 1}([])
+    new_sub = Array{Set{fmpq_mpoly}, 1}([])
     for submodel in submodels
         list_x = [x for x in submodel if x in ode.x_vars]
         if !(length(list_x) == n)
@@ -107,7 +95,7 @@ end
     
 # ------------------------------------------------------------------------------
 
-function ode_aux(ode::ODE{P}, submodel::Array{fmpq_mpoly,1}) where P <: MPolyElem
+function ode_aux(ode::ODE{P}, submodel::Set{fmpq_mpoly}) where P <: MPolyElem
     new_y = copy(ode.y_equations)
     new_x = copy(ode.x_equations)
     new_u = Array{fmpq_mpoly, 1}([u for u in ode.u_vars if u in submodel])
@@ -123,7 +111,7 @@ function ode_aux(ode::ODE{P}, submodel::Array{fmpq_mpoly,1}) where P <: MPolyEle
         end
     end
 
-    sub_str = map(var_to_str, submodel)
+    sub_str = map(var_to_str, collect(submodel))
     S, _ = Nemo.PolynomialRing(Nemo.QQ, sub_str)
     fin_x = Dict(parent_ring_change(x, S) => parent_ring_change(f, S) for (x,f) in new_x)
     fin_y = Dict(parent_ring_change(y, S) => parent_ring_change(f, S) for (y,f) in new_y)
@@ -148,7 +136,7 @@ Output:
 - A list of ODE objects, each corresponding to a certain valid submodel
 """
 
-function submodel2ode(ode::ODE{P}, submodels::Array{Array{fmpq_mpoly, 1}, 1}) where P <: MPolyElem
+function submodel2ode(ode::ODE{P}, submodels::Array{Set{fmpq_mpoly}, 1}) where P <: MPolyElem
     return [ode_aux(ode, submodel) for submodel in submodels]
 end
 
@@ -187,7 +175,7 @@ function find_submodels(ode::ODE{P}) where P <: MPolyElem
     input_unions = [raw_models[y] for y in ys]
     unions = (search_add_unions(input_unions))
     saturate_ys(unions, ys, graph,xs)
-    result = filter_max(ode,union(sort_all(unions))[2:end])
+    result = filter_max(ode, union(unions)[2:end])
     back2ode = submodel2ode(ode, result)
     return back2ode
 end
