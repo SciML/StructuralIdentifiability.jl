@@ -362,7 +362,9 @@ function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P
         flush(stdout)
         resultant = det_minor_expansion(M_simp)
     end
+    @debug "Degrees are", [(v, Nemo.degree(resultant, v)) for v in vars(resultant)]
     # Step 4: Eliminate extra factors
+    @debug "Eliminating extra factors"
     factors = fast_factor(resultant)
     for mfac in matrix_factors
         for fac in fast_factor(mfac)

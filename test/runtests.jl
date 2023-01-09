@@ -3,7 +3,6 @@ using StructuralIdentifiability
 using StructuralIdentifiability.Test
 using StructuralIdentifiability.TestSetExtensions
 
-using StructuralIdentifiability.AbstractAlgebra
 using StructuralIdentifiability.Nemo
 using StructuralIdentifiability.ModelingToolkit
 using StructuralIdentifiability: check_field_membership, check_identifiability, check_primality_zerodim,
