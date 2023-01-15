@@ -93,7 +93,7 @@ Input
 - `new_ring` - a polynomial ring such that every variable name appearing in poly appears among the generators
 
 Output:
-- a polynomial in `new_ring` "equal" to `poly`
+- a polynomial in `new_ring` “equal” to `poly`
 """
 function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching=:byname)
     old_ring = parent(poly)
@@ -137,7 +137,7 @@ function parent_ring_change(f::Generic.Frac{<: MPolyElem}, new_ring::MPolyRing; 
     n, d = unpack_fraction(f)
     return parent_ring_change(n, new_ring; matching=matching) // parent_ring_change(d, new_ring; matching=matching)
 end
- 
+
 # ------------------------------------------------------------------------------
 
 """
@@ -146,7 +146,7 @@ end
 Input:
 - `f` - polynomial with rational coefficients
 
-Output: 
+Output:
 - list of pairs `(div, certainty)` where
     - `div`'s are divisors of `f` such that `f` is their product with certain powers
     - if `certainty` is true, `div` is ``Q``-irreducible
@@ -197,7 +197,7 @@ function fast_factor(poly::MPolyElem{fmpq})
     for p in uncert_factors
 		for f in Nemo.factor(p)
             push!(cert_factors, f[1])
-        end 
+        end
     end
     return cert_factors
 end
@@ -217,7 +217,7 @@ end
 """
     extract_coefficients(poly, variables)
 
-Intput:
+Input:
 - `poly` - multivariate polynomial
 - `variables` - a list of variables from the generators of the ring of p
 Output:
@@ -335,7 +335,7 @@ function decompose_derivative(varname::String, prefixes::Array{String})
     for pr in prefixes
         if startswith(varname, pr) && length(varname) > length(pr) + 1
             if varname[length(pr) + 1] == '_' && all(map(isdigit, collect(varname[length(pr) + 2:end])))
-                return (pr, parse(Int, varname[length(pr) + 2:end])) 
+                return (pr, parse(Int, varname[length(pr) + 2:end]))
             end
         end
     end

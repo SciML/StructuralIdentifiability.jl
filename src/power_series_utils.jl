@@ -59,9 +59,9 @@ end
     ps_diff(ps)
 
 Input:
-- `ps` - (absolute capped) unvariate power series
+- `ps` - (absolute capped) univariate power series
 
-Output: 
+Output:
 - the derivative of `ps`
 """
 function ps_diff(ps::Generic.AbsSeriesElem{<: Generic.RingElem})
@@ -79,7 +79,7 @@ end
     ps_integrate(ps)
 
 Input:
-- `ps` - (absolute capped) unvariate power series
+- `ps` - (absolute capped) univariate power series
 Output:
 - the integral of `ps` without constant term
 """
@@ -100,7 +100,7 @@ end
 Input:
 - M - a square matrix with entries in a univariate power series ring
       it is assumed that `M(0)` is the identity
-Output: 
+Output:
 - the natural log of `M`
 """
 function ps_matrix_log(M::MatElem{<: Generic.AbsSeriesElem{<: Generic.FieldElem}})
@@ -137,7 +137,7 @@ end
 Input:
 - `A` - a square matrix with entries in a univariate power series ring
 - `Y0` - a square invertible matrix over the base field
-Output: 
+Output:
 - matrix `Y` such that `Y' = AY` up to precision of `A - 1` and `Y(0) = Y0`
 """
 function ps_matrix_homlinear_de(
@@ -211,8 +211,8 @@ Input:
 - `ic` - initial conditions for x's (dictionary)
 - `inputs` - power series for inputs represented as arrays (dictionary)
 - `prec` - precision of the solution
-    
-Output: 
+
+Output:
 - power series solution of the system
 """
 function ps_ode_solution(
@@ -227,7 +227,7 @@ function ps_ode_solution(
     Sv = AbstractAlgebra.MatrixSpace(ring, n, 1)
     Svconst = AbstractAlgebra.MatrixSpace(base_ring(ring), n, 1)
     eqs = Sv(equations)
-    
+
     x_vars = filter(v -> ("$(v)_dot" in map(string, gens(ring))), gens(ring))
     x_vars = [x for x in x_vars]
     x_dot_vars = [str_to_var(var_to_str(x) * "_dot", ring) for x in x_vars]
@@ -277,9 +277,9 @@ end
 #------------------------------------------------------------------------------
 
 function ps_ode_solution(
-        equations::Array{P, 1}, 
-        ic::Dict{P, Int}, 
-        inputs::Dict{P, Array{Int, 1}}, 
+        equations::Array{P, 1},
+        ic::Dict{P, Int},
+        inputs::Dict{P, Array{Int, 1}},
         prec::Int
     ) where P <: MPolyElem{<: Generic.FieldElem}
     bring = base_ring(parent(equations[1]))

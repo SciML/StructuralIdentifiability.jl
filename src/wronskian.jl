@@ -6,11 +6,11 @@ import Base.push!
     monomial_compress(io_equation, ode)
 
 Compresses an input-output equation for the rank computation
-Input: 
+Input:
 - `io_equation` - input-output equation
 - `ode` - the corresponding ODE model
 
-Output: 
+Output:
 - pair (coeffs, terms) such that:
     - sum of `coeffs[i] * terms[i] = io_equation`
     - `coeffs` involve only parameters, `terms` involve only inputs and outputs
@@ -89,8 +89,8 @@ Input:
 - `t` - a trie with exponent vectors
 - `vect` - yet another exponent vector
 
-Output: 
-- a pair `(d, v)` where `v` is a vector in the trie which is componenwise ≤ `vect` and the difference `d` is as small as possible
+Output:
+- a pair `(d, v)` where `v` is a vector in the trie which is componentwise ≤ `vect` and the difference `d` is as small as possible
 """
 function get_max_below(t::ExpVectTrie, vect::Array{Int, 1})
     if t.depth == 0
@@ -122,10 +122,10 @@ Input:
 - `polys` - a list of polynomials
 - `eval_dict` - dictionary from variables to the values. Missing values are treated as zeroes
 
-Output: 
+Output:
 - a list of values of the polynomials
 
-Evaluates a list of polynomails at a point. Assumes that multiplications are relatively expensive
+Evaluates a list of polynomials at a point. Assumes that multiplications are relatively expensive
 (like in truncated power series) so all the monomials are precomputed first and the values of monomials
 of lower degree are cached and used to compute the values of the monomials of higher degree
 """
@@ -187,10 +187,10 @@ Input:
 - `io_equations` - a set of io-equations in the form of the `Dict` as returned by `find_ioequations`
 - `ode` - the `ODE` object
 
-Output: 
-- a list of wronskians evaluated at a point modulo prime
+Output:
+- a list of Wronskians evaluated at a point modulo prime
 
-Computes the wronskians of io_equations
+Computes the Wronskians of io_equations
 """
 function wronskian(io_equations::Dict{P, P}, ode::ODE{P}) where P <: MPolyElem
     @debug "Compressing monomials"
@@ -205,7 +205,7 @@ function wronskian(io_equations::Dict{P, P}, ode::ODE{P}) where P <: MPolyElem
     F = Nemo.GF(PRIME)
     polyring_red, gens_red = Nemo.PolynomialRing(F, map(var_to_str, gens(parent(termlists[1][1]))))
     termlists = [map(p -> parent_ring_change(p, polyring_red), tlist) for tlist in termlists]
-    ode_red = reduce_ode_mod_p(ode, PRIME) 
+    ode_red = reduce_ode_mod_p(ode, PRIME)
 
     @debug "Computing power series solution up to order $ord"
 	ps = power_series_solution(
@@ -225,7 +225,7 @@ function wronskian(io_equations::Dict{P, P}, ode::ODE{P}) where P <: MPolyElem
         end
     end
 
-    @debug "Constructing wronskians"
+    @debug "Constructing Wronskians"
     result = []
     for (i, tlist) in enumerate(termlists)
         n = length(tlist)

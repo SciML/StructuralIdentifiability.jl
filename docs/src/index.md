@@ -24,7 +24,7 @@ Pkg.add("StructuralIdentifiability")
 }
 ```
 ## Feature Summary
-`StructuralIdentifiability.jl` can assess local and global identifiability of ODE models. In addition to these straightforward identifiability queries on individual parameters, the package is able to distinguish between single- and multi-experiment identifiability.
+`StructuralIdentifiability.jl` can assess local and global identifiability of ODE models. In addition to these straightforward identifiability queries on individual parameters, the package can distinguish between single- and multi-experiment identifiability.
 ## Feature List
 * Local identifiability checks
 * Global identifiability checks
