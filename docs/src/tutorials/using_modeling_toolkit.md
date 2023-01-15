@@ -17,7 +17,7 @@ $\begin{cases}
     y_2 = N_{inv}
 \end{cases}$
 
-This is an infectious desease model defined in [^1].
+This is an infectious disease model defined in [^1].
 
 The main difference between the input formats in `ModelingToolkit.jl` and `StructuralIdentifiability.jl` is that the output (measured values/functions) must be specified separately in `ModelingToolkit.jl`. In this example, measured quantities are presented by $y_1$, $y_2$.
 
@@ -51,7 +51,7 @@ Finally, let us define the array of measured quantities and call the `assess_ide
 
 For `ModelingToolkit.jl`, both `assess_identifiability` and `assess_local_identifiability` functions accept keyword arguments: 
 
-* `measured_quantities`, also called "output functions" in identifiability literature; these are crucial for answering identifiability questions.
+* `measured_quantities`, also called “output functions” in identifiability literature; these are crucial for answering identifiability questions.
 * `p`, probability of correctness. This value equals 0.99 by default.
 * `funcs_to_check`, functions of parameters of which we wish to check identifiability.
 
@@ -60,7 +60,7 @@ measured_quantities = [y1 ~ C, y2 ~ N_inv]
 @time global_id = assess_identifiability(ode, measured_quantities=measured_quantities)
 ```
 
-Let us put all of the code above together:
+Let us put all the code above together:
 
 ```@repl
 using StructuralIdentifiability, ModelingToolkit

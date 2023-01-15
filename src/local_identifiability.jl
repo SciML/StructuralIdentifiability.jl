@@ -1,14 +1,14 @@
 # Copyright (c) 2021, R. Dong, C. Goodbreak, H. Harrington, G. Pogudin
 # Copyright (c) 2020, A. Ovchinnikov, A. Pillay, G. Pogudin, T. Scanlon
 
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
-# to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 # and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 # The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # ------------------------------------------------------------------------------
@@ -16,11 +16,11 @@
 """
     differentiate_solution(ode, params, ic, inputs, prec)
 
-Input: 
+Input:
 - the same as for `power_series_solutions`
 
-Output: 
-- a tuple consisting of the power series solution and a dictionary of the form `(u, v) => power series`, where `u` is a state variable 
+Output:
+- a tuple consisting of the power series solution and a dictionary of the form `(u, v) => power series`, where `u` is a state variable
   `v` is a state or parameter, and the power series is the partial derivative of
   the function `u` w.r.t. `v` evaluated at the solution
 """
@@ -58,11 +58,11 @@ function differentiate_solution(
     for i in 1:length(ode.x_vars)
         initial_condition[i, i] = 1
     end
-    
+
     @debug "Solving the variational system and forming the output"
     sol_var_system = ps_matrix_linear_de(A, B, initial_condition, prec)
     return (
-        ps_sol, 
+        ps_sol,
         Dict(
             (vars[i], vars[j]) => sol_var_system[i, j]
             for i in 1:length(ode.x_vars), j in 1:length(vars)
@@ -75,7 +75,7 @@ end
 """
     differentiate_output(ode, params, ic, inputs, prec)
 
-Similar to `differentiate_solution` but computes partial derivatives of a prescribed outputs
+Similar to `differentiate_solution` but computes partial derivatives of prescribed outputs
 returns a dictionary of the form `y_function => Dict(var => dy/dvar)` where `dy/dvar` is the derivative
 of `y_function` with respect to `var`.
 """
@@ -106,7 +106,7 @@ function differentiate_output(
         end
     end
 
-    return result 
+    return result
 end
 
 # ------------------------------------------------------------------------------
@@ -140,25 +140,24 @@ end
 
 Input:
 - `ode` - the ODESystem object from ModelingToolkit
-- `measured_quantities` - the measureable outputs of the model
+- `measured_quantities` - the measurable outputs of the model
 - `funcs_to_check` - functions of parameters for which to check identifiability
 - `p` - probability of correctness
 - `type` - identifiability type (`:SE` for single-experiment, `:ME` for multi-experiment)
 
-Output: 
+Output:
 - for `type=:SE`, the result is a dictionary from each parameter to boolean;
 - for `type=:ME`, the result is a tuple with the dictionary as in `:SE` case and array of number of experiments.
 
 The function determines local identifiability of parameters in `funcs_to_check` or all possible parameters if `funcs_to_check` is empty
-    
+
 The result is correct with probability at least `p`.
 
 `type` can be either `:SE` (single-experiment identifiability) or `:ME` (multi-experiment identifiability).
 The return value is a tuple consisting of the array of bools and the number of experiments to be performed.
-"
 """
 function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], p::Float64=0.99, type=:SE)
-    if length(measured_quantities)==0 
+    if length(measured_quantities)==0
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
             @info "Measured quantities are not provided, trying to find the outputs in input ODE."
             measured_quantities = filter(eq->(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(ode))
@@ -171,14 +170,14 @@ function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_q
     end
     ode, syms, gens_ = PreprocessODE(ode, measured_quantities)
     funcs_to_check_ = [eval_at_nemo(x, Dict(syms .=> gens_)) for x in funcs_to_check]
-    
+
     if isequal(type, :SE)
         result = assess_local_identifiability(ode, funcs_to_check_, p, type)
         nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
         out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
         return out_dict
     elseif isequal(type, :ME)
-        result, bd = assess_local_identifiability(ode, funcs_to_check_, p, type) 
+        result, bd = assess_local_identifiability(ode, funcs_to_check_, p, type)
         nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
         out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
         return (out_dict, bd)
@@ -193,11 +192,11 @@ Input:
 - `p` - probability of correctness
 - `type` - identifiability type (`:SE` for single-experiment, `:ME` for multi-experiment)
 
-Output: 
+Output:
 - for `type=:SE`, the result is a dictionary from each parameter to boolean;
 - for `type=:ME`, the result is a tuple with the dictionary as in `:SE` case and array of number of experiments.
 
-The main entrypoint for local identifiability checks. 
+The main entry point for local identifiability checks.
 Call this function to automatically take care of local identifiability of all parameters and initial conditions.
 The result is correct with probability at least `p`.
 
@@ -269,7 +268,7 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
     prime = Primes.nextprime(Int(ceil(2 * mu * Dprime)))
     @debug "The prime is $prime"
     F = Nemo.GF(prime)
- 
+
     @debug "Extending the model"
     ode_ext = add_outputs(ode, Dict("loc_aux_$i" => f for (i, f) in enumerate(funcs_to_check)))
 
@@ -278,7 +277,7 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
 
     @debug "Computing the observability matrix (and, if ME, the bound)"
     prec = length(ode.x_vars) + length(ode.parameters)
-    
+
     # Parameter values are the same across all the replicas
     params_vals = Dict(p => F(rand(1:prime)) for p in ode_red.parameters)
 
@@ -356,7 +355,7 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
 	end
 	@debug "Transcendence basis $trbasis with indices $(trbasis_indices)"
     end
-    
+
     @debug "Computing the result"
     base_rank = LinearAlgebra.rank(Jac)
     result = Dict{Any, Bool}()
