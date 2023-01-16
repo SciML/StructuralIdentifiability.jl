@@ -1,4 +1,4 @@
-# Using `ModelingToolkit.jl` With `StructuralIdentifiability.jl`
+# Using ModelingToolkit.jl With StructuralIdentifiability.jl
 
 In this tutorial, we will cover examples of solving identifiability problems for models defined with the syntax of `ModelingToolkit.jl`.
 
