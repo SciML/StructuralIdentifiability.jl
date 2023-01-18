@@ -113,8 +113,9 @@ function ode_aux(ode::ODE{P}, submodel::Set{fmpq_mpoly}) where P <: MPolyElem
 
     sub_str = map(var_to_str, collect(submodel))
     S, _ = Nemo.PolynomialRing(Nemo.QQ, sub_str)
-    fin_x = Dict(parent_ring_change(x, S) => parent_ring_change(f, S) for (x,f) in new_x)
-    fin_y = Dict(parent_ring_change(y, S) => parent_ring_change(f, S) for (y,f) in new_y)
+    dict_type = Dict{fmpq_mpoly, Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}}
+    fin_x = dict_type(parent_ring_change(x, S) => parent_ring_change(f, S) for (x,f) in new_x)
+    fin_y = dict_type(parent_ring_change(y, S) => parent_ring_change(f, S) for (y,f) in new_y)
     fin_u = [parent_ring_change(u, S) for u in new_u]
 
     return ODE{fmpq_mpoly}(fin_x, fin_y, fin_u)
