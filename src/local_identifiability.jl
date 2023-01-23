@@ -283,8 +283,12 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
 
     prev_defect = length(ode.parameters)
     num_exp = 0
+    # rows are the "parameters": parameters and initial conditions
+    # columns are "observations": derivatives of the outputs
     Jac = zero(Nemo.MatrixSpace(F, length(ode.parameters), 1))
     output_derivatives = undef
+    # the while loop is primarily for ME-deintifiability, it is adding replicas until the rank stabilizes
+    # in the SE case, it will exit right away
     while true
         ic = Dict(x => F(rand(1:prime)) for x in ode_red.x_vars)
         inputs = Dict{Nemo.gfp_mpoly,Array{Nemo.gfp_elem,1}}(u => [F(rand(1:prime)) for i in 1:prec] for u in ode_red.u_vars)
@@ -323,37 +327,37 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
     end
 
     if !isnothing(trbasis)
-	@debug "Transcendence basis computation requested"
-	reverted_Jac = zero(Nemo.MatrixSpace(F, size(Jac)[2], size(Jac)[1]))
-	for i in 1:size(Jac)[1]
-	    for j in 1:size(Jac)[2]
-	        reverted_Jac[j, i] = Jac[size(Jac)[1] - i + 1, j]
-            end
-	end
-	Nemo.rref!(reverted_Jac)
-    # finding non-pivots
-	j = 1
-	h = size(reverted_Jac)[1]
-	nonpivots = []
-	for i in 1:(size(reverted_Jac)[2])
-	    to_add = true
-        for k in j:h
-            if !iszero(reverted_Jac[k, i])
-		        j = k + 1
-		        to_add = false
-		    end
-	    end
-	    if to_add
-	        push!(nonpivots, i)
-	    end
-    end
-	@debug "Jac sizes $(size(Jac)), params $(ode.parameters)"
-	# selecting the trbasis of polynomials
-	trbasis_indices = [size(Jac)[1] - i + 1 for i in nonpivots if i > size(Jac)[1] - length(ode.parameters)]
-	for i in trbasis_indices
-	    push!(trbasis, ode.parameters[i])
-	end
-	@debug "Transcendence basis $trbasis with indices $(trbasis_indices)"
+	    @debug "Transcendence basis computation requested"
+	    reverted_Jac = zero(Nemo.MatrixSpace(F, size(Jac)[2], size(Jac)[1]))
+    	for i in 1:size(Jac)[1]
+    	    for j in 1:size(Jac)[2]
+    	        reverted_Jac[j, i] = Jac[size(Jac)[1] - i + 1, j]
+                end
+    	end
+    	Nemo.rref!(reverted_Jac)
+        # finding non-pivots
+    	j = 1
+    	h = size(reverted_Jac)[1]
+    	nonpivots = []
+    	for i in 1:(size(reverted_Jac)[2])
+    	    to_add = true
+            for k in j:h
+                if !iszero(reverted_Jac[k, i])
+    		        j = k + 1
+    		        to_add = false
+    		    end
+    	    end
+    	    if to_add
+    	        push!(nonpivots, i)
+    	    end
+        end
+    	@debug "Jac sizes $(size(Jac)), params $(ode.parameters)"
+    	# selecting the trbasis of polynomials
+    	trbasis_indices = [size(Jac)[1] - i + 1 for i in nonpivots if i > size(Jac)[1] - length(ode.parameters)]
+    	for i in trbasis_indices
+    	    push!(trbasis, ode.parameters[i])
+    	end
+    	@debug "Transcendence basis $trbasis with indices $(trbasis_indices)"
     end
 
     @debug "Computing the result"
@@ -363,8 +367,10 @@ function assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any,
         for (k, p) in enumerate(ode_red.parameters)
             Jac[k, 1] = coeff(output_derivatives[str_to_var("loc_aux_$i", ode_red.poly_ring)][p], 0)
         end
-        for (k, x) in enumerate(ode_red.x_vars)
-            Jac[end - k + 1, 1] = coeff(output_derivatives[str_to_var("loc_aux_$i", ode_red.poly_ring)][x], 0)
+        if type == :SE
+            for (k, x) in enumerate(ode_red.x_vars)
+                Jac[end - k + 1, 1] = coeff(output_derivatives[str_to_var("loc_aux_$i", ode_red.poly_ring)][x], 0)
+            end
         end
         result[funcs_to_check[i]] = LinearAlgebra.rank(Jac) == base_rank
     end
