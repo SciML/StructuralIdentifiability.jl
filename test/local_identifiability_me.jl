@@ -208,6 +208,23 @@ end
 
     #--------------------------------------------------------------------------
 
+    # example with 0 replicas required
+    ode = @ODEmodel(
+        x'(t) = a * z(t),
+        z'(t) = a * z(t)^2,
+        y(t) = x(t)
+    )
+    funcs_to_test = [a]
+    correct = Dict([a=>false])
+        push!(test_cases, Dict(
+        :ode => ode,
+        :funcs => funcs_to_test,
+        :correct => (correct, 0)
+    ))
+
+
+    #--------------------------------------------------------------------------
+
     for case in test_cases
         result = assess_local_identifiability(case[:ode], case[:funcs], 0.932, :ME)
         @test result == case[:correct]
