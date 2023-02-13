@@ -38,7 +38,7 @@ We also note that it's usually inexpensive to obtain the result with higher prob
 ## Note on the probability of correctness
 
 Currently, the probability of correctness does not include the probability of correctness of the modular reconstruction for Groebner bases. 
-This probability is ensured by additional check modulo a large prime and can be neglected for practical purposes. However, in the future versions, we plan to 
+This probability is ensured by an additional check modulo a large prime, and can be neglected for practical purposes. However, in the future versions, we plan to 
 eliminate this possible error.
 
 [^1]:

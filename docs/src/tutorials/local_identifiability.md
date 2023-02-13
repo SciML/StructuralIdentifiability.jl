@@ -18,7 +18,7 @@ To parse the system of ordinary differential equations as above, we will use `@O
 
 We have two state variables `x1, x2` (population densities), two parameters `k, r` (intrinsic growth rates), and one output function `y`. Note that there must be `(t)` to indicate time-dependent functions.
 
-After using the macro, we use `assess_local_identifiability` function for that. This function accepts the ODE model, the probability of correctness, and the type of identifiability we would like to inquire about.
+After using the macro, we use the `assess_local_identifiability` function for that. This function accepts the ODE model, the probability of correctness, and the type of identifiability we would like to inquire about.
 
 ```@example
 using StructuralIdentifiability
@@ -53,7 +53,7 @@ As you can see, for this new model with an additional output, all parameters are
 ## Note on Probability of Correctness
 We set the probability of correctness $p$ to be `0.99`. Why would we ever want a lower value? Great question! The underlying algorithm relies on operations being modulo a large enough prime characteristic $\mathcal{P}\geq \kappa p$ where $\kappa$ is determined by the algorithm internally.
 
-The algorithm's complexity is proportional to the size of operands (see proposition 3.1 in the main paper[^1]) and hence high probability of correctness may lead to higher size of coefficients during computation for some systems hence one may wish to lower $p$ to save on runtime (though in practice this is _very_ rare).
+The algorithm's complexity is proportional to the size of operands (see proposition 3.1 in the main paper[^1]) and high probability of correctness may thus lead to higher size of coefficients during computation for some systems. Hence, one may wish to lower $p$ to save on runtime (though in practice this is _very_ rare).
 
 
 [^1]: 

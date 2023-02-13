@@ -3,8 +3,8 @@
 PairIntTuples = Tuple{Tuple{Vararg{Int}},Tuple{Vararg{Int}}}
 
 function det_minor_expansion_inner(
-        m::MatElem{<: T}, 
-        discarded::PairIntTuples, 
+        m::MatElem{<: T},
+        discarded::PairIntTuples,
         cache::Dict{PairIntTuples,T}
     ) where T <: RingElem
     n = size(m, 1);
@@ -162,8 +162,8 @@ end
 
 # ------------------------------------------------------------------------------
 
-# Definition: for an irreducible polynomial P in n variables, we will call 
-# an iterator Julia object *generic point generator* if it generates 
+# Definition: for an irreducible polynomial P in n variables, we will call
+# an iterator Julia object *generic point generator* if it generates
 # an infinite random sequence of points in C^n such that
 #    1. P vanishes at each of the points
 #    2. for every other irreducible polynomial, the probability of
@@ -270,7 +270,7 @@ end
 """
     eliminate_var(f, g, var_elim, generic_point_generator)
 
-Eliminate variable from a pair of polynomials
+Eliminate a variable from a pair of polynomials
 
 Input:
 - `f` and `g` - polynomials
@@ -307,7 +307,7 @@ function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P
             break
         end
     end
-    
+
     if f == 0 || g == 0
         return f + g
     end
@@ -321,7 +321,7 @@ function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P
     end
     for d in 0:Nemo.degree(g, var_elim)
         if coeff(g, [var_elim], [d]) != 0
-            push!(list_deg, d) 
+            push!(list_deg, d)
         end
     end
     gcd_deg = list_deg[1]
@@ -362,7 +362,9 @@ function eliminate_var(f::P, g::P, var_elim::P, generic_point_generator) where P
         flush(stdout)
         resultant = det_minor_expansion(M_simp)
     end
+    @debug "Degrees are", [(v, Nemo.degree(resultant, v)) for v in vars(resultant)]
     # Step 4: Eliminate extra factors
+    @debug "Eliminating extra factors"
     factors = fast_factor(resultant)
     for mfac in matrix_factors
         for fac in fast_factor(mfac)

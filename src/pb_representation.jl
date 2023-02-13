@@ -5,7 +5,7 @@ Contains the following fields:
 -  `y_names` - the names of the variables with finite order in the profile (typically, outputs)
 -  `u_names` - the names of the variables with infinite order in the profile (typically, inputs)
 -  `param_names` - the names of the parameters
--  `profile` - the profile of the PB-representation (see Definiton 2.13) as a dict from `y_names` with finite orders to the orders
+-  `profile` - the profile of the PB-representation (see Definition 2.13) as a dict from `y_names` with finite orders to the orders
 -  `projections` - the corresponding projections (see Definition 2.15) as a dict from `y_names` to the projections
 """
 struct PBRepresentation
@@ -61,9 +61,9 @@ function find_leader(vars::Array{<: MPolyElem}, pbr::PBRepresentation)
     end
     y_ders_ext = [(decompose_derivative(var_to_str(y), pbr.y_names), y) for y in y_ders]
     return sort(
-        y_ders_ext, rev = true, 
+        y_ders_ext, rev = true,
         by = p -> (
-            p[1][2] - pbr.profile[p[1][1]], 
+            p[1][2] - pbr.profile[p[1][1]],
             findfirst(n -> n == p[1][1], pbr.y_names)
         )
     )[1][2]
@@ -74,8 +74,8 @@ end
 """
     common_ring(poly, pbr)
 
-For a polynomail `poly` in the same differential variables as `pbr`, finds
-a polynomial ring sufficient for carrying out the reduction and the 
+For a polynomial `poly` in the same differential variables as `pbr`, finds
+a polynomial ring sufficient for carrying out the reduction and the
 corresponding differentiation mapping on the variables
 """
 function common_ring(poly::MPolyElem, pbr::PBRepresentation)
@@ -99,8 +99,8 @@ function common_ring(poly::MPolyElem, pbr::PBRepresentation)
     end
     for u in pbr.u_names
         append!(
-                varnames, 
-                ["$(u)_$h" for h in 0:max(max_ords[u], 
+                varnames,
+                ["$(u)_$h" for h in 0:max(max_ords[u],
                 max_offset + max([difforder(p, u) for p in values(pbr.projections)]...))]
         )
     end
@@ -130,14 +130,14 @@ end
 """
     lc_univariate(f, x)
 
-Computes the leading coefficient of `f` viewed as a univariate polynomail in variable `x`
+Computes the leading coefficient of `f` viewed as a univariate polynomiall in variable `x`
 """
 function lc_univariate(f::MPolyElem, x::MPolyElem)
     FieldType = typeof(one(base_ring(parent(f))))
     dict_result = Dict{Array{Int,1}, FieldType}()
     x_ind = findfirst(v -> v == x, gens(parent(f)))
     cur_deg = 0
-    for (monom, coef) in zip(exponent_vectors(f), coefficients(f)) 
+    for (monom, coef) in zip(exponent_vectors(f), coefficients(f))
         if monom[x_ind] > cur_deg
             cur_deg = monom[x_ind]
             dict_result = Dict{Array{Int, 1}, FieldType}()
@@ -157,11 +157,11 @@ end
 
 Computes the result of pseudodivision of `f` by `g` as univariate polynomials in `x`
 Input:
--  `f` - the polynomail to be divided
+-  `f` - the polynomial to be divided
 -  `g` - the polynomial to divide by
 -  `x` - the variable for the division
 
-Output: the pseudoreminder of `f` divided by `g` w.r.t. `x`
+Output: the pseudoremainder of `f` divided by `g` w.r.t. `x`
 """
 function pseudodivision(f::MPolyElem, g::MPolyElem, x::MPolyElem)
     result = f

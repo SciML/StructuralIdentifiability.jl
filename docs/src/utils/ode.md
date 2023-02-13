@@ -6,5 +6,5 @@ Pages = ["ode.md"]
 
 ```@autodocs
 Modules = [StructuralIdentifiability]
-Pages   = ["ODE.jl"]
+Pages   = ["ODE.jl", "submodels.jl"]
 ```
