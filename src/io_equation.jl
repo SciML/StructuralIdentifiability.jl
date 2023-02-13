@@ -1,24 +1,24 @@
 # ------------------------------------------------------------------------------
 
-function generator_var_change(generator, var::P, numer::P, denom::P) where P <: MPolyElem
+function generator_var_change(generator, var::P, numer::P, denom::P) where {P<:MPolyElem}
     return IterTools.imap(
         point -> begin
             result = copy(point)
             result[var] = eval_at_dict(numer, point) // eval_at_dict(denom, point)
             return result
-    end, Iterators.filter(point -> eval_at_dict(denom, point) != 0, generator)
+        end, Iterators.filter(point -> eval_at_dict(denom, point) != 0, generator)
     )
 end
 
 # ------------------------------------------------------------------------------
 
-function diff_poly(poly::P, derivation::Dict{P,P}) where P <: MPolyElem
+function diff_poly(poly::P, derivation::Dict{P,P}) where {P<:MPolyElem}
     return sum(derivative(poly, x) * xd for (x, xd) in derivation)
 end
 
 # ------------------------------------------------------------------------------
 
-function generate_io_equation_problem(ode::ODE{P}) where P <: MPolyElem{<: FieldElem}
+function generate_io_equation_problem(ode::ODE{P}) where {P<:MPolyElem{<:FieldElem}}
     dim_x = length(ode.x_vars)
 
     # Creating a ring
@@ -37,13 +37,13 @@ function generate_io_equation_problem(ode::ODE{P}) where P <: MPolyElem{<: Field
     for x in ode.x_vars
         derivation[switch_ring(x, ring)] = str_to_var(var_to_str(x) * "_dot", ring)
     end
-    for i in 0:(dim_x - 1)
+    for i in 0:(dim_x-1)
         for y in ode.y_vars
             derivation[str_to_var(var_to_str(y) * "_$i", ring)] = str_to_var(var_to_str(y) * "_$(i + 1)", ring)
         end
     end
     for u in ode.u_vars
-        for i in 0:(dim_x - 1)
+        for i in 0:(dim_x-1)
             derivation[str_to_var(var_to_str(u) * "_$i", ring)] = str_to_var(var_to_str(u) * "_$(i + 1)", ring)
         end
     end
@@ -86,9 +86,9 @@ Output:
 - a dictionary from “leaders” to the corresponding input-output equations
 """
 function find_ioequations(
-        ode::ODE{P};
-        var_change_policy=:default
-    ) where P <: MPolyElem{<: FieldElem}
+    ode::ODE{P};
+    var_change_policy=:default
+) where {P<:MPolyElem{<:FieldElem}}
     # Setting the var_change policy
     if (var_change_policy == :yes) || (var_change_policy == :default && length(ode.y_vars) < 3)
         auto_var_change = true
@@ -145,7 +145,7 @@ function find_ioequations(
                 # an ugly way of gettin the leader, to replace
                 next_y_equation = eliminate_var(
                     next_y_equation, eq,
-                    str_to_var(var_to_str(y)[1:end - 2] * "_$(y_orders[y])", ring),
+                    str_to_var(var_to_str(y)[1:end-2] * "_$(y_orders[y])", ring),
                     point_generator
                 )
             end
@@ -239,7 +239,7 @@ function find_ioequations(
         y_equations[y_prolong] = eliminate_var(y_equations[y_prolong], next_y_equation, var_elim, point_generator)
     end
 
-    io_equations = Dict(str_to_var(var_to_str(y)[1:end - 2] * "_$(y_orders[y])", ring) => p for (y, p) in y_equations)
+    io_equations = Dict(str_to_var(var_to_str(y)[1:end-2] * "_$(y_orders[y])", ring) => p for (y, p) in y_equations)
 
     @debug "Check whether the original projections are enough"
     if length(io_equations) == 1 || check_primality(io_equations)

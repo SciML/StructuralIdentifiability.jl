@@ -15,9 +15,9 @@ Output:
    the i-th function belongs to ``F``. The whole result is correct with probability at least p
 """
 function check_field_membership(
-        generators::Array{<: Array{<: MPolyElem,1},1},
-        rat_funcs::Array{<: Any,1},
-        p::Float64)
+    generators::Array{<:Array{<:MPolyElem,1},1},
+    rat_funcs::Array{<:Any,1},
+    p::Float64)
     @debug "Finding pivot polynomials"
     pivots = map(plist -> plist[findmin(map(total_degree, plist))[2]], generators)
     @debug "\tDegrees are $(map(total_degree, pivots))"
@@ -51,7 +51,7 @@ function check_field_membership(
     @debug "\tPoint is $point"
 
     @debug "Constructing the equations"
-    eqs = Array{Any, 1}()
+    eqs = Array{Any,1}()
     ring_ext, vars_ext = Nemo.PolynomialRing(
         Nemo.QQ,
         vcat(map(var_to_str, gens(ring)), ["sat_aux$i" for i in 1:length(generators)]);
@@ -68,7 +68,7 @@ function check_field_membership(
         append!(eqs, map(p -> parent_ring_change(p, ring_ext), eqs_comp))
         push!(
             eqs,
-            parent_ring_change(pivot, ring_ext) * vars_ext[end - i + 1] - 1
+            parent_ring_change(pivot, ring_ext) * vars_ext[end-i+1] - 1
         )
     end
 
@@ -104,7 +104,7 @@ function check_field_membership(
         num, den = unpack_fraction(f)
         poly = num * evaluate(den, point) - den * evaluate(num, point)
         poly_ext = parent_ring_change(poly, ring_ext)
-	# poly_ext = evaluate(poly_ext, shift)
+        # poly_ext = evaluate(poly_ext, shift)
         push!(result, iszero(normalform(gb, poly_ext)))
     end
     return result
@@ -115,12 +115,12 @@ end
 
 
 function check_identifiability(
-        io_equations::Array{P,1},
-        parameters::Array{P,1},
-        known::Array{P, 1},
-        funcs_to_check::Array{<: Any,1},
-        p::Float64=0.99
-    ) where P <: MPolyElem{fmpq}
+    io_equations::Array{P,1},
+    parameters::Array{P,1},
+    known::Array{P,1},
+    funcs_to_check::Array{<:Any,1},
+    p::Float64=0.99
+) where {P<:MPolyElem{fmpq}}
     @debug "Extracting coefficients"
     flush(stdout)
     nonparameters = filter(v -> !(var_to_str(v) in map(var_to_str, parameters)), gens(parent(io_equations[1])))
@@ -142,20 +142,20 @@ function check_identifiability(
 end
 
 function check_identifiability(
-        io_equation::P,
-        parameters::Array{P,1},
-        known::Array{P, 1},
-        funcs_to_check::Array{<: Any,1},
-        p::Float64=0.99
-    ) where P <: MPolyElem{fmpq}
+    io_equation::P,
+    parameters::Array{P,1},
+    known::Array{P,1},
+    funcs_to_check::Array{<:Any,1},
+    p::Float64=0.99
+) where {P<:MPolyElem{fmpq}}
     return check_identifiability([io_equation], parameters, known, funcs_to_check, p)
 end
 
-function check_identifiability(io_equations::Array{P,1}, parameters::Array{P,1}, known::Array{P, 1}, p::Float64=0.99) where P <: MPolyElem{fmpq}
+function check_identifiability(io_equations::Array{P,1}, parameters::Array{P,1}, known::Array{P,1}, p::Float64=0.99) where {P<:MPolyElem{fmpq}}
     check_identifiability(io_equations, parameters, known, parameters, p)
 end
 
-function check_identifiability(io_equation::P, parameters::Array{P,1}, known::Array{P, 1}, p::Float64=0.99) where P <: MPolyElem{fmpq}
+function check_identifiability(io_equation::P, parameters::Array{P,1}, known::Array{P,1}, p::Float64=0.99) where {P<:MPolyElem{fmpq}}
     return check_identifiability([io_equation], parameters, known, p)
 end
 
@@ -175,11 +175,11 @@ Output:
 Checks global identifiability for parameters of the model provided in `ode`. Call this function to check global identifiability of all parameters automatically.
 """
 function assess_global_identifiability(
-        ode::ODE{P},
-        known::Array{P, 1}=Array{P, 1}(),
-        p::Float64=0.99;
-        var_change=:default
-    ) where P <: MPolyElem{fmpq}
+    ode::ODE{P},
+    known::Array{P,1}=Array{P,1}(),
+    p::Float64=0.99;
+    var_change=:default
+) where {P<:MPolyElem{fmpq}}
     result_list = assess_global_identifiability(ode, ode.parameters, known, p; var_change=var_change)
 
     return Dict(param => val for (param, val) in zip(ode.parameters, result_list))
@@ -205,12 +205,12 @@ Output:
 Checks global identifiability of functions of parameters specified in `funcs_to_check`.
 """
 function assess_global_identifiability(
-        ode::ODE{P},
-        funcs_to_check::Array{<: Any,1},
-        known::Array{P, 1}=Array{P, 1}(),
-        p::Float64=0.99;
-        var_change=:default,
-    ) where P <: MPolyElem{fmpq}
+    ode::ODE{P},
+    funcs_to_check::Array{<:Any,1},
+    known::Array{P,1}=Array{P,1}(),
+    p::Float64=0.99;
+    var_change=:default
+) where {P<:MPolyElem{fmpq}}
 
     submodels = find_submodels(ode)
     if length(submodels) > 0
@@ -262,7 +262,7 @@ function extract_identifiable_functions(
     io_equations::Array{P,1},
     parameters::Array{P,1},
     known_functions::Array{P,1}
-) where P <: MPolyElem{fmpq}
+) where {P<:MPolyElem{fmpq}}
     @debug "Extracting coefficients"
     flush(stdout)
     nonparameters = filter(v -> !(var_to_str(v) in map(var_to_str, parameters)), gens(parent(io_equations[1])))
@@ -292,13 +292,13 @@ For the io_equation and the list of all parameter variables, returns a set of *r
 function extract_identifiable_functions_raw(
     io_equations::Array{P,1},
     parameters::Array{P,1},
-) where P <: MPolyElem{fmpq}
+) where {P<:MPolyElem{fmpq}}
     @debug "Extracting coefficients"
     flush(stdout)
     nonparameters = filter(v -> !(var_to_str(v) in map(var_to_str, parameters)), gens(parent(io_equations[1])))
     result = []
     for eq in io_equations
-        coeffs = sort(collect(values(extract_coefficients(eq, nonparameters))), by = total_degree)
+        coeffs = sort(collect(values(extract_coefficients(eq, nonparameters))), by=total_degree)
         append!(result, [c // first(coeffs) for c in coeffs[2:end]])
     end
 
@@ -320,7 +320,7 @@ Output:
 
 Find identifiable functions of parameters for a given `ode`.
 """
-function find_identifiable_functions(ode::ODE{<: MPolyElem{fmpq}}, p::Float64=0.99)
+function find_identifiable_functions(ode::ODE{<:MPolyElem{fmpq}}, p::Float64=0.99)
     @debug "Computing IO-equations"
     io_equations = find_ioequations(ode)
     global_result = check_identifiability(collect(values(io_equations)), ode.parameters, p)

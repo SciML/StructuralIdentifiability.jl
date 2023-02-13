@@ -1,14 +1,14 @@
 # Copyright (c) 2021, R. Dong, C. Goodbreak, H. Harrington, G. Pogudin
 # Copyright (c) 2020, A. Ovchinnikov, A. Pillay, G. Pogudin, T. Scanlon
 
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
-# to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 # and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 # The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ function linear_compartment_model(
     x_vars_names = ["x$i" for i in 1:n]
     y_vars_names = ["y$i" for i in outputs]
     u_vars_names = ["u$i" for i in inputs]
-    edges_vars_names = Array{String, 1}()
+    edges_vars_names = Array{String,1}()
     for i in 1:n
         for j in graph[i]
             push!(edges_vars_names, "a_$(j)_$(i)")
@@ -46,11 +46,11 @@ function linear_compartment_model(
     end
 
     R, vars = StructuralIdentifiability.Nemo.PolynomialRing(
-        StructuralIdentifiability.Nemo.QQ, 
+        StructuralIdentifiability.Nemo.QQ,
         vcat(x_vars_names, y_vars_names, u_vars_names, edges_vars_names)
     )
     x_vars = @view vars[1:n]
-    x_equations = Dict{fmpq_mpoly, Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}}(x => R(0) for x in x_vars)
+    x_equations = Dict{fmpq_mpoly,Union{fmpq_mpoly,Generic.Frac{fmpq_mpoly}}}(x => R(0) for x in x_vars)
     for i in 1:n
         for j in graph[i]
             rate = str_to_var("a_$(j)_$(i)", R)
@@ -66,7 +66,7 @@ function linear_compartment_model(
         end
     end
 
-    y_equations = Dict{fmpq_mpoly, Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}}(str_to_var("y$i", R) => str_to_var("x$i", R) for i in outputs)
+    y_equations = Dict{fmpq_mpoly,Union{fmpq_mpoly,Generic.Frac{fmpq_mpoly}}}(str_to_var("y$i", R) => str_to_var("x$i", R) for i in outputs)
 
     return ODE{fmpq_mpoly}(x_equations, y_equations, Array{fmpq_mpoly}([str_to_var("u$i", R) for i in inputs]))
 end

@@ -1,18 +1,18 @@
 #------------------------------------------------------------------------------
 
-function truncate_matrix(M::MatElem{<: Generic.AbsSeriesElem}, prec::Int)
+function truncate_matrix(M::MatElem{<:Generic.AbsSeriesElem}, prec::Int)
     return map(e -> truncate(e, prec), M)
 end
 
 #------------------------------------------------------------------------------
 
-function matrix_set_precision!(M::MatElem{<: Generic.AbsSeriesElem}, prec::Int)
+function matrix_set_precision!(M::MatElem{<:Generic.AbsSeriesElem}, prec::Int)
     map(e -> set_precision!(e, prec), M)
 end
 
 #------------------------------------------------------------------------------
 
-function ps_matrix_const_term(M::MatElem{<: Generic.AbsSeriesElem})
+function ps_matrix_const_term(M::MatElem{<:Generic.AbsSeriesElem})
     return map(e -> coeff(e, 0), M)
 end
 
@@ -23,7 +23,7 @@ end
 
 Performs a single step of Newton iteration for inverting `M` with `Minv` being a partial result
 """
-function _matrix_inv_newton_iteration(M::MatElem{T}, Minv::MatElem{T}) where T <: Generic.AbsSeriesElem{<: Generic.FieldElem}
+function _matrix_inv_newton_iteration(M::MatElem{T}, Minv::MatElem{T}) where {T<:Generic.AbsSeriesElem{<:Generic.FieldElem}}
     return 2 * Minv - Minv * M * Minv
 end
 
@@ -40,7 +40,7 @@ Input:
 Output:
 - the inverse of `M` computed up to `prec`
 """
-function ps_matrix_inv(M::MatElem{<: Generic.AbsSeriesElem{<: Generic.FieldElem}}, prec::Int=-1)
+function ps_matrix_inv(M::MatElem{<:Generic.AbsSeriesElem{<:Generic.FieldElem}}, prec::Int=-1)
     const_term = ps_matrix_const_term(M)
     prec = (prec == -1) ? precision(M[1, 1]) : prec
     power_series_ring = base_ring(parent(M))
@@ -64,10 +64,10 @@ Input:
 Output:
 - the derivative of `ps`
 """
-function ps_diff(ps::Generic.AbsSeriesElem{<: Generic.RingElem})
+function ps_diff(ps::Generic.AbsSeriesElem{<:Generic.RingElem})
     result = zero(parent(ps))
     set_precision!(result, precision(ps))
-    for exp in 1:(precision(ps) - 1)
+    for exp in 1:(precision(ps)-1)
         setcoeff!(result, exp - 1, coeff(ps, exp) * exp)
     end
     return result
@@ -83,10 +83,10 @@ Input:
 Output:
 - the integral of `ps` without constant term
 """
-function ps_integrate(ps::Generic.AbsSeriesElem{<: Generic.FieldElem})
+function ps_integrate(ps::Generic.AbsSeriesElem{<:Generic.FieldElem})
     result = zero(parent(ps))
     set_precision!(result, precision(ps) + 1)
-    for exp in 0:(precision(ps) - 1)
+    for exp in 0:(precision(ps)-1)
         setcoeff!(result, exp + 1, coeff(ps, exp) // (exp + 1))
     end
     return result
@@ -103,10 +103,10 @@ Input:
 Output:
 - the natural log of `M`
 """
-function ps_matrix_log(M::MatElem{<: Generic.AbsSeriesElem{<: Generic.FieldElem}})
+function ps_matrix_log(M::MatElem{<:Generic.AbsSeriesElem{<:Generic.FieldElem}})
     const_term = ps_matrix_const_term(M)
     if const_term != one(parent(const_term))
-       throw(Base.DomainError("Constant term must be the identity matrix"))
+        throw(Base.DomainError("Constant term must be the identity matrix"))
     end
     return map(
         e -> ps_integrate(e),
@@ -118,11 +118,11 @@ end
 #------------------------------------------------------------------------------
 
 function _matrix_homlinear_de_newton_iteration(
-        A::MatElem{<: Generic.AbsSeriesElem{T}},
-        Y::MatElem{<: Generic.AbsSeriesElem{T}},
-        Z::MatElem{<: Generic.AbsSeriesElem{T}},
-        cur_prec::Int
-    ) where T <: Generic.FieldElem
+    A::MatElem{<:Generic.AbsSeriesElem{T}},
+    Y::MatElem{<:Generic.AbsSeriesElem{T}},
+    Z::MatElem{<:Generic.AbsSeriesElem{T}},
+    cur_prec::Int
+) where {T<:Generic.FieldElem}
     Yprime = map(ps_diff, Y)
     Z = Z + truncate_matrix(Z * (one(parent(A)) - Y * Z), cur_prec)
     Y = Y - truncate_matrix(Y * map(ps_integrate, Z * (Yprime - truncate_matrix(A, 2 * cur_prec - 1) * Y)), 2 * cur_prec)
@@ -141,10 +141,10 @@ Output:
 - matrix `Y` such that `Y' = AY` up to precision of `A - 1` and `Y(0) = Y0`
 """
 function ps_matrix_homlinear_de(
-        A::MatElem{<: Generic.AbsSeriesElem{T}},
-        Y0::MatElem{<: T},
-        prec::Int=-1
-    ) where T <: Generic.FieldElem
+    A::MatElem{<:Generic.AbsSeriesElem{T}},
+    Y0::MatElem{<:T},
+    prec::Int=-1
+) where {T<:Generic.FieldElem}
     prec = (prec == -1) ? precision(A[1, 1]) : prec
     ps_ring = base_ring(parent(A))
     cur_prec = 1
@@ -162,13 +162,13 @@ end
 #------------------------------------------------------------------------------
 
 function _variation_of_constants(
-        A::MatElem{<: Generic.AbsSeriesElem{T}},
-        B::MatElem{<: Generic.AbsSeriesElem{T}},
-        Yh::MatElem{<: Generic.AbsSeriesElem{T}},
-        Zh::MatElem{<: Generic.AbsSeriesElem{T}},
-        Y0::MatElem{<: T},
-        prec::Int
-    ) where T <: Generic.FieldElem
+    A::MatElem{<:Generic.AbsSeriesElem{T}},
+    B::MatElem{<:Generic.AbsSeriesElem{T}},
+    Yh::MatElem{<:Generic.AbsSeriesElem{T}},
+    Zh::MatElem{<:Generic.AbsSeriesElem{T}},
+    Y0::MatElem{<:T},
+    prec::Int
+) where {T<:Generic.FieldElem}
     Zh += truncate_matrix(Zh * (one(parent(A)) - Yh * Zh), prec)
     Y_particular = truncate_matrix(Yh * map(ps_integrate, Zh * B), prec)
     return Y_particular + Yh * map(e -> parent(A[1, 1])(e), Y0)
@@ -187,11 +187,11 @@ Output:
 - matrix `Y` such that `Y' = AY + B` up to precision of `A - 1` and `Y(0) = Y0`
 """
 function ps_matrix_linear_de(
-        A::MatElem{<: Generic.AbsSeriesElem{T}},
-        B::MatElem{<: Generic.AbsSeriesElem{T}},
-        Y0::MatElem{<: T},
-        prec::Int=-1
-    ) where T <: Generic.FieldElem
+    A::MatElem{<:Generic.AbsSeriesElem{T}},
+    B::MatElem{<:Generic.AbsSeriesElem{T}},
+    Y0::MatElem{<:T},
+    prec::Int=-1
+) where {T<:Generic.FieldElem}
     prec = (prec == -1) ? precision(A[1, 1]) : prec
     n = nrows(A)
     identity = one(AbstractAlgebra.MatrixSpace(base_ring(parent(Y0)), n, n))
@@ -216,11 +216,11 @@ Output:
 - power series solution of the system
 """
 function ps_ode_solution(
-        equations::Array{P, 1},
-        ic::Dict{P, T},
-        inputs::Dict{P, Array{T, 1}},
-        prec::Int
-    ) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
+    equations::Array{P,1},
+    ic::Dict{P,T},
+    inputs::Dict{P,Array{T,1}},
+    prec::Int
+) where {T<:Generic.FieldElem,P<:MPolyElem{T}}
     n = length(equations)
     ring = parent(equations[1])
     S = AbstractAlgebra.MatrixSpace(ring, n, n)
@@ -277,11 +277,11 @@ end
 #------------------------------------------------------------------------------
 
 function ps_ode_solution(
-        equations::Array{P, 1},
-        ic::Dict{P, Int},
-        inputs::Dict{P, Array{Int, 1}},
-        prec::Int
-    ) where P <: MPolyElem{<: Generic.FieldElem}
+    equations::Array{P,1},
+    ic::Dict{P,Int},
+    inputs::Dict{P,Array{Int,1}},
+    prec::Int
+) where {P<:MPolyElem{<:Generic.FieldElem}}
     bring = base_ring(parent(equations[1]))
     ps_ode_solution(
         equations,

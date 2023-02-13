@@ -1,6 +1,6 @@
 @testset "Check identifiability of `ODESystem` object" begin
-    @parameters a01 a21 a12 
-    @variables t x0(t) x1(t) y1(t) [output=true]
+    @parameters a01 a21 a12
+    @variables t x0(t) x1(t) y1(t) [output = true]
     D = Differential(t)
 
     eqs = [
@@ -12,10 +12,10 @@
 
     correct = Dict(a01 => :nonidentifiable, a21 => :nonidentifiable, a12 => :nonidentifiable)
 
-    @test isequal(correct, assess_identifiability(de; measured_quantities=[y1~x0]))
+    @test isequal(correct, assess_identifiability(de; measured_quantities=[y1 ~ x0]))
     # --------------------------------------------------------------------------
-    @parameters a01 a21 a12 
-    @variables t x0(t) x1(t) y1(t) [output=true]
+    @parameters a01 a21 a12
+    @variables t x0(t) x1(t) y1(t) [output = true]
     D = Differential(t)
 
     eqs = [
@@ -31,8 +31,8 @@
 
     # --------------------------------------------------------------------------
 
-    @parameters a01 a21 a12 
-    @variables t x0(t) x1(t) y1(t) [output=true]
+    @parameters a01 a21 a12
+    @variables t x0(t) x1(t) y1(t) [output = true]
     D = Differential(t)
 
     eqs = [
@@ -43,11 +43,11 @@
     de = ODESystem(eqs, t, name=:Test)
     funcs_to_check = [a01, a21, a12, a01 * a12, a01 + a12 + a21]
     correct = Dict(a12 => :nonidentifiable, a01 + a12 + a21 => :globally, a01 * a12 => :globally, a21 => :nonidentifiable, a01 => :nonidentifiable)
-    @test isequal(correct, assess_identifiability(de; funcs_to_check = funcs_to_check))
+    @test isequal(correct, assess_identifiability(de; funcs_to_check=funcs_to_check))
 
     # --------------------------------------------------------------------------
 
-    @parameters a01 a21 a12 
+    @parameters a01 a21 a12
     @variables t x0(t) x1(t) y1(t)
     D = Differential(t)
 
@@ -62,7 +62,7 @@
     @test isequal(correct, assess_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=funcs_to_check))
 
     # --------------------------------------------------------------------------
-    @parameters μ bi bw a χ  γ k
+    @parameters μ bi bw a χ γ k
     @variables t S(t) I(t) W(t) R(t) y(t)
 
     eqs = [
@@ -78,17 +78,17 @@
 
     # check specific parameters
     funcs_to_check = [μ, bi, bw, a, χ, γ, γ + μ, k, S, I, W, R]
-    correct = Dict(f=>true for f in funcs_to_check)
+    correct = Dict(f => true for f in funcs_to_check)
     @test isequal(correct, assess_local_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=funcs_to_check))
 
     # checking ME identifiability
     funcs_to_check = [μ, bi, bw, a, χ, γ, γ + μ, k]
-    correct = Dict(f=>true for f in funcs_to_check)
-    @test isequal((correct, 1), assess_local_identifiability(de;  measured_quantities=measured_quantities, funcs_to_check=funcs_to_check, p=0.99, type=:ME)) 
+    correct = Dict(f => true for f in funcs_to_check)
+    @test isequal((correct, 1), assess_local_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=funcs_to_check, p=0.99, type=:ME))
 
     # --------------------------------------------------------------------------
     @parameters mu bi bw a xi gm k
-    @variables t S(t) I(t) W(t) R(t) y(t) [output=true]
+    @variables t S(t) I(t) W(t) R(t) y(t) [output = true]
 
     eqs = [
         D(S) ~ mu - bi * S * I - bw * S * W - mu * S + a * R,
@@ -101,18 +101,18 @@
     # check all parameters (default)
     @test isequal(true, all(values(assess_local_identifiability(de))))
 
-    @test isequal(true, all(values(assess_local_identifiability(de; measured_quantities=[y~k*I]))))
+    @test isequal(true, all(values(assess_local_identifiability(de; measured_quantities=[y ~ k * I]))))
 
     # check specific parameters
     funcs_to_check = [mu, bi, bw, a, xi, gm, gm + mu, k, S, I, W, R]
-    correct = Dict(f=>true for f in funcs_to_check)
+    correct = Dict(f => true for f in funcs_to_check)
     @test isequal(correct, assess_local_identifiability(de; funcs_to_check=funcs_to_check))
 
     # checking ME identifiability
     funcs_to_check = [mu, bi, bw, a, xi, gm, gm + mu, k]
-    correct = Dict(f=>true for f in funcs_to_check)
-    @test isequal((correct, 1), assess_local_identifiability(de; funcs_to_check=funcs_to_check, p=0.99, type=:ME)) 
-    
+    correct = Dict(f => true for f in funcs_to_check)
+    @test isequal((correct, 1), assess_local_identifiability(de; funcs_to_check=funcs_to_check, p=0.99, type=:ME))
+
     # --------------------------------------------------------------------------
     @parameters mu bi bw a xi gm k
     @variables t S(t) I(t) W(t) R(t) y(t)
@@ -126,17 +126,17 @@
     de = ODESystem(eqs, t, name=:TestSIWR)
     measured_quantities = [y ~ 1.57 * I * k]
     funcs_to_check = [mu, bi, bw, a, xi, gm, mu, gm + mu, k, S, I, W, R]
-    correct = Dict(f=>true for f in funcs_to_check)
+    correct = Dict(f => true for f in funcs_to_check)
     @test isequal(correct, assess_local_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=funcs_to_check))
 
     # checking ME identifiability
     funcs_to_check = [bi, bw, a, xi, gm, mu, gm + mu, k]
-    correct = Dict(f=>true for f in funcs_to_check)
+    correct = Dict(f => true for f in funcs_to_check)
     @test isequal((correct, 1), assess_local_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=funcs_to_check, p=0.99, type=:ME))
-    
+
     # ----------
 
-    @parameters a01 a21 a12 
+    @parameters a01 a21 a12
     @variables t x0(t) x1(t) y1(t)
     D = Differential(t)
     using SpecialFunctions
@@ -150,9 +150,9 @@
     measured_quantities = [y1 ~ x0]
     funcs_to_check = [a01, a21, a12, a01 * a12, a01 + a12 + a21]
     correct = Dict(a01 => :nonidentifiable, a21 => :nonidentifiable, a12 => :nonidentifiable, a01 * a12 => :globally, a01 + a12 + a21 => :globally)
-    @test_throws ArgumentError assess_identifiability(de; measured_quantities=measured_quantities,  funcs_to_check=funcs_to_check)
+    @test_throws ArgumentError assess_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=funcs_to_check)
     # ----------
-    @parameters a b c 
+    @parameters a b c
     @variables t x1(t) x2(t) y(t)
     D = Differential(t)
 
@@ -166,7 +166,7 @@
     to_check = [a, b, c]
     @test isequal(correct, assess_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=to_check))
     # ----------
-    @parameters a b  
+    @parameters a b
     @variables t c(t) x1(t) x2(t) y1(t) y2(t)
     D = Differential(t)
 
@@ -176,8 +176,8 @@
         D(c) ~ 0
     ]
     de = ODESystem(eqs, t, name=:Test)
-    measured_quantities = [y1 ~ x2, y2~c]
+    measured_quantities = [y1 ~ x2, y2 ~ c]
     correct = Dict(a => :globally, b => :globally)
     to_check = [a, b]
-    @test isequal(correct, assess_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=to_check))
+    @test isequal(correct, assess_identifiability(de; measured_quantities=measured_quantities, funcs_to_check=to_check))s
 end

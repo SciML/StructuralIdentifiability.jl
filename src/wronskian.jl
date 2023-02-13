@@ -20,14 +20,14 @@ function monomial_compress(io_equation, ode::ODE)
     return monomial_compress(io_equation, ode.parameters)
 end
 
-function monomial_compress(io_equation, params::Array{<: MPolyElem, 1})
+function monomial_compress(io_equation, params::Array{<:MPolyElem,1})
     other_vars = [v for v in gens(parent(io_equation)) if !(var_to_str(v) in map(var_to_str, params))]
-	coeffdict = extract_coefficients(io_equation, other_vars)
-	expvect = collect(keys(coeffdict))
-	coeffs = collect(values(coeffdict))
-	termlist = map(x->prod(other_vars.^x), expvect)
+    coeffdict = extract_coefficients(io_equation, other_vars)
+    expvect = collect(keys(coeffdict))
+    coeffs = collect(values(coeffdict))
+    termlist = map(x -> prod(other_vars .^ x), expvect)
 
-    echelon_form = Array{Any, 1}()
+    echelon_form = Array{Any,1}()
     for (c, p) in zip(coeffs, termlist)
         for i in 1:length(echelon_form)
             basis_c = echelon_form[i][1]
@@ -60,14 +60,14 @@ end
 # in `massive_eval`
 mutable struct ExpVectTrie
     depth::Int
-    subtries::Dict{Int, ExpVectTrie}
+    subtries::Dict{Int,ExpVectTrie}
 
     function ExpVectTrie(depth::Int)
-        return new(depth, Dict{Int, ExpVectTrie}())
+        return new(depth, Dict{Int,ExpVectTrie}())
     end
 end
 
-function Base.push!(t::ExpVectTrie, vect::Array{Int, 1})
+function Base.push!(t::ExpVectTrie, vect::Array{Int,1})
     if t.depth == 0
         if length(vect) != 0
             throw(DomainError("Inserting too long vector"))
@@ -79,7 +79,7 @@ function Base.push!(t::ExpVectTrie, vect::Array{Int, 1})
     if !(f in keys(t.subtries))
         t.subtries[f] = ExpVectTrie(t.depth - 1)
     end
-    push!(t.subtries[f], vect[1:end - 1])
+    push!(t.subtries[f], vect[1:end-1])
 end
 
 """
@@ -92,7 +92,7 @@ Input:
 Output:
 - a pair `(d, v)` where `v` is a vector in the trie which is componentwise ≤ `vect` and the difference `d` is as small as possible
 """
-function get_max_below(t::ExpVectTrie, vect::Array{Int, 1})
+function get_max_below(t::ExpVectTrie, vect::Array{Int,1})
     if t.depth == 0
         return (0, [])
     end
@@ -100,7 +100,7 @@ function get_max_below(t::ExpVectTrie, vect::Array{Int, 1})
     for k in keys(t.subtries)
         last_diff = last(vect) - k
         if last_diff >= 0
-            cur_diff, cur_below = get_max_below(t.subtries[k], vect[1:end - 1])
+            cur_diff, cur_below = get_max_below(t.subtries[k], vect[1:end-1])
             if !isnothing(cur_diff)
                 if isnothing(min_diff) || min_diff > cur_diff + last_diff
                     min_diff = cur_diff + last_diff
@@ -142,7 +142,7 @@ function massive_eval(polys, eval_dict)
     end
 
     cache = Dict()
-    cache[ [0 for i in 1:n] ] = one(R)
+    cache[[0 for i in 1:n]] = one(R)
     cached_monoms = ExpVectTrie(n)
     push!(cached_monoms, [0 for _ in 1:n])
 
@@ -192,7 +192,7 @@ Output:
 
 Computes the Wronskians of io_equations
 """
-function wronskian(io_equations::Dict{P, P}, ode::ODE{P}) where P <: MPolyElem
+function wronskian(io_equations::Dict{P,P}, ode::ODE{P}) where {P<:MPolyElem}
     @debug "Compressing monomials"
     termlists = [monomial_compress(ioeq, ode)[2] for ioeq in values(io_equations)]
     @debug "Matrix sizes $(map(length, termlists))"
@@ -208,7 +208,7 @@ function wronskian(io_equations::Dict{P, P}, ode::ODE{P}) where P <: MPolyElem
     ode_red = reduce_ode_mod_p(ode, PRIME)
 
     @debug "Computing power series solution up to order $ord"
-	ps = power_series_solution(
+    ps = power_series_solution(
         ode_red,
         Dict(p => rand(1:100) for p in ode_red.parameters),
         Dict(x => rand(1:100) for x in ode_red.x_vars),
@@ -216,7 +216,7 @@ function wronskian(io_equations::Dict{P, P}, ode::ODE{P}) where P <: MPolyElem
         ord
     )
     @debug "Computing the derivatives of the solution"
-    ps_ext = Dict{MPolyElem, Nemo.gfp_abs_series}()# Generic.AbsSeries}()
+    ps_ext = Dict{MPolyElem,Nemo.gfp_abs_series}()# Generic.AbsSeries}()
     for v in vcat(ode_red.y_vars, ode_red.u_vars)
         cur_ps = ps[v]
         for i in 0:length(ode_red.x_vars)

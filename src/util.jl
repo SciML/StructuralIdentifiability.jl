@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------------------
 
-function Nemo.vars(f::Generic.Frac{<: MPolyElem})
+function Nemo.vars(f::Generic.Frac{<:MPolyElem})
     return collect(union(Set(vars(numerator(f))), Set(vars(denominator(f)))))
 end
 
@@ -11,23 +11,23 @@ end
 
 Evaluates a polynomial/rational function on a dictionary of type `var => val` and missing values are replaced with zeroes
 """
-function eval_at_dict(poly::P, d::Dict{P,<: RingElem}) where P <: MPolyElem
+function eval_at_dict(poly::P, d::Dict{P,<:RingElem}) where {P<:MPolyElem}
     R = parent(first(values(d)))
     point = [get(d, v, zero(R)) for v in gens(parent(poly))]
     return evaluate(poly, point)
 end
 
-function eval_at_dict(rational::Generic.Frac{<: P}, d::Dict{P,<: RingElem}) where P <: MPolyElem
+function eval_at_dict(rational::Generic.Frac{<:P}, d::Dict{P,<:RingElem}) where {P<:MPolyElem}
     f, g = unpack_fraction(rational)
     return eval_at_dict(f, d) * inv(eval_at_dict(g, d))
 end
 
-function eval_at_dict(rational::Generic.Frac{<: P}, d::Dict{P,<: Generic.Frac}) where P <: MPolyElem
+function eval_at_dict(rational::Generic.Frac{<:P}, d::Dict{P,<:Generic.Frac}) where {P<:MPolyElem}
     f, g = unpack_fraction(rational)
     return eval_at_dict(f, d) // eval_at_dict(g, d)
 end
 
-function eval_at_dict(rational::Generic.Frac{<: P}, d::Dict{P,<: MPolyElem}) where P <: MPolyElem
+function eval_at_dict(rational::Generic.Frac{<:P}, d::Dict{P,<:MPolyElem}) where {P<:MPolyElem}
     f, g = unpack_fraction(rational)
     return eval_at_dict(f, d) // eval_at_dict(g, d)
 end
@@ -38,13 +38,13 @@ function unpack_fraction(f::MPolyElem)
     return (f, one(parent(f)))
 end
 
-function unpack_fraction(f::Generic.Frac{<: MPolyElem})
+function unpack_fraction(f::Generic.Frac{<:MPolyElem})
     return (numerator(f), denominator(f))
 end
 
 # ------------------------------------------------------------------------------
 
-function simplify_frac(numer::P, denom::P) where P <: MPolyElem
+function simplify_frac(numer::P, denom::P) where {P<:MPolyElem}
     gcd_sub = gcd(numer, denom)
     sub_numer = divexact(numer, gcd_sub)
     sub_denom = divexact(denom, gcd_sub)
@@ -67,7 +67,7 @@ Input:
 Output:
 - `polynomial` - result of substitution
 """
-function make_substitution(f::P, var_sub::P, val_numer::P, val_denom::P) where P <: MPolyElem
+function make_substitution(f::P, var_sub::P, val_numer::P, val_denom::P) where {P<:MPolyElem}
     d = Nemo.degree(f, var_sub)
 
     result = 0
@@ -110,7 +110,7 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching=:byna
     elseif matching == :byindex
         append!(var_mapping, 1:length(symbols(new_ring)))
         if length(symbols(new_ring)) < length(symbols(old_ring))
-            append!(var_mapping, Array{Any,1}[nothing, length(symbols(old_ring)) - length(symbols(new_ring))])
+            append!(var_mapping, Array{Any,1}[nothing, length(symbols(old_ring))-length(symbols(new_ring))])
         end
     else
         throw(Base.ArgumentError("Unknown matching type: $matching"))
@@ -133,7 +133,7 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching=:byna
     return finish(builder)
 end
 
-function parent_ring_change(f::Generic.Frac{<: MPolyElem}, new_ring::MPolyRing; matching=:byname)
+function parent_ring_change(f::Generic.Frac{<:MPolyElem}, new_ring::MPolyRing; matching=:byname)
     n, d = unpack_fraction(f)
     return parent_ring_change(n, new_ring; matching=matching) // parent_ring_change(d, new_ring; matching=matching)
 end
@@ -160,7 +160,7 @@ function uncertain_factorization(f::MPolyElem{fmpq})
     d = Nemo.degree(f, main_var)
     lc_f = coeff(f, [main_var], [d])
     gcd_coef = lc_f
-    for i in  (d - 1):-1:0
+    for i in (d-1):-1:0
         gcd_coef = gcd(gcd_coef, coeff(f, [main_var], [i]))
     end
     f = divexact(f, gcd_coef)
@@ -169,8 +169,8 @@ function uncertain_factorization(f::MPolyElem{fmpq})
     is_irr = undef
     while true
         plugin = rand(5:10, length(vars_f) - 1)
-        if evaluate(lc_f, vars_f[1:end - 1], plugin) != 0
-            f_sub = evaluate(f, vars_f[1:end - 1], plugin)
+        if evaluate(lc_f, vars_f[1:end-1], plugin) != 0
+            f_sub = evaluate(f, vars_f[1:end-1], plugin)
             uni_ring, var_uni = Nemo.PolynomialRing(base_ring(f), string(main_var))
             f_uni = to_univariate(uni_ring, f_sub)
             # if !issquarefree(f_uni)
@@ -195,7 +195,7 @@ function fast_factor(poly::MPolyElem{fmpq})
     cert_factors = map(pair -> pair[1], filter(f -> f[2], prelim_factors))
     uncert_factors = map(pair -> pair[1], filter(f -> !f[2], prelim_factors))
     for p in uncert_factors
-		for f in Nemo.factor(p)
+        for f in Nemo.factor(p)
             push!(cert_factors, f[1])
         end
     end
@@ -204,7 +204,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-function dict_to_poly(dict_monom::Dict{Array{Int,1},<: RingElem}, poly_ring::MPolyRing)
+function dict_to_poly(dict_monom::Dict{Array{Int,1},<:RingElem}, poly_ring::MPolyRing)
     builder = MPolyBuildCtx(poly_ring)
     for (monom, coef) in pairs(dict_monom)
         push_term!(builder, poly_ring.base_ring(coef), monom)
@@ -223,7 +223,7 @@ Input:
 Output:
 - dictionary with keys being tuples of length `lenght(variables)` and values being polynomials in the variables other than those which are the coefficients at the corresponding monomials (in a smaller polynomial ring)
 """
-function extract_coefficients(poly::P, variables::Array{P,1}) where P <: MPolyElem
+function extract_coefficients(poly::P, variables::Array{P,1}) where {P<:MPolyElem}
     var_to_ind = Dict((v, findfirst(e -> (e == v), gens(parent(poly)))) for v in variables)
     indices = [var_to_ind[v] for v in variables]
 
@@ -281,31 +281,32 @@ end
 # ------------------------------------------------------------------------------
 
 function eval_at_nemo(e::Num, vals::Dict)
-    e = ModelingToolkit.Symbolics.value(e)
+    e = Symbolics.value(e)
     return eval_at_nemo(e, vals)
 end
 
 function eval_at_nemo(e, vals::Dict)
-    if ModelingToolkit.Symbolics.istree(e)
-        args = map(a -> eval_at_nemo(a, vals), ModelingToolkit.Symbolics.arguments(e))
-        if ModelingToolkit.Symbolics.operation(e) in [+, -, *]
-            return ModelingToolkit.Symbolics.operation(e)(args...)
-        elseif isequal(ModelingToolkit.Symbolics.operation(e), /)
+    println(e, vals)
+    if Symbolics.istree(e)
+        args = map(a -> eval_at_nemo(a, vals), Symbolics.arguments(e))
+        if Symbolics.operation(e) in (+, -, *)
+            return Symbolics.operation(e)(args...)
+        elseif isequal(Symbolics.operation(e), /)
             return //(args...)
         end
-        if ModelingToolkit.Symbolics.operation(e) === ^
+        if Symbolics.operation(e) === ^
             if args[2] >= 0
                 return args[1]^args[2]
             end
             return 1 // args[1]^(-args[2])
         end
-        throw(Base.ArgumentError("Function $(ModelingToolkit.Symbolics.operation(e)) is not supported"))
+        throw(Base.ArgumentError("Function $(Symbolics.operation(e)) is not supported"))
     end
 end
 
-function eval_at_nemo(e::Union{ModelingToolkit.Symbolics.Sym,ModelingToolkit.Symbolics.Term}, vals::Dict)
-    if typeof(e) <: ModelingToolkit.Symbolics.Term{Real,Nothing}
-        throw(Base.ArgumentError("Function $(ModelingToolkit.Symbolics.operation(e)) is not supported"))
+function eval_at_nemo(e::SymbolicUtils.BasicSymbolic, vals::Dict)
+    if SymbolicUtils.isterm(e)
+        throw(Base.ArgumentError("Function $(Symbolics.operation(e)) is not supported"))
     end
     return get(vals, e, e)
 end
@@ -334,8 +335,8 @@ Determines if it is possible to represent the `varname` as `a_number` where `a` 
 function decompose_derivative(varname::String, prefixes::Array{String})
     for pr in prefixes
         if startswith(varname, pr) && length(varname) > length(pr) + 1
-            if varname[length(pr) + 1] == '_' && all(map(isdigit, collect(varname[length(pr) + 2:end])))
-                return (pr, parse(Int, varname[length(pr) + 2:end]))
+            if varname[length(pr)+1] == '_' && all(map(isdigit, collect(varname[length(pr)+2:end])))
+                return (pr, parse(Int, varname[length(pr)+2:end]))
             end
         end
     end
