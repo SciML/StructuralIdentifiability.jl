@@ -8,7 +8,7 @@ using StructuralIdentifiability
 
 logger = Logging.SimpleLogger(stdout, Logging.Debug)
 global_logger(logger)
-
+#! format: off
 ode = @ODEmodel(
     x_0'(t) = mu - bi * x_0(t) * x_1(t) - bw * x_0(t) * x_2(t) - mu * x_0(t) + a * x_3(t),
     x_1'(t) = bw * x_0(t) * x_2(t) + bi * x_0(t) * x_1(t) - (gam + mu) * x_1(t),
@@ -17,5 +17,5 @@ ode = @ODEmodel(
     y1(t) = k * x_1(t),
     y2(t) = x_0(t) + x_1(t) + x_3(t)
 )
-
+#! format: on
 @time println(assess_global_identifiability(ode))

@@ -1,4 +1,4 @@
-# Balsa-Canto, E., Alonso, A. A., Banga, J. R., 
+# Balsa-Canto, E., Alonso, A. A., Banga, J. R.,
 # An iterative identification procedure for dynamic modeling of biochemical networks
 # https://doi.org/10.1186/1752-0509-4-11
 # The model is out of reach at the moment but can be analyzed by SIAN (https://github.com/pogudingleb/SIAN)
@@ -8,7 +8,7 @@ using StructuralIdentifiability
 
 logger = Logging.SimpleLogger(stdout, Logging.Info)
 global_logger(logger)
-
+#! format: off
 ode = @ODEmodel(
     x1'(t) = k_prod  - k_deg * x1(t) - k1 * x1(t) * u(t),
     x2'(t) = -k3 * x2(t) - k_deg * x2(t) - a2 * x2(t) * x10(t) + t1 * x4(t) - a3 * x2(t) * x13(t) + t2 * x5(t) + (k1 * x1(t) - k2 * x2(t) * x8(t)) * u(t),
@@ -32,27 +32,26 @@ ode = @ODEmodel(
     y5(t) = x2(t),
     y6(t) = x12(t)
 )
-
+#! format: on
 QQ = StructuralIdentifiability.Nemo.QQ
 
-ode = set_parameter_values(ode, Dict(
-    a1 => QQ(1, 2),
-    a2 => QQ(1, 5),
-    a3 => QQ(1),
-    c1a => QQ(5, 10^(7)),
-    c2a => QQ(0),
-    c5a => QQ(1, 10^(4)),
-    c6a => QQ(2, 10^(5)),
-    c1 => QQ(5, 10^(7)),
-    c2 => QQ(0),
-    c3 => QQ(4, 10^(4)),
-    c4 => QQ(1, 2),
-    kv => QQ(5),
-    e1a => QQ(5, 10^(4)),
-    c1c => QQ(5, 10^(7)),
-    c2c => QQ(0),
-    c3c => QQ(4, 10^(4))                             
-))
+ode = set_parameter_values(ode,
+                           Dict(a1 => QQ(1, 2),
+                                a2 => QQ(1, 5),
+                                a3 => QQ(1),
+                                c1a => QQ(5, 10^(7)),
+                                c2a => QQ(0),
+                                c5a => QQ(1, 10^(4)),
+                                c6a => QQ(2, 10^(5)),
+                                c1 => QQ(5, 10^(7)),
+                                c2 => QQ(0),
+                                c3 => QQ(4, 10^(4)),
+                                c4 => QQ(1, 2),
+                                kv => QQ(5),
+                                e1a => QQ(5, 10^(4)),
+                                c1c => QQ(5, 10^(7)),
+                                c2c => QQ(0),
+                                c3c => QQ(4, 10^(4))))
 
 println(assess_local_identifiability(ode))
 

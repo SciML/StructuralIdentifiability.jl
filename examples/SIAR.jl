@@ -6,7 +6,7 @@ using StructuralIdentifiability
 
 logger = Logging.SimpleLogger(stdout, Logging.Info)
 global_logger(logger)
-
+#! format: off
 ode = @ODEmodel(
     S'(t) = -S(t) * (betaIa * Ia(t) + betaIs * Is(t) + betaH * H(t) + betaT * T(t)) * Ninv,
     E'(t) = S(t) * (betaIa * Ia(t) + betaIs * Is(t) + betaH * H(t) + betaT * T(t)) * Ninv - (alphaEIa + alphaEIs) * E(t),
@@ -22,5 +22,5 @@ ode = @ODEmodel(
     y4(t) = D(t),
     y5(t) = Ninv
 )
-
+#! format: on
 @time println(assess_identifiability(ode))
