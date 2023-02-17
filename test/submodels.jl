@@ -45,6 +45,7 @@
                                    (Set(["x1", "x2"]), Set(["y1", "y2"]), Set(["a", "d"])),
                                    (Set(["x1"]), Set(["y1"]), Set{String}()),
                                ])),
+                               #! format: off
         Dict(:ode => @ODEmodel(o1'(t)=r1 * o1(t),
                                x0'(t)=o1(t) - d * x0(t),
                                x1'(t)=x0(t) - x1(t),
@@ -64,10 +65,7 @@
                                y2(t)=x2(t) + x22(t),
                                y3(t)=x3(t) + x32(t),
                                y4(t)=x4(t) + x42(t) + x5(t) + x52(t),
-                               function y5(t)
-                                   x1(t) + x2(t) + x3(t) + x4(t) + x12(t) + x22(t) +
-                                   x32(t) + x42(t)
-                               end,
+                               y5(t)=x1(t) + x2(t) + x3(t) + x4(t) + x12(t) + x22(t) + x32(t) + x42(t),
                                y6(t)=x5(t) + x52(t)),
              :submodels => Set([
                                    (Set([
