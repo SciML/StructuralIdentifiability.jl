@@ -6,10 +6,12 @@ Prints the ODE in the format accepted by maple packages
 - DifferentialAlgebra if package=:DifferentialAlgebra
 - DifferentialThomas if package=:DifferentialThomas
 """
-function print_for_maple(ode::ODE, package=:SIAN)
-    varstr = Dict(x => var_to_str(x) * "(t)" for x in vcat(ode.x_vars, ode.u_vars, ode.y_vars))
+function print_for_maple(ode::ODE, package = :SIAN)
+    varstr = Dict(x => var_to_str(x) * "(t)"
+                  for x in vcat(ode.x_vars, ode.u_vars, ode.y_vars))
     merge!(varstr, Dict(p => var_to_str(p) for p in ode.parameters))
-    R_print, vars_print = Nemo.PolynomialRing(base_ring(ode.poly_ring), [varstr[v] for v in gens(ode.poly_ring)])
+    R_print, vars_print = Nemo.PolynomialRing(base_ring(ode.poly_ring),
+                                              [varstr[v] for v in gens(ode.poly_ring)])
     x_names = join(map(var_to_str, ode.x_vars), ", ")
     y_names = join(map(var_to_str, ode.y_vars), ", ")
     u_names = join(map(var_to_str, ode.u_vars), ", ")
@@ -39,7 +41,7 @@ function print_for_maple(ode::ODE, package=:SIAN)
         num, den = unpack_fraction(rhs)
         res = string(evaluate(num, vars_print))
         if den != 1
-             res = "($res) / ($(evaluate(den, vars_print)))"
+            res = "($res) / ($(evaluate(den, vars_print)))"
         end
         return res
     end
@@ -51,7 +53,7 @@ function print_for_maple(ode::ODE, package=:SIAN)
     for (y, g) in ode.y_equations
         push!(eqs, (var_to_str(y) * "(t)", _rhs_to_str(g)))
     end
-    if package == :SIAN 
+    if package == :SIAN
         result *= join(map(a -> a[1] * " = " * a[2], eqs), ",\n") * "\n];\n"
     else
         result *= join(map(a -> "$(a[1]) - ($(a[2]))", eqs), ",\n") * "\n];\n"
@@ -78,7 +80,7 @@ function _rhs_to_str(lhs)
     num, den = unpack_fraction(lhs)
     rslt = string(num)
     if den != 1
-         rslt = "($rslt) / ($den)"
+        rslt = "($rslt) / ($den)"
     end
     return rslt
 end
@@ -92,7 +94,8 @@ function print_for_DAISY(ode::ODE)
     result = ""
 
     # listing functions (ordering u, y, x matters!)
-    result = result * "B_:={" * join(map(var_to_str, vcat(ode.u_vars, ode.y_vars, ode.x_vars)), ", ") * "}\$\n"
+    result = result * "B_:={" *
+             join(map(var_to_str, vcat(ode.u_vars, ode.y_vars, ode.x_vars)), ", ") * "}\$\n"
 
     result = result * "FOR EACH EL_ IN B_ DO DEPEND EL_,T\$\n\n"
 
@@ -130,7 +133,7 @@ Prints the ODE in the format accepted by GenSSI 2.0 (https://github.com/genssi-d
 function print_for_GenSSI(ode::ODE)
     result = "function model = SMTH()\n"
 
-    result *= "syms " * join(var_to_str.(ode.x_vars)," ") * "\n"
+    result *= "syms " * join(var_to_str.(ode.x_vars), " ") * "\n"
     result *= "syms " * join(var_to_str.(ode.parameters), " ") * "\n"
     result *= "syms " * join(map(v -> var_to_str(v) * "0", ode.x_vars), " ") * "\n"
     if length(ode.u_vars) > 0
@@ -143,7 +146,8 @@ function print_for_GenSSI(ode::ODE)
     result *= "model.sym.x = [" * join(var_to_str.(ode.x_vars), "; ") * "];\n"
     result *= "model.sym.g = [" * join(var_to_str.(ode.u_vars), "; ") * "];\n"
 
-    result *= "model.sym.x0 = [" * join(map(v -> var_to_str(v) * "0", ode.x_vars), "; ") * "];\n"
+    result *= "model.sym.x0 = [" * join(map(v -> var_to_str(v) * "0", ode.x_vars), "; ") *
+              "];\n"
 
     result *= "model.sym.xdot = ["
 
@@ -180,20 +184,21 @@ function print_for_COMBOS(ode::ODE)
     merge!(varstr, Dict(u => "u" * string(ind) for (ind, u) in enumerate(ode.u_vars)))
     merge!(varstr, Dict(y => "y" * string(ind) for (ind, y) in enumerate(ode.y_vars)))
     merge!(varstr, Dict(p => var_to_str(p) for p in ode.parameters))
-    R_print, vars_print = Nemo.PolynomialRing(base_ring(ode.poly_ring), [varstr[v] for v in gens(ode.poly_ring)])
-    
+    R_print, vars_print = Nemo.PolynomialRing(base_ring(ode.poly_ring),
+                                              [varstr[v] for v in gens(ode.poly_ring)])
+
     result = ""
 
     eqs = []
-    
+
     function _lhs_to_str(lhs)
         num, den = unpack_fraction(lhs)
         res = string(evaluate(num, vars_print))
         if den != 1
-             res = "($res) / ($(evaluate(den, vars_print)))"
+            res = "($res) / ($(evaluate(den, vars_print)))"
         end
         return res
-    end    
+    end
 
     for (x, f) in ode.x_equations
         push!(eqs, "d$(varstr[x])/dt = " * _lhs_to_str(f))

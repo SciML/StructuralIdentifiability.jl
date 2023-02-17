@@ -23,10 +23,9 @@ struct PBRepresentation
         u_names = map(var_to_str, ode.u_vars)
         param_names = map(var_to_str, ode.parameters)
         old_ring = parent(first(values(io_equations)))
-        new_varnames = filter(
-            v -> (v in param_names) || decompose_derivative(v, vcat(y_names, u_names)) != nothing,
-            map(var_to_str, gens(old_ring))
-        )
+        new_varnames = filter(v -> (v in param_names) ||
+                                  decompose_derivative(v, vcat(y_names, u_names)) != nothing,
+                              map(var_to_str, gens(old_ring)))
         newring, _ = Nemo.PolynomialRing(base_ring(old_ring), new_varnames)
 
         profile = Dict{String, Int}()
@@ -54,19 +53,15 @@ Among the variables `vars`, determines the leading derivative if the y-variable
 (if exists) with respect to the ordering defined by the PB-representation
 (see Remark 2.20 in https://arxiv.org/abs/2111.00991)
 """
-function find_leader(vars::Array{<: MPolyElem}, pbr::PBRepresentation)
+function find_leader(vars::Array{<:MPolyElem}, pbr::PBRepresentation)
     y_ders = filter(v -> decompose_derivative(var_to_str(v), pbr.y_names) != nothing, vars)
     if length(y_ders) == 0
         return nothing
     end
     y_ders_ext = [(decompose_derivative(var_to_str(y), pbr.y_names), y) for y in y_ders]
-    return sort(
-        y_ders_ext, rev = true,
-        by = p -> (
-            p[1][2] - pbr.profile[p[1][1]],
-            findfirst(n -> n == p[1][1], pbr.y_names)
-        )
-    )[1][2]
+    return sort(y_ders_ext, rev = true,
+                by = p -> (p[1][2] - pbr.profile[p[1][1]],
+                           findfirst(n -> n == p[1][1], pbr.y_names)))[1][2]
 end
 
 # -----------------------------------------------------------------------------
@@ -98,16 +93,17 @@ function common_ring(poly::MPolyElem, pbr::PBRepresentation)
         append!(varnames, ["$(y)_$h" for h in 0:(max_offset + pbr.profile[y])])
     end
     for u in pbr.u_names
-        append!(
-                varnames,
-                ["$(u)_$h" for h in 0:max(max_ords[u],
-                max_offset + max([difforder(p, u) for p in values(pbr.projections)]...))]
-        )
+        append!(varnames,
+                ["$(u)_$h"
+                 for h in 0:max(max_ords[u],
+                                max_offset +
+                                max([difforder(p, u) for p in values(pbr.projections)]...))])
     end
     append!(varnames, pbr.param_names)
     append!(varnames, new_params)
 
-    newring, _ = StructuralIdentifiability.Nemo.PolynomialRing(base_ring(parent(poly)), varnames)
+    newring, _ = StructuralIdentifiability.Nemo.PolynomialRing(base_ring(parent(poly)),
+                                                               varnames)
     derivation = Dict{MPolyElem, MPolyElem}()
     for v in varnames
         d = decompose_derivative(v, vcat(pbr.y_names, pbr.u_names))
@@ -134,7 +130,7 @@ Computes the leading coefficient of `f` viewed as a univariate polynomiall in va
 """
 function lc_univariate(f::MPolyElem, x::MPolyElem)
     FieldType = typeof(one(base_ring(parent(f))))
-    dict_result = Dict{Array{Int,1}, FieldType}()
+    dict_result = Dict{Array{Int, 1}, FieldType}()
     x_ind = findfirst(v -> v == x, gens(parent(f)))
     cur_deg = 0
     for (monom, coef) in zip(exponent_vectors(f), coefficients(f))
@@ -179,7 +175,7 @@ end
 
 # -----------------------------------------------------------------------------
 
-function diff(p::MPolyElem, derivation::Dict{<: MPolyElem, <: MPolyElem}, i::Int)
+function diff(p::MPolyElem, derivation::Dict{<:MPolyElem, <:MPolyElem}, i::Int)
     if i == 0
         return p
     end
@@ -217,7 +213,8 @@ function diffreduce(diffpoly::MPolyElem, pbr::PBRepresentation)
         if ord < pbr.profile[var]
             return result
         end
-        if ord == pbr.profile[var] && Nemo.degree(result, lead) < Nemo.degree(ext_projections[var], lead)
+        if ord == pbr.profile[var] &&
+           Nemo.degree(result, lead) < Nemo.degree(ext_projections[var], lead)
             return result
         end
         reducer = diff(ext_projections[var], der, ord - pbr.profile[var])
