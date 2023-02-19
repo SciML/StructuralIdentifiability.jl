@@ -1,4 +1,5 @@
 # Elimination
+
 ```@index
 Pages=["elimination.md"]
 ```

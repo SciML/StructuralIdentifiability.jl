@@ -1,5 +1,4 @@
 @testset "Trie for exponents vectors" begin
-    
     for _ in 1:10
         d = rand([i + 10 for i in 1:10])
         t = ExpVectTrie(d)
@@ -29,5 +28,4 @@
             end
         end
     end
-    
 end

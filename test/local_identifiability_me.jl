@@ -28,10 +28,13 @@ function _linear_compartment_model(graph, sinks)
         push!(edges_vars_names, "a_$(s)_0")
         push!(edges_vars_names, "b_$(s)_0")
     end
-    R, vars = Nemo.PolynomialRing(Nemo.QQ, vcat(x_vars_names, edges_vars_names, ["y1", "y2"]))
+    R, vars =
+        Nemo.PolynomialRing(Nemo.QQ, vcat(x_vars_names, edges_vars_names, ["y1", "y2"]))
     x_vars = vars[2:(n + 1)]
     x0 = vars[1]
-    equations = Dict{fmpq_mpoly, Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}}(x => R(0) for x in x_vars)
+    equations = Dict{fmpq_mpoly, Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}}(
+        x => R(0) for x in x_vars
+    )
     equations[x0] = R(0)
     for i in 1:n
         for j in graph[i]
@@ -49,7 +52,11 @@ function _linear_compartment_model(graph, sinks)
             equations[x_vars[i]] += -x_vars[i] * rate
         end
     end
-    return ODE{fmpq_mpoly}(equations, Dict(vars[end] => x_vars[1], vars[end - 1] => x0), Array{fmpq_mpoly, 1}())
+    return ODE{fmpq_mpoly}(
+        equations,
+        Dict(vars[end] => x_vars[1], vars[end - 1] => x0),
+        Array{fmpq_mpoly, 1}(),
+    )
 end
 
 #------------------------------------------------------------------------------
@@ -111,29 +118,16 @@ end
 
 #------------------------------------------------------------------------------
 
-
 ###############################################################################
 
 @testset "Assessing local identifiability (multiexperiment)" begin
 
     # checking bounds
-    
+
     test_cases = [
-        Dict(
-            :name => "Cyclic",
-            :graph => cycle,
-            :bound => [3]
-        ),
-        Dict(
-            :name => "Catenary",
-            :graph => catenary,
-            :bound => [4, 5]
-        ),
-        Dict(
-            :name => "Mammilary",
-            :graph => mammilary,
-            :bound => [4, 5]
-        )
+        Dict(:name => "Cyclic", :graph => cycle, :bound => [3]),
+        Dict(:name => "Catenary", :graph => catenary, :bound => [4, 5]),
+        Dict(:name => "Mammilary", :graph => mammilary, :bound => [4, 5]),
     ]
 
     n_min = 3
@@ -154,7 +148,7 @@ end
     end
 
     # checking bounds and results
-    
+
     test_cases = []
 
     ode = @ODEmodel(
@@ -162,29 +156,32 @@ end
         x1'(t) = a21 * x0(t) - a12 * x1(t),
         y(t) = x0(t)
     )
-    funcs_to_test = [a01, a21, a12, a01 * a12, a01 + a12 + a21, (a01 + a12 + a21) // (a01 * a12)]
+    funcs_to_test =
+        [a01, a21, a12, a01 * a12, a01 + a12 + a21, (a01 + a12 + a21) // (a01 * a12)]
     correct = [false, false, false, true, true, true]
-    push!(test_cases, Dict(
-        :ode => ode,
-        :funcs => funcs_to_test,
-        :correct => (Dict(funcs_to_test .=> correct), 1)
-    ))
+    push!(
+        test_cases,
+        Dict(
+            :ode => ode,
+            :funcs => funcs_to_test,
+            :correct => (Dict(funcs_to_test .=> correct), 1),
+        ),
+    )
 
     #--------------------------------------------------------------------------
 
     # Example 7.7 from https://arxiv.org/pdf/2011.10868.pdf
-    ode = @ODEmodel(
-        x0'(t) = 0,
-        x1'(t) = x0(t) * x1(t) + mu1 * x0(t) + mu2,
-        y(t) = x1(t)
-    )
+    ode = @ODEmodel(x0'(t) = 0, x1'(t) = x0(t) * x1(t) + mu1 * x0(t) + mu2, y(t) = x1(t))
     funcs_to_test = [mu1, mu2]
     correct = [true, true]
-    push!(test_cases, Dict(
-        :ode => ode,
-        :funcs => funcs_to_test,
-        :correct => (Dict(funcs_to_test .=> correct), 2)
-    ))
+    push!(
+        test_cases,
+        Dict(
+            :ode => ode,
+            :funcs => funcs_to_test,
+            :correct => (Dict(funcs_to_test .=> correct), 2),
+        ),
+    )
 
     #--------------------------------------------------------------------------
 
@@ -199,29 +196,16 @@ end
         y3(t) = N
     )
     funcs_to_test = [b, nu, d, a]
-    correct = Dict([b=>true, nu=>true, d=>true, a=>true])
-        push!(test_cases, Dict(
-        :ode => ode,
-        :funcs => funcs_to_test,
-        :correct => (correct, 1)
-    ))
+    correct = Dict([b => true, nu => true, d => true, a => true])
+    push!(test_cases, Dict(:ode => ode, :funcs => funcs_to_test, :correct => (correct, 1)))
 
     #--------------------------------------------------------------------------
 
     # example with 0 replicas required
-    ode = @ODEmodel(
-        x'(t) = a * z(t),
-        z'(t) = a * z(t)^2,
-        y(t) = x(t)
-    )
+    ode = @ODEmodel(x'(t) = a * z(t), z'(t) = a * z(t)^2, y(t) = x(t))
     funcs_to_test = [a]
-    correct = Dict([a=>false])
-        push!(test_cases, Dict(
-        :ode => ode,
-        :funcs => funcs_to_test,
-        :correct => (correct, 0)
-    ))
-
+    correct = Dict([a => false])
+    push!(test_cases, Dict(:ode => ode, :funcs => funcs_to_test, :correct => (correct, 0)))
 
     #--------------------------------------------------------------------------
 
@@ -229,5 +213,4 @@ end
         result = assess_local_identifiability(case[:ode], case[:funcs], 0.932, :ME)
         @test result == case[:correct]
     end
-
 end

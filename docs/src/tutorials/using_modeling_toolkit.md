@@ -7,14 +7,14 @@ In this tutorial, we will cover examples of solving identifiability problems for
 Let us consider the following ODE model with two outputs:
 
 $\begin{cases}
-    \dot{S} = -b \, S \, (I + J + q \, A) \, N_{inv},\\
-    \dot{E} = b \, S \, (I + J + q \, A) \, N_{inv} - k \, E,\\
-    \dot{A} = k \, (1 - r) \, E - g_1 \, A,\\
-    \dot{I} = k \, r \, E - (\alpha + g_1) \, I,\\
-    \dot{J} = \alpha \, I - g_2 \, J,\\
-    \dot{C} = \alpha \, I,\\
-    y_1 = C,\\
-    y_2 = N_{inv}
+\dot{S} = -b \, S \, (I + J + q \, A) \, N_{inv},\\
+\dot{E} = b \, S \, (I + J + q \, A) \, N_{inv} - k \, E,\\
+\dot{A} = k \, (1 - r) \, E - g_1 \, A,\\
+\dot{I} = k \, r \, E - (\alpha + g_1) \, I,\\
+\dot{J} = \alpha \, I - g_2 \, J,\\
+\dot{C} = \alpha \, I,\\
+y_1 = C,\\
+y_2 = N_{inv}
 \end{cases}$
 
 This is an infectious disease model defined in [^1].
@@ -49,15 +49,15 @@ ode = ODESystem(eqs, t, name = :SEIAJRCmodel)
 
 Finally, let us define the array of measured quantities and call the `assess_identifiability` function. This is the main function that determines local/global identifiability properties of each parameter and state. We will use the probability of correctness $p=0.99$.
 
-For `ModelingToolkit.jl`, both `assess_identifiability` and `assess_local_identifiability` functions accept keyword arguments: 
+For `ModelingToolkit.jl`, both `assess_identifiability` and `assess_local_identifiability` functions accept keyword arguments:
 
-* `measured_quantities`, also called “output functions” in identifiability literature; these are crucial for answering identifiability questions.
-* `p`, probability of correctness. This value equals 0.99 by default.
-* `funcs_to_check`, functions of parameters of which we wish to check identifiability.
+  - `measured_quantities`, also called “output functions” in identifiability literature; these are crucial for answering identifiability questions.
+  - `p`, probability of correctness. This value equals 0.99 by default.
+  - `funcs_to_check`, functions of parameters of which we wish to check identifiability.
 
 ```julia
 measured_quantities = [y1 ~ C, y2 ~ N_inv]
-@time global_id = assess_identifiability(ode, measured_quantities=measured_quantities)
+@time global_id = assess_identifiability(ode, measured_quantities = measured_quantities)
 ```
 
 Let us put all the code above together:
@@ -82,9 +82,7 @@ eqs = [
 ode = ODESystem(eqs, t, name = :SEIAJRCmodel)
 
 measured_quantities = [y1 ~ C, y2 ~ N_inv]
-@time global_id = assess_identifiability(ode, measured_quantities=measured_quantities)
+@time global_id = assess_identifiability(ode, measured_quantities = measured_quantities)
 ```
 
-
-[^1]:
-    > K. Roosa and G. Chowell. [*Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models*](https://doi.org/10.1186/s12976-018-0097-6), Theor Biol Med Model 16, 1 (2019)
+[^1]: > K. Roosa and G. Chowell. [*Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models*](https://doi.org/10.1186/s12976-018-0097-6), Theor Biol Med Model 16, 1 (2019)

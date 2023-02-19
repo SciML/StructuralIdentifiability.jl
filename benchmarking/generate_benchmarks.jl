@@ -9,28 +9,20 @@ formats = [
     Dict(
         :name => "SIAN",
         :function => ode -> print_for_maple(ode, :SIAN),
-        :extension => ".mpl"
+        :extension => ".mpl",
     ),
     Dict(
         :name => "RosenfeldGroebner",
         :function => ode -> print_for_maple(ode, :DifferentialAlgebra),
-        :extension => ".mpl"
+        :extension => ".mpl",
     ),
     Dict(
         :name => "DifferentialThomas",
         :function => ode -> print_for_maple(ode, :DifferentialThomas),
-        :extension => ".mpl"
+        :extension => ".mpl",
     ),
-    Dict(
-        :name => "DAISY",
-        :function => print_for_DAISY,
-        :extension => ".txt"
-    ),
-    Dict(
-        :name => "COMBOS",
-        :function => print_for_COMBOS,
-        :extension => ".txt"
-    )
+    Dict(:name => "DAISY", :function => print_for_DAISY, :extension => ".txt"),
+    Dict(:name => "COMBOS", :function => print_for_COMBOS, :extension => ".txt"),
 ]
 
 for frmt in formats

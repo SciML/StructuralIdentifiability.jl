@@ -1,11 +1,10 @@
 @testset "Monomial compression test" begin
-    
     R, (v1, v2, v3, v4) = Nemo.PolynomialRing(Nemo.QQ, ["v1", "v2", "v3", "v4"])
     tests = [
         v1 + v2 - 2,
         v4 + v4 * v1 - 3 * v2 * v4,
         (v1 + v2 + v2^2) * (v3 + v4),
-        (v1 + v2^2) * (v3^3 + v4) - 7 * (v1 - 3 - v2) * (v3 - v4^2 - v3^2)
+        (v1 + v2^2) * (v3^3 + v4) - 7 * (v1 - 3 - v2) * (v3 - v4^2 - v3^2),
     ]
 
     for t in tests
@@ -16,5 +15,4 @@
         end
         @test s == t
     end
-
 end

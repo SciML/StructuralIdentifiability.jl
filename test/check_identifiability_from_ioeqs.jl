@@ -3,13 +3,14 @@
 
     @test check_identifiability(
         x * (y + z) * t^4 - x^3 * y * z * t^5 + 7 + t * x,
-	[x, y, z], Array{fmpq_mpoly, 1}()
+        [x, y, z],
+        Array{fmpq_mpoly, 1}(),
     ) == [true, false, false]
 
     @test check_identifiability(
-        [z + t * (x + y) + z^3, z - t^2 * x * y *5 + t^2],
-	[x, y], Array{fmpq_mpoly, 1}(),
-        [x, y, x + y, x - y, x^2 + y^2]
+        [z + t * (x + y) + z^3, z - t^2 * x * y * 5 + t^2],
+        [x, y],
+        Array{fmpq_mpoly, 1}(),
+        [x, y, x + y, x - y, x^2 + y^2],
     ) == [false, false, true, false, true]
-
 end
