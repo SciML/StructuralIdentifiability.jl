@@ -1,6 +1,5 @@
 # Primality Checks
 
-
 ```@index
 Pages=["primality.md"]
 ```

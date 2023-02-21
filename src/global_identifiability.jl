@@ -15,9 +15,10 @@ Output:
    the i-th function belongs to ``F``. The whole result is correct with probability at least p
 """
 function check_field_membership(
-        generators::Array{<: Array{<: MPolyElem,1},1},
-        rat_funcs::Array{<: Any,1},
-        p::Float64)
+    generators::Array{<:Array{<:MPolyElem, 1}, 1},
+    rat_funcs::Array{<:Any, 1},
+    p::Float64,
+)
     @debug "Finding pivot polynomials"
     pivots = map(plist -> plist[findmin(map(total_degree, plist))[2]], generators)
     @debug "\tDegrees are $(map(total_degree, pivots))"
@@ -27,7 +28,7 @@ function check_field_membership(
     ring = parent(first(first(generators)))
 
     total_lcm = foldl(lcm, pivots)
-    total_lcm = foldl(lcm, map(f -> unpack_fraction(f)[2], rat_funcs); init=total_lcm)
+    total_lcm = foldl(lcm, map(f -> unpack_fraction(f)[2], rat_funcs); init = total_lcm)
     degree = total_degree(total_lcm) + 1
     for (i, plist) in enumerate(generators)
         extra_degree = total_degree(total_lcm) - total_degree(pivots[i])
@@ -35,19 +36,22 @@ function check_field_membership(
     end
     for f in rat_funcs
         num, den = unpack_fraction(f)
-        degree = max(degree, total_degree(total_lcm) - total_degree(den) + total_degree(num))
+        degree =
+            max(degree, total_degree(total_lcm) - total_degree(den) + total_degree(num))
     end
     @debug "\tBound for the degrees is $degree"
     total_vars = foldl(
         union,
-        map(plist -> foldl(union, map(poly -> Set(vars(poly)), plist)), generators)
+        map(plist -> foldl(union, map(poly -> Set(vars(poly)), plist)), generators),
     )
     @debug "\tThe total number of variables in $(length(total_vars))"
 
-    sampling_bound = BigInt(3 * BigInt(degree)^(length(total_vars) + 3) * length(rat_funcs) * ceil(1 / (1 - p)))
+    sampling_bound = BigInt(
+        3 * BigInt(degree)^(length(total_vars) + 3) * length(rat_funcs) * ceil(1 / (1 - p)),
+    )
     # sampling_bound = 5
     @debug "\tSampling from $(-sampling_bound) to $(sampling_bound)"
-    point = map(v -> rand(-sampling_bound:sampling_bound), gens(ring))
+    point = map(v -> rand((-sampling_bound):sampling_bound), gens(ring))
     @debug "\tPoint is $point"
 
     @debug "Constructing the equations"
@@ -55,7 +59,7 @@ function check_field_membership(
     ring_ext, vars_ext = Nemo.PolynomialRing(
         Nemo.QQ,
         vcat(map(var_to_str, gens(ring)), ["sat_aux$i" for i in 1:length(generators)]);
-        ordering=:degrevlex
+        ordering = :degrevlex,
     )
 
     for (i, component) in enumerate(generators)
@@ -63,13 +67,13 @@ function check_field_membership(
         @debug "\tPivot polynomial is $(pivot)"
         eqs_comp = []
         for poly in component
-            push!(eqs_comp, poly * evaluate(ring(pivot), point) - evaluate(ring(poly), point) * pivot)
+            push!(
+                eqs_comp,
+                poly * evaluate(ring(pivot), point) - evaluate(ring(poly), point) * pivot,
+            )
         end
         append!(eqs, map(p -> parent_ring_change(p, ring_ext), eqs_comp))
-        push!(
-            eqs,
-            parent_ring_change(pivot, ring_ext) * vars_ext[end - i + 1] - 1
-        )
+        push!(eqs, parent_ring_change(pivot, ring_ext) * vars_ext[end - i + 1] - 1)
     end
 
     eqs = [e for e in eqs if !iszero(e)]
@@ -86,10 +90,10 @@ function check_field_membership(
     end
     gb = nothing
     try
-        gb = groebner(eqs; linalg=:prob, loglevel=gb_loglevel)
+        gb = groebner(eqs; linalg = :prob, loglevel = gb_loglevel)
     catch AssertionError
         @warn "Probabilistic linear algebra failed in Groebner.jl, switching to the deterministic one"
-        gb = groebner(eqs; loglevel=gb_loglevel)
+        gb = groebner(eqs; loglevel = gb_loglevel)
     end
     if isequal(one(ring_ext), gb[1])
         @error "The Groebner basis computation resulted in the unit ideal. This is an incorrect result,
@@ -104,7 +108,7 @@ function check_field_membership(
         num, den = unpack_fraction(f)
         poly = num * evaluate(den, point) - den * evaluate(num, point)
         poly_ext = parent_ring_change(poly, ring_ext)
-	# poly_ext = evaluate(poly_ext, shift)
+        # poly_ext = evaluate(poly_ext, shift)
         push!(result, iszero(normalform(gb, poly_ext)))
     end
     return result
@@ -112,19 +116,20 @@ end
 
 # ------------------------------------------------------------------------------
 
-
-
 function check_identifiability(
-        io_equations::Array{P,1},
-        parameters::Array{P,1},
-        known::Array{P, 1},
-        funcs_to_check::Array{<: Any,1},
-        p::Float64=0.99
-    ) where P <: MPolyElem{fmpq}
+    io_equations::Array{P, 1},
+    parameters::Array{P, 1},
+    known::Array{P, 1},
+    funcs_to_check::Array{<:Any, 1},
+    p::Float64 = 0.99,
+) where {P <: MPolyElem{fmpq}}
     @debug "Extracting coefficients"
     flush(stdout)
-    nonparameters = filter(v -> !(var_to_str(v) in map(var_to_str, parameters)), gens(parent(io_equations[1])))
-    coeff_lists = Array{Array{P,1},1}()
+    nonparameters = filter(
+        v -> !(var_to_str(v) in map(var_to_str, parameters)),
+        gens(parent(io_equations[1])),
+    )
+    coeff_lists = Array{Array{P, 1}, 1}()
     for eq in io_equations
         push!(coeff_lists, collect(values(extract_coefficients(eq, nonparameters))))
     end
@@ -142,20 +147,30 @@ function check_identifiability(
 end
 
 function check_identifiability(
-        io_equation::P,
-        parameters::Array{P,1},
-        known::Array{P, 1},
-        funcs_to_check::Array{<: Any,1},
-        p::Float64=0.99
-    ) where P <: MPolyElem{fmpq}
+    io_equation::P,
+    parameters::Array{P, 1},
+    known::Array{P, 1},
+    funcs_to_check::Array{<:Any, 1},
+    p::Float64 = 0.99,
+) where {P <: MPolyElem{fmpq}}
     return check_identifiability([io_equation], parameters, known, funcs_to_check, p)
 end
 
-function check_identifiability(io_equations::Array{P,1}, parameters::Array{P,1}, known::Array{P, 1}, p::Float64=0.99) where P <: MPolyElem{fmpq}
+function check_identifiability(
+    io_equations::Array{P, 1},
+    parameters::Array{P, 1},
+    known::Array{P, 1},
+    p::Float64 = 0.99,
+) where {P <: MPolyElem{fmpq}}
     check_identifiability(io_equations, parameters, known, parameters, p)
 end
 
-function check_identifiability(io_equation::P, parameters::Array{P,1}, known::Array{P, 1}, p::Float64=0.99) where P <: MPolyElem{fmpq}
+function check_identifiability(
+    io_equation::P,
+    parameters::Array{P, 1},
+    known::Array{P, 1},
+    p::Float64 = 0.99,
+) where {P <: MPolyElem{fmpq}}
     return check_identifiability([io_equation], parameters, known, p)
 end
 
@@ -175,12 +190,18 @@ Output:
 Checks global identifiability for parameters of the model provided in `ode`. Call this function to check global identifiability of all parameters automatically.
 """
 function assess_global_identifiability(
-        ode::ODE{P},
-        known::Array{P, 1}=Array{P, 1}(),
-        p::Float64=0.99;
-        var_change=:default
-    ) where P <: MPolyElem{fmpq}
-    result_list = assess_global_identifiability(ode, ode.parameters, known, p; var_change=var_change)
+    ode::ODE{P},
+    known::Array{P, 1} = Array{P, 1}(),
+    p::Float64 = 0.99;
+    var_change = :default,
+) where {P <: MPolyElem{fmpq}}
+    result_list = assess_global_identifiability(
+        ode,
+        ode.parameters,
+        known,
+        p;
+        var_change = var_change,
+    )
 
     return Dict(param => val for (param, val) in zip(ode.parameters, result_list))
 end
@@ -205,20 +226,20 @@ Output:
 Checks global identifiability of functions of parameters specified in `funcs_to_check`.
 """
 function assess_global_identifiability(
-        ode::ODE{P},
-        funcs_to_check::Array{<: Any,1},
-        known::Array{P, 1}=Array{P, 1}(),
-        p::Float64=0.99;
-        var_change=:default,
-    ) where P <: MPolyElem{fmpq}
-
+    ode::ODE{P},
+    funcs_to_check::Array{<:Any, 1},
+    known::Array{P, 1} = Array{P, 1}(),
+    p::Float64 = 0.99;
+    var_change = :default,
+) where {P <: MPolyElem{fmpq}}
     submodels = find_submodels(ode)
     if length(submodels) > 0
         @info "Note: the input model has nontrivial submodels. If the computation for the full model will be too heavy, you may want to try to first analyze one of the submodels. They can be produced using function `find_submodels`"
     end
 
     @info "Computing IO-equations"
-    ioeq_time = @elapsed io_equations = find_ioequations(ode; var_change_policy=var_change)
+    ioeq_time =
+        @elapsed io_equations = find_ioequations(ode; var_change_policy = var_change)
     @debug "Sizes: $(map(length, values(io_equations)))"
     @info "Computed in $ioeq_time seconds" :ioeq_time ioeq_time
     _runtime_logger[:ioeq_time] = ioeq_time
@@ -242,7 +263,13 @@ function assess_global_identifiability(
     end
 
     @info "Assessing global identifiability using the coefficients of the io-equations"
-    check_time = @elapsed result = check_identifiability(collect(values(io_equations)), ode.parameters, known, funcs_to_check, p)
+    check_time = @elapsed result = check_identifiability(
+        collect(values(io_equations)),
+        ode.parameters,
+        known,
+        funcs_to_check,
+        p,
+    )
     @info "Computed in $check_time seconds" :check_time check_time
     _runtime_logger[:check_time] = check_time
 
@@ -259,14 +286,17 @@ For the io_equation and the list of all parameter variables, returns a set of ge
 Note: an experimental functionality at the moment, may fail and may be inefficient
 """
 function extract_identifiable_functions(
-    io_equations::Array{P,1},
-    parameters::Array{P,1},
-    known_functions::Array{P,1}
-) where P <: MPolyElem{fmpq}
+    io_equations::Array{P, 1},
+    parameters::Array{P, 1},
+    known_functions::Array{P, 1},
+) where {P <: MPolyElem{fmpq}}
     @debug "Extracting coefficients"
     flush(stdout)
-    nonparameters = filter(v -> !(var_to_str(v) in map(var_to_str, parameters)), gens(parent(io_equations[1])))
-    coeff_lists = Array{Array{P,1},1}()
+    nonparameters = filter(
+        v -> !(var_to_str(v) in map(var_to_str, parameters)),
+        gens(parent(io_equations[1])),
+    )
+    coeff_lists = Array{Array{P, 1}, 1}()
     for eq in io_equations
         push!(coeff_lists, collect(values(extract_coefficients(eq, nonparameters))))
     end
@@ -290,21 +320,26 @@ end
 For the io_equation and the list of all parameter variables, returns a set of *raw* *generators of a field of all functions of parameters
 """
 function extract_identifiable_functions_raw(
-    io_equations::Array{P,1},
-    parameters::Array{P,1},
-) where P <: MPolyElem{fmpq}
+    io_equations::Array{P, 1},
+    parameters::Array{P, 1},
+) where {P <: MPolyElem{fmpq}}
     @debug "Extracting coefficients"
     flush(stdout)
-    nonparameters = filter(v -> !(var_to_str(v) in map(var_to_str, parameters)), gens(parent(io_equations[1])))
+    nonparameters = filter(
+        v -> !(var_to_str(v) in map(var_to_str, parameters)),
+        gens(parent(io_equations[1])),
+    )
     result = []
     for eq in io_equations
-        coeffs = sort(collect(values(extract_coefficients(eq, nonparameters))), by = total_degree)
+        coeffs = sort(
+            collect(values(extract_coefficients(eq, nonparameters))),
+            by = total_degree,
+        )
         append!(result, [c // first(coeffs) for c in coeffs[2:end]])
     end
 
     return result
 end
-
 
 #------------------------------------------------------------------------------
 
@@ -320,15 +355,19 @@ Output:
 
 Find identifiable functions of parameters for a given `ode`.
 """
-function find_identifiable_functions(ode::ODE{<: MPolyElem{fmpq}}, p::Float64=0.99)
+function find_identifiable_functions(ode::ODE{<:MPolyElem{fmpq}}, p::Float64 = 0.99)
     @debug "Computing IO-equations"
     io_equations = find_ioequations(ode)
     global_result = check_identifiability(collect(values(io_equations)), ode.parameters, p)
-    known_params = Array{fmpq_mpoly,1}()
+    known_params = Array{fmpq_mpoly, 1}()
     for (glob, p) in zip(global_result, ode.parameters)
         if glob
             push!(known_params, p)
         end
     end
-    return extract_identifiable_functions(collect(values(io_equations)), ode.parameters, known_params)
+    return extract_identifiable_functions(
+        collect(values(io_equations)),
+        ode.parameters,
+        known_params,
+    )
 end
