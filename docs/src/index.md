@@ -18,10 +18,13 @@ Pkg.add("StructuralIdentifiability")
 ```latex
 @article{structidjl,
   author  = {Dong, R. and Goodbrake, C. and Harrington, H. and Pogudin G.},
-  title   = {Differential elimination for dynamical models via projections with applications to structural identifiability},
-  journal = {preprint},
-  url     = {https://arxiv.org/abs/2111.00991},
-  year    = {2021}
+  title   = {Differential Elimination for Dynamical Models via Projections with Applications to Structural Identifiability},
+  journal = {SIAM Journal on Applied Algebra and Geometry},
+  url     = {https://doi.org/10.1137/22M1469067},
+  year    = {2023}
+  volume  = {7},
+  number  = {1},
+  pages   = {194-235}
 }
 ```
 
