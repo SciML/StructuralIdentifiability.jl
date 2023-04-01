@@ -149,7 +149,7 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :by
                 end
             end
         end
-        push_term!(builder, new_ring.base_ring(coef), new_exp)
+        push_term!(builder, base_ring(new_ring)(coef), new_exp)
     end
     return finish(builder)
 end
@@ -233,7 +233,7 @@ end
 function dict_to_poly(dict_monom::Dict{Array{Int, 1}, <:RingElem}, poly_ring::MPolyRing)
     builder = MPolyBuildCtx(poly_ring)
     for (monom, coef) in pairs(dict_monom)
-        push_term!(builder, poly_ring.base_ring(coef), monom)
+        push_term!(builder, base_ring(poly_ring)(coef), monom)
     end
     return finish(builder)
 end
