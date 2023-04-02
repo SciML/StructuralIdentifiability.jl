@@ -90,7 +90,8 @@ end
 
 # ------------------------------------------------------------------------------
 
-function filter_max(
+# filters the models containin all states or no states
+function filter_max_empty(
     ode::ODE{P},
     submodels::Array{Set{fmpq_mpoly}, 1},
 ) where {P <: MPolyElem}
@@ -98,7 +99,7 @@ function filter_max(
     new_sub = Array{Set{fmpq_mpoly}, 1}([])
     for submodel in submodels
         list_x = [x for x in submodel if x in ode.x_vars]
-        if !(length(list_x) == n)
+        if !(length(list_x) == n) && (length(list_x) > 0)
             push!(new_sub, submodel)
         end
     end
@@ -192,7 +193,7 @@ function find_submodels(ode::ODE{P}) where {P <: MPolyElem}
     input_unions = [raw_models[y] for y in ys]
     unions = (search_add_unions(input_unions))
     saturate_ys(unions, ys, graph, xs)
-    result = filter_max(ode, union(unions)[2:end])
+    result = filter_max_empty(ode, union(unions))
     back2ode = submodel2ode(ode, result)
     return back2ode
 end
