@@ -423,7 +423,7 @@ end
 
 #------------------------------------------------------------------------------
 """
-    function PreprocessODE(de::ModelingToolkit.ODESystem, measured_quantities::Array{ModelingToolkit.Equation})
+    function preprocess_ode(de::ModelingToolkit.ODESystem, measured_quantities::Array{ModelingToolkit.Equation})
 
 Input:
 - `de` - ModelingToolkit.ODESystem, a system for identifiability query
@@ -431,14 +431,22 @@ Input:
 
 Output:
 - `ODE` object containing required data for identifiability assessment
+- `conversion` dictionary from the symbols in the input MTK model to the variable
+  involved in the produced `ODE` object
 """
-function PreprocessODE(
+function preprocess_ode(
     de::ModelingToolkit.ODESystem,
     measured_quantities::Array{ModelingToolkit.Equation},
 )
     @info "Preproccessing `ModelingToolkit.ODESystem` object"
     diff_eqs =
         filter(eq -> !(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
+    # performing full structural simplification
+    if length(observed(de)) > 0
+        rules = Dict(s.lhs => s.rhs for s in observed(de))
+        diff_eqs = [SymbolicUtils.substitute(eq, rules) for eq in diff_eqs]
+    end
+
     y_functions = [each.lhs for each in measured_quantities]
     inputs = filter(v -> ModelingToolkit.isinput(v), ModelingToolkit.states(de))
     state_vars = filter(
@@ -499,7 +507,6 @@ function PreprocessODE(
             out_eqn_dict,
             inputs_,
         ),
-        input_symbols,
-        gens_,
+        Dict(input_symbols .=> gens_),
     )
 end

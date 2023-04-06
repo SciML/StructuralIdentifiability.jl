@@ -24,7 +24,7 @@ using MacroTools
 using ModelingToolkit
 
 # defining a model
-export ODE, @ODEmodel, PreprocessODE
+export ODE, @ODEmodel, preprocess_ode
 
 # assessing identifiability
 export assess_local_identifiability, assess_global_identifiability, assess_identifiability
@@ -184,9 +184,9 @@ function assess_identifiability(
     if length(funcs_to_check) == 0
         funcs_to_check = ModelingToolkit.parameters(ode)
     end
-    ode, syms, gens_ = PreprocessODE(ode, measured_quantities)
+    ode, conversion = preprocess_ode(ode, measured_quantities)
     out_dict = Dict{Num, Symbol}()
-    funcs_to_check_ = [eval_at_nemo(each, Dict(syms .=> gens_)) for each in funcs_to_check]
+    funcs_to_check_ = [eval_at_nemo(each, conversion) for each in funcs_to_check]
     result = assess_identifiability(ode, funcs_to_check_, p)
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
