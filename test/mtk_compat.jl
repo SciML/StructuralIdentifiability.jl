@@ -257,4 +257,53 @@
             funcs_to_check = to_check,
         ),
     )
+
+    #----------------------------------
+    # Composable models test (from https://github.com/SciML/StructuralIdentifiability.jl/issues/162)
+    @variables t
+    function rabbits_creator(;name)
+        ps = @parameters α=1.5
+        vars = @variables x(t)=1.0 z(t)=0.0 [input = true]
+        D = Differential(t)
+        equs = [
+            D(x) ~ α^2 *x + z
+        ]
+
+        ODESystem(equs, t, vars, ps; name = name)
+    end
+
+    function wolves_creator(;name)
+        ps = @parameters δ = 3.0
+        vars = @variables y(t)=1.0 q(t)=0.0 [input = true]
+        D = Differential(t)
+        equs = [
+            D(y) ~ -δ * y + q
+        ]
+
+        ODESystem(equs, t, vars, ps; name = name)
+    end
+
+    function lotka_volterra_creator(;name)
+        @named wolves = wolves_creator()
+        @named rabbits = rabbits_creator()
+
+        ps = @parameters β=1.0 γ=1.0
+        D = Differential(t)
+
+        eqs = [
+            rabbits.z ~  - β *  wolves.y * rabbits.x,
+            wolves.q ~ γ *  wolves.y *rabbits.x]
+
+        ModelingToolkit.compose(ODESystem(eqs, t, [],ps; name= name), wolves, rabbits)
+    end
+
+    @named ltk_mtk = lotka_volterra_creator()
+    simp_ltk_mtk = structural_simplify(ltk_mtk)
+    @unpack wolves₊δ, rabbits₊α , β, γ,  wolves₊y, rabbits₊x = simp_ltk_mtk
+    @unpack wolves₊y, rabbits₊x = simp_ltk_mtk
+    @variables y(t)
+    measured_quantities = [y ~ wolves₊y]
+    result = assess_identifiability(simp_ltk_mtk, measured_quantities = measured_quantities)
+    correct = Dict(rabbits₊α => :locally, γ => :nonidentifiable, β => :globally, wolves₊δ => :globally)
+    @test result == correct
 end

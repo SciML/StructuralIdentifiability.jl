@@ -188,8 +188,8 @@ function assess_local_identifiability(
     if length(funcs_to_check) == 0
         funcs_to_check = ModelingToolkit.parameters(ode)
     end
-    ode, syms, gens_ = PreprocessODE(ode, measured_quantities)
-    funcs_to_check_ = [eval_at_nemo(x, Dict(syms .=> gens_)) for x in funcs_to_check]
+    ode, conversion = preprocess_ode(ode, measured_quantities)
+    funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
 
     if isequal(type, :SE)
         result = assess_local_identifiability(ode, funcs_to_check_, p, type)
