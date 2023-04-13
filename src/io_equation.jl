@@ -77,33 +77,11 @@ end
 
 # ------------------------------------------------------------------------------
 
-"""
-    find_ioequations(ode, [var_change_policy=:default])
-
-Finds the input-output equations of an ODE system
-Input:
-- `ode` - the ODE system
-- `var_change_policy` - whether to perform automatic variable change, can be one of `:default`, `:yes`, `:no`
-
-Output:
-- a dictionary from “leaders” to the corresponding input-output equations
-"""
-function find_ioequations(
-    ode::ODE{P};
-    var_change_policy = :default,
+# does the same as find_ioequations but without preforming extra projection
+# additionally, returns a point generator
+function find_ioprojections(
+    ode::ODE{P}, auto_var_change::Bool
 ) where {P <: MPolyElem{<:FieldElem}}
-    # Setting the var_change policy
-    if (var_change_policy == :yes) ||
-       (var_change_policy == :default && length(ode.y_vars) < 3)
-        auto_var_change = true
-    elseif (var_change_policy == :no) ||
-           (var_change_policy == :default && length(ode.y_vars) >= 3)
-        auto_var_change = false
-    else
-        @error "Unknown var_change policy $var_change_policy"
-        return
-    end
-
     # Initialization
     ring, derivation, x_equations, y_equations, point_generator =
         generate_io_equation_problem(ode)
@@ -277,27 +255,62 @@ function find_ioequations(
         )
     end
 
-    io_equations = Dict(
+    io_projections = Dict(
         str_to_var(var_to_str(y)[1:(end - 2)] * "_$(y_orders[y])", ring) => p for
         (y, p) in y_equations
     )
 
+    return io_projections, point_generator
+end
+
+# ------------------------------------------------------------------------------
+
+"""
+    find_ioequations(ode, [var_change_policy=:default])
+
+Finds the input-output equations of an ODE system
+Input:
+- `ode` - the ODE system
+- `var_change_policy` - whether to perform automatic variable change, can be one of `:default`, `:yes`, `:no`
+
+Output:
+- a dictionary from “leaders” to the corresponding input-output equations
+"""
+function find_ioequations(
+    ode::ODE{P};
+    var_change_policy = :default,
+) where {P <: MPolyElem{<:FieldElem}}
+    # Setting the var_change policy
+    if (var_change_policy == :yes) ||
+       (var_change_policy == :default && length(ode.y_vars) < 3)
+        auto_var_change = true
+    elseif (var_change_policy == :no) ||
+           (var_change_policy == :default && length(ode.y_vars) >= 3)
+        auto_var_change = false
+    else
+        @error "Unknown var_change policy $var_change_policy"
+        return
+    end
+
+    io_projections, point_generator = find_ioprojections(ode, auto_var_change)
+    ring = parent(first(values(io_projections)))
+
     @debug "Check whether the original projections are enough"
-    if length(io_equations) == 1 || check_primality(io_equations)
+    if length(io_projections) == 1 || check_primality(io_projections)
         @debug "The projections generate an ideal with a single components of highest dimension, returning"
-        return io_equations
+        return io_projections
     end
 
     sampling_range = 5
     while true
         @debug "There are several components of the highest dimension, trying to isolate one"
         extra_var = str_to_var("rand_proj_var", ring)
-        extra_var_rhs = sum(rand(1:sampling_range) * v for v in keys(io_equations))
+        extra_var_rhs = sum(rand(1:sampling_range) * v for v in keys(io_projections))
         @debug "Extra projections: $extra_var_rhs"
         point_generator =
             generator_var_change(point_generator, extra_var, extra_var_rhs, one(ring))
         extra_poly = extra_var - extra_var_rhs
-        for (y, io_eq) in io_equations
+        for (y, io_eq) in io_projections
             @debug "Eliminating $y (using an equation of size $(length(io_eq)))"
             extra_poly = eliminate_var(extra_poly, io_eq, y, point_generator)
         end
@@ -305,12 +318,12 @@ function find_ioequations(
         flush(stdout)
         extra_poly = evaluate(extra_poly, [extra_var], [extra_var_rhs])
         @debug "Check primality"
-        if check_primality(io_equations, [extra_poly])
+        if check_primality(io_projections, [extra_poly])
             @debug "Single component of highest dimension isolated, returning"
-            io_equations[extra_var] = extra_poly
+            io_projections[extra_var] = extra_poly
             break
         end
         sampling_range = 2 * sampling_range
     end
-    return io_equations
+    return io_projections
 end
