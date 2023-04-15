@@ -280,13 +280,13 @@ function choose(
 ) where {P <: MPolyElem{<:FieldElem}}
     vars = gens(parent(polys[1]))
     for p in generic_point_generator
-        if length(polys) <= 1
-            break
-        end
         # get accounts for the fact that the big ring may contain some auxiliary variables, e.g. rand_proj_var
         point = [get(p, v, zero(base_ring(parent(polys[1])))) for v in vars]
         polys = filter(e -> (evaluate(e, point) == 0), polys)
         flush(stdout)
+        if length(polys) <= 1
+            break
+        end 
     end
     return polys[1]
 end

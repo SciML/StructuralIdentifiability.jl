@@ -77,8 +77,6 @@ function check_field_membership(
     end
 
     eqs = [e for e in eqs if !iszero(e)]
-    @debug "VARS $(vars_ext)"
-    @debug "GB $eqs"
 
     @debug "Computing Groebner basis ($(length(eqs)) equations)"
     flush(stdout)

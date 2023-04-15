@@ -1,3 +1,5 @@
+PROJECTION_VARNAME = "rand_proj_var"
+
 # ------------------------------------------------------------------------------
 
 function generator_var_change(generator, var::P, numer::P, denom::P) where {P <: MPolyElem}
@@ -29,7 +31,7 @@ function generate_io_equation_problem(ode::ODE{P}) where {P <: MPolyElem{<:Field
         [var_to_str(x) * "_dot" for x in ode.x_vars],
         [var_to_str(y) * "_$i" for i in 0:dim_x for y in ode.y_vars],
         [var_to_str(u) * "_$i" for i in 0:dim_x for u in ode.u_vars],
-        ["rand_proj_var"],
+        [PROJECTION_VARNAME],
     )
     ring, ring_vars = Nemo.PolynomialRing(base_ring(ode.poly_ring), var_names)
 
@@ -80,12 +82,42 @@ end
 # does the same as find_ioequations but without preforming extra projection
 # additionally, returns a point generator
 function find_ioprojections(
-    ode::ODE{P}, auto_var_change::Bool
+    ode::ODE{P}, auto_var_change::Bool, extra_projection=nothing
 ) where {P <: MPolyElem{<:FieldElem}}
     # Initialization
     ring, derivation, x_equations, y_equations, point_generator =
         generate_io_equation_problem(ode)
     y_orders = Dict(y => 0 for y in keys(y_equations))
+
+    proj_var = str_to_var(PROJECTION_VARNAME, ring)
+    projection_equation = proj_var
+
+    if !isnothing(extra_projection)
+        extra_projection = parent_ring_change(extra_projection, ring)
+        point_generator = generator_var_change(point_generator, proj_var, extra_projection, one(ring))
+        for y in vars(extra_projection)
+            coef = derivative(extra_projection, y)
+            y_name, ord = decompose_derivative(var_to_str(y), [var_to_str(v) for v in ode.y_vars])
+            y0 = str_to_var(y_name * "_0", ring)
+            y_ders = [(y0, y_equations[y0])]
+            for i in 1:ord
+                y_prev, eq_prev = y_ders[end]
+                eq_new = diff_poly(eq_prev, derivation)
+                for (x, xeq) in x_equations
+                    eq_new = eliminate_var(eq_new, xeq, derivation[x], point_generator)
+                end
+                for (y, y_eq) in y_ders
+                    eq_new = eliminate_var(eq_new, y_eq, y, point_generator)
+                end
+                y_new = diff_poly(y_prev, derivation)
+                push!(y_ders, (y_new, eq_new))
+            end
+            y, y_eq = y_ders[end]
+            projection_equation += coef * evaluate(y_eq, [y], [zero(ring)]) // derivative(y_eq, y)
+        end
+        projection_equation, _ = unpack_fraction(projection_equation)
+        @debug "Extra projection equation $projection_equation"
+    end
 
     while true
         var_degs = [
@@ -213,6 +245,9 @@ function find_ioprojections(
                                 point_generator,
                             )
                         end
+                        # change the projection
+                        @debug "Change of variables in the extra projection"
+                        projection_equation = make_substitution(projection_equation, x, A * x - B, A)
                         @debug "Change of variables performed"
                         flush(stdout)
                         break
@@ -245,6 +280,8 @@ function find_ioprojections(
                 )
             end
         end
+        @debug "\t Elimination in the extra projection"
+        projection_equation = eliminate_var(projection_equation, y_equations[y_prolong], var_elim, point_generator)
         @debug "\t Elimination in the prolonged equation"
         flush(stdout)
         y_equations[y_prolong] = eliminate_var(
@@ -253,6 +290,7 @@ function find_ioprojections(
             var_elim,
             point_generator,
         )
+        flush(stdout)
     end
 
     io_projections = Dict(
@@ -260,7 +298,11 @@ function find_ioprojections(
         (y, p) in y_equations
     )
 
-    return io_projections, point_generator
+    if projection_equation != proj_var
+        projection_equation = evaluate(projection_equation, [proj_var], [extra_projection])
+    end
+
+    return io_projections, point_generator, projection_equation
 end
 
 # ------------------------------------------------------------------------------
@@ -292,7 +334,7 @@ function find_ioequations(
         return
     end
 
-    io_projections, point_generator = find_ioprojections(ode, auto_var_change)
+    io_projections, point_generator, _ = find_ioprojections(ode, auto_var_change, nothing)
     ring = parent(first(values(io_projections)))
 
     @debug "Check whether the original projections are enough"
@@ -304,23 +346,13 @@ function find_ioequations(
     sampling_range = 5
     while true
         @debug "There are several components of the highest dimension, trying to isolate one"
-        extra_var = str_to_var("rand_proj_var", ring)
-        extra_var_rhs = sum(rand(1:sampling_range) * v for v in keys(io_projections))
-        @debug "Extra projections: $extra_var_rhs"
-        point_generator =
-            generator_var_change(point_generator, extra_var, extra_var_rhs, one(ring))
-        extra_poly = extra_var - extra_var_rhs
-        for (y, io_eq) in io_projections
-            @debug "Eliminating $y (using an equation of size $(length(io_eq)))"
-            extra_poly = eliminate_var(extra_poly, io_eq, y, point_generator)
-        end
-        @debug "Plugging the original expression into a result of size $(length(extra_poly))"
-        flush(stdout)
-        extra_poly = evaluate(extra_poly, [extra_var], [extra_var_rhs])
+        extra_projection = sum(rand(1:sampling_range) * v for v in keys(io_projections))
+        @debug "Extra projections: $extra_projection"
+        new_projections, new_gpg, projection_equation = find_ioprojections(ode, auto_var_change, extra_projection)
         @debug "Check primality"
-        if check_primality(io_projections, [extra_poly])
+        if check_primality(io_projections, [projection_equation])
             @debug "Single component of highest dimension isolated, returning"
-            io_projections[extra_var] = extra_poly
+            io_projections[str_to_var(PROJECTION_VARNAME, parent(projection_equation))] = projection_equation
             break
         end
         sampling_range = 2 * sampling_range
