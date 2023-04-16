@@ -7,6 +7,8 @@ function check_primality_zerodim(J::Array{fmpq_mpoly, 1})
     S = Nemo.MatrixSpace(Nemo.QQ, dim, dim)
     matrices = []
 
+    @info "Dim is $dim"
+
     for v in gens(parent(first(J)))
         M = zero(S)
         for (i, vec) in enumerate(basis)
