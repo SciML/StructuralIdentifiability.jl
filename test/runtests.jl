@@ -9,6 +9,7 @@ using StructuralIdentifiability:
     check_field_membership,
     check_identifiability,
     check_primality_zerodim,
+    check_primality,
     det_minor_expansion,
     ExpVectTrie,
     get_max_below,
@@ -45,7 +46,9 @@ using StructuralIdentifiability:
     pseudodivision,
     diffreduce,
     io_switch!,
-    add_outputs
+    add_outputs,
+    find_ioprojections,
+    choose
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)

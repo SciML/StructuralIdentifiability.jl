@@ -79,8 +79,21 @@ end
 
 # ------------------------------------------------------------------------------
 
-# does the same as find_ioequations but without preforming extra projection
-# additionally, returns a point generator
+"""
+    find_ioprojections(ode, auto_var_change, extra_projection)
+
+Finds the input-output projections of an ODE system
+Input:
+- `ode` - the ODE system
+- `auto_var_change` - whether to perform automatic variable change
+- `extra_projection` - a linear formin the derivatives of outputs (in any ring) to be
+  used for extra projection
+
+Output:
+- a dictionary from “leaders” to the corresponding input-output equations
+- generic point generator for the model (including the derivatives; mostly for testing)
+- an extra projection (if `extra_projection` was provided)
+"""
 function find_ioprojections(
     ode::ODE{P}, auto_var_change::Bool, extra_projection=nothing
 ) where {P <: MPolyElem{<:FieldElem}}
@@ -89,6 +102,9 @@ function find_ioprojections(
         generate_io_equation_problem(ode)
     y_orders = Dict(y => 0 for y in keys(y_equations))
 
+    # producing an equation for random projection: assuming that `rand_proj_var`
+    # is equal to `extra_projection`, an equation for it over x's, params, and
+    # derivtaives of u's is derived
     proj_var = str_to_var(PROJECTION_VARNAME, ring)
     projection_equation = proj_var
 
@@ -99,6 +115,8 @@ function find_ioprojections(
             coef = derivative(extra_projection, y)
             y_name, ord = decompose_derivative(var_to_str(y), [var_to_str(v) for v in ode.y_vars])
             y0 = str_to_var(y_name * "_0", ring)
+            # basically a vector of Lie derivtaives of y encoded as equations
+            # on the derivtaives over x's, params, and derivatives of u's
             y_ders = [(y0, y_equations[y0])]
             for i in 1:ord
                 y_prev, eq_prev = y_ders[end]
@@ -316,7 +334,8 @@ Input:
 - `var_change_policy` - whether to perform automatic variable change, can be one of `:default`, `:yes`, `:no`
 
 Output:
-- a dictionary from “leaders” to the corresponding input-output equations
+- a dictionary from “leaders” to the corresponding input-output equations; if an extra projection is needed,
+  it will be the value corresponding to `rand_proj_var`
 """
 function find_ioequations(
     ode::ODE{P};
@@ -334,7 +353,7 @@ function find_ioequations(
         return
     end
 
-    io_projections, point_generator, _ = find_ioprojections(ode, auto_var_change, nothing)
+    io_projections, _, _ = find_ioprojections(ode, auto_var_change, nothing)
     ring = parent(first(values(io_projections)))
 
     @debug "Check whether the original projections are enough"
@@ -348,7 +367,7 @@ function find_ioequations(
         @debug "There are several components of the highest dimension, trying to isolate one"
         extra_projection = sum(rand(1:sampling_range) * v for v in keys(io_projections))
         @debug "Extra projections: $extra_projection"
-        new_projections, new_gpg, projection_equation = find_ioprojections(ode, auto_var_change, extra_projection)
+        new_projections, _, projection_equation = find_ioprojections(ode, auto_var_change, extra_projection)
         @debug "Check primality"
         if check_primality(io_projections, [projection_equation])
             @debug "Single component of highest dimension isolated, returning"
