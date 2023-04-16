@@ -95,7 +95,9 @@ Output:
 - an extra projection (if `extra_projection` was provided)
 """
 function find_ioprojections(
-    ode::ODE{P}, auto_var_change::Bool, extra_projection=nothing
+    ode::ODE{P},
+    auto_var_change::Bool,
+    extra_projection = nothing,
 ) where {P <: MPolyElem{<:FieldElem}}
     # Initialization
     ring, derivation, x_equations, y_equations, point_generator =
@@ -110,10 +112,12 @@ function find_ioprojections(
 
     if !isnothing(extra_projection)
         extra_projection = parent_ring_change(extra_projection, ring)
-        point_generator = generator_var_change(point_generator, proj_var, extra_projection, one(ring))
+        point_generator =
+            generator_var_change(point_generator, proj_var, extra_projection, one(ring))
         for y in vars(extra_projection)
             coef = derivative(extra_projection, y)
-            y_name, ord = decompose_derivative(var_to_str(y), [var_to_str(v) for v in ode.y_vars])
+            y_name, ord =
+                decompose_derivative(var_to_str(y), [var_to_str(v) for v in ode.y_vars])
             y0 = str_to_var(y_name * "_0", ring)
             # basically a vector of Lie derivtaives of y encoded as equations
             # on the derivtaives over x's, params, and derivatives of u's
@@ -131,7 +135,8 @@ function find_ioprojections(
                 push!(y_ders, (y_new, eq_new))
             end
             y, y_eq = y_ders[end]
-            projection_equation += coef * evaluate(y_eq, [y], [zero(ring)]) // derivative(y_eq, y)
+            projection_equation +=
+                coef * evaluate(y_eq, [y], [zero(ring)]) // derivative(y_eq, y)
         end
         projection_equation, _ = unpack_fraction(projection_equation)
         @debug "Extra projection equation $projection_equation"
@@ -265,7 +270,8 @@ function find_ioprojections(
                         end
                         # change the projection
                         @debug "Change of variables in the extra projection"
-                        projection_equation = make_substitution(projection_equation, x, A * x - B, A)
+                        projection_equation =
+                            make_substitution(projection_equation, x, A * x - B, A)
                         @debug "Change of variables performed"
                         flush(stdout)
                         break
@@ -299,7 +305,12 @@ function find_ioprojections(
             end
         end
         @debug "\t Elimination in the extra projection"
-        projection_equation = eliminate_var(projection_equation, y_equations[y_prolong], var_elim, point_generator)
+        projection_equation = eliminate_var(
+            projection_equation,
+            y_equations[y_prolong],
+            var_elim,
+            point_generator,
+        )
         @debug "\t Elimination in the prolonged equation"
         flush(stdout)
         y_equations[y_prolong] = eliminate_var(
@@ -367,11 +378,13 @@ function find_ioequations(
         @debug "There are several components of the highest dimension, trying to isolate one"
         extra_projection = sum(rand(1:sampling_range) * v for v in keys(io_projections))
         @debug "Extra projections: $extra_projection"
-        new_projections, _, projection_equation = find_ioprojections(ode, auto_var_change, extra_projection)
+        new_projections, _, projection_equation =
+            find_ioprojections(ode, auto_var_change, extra_projection)
         @debug "Check primality"
         if check_primality(io_projections, [projection_equation])
             @debug "Single component of highest dimension isolated, returning"
-            io_projections[str_to_var(PROJECTION_VARNAME, parent(projection_equation))] = projection_equation
+            io_projections[str_to_var(PROJECTION_VARNAME, parent(projection_equation))] =
+                projection_equation
             break
         end
         sampling_range = 2 * sampling_range

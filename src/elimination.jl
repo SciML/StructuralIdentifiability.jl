@@ -286,7 +286,7 @@ function choose(
         flush(stdout)
         if length(polys) <= 1
             break
-        end 
+        end
     end
     return polys[1]
 end
