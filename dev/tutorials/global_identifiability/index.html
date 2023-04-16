@@ -29,7 +29,7 @@ z&#39;(t) = c*w(t)*q*y(t) - h*z(t)
 y&#39;(t) = x(t)*v(t)*beta - a*y(t)
 y2(t) = z(t)
 y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; global_id = assess_identifiability(ode, 0.99)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 6.682581843 seconds
+[ Info: Local identifiability assessed in 6.021044278 seconds
 [ Info: Assessing global identifiability
 [ Info: Note: the input model has nontrivial submodels. If the computation for the full model will be too heavy, you may want to try to first analyze one of the submodels. They can be produced using function `find_submodels`
 [ Info: Computing IO-equations
@@ -46,6 +46,7 @@ y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:bl
 [ Info: 3: selected lucky prime 2147483693
 [ Info: CRT modulo (4611686039902224373, 2147483693)
 [ Info: Reconstructing modulo 9903520567925774155444649489
+[ Info: Heuristic check failed.
 [ Info: 4: selected lucky prime 2147483713
 [ Info: CRT modulo (9903520567925774155444649489, 2147483713)
 [ Info: Reconstructing modulo 21267649120981110191733715050621272657
@@ -57,12 +58,6 @@ y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:bl
 [ Info: 6: selected lucky prime 2147483777
 [ Info: CRT modulo (45671930739135174346839766056203605080877915151, 2147483777)
 [ Info: Reconstructing modulo 98079730326560405919904968824172512120100095704355005327
-[ Info: Heuristic check failed.
-[ Info: 7: selected lucky prime 2147483783
-[ Info: CRT modulo (98079730326560405919904968824172512120100095704355005327, 2147483783)
-[ Info: 8: selected lucky prime 2147483813
-[ Info: CRT modulo (210624630317301765882893117451031048172285903861850336414611112041, 2147483813)
-[ Info: Reconstructing modulo 452312984225514596069828623335196996110407213751397785678981819797976892333
 [ Info: Heuristic check passed!
 [ Info: Randomized check passed!
 [ Info: Success!
@@ -70,6 +65,7 @@ y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:bl
 [ Info: Using fglm: false
 [ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
 [ Info: Using fglm: false
+[ Info: Dim is 1
 [ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
 [ Info: Using fglm: false
 [ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
@@ -78,17 +74,17 @@ y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:bl
 [ Info: Using fglm: false
 [ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
 [ Info: Using fglm: false
-┌ Info: Computed in 22.375657886 seconds
+┌ Info: Computed in 18.380102209 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 22.375657886
+└   ioeq_time = 18.380102209
 [ Info: Computing Wronskians
-┌ Info: Computed in 3.709728989 seconds
+┌ Info: Computed in 3.422842569 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 3.709728989
+└   wrnsk_time = 3.422842569
 [ Info: Dimensions of the Wronskians [40, 18]
-┌ Info: Ranks of the Wronskians computed in 0.02930429 seconds
+┌ Info: Ranks of the Wronskians computed in 0.025529716 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.02930429
+└   rank_times = 0.025529716
 [ Info: Assessing global identifiability using the coefficients of the io-equations
 [ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
 [ Info: Using fglm: false
@@ -96,17 +92,18 @@ y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:bl
 [ Info: 1: selected lucky prime 2147483647
 [ Info: CRT modulo (1, 2147483647)
 [ Info: Reconstructing modulo 2147483647
-[ Info: Heuristic check failed.
+[ Info: Heuristic check passed!
+[ Info: Randomized check failed.
 [ Info: 2: selected lucky prime 2147483659
 [ Info: CRT modulo (2147483647, 2147483659)
 [ Info: Reconstructing modulo 4611686039902224373
-[ Info: Heuristic check failed.
 [ Info: 3: selected lucky prime 2147483693
 [ Info: CRT modulo (4611686039902224373, 2147483693)
 [ Info: Reconstructing modulo 9903520567925774155444649489
 [ Info: 4: selected lucky prime 2147483713
 [ Info: CRT modulo (9903520567925774155444649489, 2147483713)
 [ Info: Reconstructing modulo 21267649120981110191733715050621272657
+[ Info: Heuristic check failed.
 [ Info: 5: selected lucky prime 2147483743
 [ Info: CRT modulo (21267649120981110191733715050621272657, 2147483743)
 [ Info: Reconstructing modulo 45671930739135174346839766056203605080877915151
@@ -153,10 +150,10 @@ y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:bl
 [ Info: Using fglm: false
 [ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
 [ Info: Using fglm: false
-┌ Info: Computed in 8.21953799 seconds
+┌ Info: Computed in 6.549459869 seconds
 │   :check_time = :check_time
-└   check_time = 8.21953799
-[ Info: Global identifiability assessed in 35.673758337 seconds
+└   check_time = 6.549459869
+[ Info: Global identifiability assessed in 29.242419503 seconds
 Dict{Any, Symbol} with 10 entries:
   d    =&gt; :globally
   lm   =&gt; :nonidentifiable
@@ -167,4 +164,4 @@ Dict{Any, Symbol} with 10 entries:
   h    =&gt; :globally
   beta =&gt; :nonidentifiable
   b    =&gt; :globally
-  u    =&gt; :globally</code></pre><p>We also note that it&#39;s usually inexpensive to obtain the result with higher probability of correctness. For example, taking <code>p=0.9999</code> in the system above will result only in a slight slowdown.</p><h2 id="Note-on-the-probability-of-correctness"><a class="docs-heading-anchor" href="#Note-on-the-probability-of-correctness">Note on the probability of correctness</a><a id="Note-on-the-probability-of-correctness-1"></a><a class="docs-heading-anchor-permalink" href="#Note-on-the-probability-of-correctness" title="Permalink"></a></h2><p>Currently, the probability of correctness does not include the probability of correctness of the modular reconstruction for Groebner bases. This probability is ensured by an additional check modulo a large prime, and can be neglected for practical purposes. However, in the future versions, we plan to eliminate this possible error.</p><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>D. Wodarz, M. Nowak, <a href="https://doi.org/10.1073/pnas.96.25.14464"><em>Specific therapy regimes could lead to long-term immunological control of HIV</em></a>, PNAS December 7, 1999 96 (25) 14464-14469;</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../local_identifiability/">« Local Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../using_modeling_toolkit/">Using ModelingToolkit.jl With StructuralIdentifiability.jl »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.24 on <span class="colophon-date" title="Thursday 6 April 2023 13:19">Thursday 6 April 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  u    =&gt; :globally</code></pre><p>We also note that it&#39;s usually inexpensive to obtain the result with higher probability of correctness. For example, taking <code>p=0.9999</code> in the system above will result only in a slight slowdown.</p><h2 id="Note-on-the-probability-of-correctness"><a class="docs-heading-anchor" href="#Note-on-the-probability-of-correctness">Note on the probability of correctness</a><a id="Note-on-the-probability-of-correctness-1"></a><a class="docs-heading-anchor-permalink" href="#Note-on-the-probability-of-correctness" title="Permalink"></a></h2><p>Currently, the probability of correctness does not include the probability of correctness of the modular reconstruction for Groebner bases. This probability is ensured by an additional check modulo a large prime, and can be neglected for practical purposes. However, in the future versions, we plan to eliminate this possible error.</p><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>D. Wodarz, M. Nowak, <a href="https://doi.org/10.1073/pnas.96.25.14464"><em>Specific therapy regimes could lead to long-term immunological control of HIV</em></a>, PNAS December 7, 1999 96 (25) 14464-14469;</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../local_identifiability/">« Local Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../using_modeling_toolkit/">Using ModelingToolkit.jl With StructuralIdentifiability.jl »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.24 on <span class="colophon-date" title="Sunday 16 April 2023 12:21">Sunday 16 April 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
