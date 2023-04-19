@@ -444,6 +444,11 @@ function preprocess_ode(
     # performing full structural simplification
     if length(observed(de)) > 0
         rules = Dict(s.lhs => s.rhs for s in observed(de))
+        while any([
+            length(intersect(get_variables(r), keys(rules))) > 0 for r in values(rules)
+        ])
+            rules = Dict(k => SymbolicUtils.substitute(v, rules) for (k, v) in rules)
+        end
         diff_eqs = [SymbolicUtils.substitute(eq, rules) for eq in diff_eqs]
     end
 
