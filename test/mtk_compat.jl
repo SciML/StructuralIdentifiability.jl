@@ -305,4 +305,11 @@
         wolves₊δ => :globally,
     )
     @test result == correct
+    #----------------------------------
+    @variables t, x(t), y(t), z(t), w(t)
+    @parameters a
+    @named sys = ODESystem([D(x) ~ a * y], t, [x], [a]; observed = [y ~ z, z ~ x])
+    measured_quantities = [w ~ x]
+    result = assess_identifiability(sys, measured_quantities = measured_quantities)
+    @test result[a] == :globally
 end
