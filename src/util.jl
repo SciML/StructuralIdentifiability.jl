@@ -25,21 +25,31 @@ function eval_at_dict(
     return eval_at_dict(f, d) * inv(eval_at_dict(g, d))
 end
 
+# TODO: merge the three functions below
+
 function eval_at_dict(
     rational::Generic.Frac{<:P},
-    d::Dict{P, <:Generic.Frac},
+    d::Dict{<: P, <: Union{<: Generic.Frac, <: P}},
 ) where {P <: MPolyElem}
     f, g = unpack_fraction(rational)
     return eval_at_dict(f, d) // eval_at_dict(g, d)
 end
 
-function eval_at_dict(
-    rational::Generic.Frac{<:P},
-    d::Dict{P, <:MPolyElem},
-) where {P <: MPolyElem}
-    f, g = unpack_fraction(rational)
-    return eval_at_dict(f, d) // eval_at_dict(g, d)
-end
+#function eval_at_dict(
+#    rational::Generic.Frac{<:P},
+#    d::Dict{P, <:Generic.Frac},
+#) where {P <: MPolyElem}
+#    f, g = unpack_fraction(rational)
+#    return eval_at_dict(f, d) // eval_at_dict(g, d)
+#end
+
+#function eval_at_dict(
+#    rational::Generic.Frac{<:P},
+#    d::Dict{P, <:MPolyElem},
+#) where {P <: MPolyElem}
+#    f, g = unpack_fraction(rational)
+#    return eval_at_dict(f, d) // eval_at_dict(g, d)
+#end
 
 # ------------------------------------------------------------------------------
 
