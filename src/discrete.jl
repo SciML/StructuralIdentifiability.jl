@@ -156,3 +156,96 @@ function differentiate_sequence_output(
     return result
 end
 
+# ------------------------------------------------------------------------------
+
+"""
+    _assess_local_identifiability_discretei(dds::ODE{P}, funcs_to_check::Array{<: Any, 1}, known_ic, p::Float64=0.99) where P <: MPolyElem{Nemo.fmpq}
+
+Checks the local identifiability/observability of the functions in `funcs_to_check` treating `dds` as a discrete-time system. 
+The result is correct with probability at least `p`.
+`known_ic` can take one of the following
+ * `:none` - no initial conditions are assumed to be known
+ * `:all` - all initial conditions are assumed to be known
+ * a list of rational functions in states and parameters assumed to be known at t = 0
+"""
+function _assess_local_identifiability_discrete(
+    dds::ODE{P},
+    funcs_to_check::Array{<:Any, 1},
+    known_ic = :none,
+    p::Float64 = 0.99,
+) where {P <: MPolyElem{Nemo.fmpq}}
+
+    bring = base_ring(dds.poly_ring)
+
+    # TODO actual bound
+    D = 1000
+
+    @debug "Extending the model"
+    dds_ext =
+        add_outputs(dds, Dict("loc_aux_$i" => f for (i, f) in enumerate(funcs_to_check)))
+
+    if known_ic == :none
+        known_ic = []
+    end
+    if known_ic == :all
+        known_ic = dds_ext.x_vars
+    end
+
+    @debug "Computing the observability matrix"
+    prec = length(dds.x_vars) + length(dds.parameters)
+
+    # Parameter values are the same across all the replicas
+    params_vals = Dict(p => bring(rand(1:D)) for p in dds_ext.parameters)
+    ic = Dict(x => bring(rand(1:D)) for x in dds_ext.x_vars)
+    # TODO: parametric type instead of fmpq
+    inputs = Dict{P, Array{fmpq, 1}}(
+        u => [bring(rand(1:D)) for i in 1:prec] for u in dds_ext.u_vars
+    )
+
+    @debug "Computing the output derivatives"
+    output_derivatives = differentiate_sequence_output(dds_ext, params_vals, ic, inputs, prec)
+
+    @debug "Building the matrices"
+    Jac = zero(Nemo.MatrixSpace(bring, 
+        length(dds.x_vars) + length(dds.parameters),
+        1 + prec * length(dds.y_vars) + length(known_ic)
+    ))
+    xs_params = vcat(dds_ext.x_vars, dds_ext.parameters)
+    for (i, y) in enumerate(dds.y_vars)
+        y = switch_ring(y, dds_ext.poly_ring)
+        for j in 1:prec
+            for (k, p) in enumerate(dds_ext.parameters)
+                Jac[k, 1 + (i - 1) * prec + j] = output_derivatives[(y, p)][j]
+            end
+            for (k, x) in enumerate(dds_ext.x_vars)
+                Jac[end - k + 1, 1 + (i - 1) * prec + j] = output_derivatives[(y, x)][j]
+            end
+        end
+    end
+    eval_point = merge(params_vals, ic)
+    for (i, v) in enumerate(known_ic)
+        for (k, p) in enumerate(dds_ext.parameters)
+            Jac[k, end - i + 1] = eval_at_dict(derivative(v, p), eval_point)
+        end
+        for (k, x) in enumerate(dds_ext.x_vars)
+            Jac[end - k + 1, end - i + 1] = eval_at_dict(derivative(v, x), eval_point)
+        end      
+    end
+
+    @debug "Computing the result"
+    base_rank = LinearAlgebra.rank(Jac)
+    result = Dict{Any, Bool}()
+    for i in 1:length(funcs_to_check)
+        for (k, p) in enumerate(dds_ext.parameters)
+            Jac[k, 1] = output_derivatives[(str_to_var("loc_aux_$i", dds_ext.poly_ring), p)][1]
+        end
+        for (k, x) in enumerate(dds_ext.x_vars)
+            Jac[end - k + 1, 1] = output_derivatives[(str_to_var("loc_aux_$i", dds_ext.poly_ring), x)][1]
+        end
+        result[funcs_to_check[i]] = LinearAlgebra.rank(Jac) == base_rank
+    end
+
+    return Dict(result)
+end
+
+# ------------------------------------------------------------------------------

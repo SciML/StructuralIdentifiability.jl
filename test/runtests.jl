@@ -51,7 +51,8 @@ using StructuralIdentifiability:
     choose,
     sequence_solution,
     differentiate_sequence_solution,
-    differentiate_sequence_output
+    differentiate_sequence_output,
+    _assess_local_identifiability_discrete
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)
