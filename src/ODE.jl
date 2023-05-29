@@ -423,10 +423,10 @@ end
 
 #------------------------------------------------------------------------------
 """
-    function preprocess_ode(de::ModelingToolkit.ODESystem, measured_quantities::Array{ModelingToolkit.Equation})
+    function preprocess_ode(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{ModelingToolkit.Equation})
 
 Input:
-- `de` - ModelingToolkit.ODESystem, a system for identifiability query
+- `de` - ModelingToolkit.AbstractTimeDependentSystem, a system for identifiability query
 - `measured_quantities` - array of output functions
 
 Output:
@@ -435,10 +435,10 @@ Output:
   involved in the produced `ODE` object
 """
 function preprocess_ode(
-    de::ModelingToolkit.ODESystem,
+    de::ModelingToolkit.AbstractTimeDependentSystem,
     measured_quantities::Array{ModelingToolkit.Equation},
 )
-    @info "Preproccessing `ModelingToolkit.ODESystem` object"
+    @info "Preproccessing `ModelingToolkit.AbstractTimeDependentSystem` object"
     diff_eqs =
         filter(eq -> !(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
     # performing full structural simplification

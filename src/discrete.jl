@@ -164,7 +164,7 @@ function _degree_with_common_denom(polys)
 end
 
 """
-    _assess_local_identifiability_discretei(dds::ODE{P}, funcs_to_check::Array{<: Any, 1}, known_ic, p::Float64=0.99) where P <: MPolyElem{Nemo.fmpq}
+    _assess_local_identifiability_discrete(dds::ODE{P}, funcs_to_check::Array{<: Any, 1}, known_ic, p::Float64=0.99) where P <: MPolyElem{Nemo.fmpq}
 
 Checks the local identifiability/observability of the functions in `funcs_to_check` treating `dds` as a discrete-time system. 
 The result is correct with probability at least `p`.
@@ -208,7 +208,7 @@ function _assess_local_identifiability_discrete(
         Jac_degree += 2 * deg_y * prec
     end
     D = Int(ceil(Jac_degree * length(funcs_to_check) / (1 - p)))
-    @info "Sampling range $D"
+    @debug "Sampling range $D"
 
     # Parameter values are the same across all the replicas
     params_vals = Dict(p => bring(rand(1:D)) for p in dds_ext.parameters)
@@ -265,3 +265,64 @@ function _assess_local_identifiability_discrete(
 end
 
 # ------------------------------------------------------------------------------
+
+"""
+    function assess_local_identifiability(
+        dds::ModelingToolkit.DiscreteSystem; 
+        measured_quantities=Array{ModelingToolkit.Equation}[], 
+        funcs_to_check=Array{}[], 
+        known_ic=Array{}[],
+        p::Float64=0.99)
+
+Input:
+- `dds` - the DiscreteSystem object from ModelingToolkit
+- `measured_quantities` - the measurable outputs of the model
+- `funcs_to_check` - functions of parameters for which to check identifiability (all parameters and states if not specified)
+- `known_ic` - functions (of states and parameter) whose initial conditions are assumed to be known
+- `p` - probability of correctness
+
+Output:
+- the result is a dictionary from each function to to boolean;
+
+The result is correct with probability at least `p`.
+"""
+function assess_local_identifiability(
+    dds::ModelingToolkit.DiscreteSystem;
+    measured_quantities = Array{ModelingToolkit.Equation}[],
+    funcs_to_check = Array{}[],
+    known_ic=Array{}[],
+    p::Float64 = 0.99
+)
+    if length(measured_quantities) == 0
+        if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(dds))
+            @info "Measured quantities are not provided, trying to find the outputs in input dynamical system."
+            measured_quantities = filter(
+                eq -> (ModelingToolkit.isoutput(eq.lhs)),
+                ModelingToolkit.equations(dds),
+            )
+        else
+            throw(
+                error(
+                    "Measured quantities (output functions) were not provided and no outputs were found.",
+                ),
+            )
+        end
+    end
+ 
+    dds_aux, conversion = preprocess_ode(dds, measured_quantities)
+    if length(funcs_to_check) == 0
+        funcs_to_check = vcat(parameters(dds), [x for x in states(dds) if conversion[x] in dds_aux.x_vars])
+    end
+    funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
+    known_ic_ = [eval_at_nemo(x, conversion) for x in known_ic]
+
+    result = _assess_local_identifiability_discrete(dds_aux, funcs_to_check_, known_ic_, p)
+    nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
+    out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
+    if length(known_ic) > 0
+        @warn "Since known initial conditions were provided, identifiability of states (e.g., `x(t)`) is at t = 0 only !"
+    end
+    return out_dict
+end
+# ------------------------------------------------------------------------------
+
