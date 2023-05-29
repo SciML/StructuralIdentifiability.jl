@@ -4,6 +4,10 @@ function Nemo.vars(f::Generic.Frac{<:MPolyElem})
     return collect(union(Set(vars(numerator(f))), Set(vars(denominator(f)))))
 end
 
+function Nemo.total_degree(f::Generic.Frac{<:MPolyElem})
+    return sum(map(total_degree, unpack_fraction(f)))
+end
+
 # ------------------------------------------------------------------------------
 
 """
@@ -25,21 +29,31 @@ function eval_at_dict(
     return eval_at_dict(f, d) * inv(eval_at_dict(g, d))
 end
 
+# TODO: merge the three functions below
+
 function eval_at_dict(
     rational::Generic.Frac{<:P},
-    d::Dict{P, <:Generic.Frac},
+    d::Dict{<:P, <:Union{<:Generic.Frac, <:P}},
 ) where {P <: MPolyElem}
     f, g = unpack_fraction(rational)
     return eval_at_dict(f, d) // eval_at_dict(g, d)
 end
 
-function eval_at_dict(
-    rational::Generic.Frac{<:P},
-    d::Dict{P, <:MPolyElem},
-) where {P <: MPolyElem}
-    f, g = unpack_fraction(rational)
-    return eval_at_dict(f, d) // eval_at_dict(g, d)
-end
+#function eval_at_dict(
+#    rational::Generic.Frac{<:P},
+#    d::Dict{P, <:Generic.Frac},
+#) where {P <: MPolyElem}
+#    f, g = unpack_fraction(rational)
+#    return eval_at_dict(f, d) // eval_at_dict(g, d)
+#end
+
+#function eval_at_dict(
+#    rational::Generic.Frac{<:P},
+#    d::Dict{P, <:MPolyElem},
+#) where {P <: MPolyElem}
+#    f, g = unpack_fraction(rational)
+#    return eval_at_dict(f, d) // eval_at_dict(g, d)
+#end
 
 # ------------------------------------------------------------------------------
 

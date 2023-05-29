@@ -63,6 +63,7 @@ include("global_identifiability.jl")
 include("lincomp.jl")
 include("pb_representation.jl")
 include("submodels.jl")
+include("discrete.jl")
 
 """
     assess_identifiability(ode::ODE{P}, p::Float64=0.99) where P <: MPolyElem{fmpq}
