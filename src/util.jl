@@ -33,7 +33,7 @@ end
 
 function eval_at_dict(
     rational::Generic.Frac{<:P},
-    d::Dict{<: P, <: Union{<: Generic.Frac, <: P}},
+    d::Dict{<:P, <:Union{<:Generic.Frac, <:P}},
 ) where {P <: MPolyElem}
     f, g = unpack_fraction(rational)
     return eval_at_dict(f, d) // eval_at_dict(g, d)

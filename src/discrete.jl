@@ -22,9 +22,9 @@ function sequence_solution(
     result = Dict(x => [initial_conditions[x]] for x in dds.x_vars)
     for i in 2:num_terms
         eval_dict = merge(
-            param_values, 
+            param_values,
             Dict(k => v[end] for (k, v) in result),
-            Dict(u => val[i - 1] for (u, val) in input_values)
+            Dict(u => val[i - 1] for (u, val) in input_values),
         )
         for x in dds.x_vars
             push!(result[x], eval_at_dict(dds.x_equations[x], eval_dict))
@@ -48,7 +48,7 @@ function sequence_solution(
         Dict(p => bring(v) for (p, v) in param_values),
         Dict(x => bring(v) for (x, v) in initial_conditions),
         Dict(u => map(v -> bring(v), vv) for (u, vv) in input_values),
-        num_terms
+        num_terms,
     )
 end
 
@@ -79,23 +79,26 @@ function differentiate_sequence_solution(
 
     @debug "Solving the variational system at the solution"
     part_diffs = Dict(
-        (x, p) => derivative(dds.x_equations[x], p) 
-        for x in dds.x_vars for p in generalized_params
+        (x, p) => derivative(dds.x_equations[x], p) for x in dds.x_vars for
+        p in generalized_params
     )
     result = Dict(
-        (x, p) => [x == p ? one(bring) : zero(bring)]
-        for x in dds.x_vars for p in generalized_params
+        (x, p) => [x == p ? one(bring) : zero(bring)] for x in dds.x_vars for
+        p in generalized_params
     )
     for i in 2:num_terms
         eval_dict = merge(
-            params, 
+            params,
             Dict(k => v[i - 1] for (k, v) in seq_sol),
-            Dict(u => val[i - 1] for (u, val) in inputs)
+            Dict(u => val[i - 1] for (u, val) in inputs),
         )
         for p in generalized_params
             local_eval = Dict(x => result[(x, p)][end] for x in dds.x_vars)
             for x in dds.x_vars
-                res = sum([eval_at_dict(part_diffs[(x, x2)], eval_dict) * local_eval[x2] for x2 in dds.x_vars])
+                res = sum([
+                    eval_at_dict(part_diffs[(x, x2)], eval_dict) * local_eval[x2] for
+                    x2 in dds.x_vars
+                ])
                 if p in dds.parameters
                     res += eval_at_dict(part_diffs[(x, p)], eval_dict)
                 end
@@ -121,7 +124,7 @@ function differentiate_sequence_output(
     params::Dict{P, T},
     ic::Dict{P, T},
     inputs::Dict{P, Array{T, 1}},
-    num_terms::Int
+    num_terms::Int,
 ) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
     @debug "Computing partial derivatives of the solution"
     seq_sol, sol_diff = differentiate_sequence_solution(dds, params, ic, inputs, num_terms)
@@ -129,22 +132,25 @@ function differentiate_sequence_output(
     @debug "Evaluating the partial derivatives of the outputs"
     generalized_params = vcat(dds.x_vars, dds.parameters)
     part_diffs = Dict(
-        (y, p) => derivative(dds.y_equations[y], p) 
-        for y in dds.y_vars for p in generalized_params
+        (y, p) => derivative(dds.y_equations[y], p) for y in dds.y_vars for
+        p in generalized_params
     )
- 
+
     result = Dict((y, p) => [] for y in dds.y_vars for p in generalized_params)
     for i in 1:num_terms
         eval_dict = merge(
-            params, 
+            params,
             Dict(k => v[i] for (k, v) in seq_sol),
-            Dict(u => val[i] for (u, val) in inputs)
+            Dict(u => val[i] for (u, val) in inputs),
         )
- 
+
         for p in vcat(dds.x_vars, dds.parameters)
             local_eval = Dict(x => sol_diff[(x, p)][i] for x in dds.x_vars)
             for (y, y_eq) in dds.y_equations
-                res = sum([eval_at_dict(part_diffs[(y, x)], eval_dict) * local_eval[x] for x in dds.x_vars])
+                res = sum([
+                    eval_at_dict(part_diffs[(y, x)], eval_dict) * local_eval[x] for
+                    x in dds.x_vars
+                ])
                 if p in dds.parameters
                     res += eval_at_dict(part_diffs[(y, p)], eval_dict)
                 end
@@ -160,7 +166,15 @@ end
 
 function _degree_with_common_denom(polys)
     common_denom = reduce(lcm, map(f -> unpack_fraction(f)[2], polys))
-    return max(max([total_degree(pair[1]) + total_degree(common_denom) - total_degree(pair[2]) for pair in map(unpack_fraction, polys)]...), total_degree(common_denom))
+    return max(
+        max(
+            [
+                total_degree(pair[1]) + total_degree(common_denom) - total_degree(pair[2])
+                for pair in map(unpack_fraction, polys)
+            ]...,
+        ),
+        total_degree(common_denom),
+    )
 end
 
 """
@@ -179,7 +193,6 @@ function _assess_local_identifiability_discrete(
     known_ic = :none,
     p::Float64 = 0.99,
 ) where {P <: MPolyElem{Nemo.fmpq}}
-
     bring = base_ring(dds.poly_ring)
 
     @debug "Extending the model"
@@ -199,7 +212,7 @@ function _assess_local_identifiability_discrete(
     # Computing the bound from the Schwartz-Zippel-DeMilo-Lipton lemma
     deg_x = _degree_with_common_denom(values(dds.x_equations))
     deg_y = _degree_with_common_denom(values(dds.y_equations))
-    deg_known = reduce(+, map(total_degree, known_ic), init=0)
+    deg_known = reduce(+, map(total_degree, known_ic), init = 0)
     deg_to_check = max(map(total_degree, funcs_to_check)...)
     Jac_degree = deg_to_check + deg_known
     if deg_x > 1
@@ -219,13 +232,17 @@ function _assess_local_identifiability_discrete(
     )
 
     @debug "Computing the output derivatives"
-    output_derivatives = differentiate_sequence_output(dds_ext, params_vals, ic, inputs, prec)
+    output_derivatives =
+        differentiate_sequence_output(dds_ext, params_vals, ic, inputs, prec)
 
     @debug "Building the matrices"
-    Jac = zero(Nemo.MatrixSpace(bring, 
-        length(dds.x_vars) + length(dds.parameters),
-        1 + prec * length(dds.y_vars) + length(known_ic)
-    ))
+    Jac = zero(
+        Nemo.MatrixSpace(
+            bring,
+            length(dds.x_vars) + length(dds.parameters),
+            1 + prec * length(dds.y_vars) + length(known_ic),
+        ),
+    )
     xs_params = vcat(dds_ext.x_vars, dds_ext.parameters)
     for (i, y) in enumerate(dds.y_vars)
         y = switch_ring(y, dds_ext.poly_ring)
@@ -245,7 +262,7 @@ function _assess_local_identifiability_discrete(
         end
         for (k, x) in enumerate(dds_ext.x_vars)
             Jac[end - k + 1, end - i + 1] = eval_at_dict(derivative(v, x), eval_point)
-        end      
+        end
     end
 
     @debug "Computing the result"
@@ -253,10 +270,12 @@ function _assess_local_identifiability_discrete(
     result = Dict{Any, Bool}()
     for i in 1:length(funcs_to_check)
         for (k, p) in enumerate(dds_ext.parameters)
-            Jac[k, 1] = output_derivatives[(str_to_var("loc_aux_$i", dds_ext.poly_ring), p)][1]
+            Jac[k, 1] =
+                output_derivatives[(str_to_var("loc_aux_$i", dds_ext.poly_ring), p)][1]
         end
         for (k, x) in enumerate(dds_ext.x_vars)
-            Jac[end - k + 1, 1] = output_derivatives[(str_to_var("loc_aux_$i", dds_ext.poly_ring), x)][1]
+            Jac[end - k + 1, 1] =
+                output_derivatives[(str_to_var("loc_aux_$i", dds_ext.poly_ring), x)][1]
         end
         result[funcs_to_check[i]] = LinearAlgebra.rank(Jac) == base_rank
     end
@@ -290,8 +309,8 @@ function assess_local_identifiability(
     dds::ModelingToolkit.DiscreteSystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = Array{}[],
-    known_ic=Array{}[],
-    p::Float64 = 0.99
+    known_ic = Array{}[],
+    p::Float64 = 0.99,
 )
     if length(measured_quantities) == 0
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(dds))
@@ -308,10 +327,13 @@ function assess_local_identifiability(
             )
         end
     end
- 
+
     dds_aux, conversion = preprocess_ode(dds, measured_quantities)
     if length(funcs_to_check) == 0
-        funcs_to_check = vcat(parameters(dds), [x for x in states(dds) if conversion[x] in dds_aux.x_vars])
+        funcs_to_check = vcat(
+            parameters(dds),
+            [x for x in states(dds) if conversion[x] in dds_aux.x_vars],
+        )
     end
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
     known_ic_ = [eval_at_nemo(x, conversion) for x in known_ic]
@@ -325,4 +347,3 @@ function assess_local_identifiability(
     return out_dict
 end
 # ------------------------------------------------------------------------------
-
