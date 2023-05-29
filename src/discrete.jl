@@ -158,6 +158,11 @@ end
 
 # ------------------------------------------------------------------------------
 
+function _degree_with_common_denom(polys)
+    common_denom = reduce(lcm, map(f -> unpack_fraction(f)[2], polys))
+    return max(max([total_degree(pair[1]) + total_degree(common_denom) - total_degree(pair[2]) for pair in map(unpack_fraction, polys)]...), total_degree(common_denom))
+end
+
 """
     _assess_local_identifiability_discretei(dds::ODE{P}, funcs_to_check::Array{<: Any, 1}, known_ic, p::Float64=0.99) where P <: MPolyElem{Nemo.fmpq}
 
@@ -177,9 +182,6 @@ function _assess_local_identifiability_discrete(
 
     bring = base_ring(dds.poly_ring)
 
-    # TODO actual bound
-    D = 1000
-
     @debug "Extending the model"
     dds_ext =
         add_outputs(dds, Dict("loc_aux_$i" => f for (i, f) in enumerate(funcs_to_check)))
@@ -193,6 +195,20 @@ function _assess_local_identifiability_discrete(
 
     @debug "Computing the observability matrix"
     prec = length(dds.x_vars) + length(dds.parameters)
+
+    # Computing the bound from the Schwartz-Zippel-DeMilo-Lipton lemma
+    deg_x = _degree_with_common_denom(values(dds.x_equations))
+    deg_y = _degree_with_common_denom(values(dds.y_equations))
+    deg_known = reduce(+, map(total_degree, known_ic), init=0)
+    deg_to_check = max(map(total_degree, funcs_to_check)...)
+    Jac_degree = deg_to_check + deg_known
+    if deg_x > 1
+        Jac_degree += 2 * deg_y * ((deg_x^prec - 1) ÷ (deg_x - 1))
+    else
+        Jac_degree += 2 * deg_y * prec
+    end
+    D = Int(ceil(Jac_degree * length(funcs_to_check) / (1 - p)))
+    @info "Sampling range $D"
 
     # Parameter values are the same across all the replicas
     params_vals = Dict(p => bring(rand(1:D)) for p in dds_ext.parameters)

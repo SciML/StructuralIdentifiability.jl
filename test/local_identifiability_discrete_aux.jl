@@ -1,5 +1,3 @@
-using StructuralIdentifiability
-using StructuralIdentifiability: _assess_local_identifiability_discrete
 @testset "Discrete local identifiability, internal function" begin
    
     cases = []

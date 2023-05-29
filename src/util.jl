@@ -4,6 +4,10 @@ function Nemo.vars(f::Generic.Frac{<:MPolyElem})
     return collect(union(Set(vars(numerator(f))), Set(vars(denominator(f)))))
 end
 
+function Nemo.total_degree(f::Generic.Frac{<:MPolyElem})
+    return sum(map(total_degree, unpack_fraction(f)))
+end
+
 # ------------------------------------------------------------------------------
 
 """
