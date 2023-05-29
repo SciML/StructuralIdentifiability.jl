@@ -16,26 +16,27 @@ Pkg.add(&quot;StructuralIdentifiability&quot;)</code></pre><h2 id="Citation"><a 
 }</code></pre><h2 id="Feature-Summary"><a class="docs-heading-anchor" href="#Feature-Summary">Feature Summary</a><a id="Feature-Summary-1"></a><a class="docs-heading-anchor-permalink" href="#Feature-Summary" title="Permalink"></a></h2><p><code>StructuralIdentifiability.jl</code> can assess local and global identifiability of ODE models. In addition to these straightforward identifiability queries on individual parameters, the package can distinguish between single- and multi-experiment identifiability.</p><h2 id="Feature-List"><a class="docs-heading-anchor" href="#Feature-List">Feature List</a><a id="Feature-List-1"></a><a class="docs-heading-anchor-permalink" href="#Feature-List" title="Permalink"></a></h2><ul><li>Local identifiability checks</li><li>Global identifiability checks</li><li>Assessment of identifiable functions of parameters</li></ul><h2 id="Contributing"><a class="docs-heading-anchor" href="#Contributing">Contributing</a><a id="Contributing-1"></a><a class="docs-heading-anchor-permalink" href="#Contributing" title="Permalink"></a></h2><ul><li><p>Please refer to the <a href="https://github.com/SciML/ColPrac/blob/master/README.md">SciML ColPrac: Contributor&#39;s Guide on Collaborative Practices for Community Packages</a> for guidance on PRs, issues, and other matters relating to contributing to StructuralIdentifiability.</p></li><li><p>There are a few community forums:</p><ul><li>The #diffeq-bridged channel in the <a href="https://julialang.org/slack/">Julia Slack</a></li><li><a href="https://gitter.im/JuliaDiffEq/Lobby">JuliaDiffEq</a> on Gitter</li><li>On the Julia Discourse forums</li><li>See also <a href="https://sciml.ai/community/">SciML Community page</a></li></ul></li></ul><h2 id="Reproducibility"><a class="docs-heading-anchor" href="#Reproducibility">Reproducibility</a><a id="Reproducibility-1"></a><a class="docs-heading-anchor-permalink" href="#Reproducibility" title="Permalink"></a></h2><details><summary>The documentation of this SciML package was built using these direct dependencies,</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl/docs/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.2
   [e30172f5] Documenter v0.27.24
-  [961ee093] ModelingToolkit v8.55.1
+  [961ee093] ModelingToolkit v8.56.0
   [220ca800] StructuralIdentifiability v0.4.9 `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.9.0
 Commit 8e630552924 (2023-05-07 11:25 UTC)
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
-  CPU: 2 × Intel(R) Xeon(R) Platinum 8272CL CPU @ 2.60GHz
+  CPU: 2 × Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz
   WORD_SIZE: 64
   LIBM: libopenlibm
-  LLVM: libLLVM-14.0.6 (ORCJIT, skylake-avx512)
+  LLVM: libLLVM-14.0.6 (ORCJIT, icelake-server)
   Threads: 1 on 2 virtual cores</code></pre></details><details><summary>A more complete overview of all dependencies and their versions is also provided.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl/docs/Manifest.toml`
+  [47edcb42] ADTypes v0.1.3
   [a4c015fc] ANSIColoredPrinters v0.0.1
-⌅ [c3fe647b] AbstractAlgebra v0.29.4
+  [c3fe647b] AbstractAlgebra v0.30.7
   [1520ce14] AbstractTrees v0.4.4
   [79e6a3ab] Adapt v3.6.2
   [ec485272] ArnoldiMethod v0.2.0
-  [4fba245c] ArrayInterface v7.4.3
+  [4fba245c] ArrayInterface v7.4.5
   [6e4b80f9] BenchmarkTools v1.3.2
   [e2ed5e7c] Bijections v0.1.4
   [62783981] BitTwiddlingConvenienceFunctions v0.1.5
-  [2a0fbf3d] CPUSummary v0.2.2
+  [2a0fbf3d] CPUSummary v0.2.3
   [00ebfdb7] CSTParser v3.3.6
   [49dc2e85] Calculus v0.5.1
   [d360d2e6] ChainRulesCore v1.16.0
@@ -49,16 +50,16 @@ Platform Info:
   [187b0558] ConstructionBase v1.5.2
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
-  [9a962f9c] DataAPI v1.14.0
+  [9a962f9c] DataAPI v1.15.0
   [864edb3b] DataStructures v0.18.13
   [e2d170a0] DataValueInterfaces v1.0.0
   [ab62b9b5] DeepDiffs v1.2.0
-  [2b5f629d] DiffEqBase v6.124.0
+  [2b5f629d] DiffEqBase v6.125.0
   [459566f4] DiffEqCallbacks v2.26.1
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.13.0
   [b4f34e82] Distances v0.10.8
-  [31c24e10] Distributions v0.25.90
+  [31c24e10] Distributions v0.25.95
   [ffbed154] DocStringExtensions v0.9.3
   [e30172f5] Documenter v0.27.24
   [5b8099bc] DomainSets v0.6.6
@@ -67,19 +68,19 @@ Platform Info:
   [4e289a0a] EnumX v1.0.4
   [e2ba6199] ExprTools v0.1.9
   [7034ab61] FastBroadcast v0.2.5
-  [1a297f60] FillArrays v1.0.0
-  [6a86dc24] FiniteDiff v2.20.0
+  [1a297f60] FillArrays v1.1.0
+  [6a86dc24] FiniteDiff v2.21.0
   [59287772] Formatting v0.4.2
   [f6369f11] ForwardDiff v0.10.35
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
-  [46192b85] GPUArraysCore v0.1.4
+  [46192b85] GPUArraysCore v0.1.5
   [c27321d9] Glob v1.3.1
   [86223c79] Graphs v1.8.0
-  [0b43b601] Groebner v0.3.4
+  [0b43b601] Groebner v0.3.5
   [d5909c97] GroupsCore v0.4.0
   [34004b35] HypergeometricFunctions v0.3.16
-  [b5f81e59] IOCapture v0.2.2
+  [b5f81e59] IOCapture v0.2.3
   [615f187c] IfElse v0.1.1
   [d25df0c9] Inflate v0.1.3
   [18e54dd8] IntegerMathUtils v0.1.0
@@ -89,7 +90,7 @@ Platform Info:
   [82899510] IteratorInterfaceExtensions v1.0.0
   [692b3bcd] JLLWrappers v1.4.1
   [682c06a0] JSON v0.21.4
-  [98e50ef6] JuliaFormatter v1.0.29
+  [98e50ef6] JuliaFormatter v1.0.31
   [ccbc3e58] JumpProcesses v9.6.3
   [b964fa9f] LaTeXStrings v1.3.0
   [2ee39098] LabelledArrays v1.14.0
@@ -102,18 +103,18 @@ Platform Info:
   [1914dd2f] MacroTools v0.5.10
   [d125e4d3] ManualMemory v0.1.8
   [e1d29d7a] Missings v1.1.0
-  [961ee093] ModelingToolkit v8.55.1
+  [961ee093] ModelingToolkit v8.56.0
   [46d2c3a1] MuladdMacro v0.2.4
   [102ac46a] MultivariatePolynomials v0.4.7
   [d8a4904e] MutableArithmetics v1.3.0
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
-⌅ [2edaba10] Nemo v0.33.8
+  [2edaba10] Nemo v0.34.4
   [bac558e1] OrderedCollections v1.6.0
   [90014a1f] PDMats v0.11.17
   [d96e819e] Parameters v0.12.3
-  [69de0a69] Parsers v2.5.9
+  [69de0a69] Parsers v2.5.10
   [e409e4f3] PoissonRandom v0.4.4
   [f517fe37] Polyester v0.7.3
   [1d0040c9] PolyesterWeave v0.2.1
@@ -129,19 +130,19 @@ Platform Info:
   [189a3867] Reexport v1.2.2
   [ae029012] Requires v1.3.0
   [79098fc4] Rmath v0.7.1
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.7
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.8
   [94e857df] SIMDTypes v0.1.0
-  [0bca4576] SciMLBase v1.91.7
-  [c0aeaf25] SciMLOperators v0.2.5
+  [0bca4576] SciMLBase v1.92.2
+  [c0aeaf25] SciMLOperators v0.2.9
   [efcf1570] Setfield v1.1.1
-  [727e6d20] SimpleNonlinearSolve v0.1.14
+  [727e6d20] SimpleNonlinearSolve v0.1.15
   [699a6c99] SimpleTraits v0.9.4
   [66db9d55] SnoopPrecompile v1.0.3
   [a2af1166] SortingAlgorithms v1.1.0
   [276daf66] SpecialFunctions v2.2.0
   [aedffcd0] Static v0.8.7
   [0d7ed370] StaticArrayInterface v1.4.0
-  [90137ffa] StaticArrays v1.5.24
+  [90137ffa] StaticArrays v1.5.25
   [1e83bf80] StaticArraysCore v1.4.0
   [82ae8749] StatsAPI v1.6.0
   [2913bbd2] StatsBase v0.34.0
@@ -168,7 +169,7 @@ Platform Info:
   [e21ec000] Antic_jll v0.201.500+0
   [d9960996] Arb_jll v200.2300.0+0
   [fcfa6d1b] Calcium_jll v0.401.100+0
-  [e134572f] FLINT_jll v200.900.5+0
+  [e134572f] FLINT_jll v200.900.6+0
 ⌅ [656ef2d0] OpenBLAS32_jll v0.3.21+0
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [f50d1b31] Rmath_jll v0.4.0+0
@@ -222,4 +223,4 @@ Platform Info:
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`</code></pre></details>You can also download the 
 <a href="https://github.com/SciML/StructuralIdentifiability.jl/tree/gh-pages/v0.4.9/assets/Manifest.toml">manifest</a> file and the
-<a href="https://github.com/SciML/StructuralIdentifiability.jl/tree/gh-pages/v0.4.9/assets/Project.toml">project</a> file.</article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/local_identifiability/">Local Identifiability of Differential Models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.24 on <span class="colophon-date" title="Friday 12 May 2023 11:50">Friday 12 May 2023</span>. Using Julia version 1.9.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+<a href="https://github.com/SciML/StructuralIdentifiability.jl/tree/gh-pages/v0.4.9/assets/Project.toml">project</a> file.</article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/local_identifiability/">Local Identifiability of Differential Models »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.24 on <span class="colophon-date" title="Monday 29 May 2023 21:34">Monday 29 May 2023</span>. Using Julia version 1.9.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
