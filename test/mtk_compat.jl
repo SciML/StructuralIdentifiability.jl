@@ -10,6 +10,11 @@
         Dict(a01 => :nonidentifiable, a21 => :nonidentifiable, a12 => :nonidentifiable)
 
     @test isequal(correct, assess_identifiability(de; measured_quantities = [y1 ~ x0]))
+    @test isequal(correct, assess_identifiability(de; measured_quantities = [x0]))
+    @test isequal(
+        correct,
+        assess_identifiability(de; measured_quantities = [(y1 ~ x0).rhs]),
+    )
     # --------------------------------------------------------------------------
     @parameters a01 a21 a12
     @variables t x0(t) x1(t) y1(t) [output = true]

@@ -424,10 +424,11 @@ end
 #------------------------------------------------------------------------------
 """
     function preprocess_ode(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{ModelingToolkit.Equation})
+    function preprocess_ode(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{SymbolicUtils.BasicSymbolic})
 
 Input:
 - `de` - ModelingToolkit.AbstractTimeDependentSystem, a system for identifiability query
-- `measured_quantities` - array of output functions
+- `measured_quantities` - array of output functions (as equations of just functions)
 
 Output:
 - `ODE` object containing required data for identifiability assessment
@@ -437,6 +438,46 @@ Output:
 function preprocess_ode(
     de::ModelingToolkit.AbstractTimeDependentSystem,
     measured_quantities::Array{ModelingToolkit.Equation},
+)
+    return __preprocess_ode(
+        de,
+        [(replace(string(e.lhs), "(t)" => ""), e.rhs) for e in measured_quantities],
+    )
+end
+
+function preprocess_ode(
+    de::ModelingToolkit.AbstractTimeDependentSystem,
+    measured_quantities::Array{<:Symbolics.Num},
+)
+    return __preprocess_ode(
+        de,
+        [("y$i", Symbolics.value(e)) for (i, e) in enumerate(measured_quantities)],
+    )
+end
+
+function preprocess_ode(
+    de::ModelingToolkit.AbstractTimeDependentSystem,
+    measured_quantities::Array{<:SymbolicUtils.BasicSymbolic},
+)
+    return __preprocess_ode(de, [("y$i", e) for (i, e) in enumerate(measured_quantities)])
+end
+
+#------------------------------------------------------------------------------
+"""
+    function __preprocess_ode(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{Tuple{String, SymbolicUtils.BasicSymbolic}})
+
+Input:
+- `de` - ModelingToolkit.AbstractTimeDependentSystem, a system for identifiability query
+- `measured_quantities` - array of input function in the form (name, expression)
+
+Output:
+- `ODE` object containing required data for identifiability assessment
+- `conversion` dictionary from the symbols in the input MTK model to the variable
+  involved in the produced `ODE` object
+"""
+function __preprocess_ode(
+    de::ModelingToolkit.AbstractTimeDependentSystem,
+    measured_quantities::Array{<:Tuple{String, <:SymbolicUtils.BasicSymbolic}},
 )
     @info "Preproccessing `ModelingToolkit.AbstractTimeDependentSystem` object"
     diff_eqs =
@@ -452,23 +493,25 @@ function preprocess_ode(
         diff_eqs = [SymbolicUtils.substitute(eq, rules) for eq in diff_eqs]
     end
 
-    y_functions = [each.lhs for each in measured_quantities]
+    y_functions = [each[2] for each in measured_quantities]
     inputs = filter(v -> ModelingToolkit.isinput(v), ModelingToolkit.states(de))
     state_vars = filter(
         s -> !(ModelingToolkit.isinput(s) || ModelingToolkit.isoutput(s)),
         ModelingToolkit.states(de),
     )
     params = ModelingToolkit.parameters(de)
-    t = ModelingToolkit.arguments(measured_quantities[1].lhs)[1]
-    params_from_measured_quantities = ModelingToolkit.parameters(
-        ModelingToolkit.ODESystem(measured_quantities, t, name = :DataSeries),
+    t = ModelingToolkit.arguments(diff_eqs[1].lhs)[1]
+    params_from_measured_quantities = union(
+        [filter(s -> !istree(s), get_variables(y[2])) for y in measured_quantities]...,
     )
     params = union(params, params_from_measured_quantities)
 
-    input_symbols = vcat(state_vars, y_functions, inputs, params)
-    generators = string.(input_symbols)
+    input_symbols = vcat(state_vars, inputs, params)
+    generators = vcat(string.(input_symbols), [e[1] for e in measured_quantities])
     generators = map(g -> replace(g, "(t)" => ""), generators)
     R, gens_ = Nemo.PolynomialRing(Nemo.QQ, generators)
+    y_vars = [str_to_var(e[1], R) for e in measured_quantities]
+    symb2gens = Dict(input_symbols .=> gens_[1:length(input_symbols)])
     state_eqn_dict = Dict{
         StructuralIdentifiability.Nemo.fmpq_mpoly,
         Union{
@@ -490,19 +533,17 @@ function preprocess_ode(
 
     for i in 1:length(diff_eqs)
         if !(typeof(diff_eqs[i].rhs) <: Number)
-            state_eqn_dict[substitute(state_vars[i], input_symbols .=> gens_)] =
-                eval_at_nemo(diff_eqs[i].rhs, Dict(input_symbols .=> gens_))
+            state_eqn_dict[substitute(state_vars[i], symb2gens)] =
+                eval_at_nemo(diff_eqs[i].rhs, symb2gens)
         else
-            state_eqn_dict[substitute(state_vars[i], input_symbols .=> gens_)] =
-                R(diff_eqs[i].rhs)
+            state_eqn_dict[substitute(state_vars[i], symb2gens)] = R(diff_eqs[i].rhs)
         end
     end
     for i in 1:length(measured_quantities)
-        out_eqn_dict[substitute(y_functions[i], input_symbols .=> gens_)] =
-            eval_at_nemo(measured_quantities[i].rhs, Dict(input_symbols .=> gens_))
+        out_eqn_dict[y_vars[i]] = eval_at_nemo(measured_quantities[i][2], symb2gens)
     end
 
-    inputs_ = [substitute(each, input_symbols .=> gens_) for each in inputs]
+    inputs_ = [substitute(each, symb2gens) for each in inputs]
     if isequal(length(inputs_), 0)
         inputs_ = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}()
     end
@@ -512,6 +553,6 @@ function preprocess_ode(
             out_eqn_dict,
             inputs_,
         ),
-        Dict(input_symbols .=> gens_),
+        symb2gens,
     )
 end
