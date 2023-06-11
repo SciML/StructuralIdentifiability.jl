@@ -13,6 +13,7 @@
             :dds => sir,
             :res => Dict(S => true, I => true, R => false, α => true, β => true),
             :y => [y ~ I],
+            :y2 => [I],
             :known_ic => Array{}[],
             :to_check => Array{}[],
         ),
@@ -31,6 +32,7 @@
             :dds => eqs,
             :res => Dict(x => true, θ => true),
             :y => [y ~ x],
+            :y2 => [x],
             :known_ic => Array{}[],
             :to_check => Array{}[],
         ),
@@ -49,13 +51,14 @@
             :dds => eqs,
             :res => Dict(x1 => true, x2 => true, θ => false, β => false),
             :y => [y ~ x1],
+            :y2 => [x1],
             :known_ic => Array{}[],
             :to_check => Array{}[],
         ),
     )
 
     @parameters a b c d
-    @variables t x1(t) x2(t) u(t)
+    @variables t x1(t) x2(t) u(t) y2(t)
     D = Difference(t; dt = 1.0)
 
     eqs = [D(x1) ~ a * x1 - b * x1 * x2 + u, D(x2) ~ -c * x2 + d * x1 * x2]
@@ -68,6 +71,7 @@
             :res =>
                 Dict(a => true, b => false, c => true, d => true, x1 => true, x2 => false),
             :y => [y ~ x1],
+            :y2 => [x1],
             :known_ic => Array{}[],
             :to_check => Array{}[],
         ),
@@ -79,6 +83,7 @@
             :dds => lv,
             :res => Dict(b * x2 => true),
             :y => [y ~ x1],
+            :y2 => [x1],
             :known_ic => Array{}[],
             :to_check => [b * x2],
         ),
@@ -90,7 +95,21 @@
             :dds => lv,
             :res =>
                 Dict(a => true, b => true, c => true, d => true, x1 => true, x2 => true),
+            :y => [y ~ x1, y2 ~ x1 / x2],
+            :y2 => [x1, x1 / x2],
+            :known_ic => Array{}[],
+            :to_check => Array{}[],
+        ),
+    )
+
+    push!(
+        cases,
+        Dict(
+            :dds => lv,
+            :res =>
+                Dict(a => true, b => true, c => true, d => true, x1 => true, x2 => true),
             :y => [y ~ x1],
+            :y2 => [x1],
             :known_ic => [x2],
             :to_check => Array{}[],
         ),
@@ -110,6 +129,7 @@
             :dds => abmd1,
             :res => Dict(x1 => true, x2 => true, theta1 => true, theta2 => true),
             :y => [y ~ x1],
+            :y2 => [x1],
             :known_ic => Array{}[],
             :to_check => Array{}[],
         ),
@@ -117,7 +137,7 @@
 
     # Example 2 from https://doi.org/10.1016/j.automatica.2008.03.019
     @parameters theta1 theta2 theta3
-    @variables t x1(t) x2(t) u(t) y(t)
+    @variables t x1(t) x2(t) u(t) y(t) y2(t)
     D = Difference(t; dt = 1.0)
 
     eqs = [D(x1) ~ theta1 * x1^2 + theta2 * x2 + u, D(x2) ~ theta3 * x1]
@@ -135,6 +155,24 @@
                 x2 => false,
             ),
             :y => [y ~ x1],
+            :y2 => [x1],
+            :known_ic => Array{}[],
+            :to_check => Array{}[],
+        ),
+    )
+    push!(
+        cases,
+        Dict(
+            :dds => abmd2,
+            :res => Dict(
+                theta1 => true,
+                theta2 => true,
+                theta3 => true,
+                x1 => true,
+                x2 => true,
+            ),
+            :y => [y ~ x1, y2 ~ x2],
+            :y2 => [x1, x2],
             :known_ic => Array{}[],
             :to_check => Array{}[],
         ),
@@ -144,6 +182,12 @@
         @test assess_local_identifiability(
             c[:dds];
             measured_quantities = c[:y],
+            known_ic = c[:known_ic],
+            funcs_to_check = c[:to_check],
+        ) == c[:res]
+        @test assess_local_identifiability(
+            c[:dds];
+            measured_quantities = c[:y2],
             known_ic = c[:known_ic],
             funcs_to_check = c[:to_check],
         ) == c[:res]

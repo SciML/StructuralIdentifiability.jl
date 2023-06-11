@@ -439,19 +439,25 @@ function preprocess_ode(
     de::ModelingToolkit.AbstractTimeDependentSystem,
     measured_quantities::Array{ModelingToolkit.Equation},
 )
-    return __preprocess_ode(de, [(replace(string(e.lhs), "(t)" => ""), e.rhs) for e in measured_quantities])
+    return __preprocess_ode(
+        de,
+        [(replace(string(e.lhs), "(t)" => ""), e.rhs) for e in measured_quantities],
+    )
 end
 
 function preprocess_ode(
     de::ModelingToolkit.AbstractTimeDependentSystem,
-    measured_quantities::Array{<: Symbolics.Num},
+    measured_quantities::Array{<:Symbolics.Num},
 )
-    return __preprocess_ode(de, [("y$i", Symbolics.value(e)) for (i, e) in enumerate(measured_quantities)])
+    return __preprocess_ode(
+        de,
+        [("y$i", Symbolics.value(e)) for (i, e) in enumerate(measured_quantities)],
+    )
 end
 
 function preprocess_ode(
     de::ModelingToolkit.AbstractTimeDependentSystem,
-    measured_quantities::Array{<: SymbolicUtils.BasicSymbolic},
+    measured_quantities::Array{<:SymbolicUtils.BasicSymbolic},
 )
     return __preprocess_ode(de, [("y$i", e) for (i, e) in enumerate(measured_quantities)])
 end
@@ -471,7 +477,7 @@ Output:
 """
 function __preprocess_ode(
     de::ModelingToolkit.AbstractTimeDependentSystem,
-    measured_quantities::Array{<: Tuple{String, <: SymbolicUtils.BasicSymbolic}},
+    measured_quantities::Array{<:Tuple{String, <:SymbolicUtils.BasicSymbolic}},
 )
     @info "Preproccessing `ModelingToolkit.AbstractTimeDependentSystem` object"
     diff_eqs =
@@ -496,7 +502,7 @@ function __preprocess_ode(
     params = ModelingToolkit.parameters(de)
     t = ModelingToolkit.arguments(diff_eqs[1].lhs)[1]
     params_from_measured_quantities = union(
-        [filter(s -> !istree(s), get_variables(y[2])) for y in measured_quantities]...
+        [filter(s -> !istree(s), get_variables(y[2])) for y in measured_quantities]...,
     )
     params = union(params, params_from_measured_quantities)
 
@@ -530,13 +536,11 @@ function __preprocess_ode(
             state_eqn_dict[substitute(state_vars[i], symb2gens)] =
                 eval_at_nemo(diff_eqs[i].rhs, symb2gens)
         else
-            state_eqn_dict[substitute(state_vars[i], symb2gens)] =
-                R(diff_eqs[i].rhs)
+            state_eqn_dict[substitute(state_vars[i], symb2gens)] = R(diff_eqs[i].rhs)
         end
     end
     for i in 1:length(measured_quantities)
-        out_eqn_dict[y_vars[i]] =
-            eval_at_nemo(measured_quantities[i][2], symb2gens)
+        out_eqn_dict[y_vars[i]] = eval_at_nemo(measured_quantities[i][2], symb2gens)
     end
 
     inputs_ = [substitute(each, symb2gens) for each in inputs]
