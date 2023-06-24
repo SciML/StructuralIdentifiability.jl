@@ -187,8 +187,8 @@ function assess_local_identifiability(
     end
     if length(funcs_to_check) == 0
         funcs_to_check = vcat(
-            ModelingToolkit.parameters(ode), 
-            [e for e in ModelingToolkit.states(ode) if !ModelingToolkit.isoutput(e)]
+            ModelingToolkit.parameters(ode),
+            [e for e in ModelingToolkit.states(ode) if !ModelingToolkit.isoutput(e)],
         )
     end
     ode, conversion = preprocess_ode(ode, measured_quantities)
