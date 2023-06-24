@@ -186,7 +186,10 @@ function assess_local_identifiability(
         end
     end
     if length(funcs_to_check) == 0
-        funcs_to_check = ModelingToolkit.parameters(ode)
+        funcs_to_check = vcat(
+            ModelingToolkit.parameters(ode), 
+            [e for e in ModelingToolkit.states(ode) if !ModelingToolkit.isoutput(e)]
+        )
     end
     ode, conversion = preprocess_ode(ode, measured_quantities)
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]

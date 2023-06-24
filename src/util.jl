@@ -334,6 +334,10 @@ function eval_at_nemo(e::SymbolicUtils.BasicSymbolic, vals::Dict)
         if length(Symbolics.arguments(e)) == 1 && "$(first(Symbolics.arguments(e)))" == "t"
             return vals[e]
         end
+        # checking if this is a vector entry like x(t)[1]
+        if Symbolics.operation(e) == getindex
+            return vals[e]
+        end
         # otherwise, this is a term
         args = map(a -> eval_at_nemo(a, vals), Symbolics.arguments(e))
         if Symbolics.operation(e) in (+, -, *)

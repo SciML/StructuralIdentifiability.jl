@@ -310,11 +310,29 @@
         wolves₊δ => :globally,
     )
     @test result == correct
+
     #----------------------------------
+
     @variables t, x(t), y(t), z(t), w(t)
     @parameters a
     @named sys = ODESystem([D(x) ~ a * y], t, [x], [a]; observed = [y ~ z, z ~ x])
     measured_quantities = [w ~ x]
     result = assess_identifiability(sys, measured_quantities = measured_quantities)
     @test result[a] == :globally
+
+    #----------------------------------
+    
+    # Tensor definition case as reported in
+    # https://github.com/SciML/StructuralIdentifiability.jl/issues/178
+    @variables t, x(t)[1:2], y(t)[1:2]
+    @parameters k1, k2
+
+    eqs = [
+        D(x[1]) ~ -k1 * x[2],
+        D(x[2]) ~ -k2 * x[1]
+    ]
+
+    sys = ODESystem(eqs, t, name=:example_vector)
+    correct = Dict(k1 => true, k2 => true, x[1] => true, x[2] => true)
+    @test assess_local_identifiability(sys, measured_quantities=[x[1], x[2]]) == correct
 end
