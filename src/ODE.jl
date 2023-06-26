@@ -374,6 +374,19 @@ macro ODEmodel(ex::Expr...)
 
     u_vars = setdiff(io_vars, y_vars)
     params = setdiff(all_symb, union(x_vars, y_vars, u_vars))
+    allnames = map(
+        string,
+        vcat(collect(x_vars), collect(params), collect(u_vars), collect(y_vars)),
+    )
+    for n in allnames
+        if !Base.isidentifier(n)
+            throw(
+                ArgumentError(
+                    "The names of the variables will be injected into the global scope, so their name must be allowed Julia names, $n is not",
+                ),
+            )
+        end
+    end
     @info "Summary of the model:"
     @info "State variables: " * join(map(string, collect(x_vars)), ", ")
     @info "Parameters: " * join(map(string, collect(params)), ", ")
