@@ -194,4 +194,7 @@ function assess_identifiability(
     return out_dict
 end
 
+using PrecompileTools
+include("precompile.jl")
+
 end
