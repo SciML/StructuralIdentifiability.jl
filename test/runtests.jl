@@ -1,7 +1,7 @@
 using StructuralIdentifiability
 
-using StructuralIdentifiability.Test
-using StructuralIdentifiability.TestSetExtensions
+using Test
+using TestSetExtensions
 
 using StructuralIdentifiability.Nemo
 using StructuralIdentifiability.ModelingToolkit
@@ -72,6 +72,9 @@ function random_ps_matrix(ps_ring, matrix_space)
 end
 
 @info "Testing started"
+
+@test isempty(Test.detect_ambiguities(StructuralIdentifiability))
+@test isempty(Test.detect_unbound_args(StructuralIdentifiability))
 
 @testset "All the tests" begin
     @includetests ARGS

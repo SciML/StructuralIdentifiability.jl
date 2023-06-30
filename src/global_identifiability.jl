@@ -80,6 +80,10 @@ function check_field_membership(
 
     @debug "Computing Groebner basis ($(length(eqs)) equations)"
     flush(stdout)
+    # NOTE(Alex): a crazy idea: what if we "certify" only a part of the basis?
+    # Say, we check ideal inclusion over Q for a random sample or a linear
+    # combination of input polynomials rather than for all of them.
+    #
     # to uncomment certify
     # gb = groebner(eqs; certify=true, linalg=:prob)
     gb_loglevel = Logging.Warn
@@ -87,28 +91,28 @@ function check_field_membership(
         gb_loglevel = Logging.Debug
     end
     gb = nothing
+    # TODO(Alex): remove once Groebner.jl v0.4 is out
     try
         gb = groebner(eqs; linalg = :prob, loglevel = gb_loglevel)
     catch AssertionError
         @warn "Probabilistic linear algebra failed in Groebner.jl, switching to the deterministic one"
-        gb = groebner(eqs; loglevel = gb_loglevel)
-    end
-    if isequal(one(ring_ext), gb[1])
-        @error "The Groebner basis computation resulted in the unit ideal. This is an incorrect result,
-        please, run the code again. Sorry for the inconvenience"
-        throw("GB problem")
+        gb = groebner(eqs; linalg = :det, loglevel = gb_loglevel)
     end
 
     @debug "Producing the result"
     flush(stdout)
-    result = []
+    if isempty(rat_funcs)
+        return Bool[]
+    end
+    polys_ext = Vector{typeof(gb[1])}()
     for f in rat_funcs
         num, den = unpack_fraction(f)
         poly = num * evaluate(den, point) - den * evaluate(num, point)
         poly_ext = parent_ring_change(poly, ring_ext)
         # poly_ext = evaluate(poly_ext, shift)
-        push!(result, iszero(normalform(gb, poly_ext)))
+        push!(polys_ext, poly_ext)
     end
+    result = map(iszero, normalform(gb, polys_ext))
     return result
 end
 

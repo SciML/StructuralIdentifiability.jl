@@ -15,12 +15,6 @@ using AbstractAlgebra
 using Nemo
 using Groebner
 
-# For testing (TODO: move to the test-specific dependencies)
-using Test
-using TestSetExtensions
-using IterTools
-using MacroTools
-
 using ModelingToolkit
 
 # defining a model
@@ -48,7 +42,7 @@ export PBRepresentation, diffreduce, io_switch!, pseudodivision
 export find_submodels
 
 # would be great to merge with the Julia logger
-_runtime_logger = Dict()
+const _runtime_logger = Dict()
 
 include("util.jl")
 include("power_series_utils.jl")
