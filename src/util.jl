@@ -135,13 +135,7 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :by
     elseif matching == :byindex
         append!(var_mapping, 1:nvars(new_ring))
         if nvars(new_ring) < nvars(old_ring)
-            append!(
-                var_mapping,
-                Array{Any, 1}[
-                    nothing,
-                    nvars(old_ring) - nvars(new_ring),
-                ],
-            )
+            append!(var_mapping, Array{Any, 1}[nothing, nvars(old_ring) - nvars(new_ring)])
         end
     else
         throw(Base.ArgumentError("Unknown matching type: $matching"))
