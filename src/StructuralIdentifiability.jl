@@ -92,9 +92,9 @@ be a dictionary from the parameters to their identifiability properties (again, 
 """
 function assess_identifiability(
     ode::ODE{P},
-    funcs_to_check::Array{T, 1},
+    funcs_to_check::Array{<:RingElem, 1},
     p::Float64 = 0.99,
-) where {P <: MPolyElem{fmpq}, T <: RingElem}
+) where {P <: MPolyElem{fmpq}}
     p_glob = 1 - (1 - p) * 0.9
     p_loc = 1 - (1 - p) * 0.1
 
@@ -112,7 +112,7 @@ function assess_identifiability(
     end
 
     loc_id = [local_result[each] for each in funcs_to_check]
-    locally_identifiable = Array{T, 1}()
+    locally_identifiable = Array{Any, 1}()
     for (loc, f) in zip(loc_id, funcs_to_check)
         if loc
             push!(locally_identifiable, f)
@@ -125,7 +125,7 @@ function assess_identifiability(
     @info "Global identifiability assessed in $runtime seconds"
     _runtime_logger[:glob_time] = runtime
 
-    result = Dict{T, Symbol}()
+    result = Dict{Any, Symbol}()
     glob_ind = 1
     for i in 1:length(funcs_to_check)
         if !local_result[funcs_to_check[i]]
