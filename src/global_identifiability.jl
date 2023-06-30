@@ -98,12 +98,6 @@ function check_field_membership(
         @warn "Probabilistic linear algebra failed in Groebner.jl, switching to the deterministic one"
         gb = groebner(eqs; linalg = :det, loglevel = gb_loglevel)
     end
-    # NOTE(Alex): this is probably not relevant
-    if isequal(one(ring_ext), gb[1])
-        @error "The Groebner basis computation resulted in the unit ideal. This is an incorrect result,
-        please, run the code again. Sorry for the inconvenience"
-        throw("GB problem")
-    end
 
     @debug "Producing the result"
     flush(stdout)
