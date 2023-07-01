@@ -14,6 +14,7 @@ using DataStructures
 using AbstractAlgebra
 using Nemo
 using Groebner
+using ParamPunPam
 
 using ModelingToolkit
 
@@ -54,6 +55,7 @@ include("elimination.jl")
 include("primality_check.jl")
 include("io_equation.jl")
 include("global_identifiability.jl")
+include("identifiable_functions.jl")
 include("lincomp.jl")
 include("pb_representation.jl")
 include("submodels.jl")
