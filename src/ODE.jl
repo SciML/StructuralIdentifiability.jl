@@ -387,11 +387,13 @@ macro ODEmodel(ex::Expr...)
             )
         end
     end
-    @info "Summary of the model:"
-    @info "State variables: " * join(map(string, collect(x_vars)), ", ")
-    @info "Parameters: " * join(map(string, collect(params)), ", ")
-    @info "Inputs: " * join(map(string, collect(u_vars)), ", ")
-    @info "Outputs: " * join(map(string, collect(y_vars)), ", ")
+    logging_exprs = [
+        :(@info "Summary of the model:"),
+        :(@info "State variables: " * $(join(map(string, collect(x_vars)), ", "))),
+        :(@info "Parameters: " * $(join(map(string, collect(params)), ", "))),
+        :(@info "Inputs: " * $(join(map(string, collect(u_vars)), ", "))),
+        :(@info "Outputs: " * $(join(map(string, collect(y_vars)), ", "))),
+    ]
 
     # creating the ode object
     ode_expr = :(ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(
@@ -402,6 +404,7 @@ macro ODEmodel(ex::Expr...)
 
     result = Expr(
         :block,
+        logging_exprs...,
         exp_ring,
         assignments...,
         x_dict_create_expr,
