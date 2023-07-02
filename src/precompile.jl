@@ -22,6 +22,7 @@
             assess_identifiability(ode)
             assess_identifiability(de; measured_quantities = [x0])
             assess_identifiability(de; measured_quantities = [y ~ x0])
+            find_identifiable_functions(ode)
         end
     end
 end
