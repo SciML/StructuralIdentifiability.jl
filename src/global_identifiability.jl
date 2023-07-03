@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------------------
 """
-    check_field_membership(generators, rat_funcs, p, [method=:GroebnerBasis])
+    check_field_membership(generators, rat_funcs, p)
 
 Checks whether given rational function belong to a given field of rational functions
 

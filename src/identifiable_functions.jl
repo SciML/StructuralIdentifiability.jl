@@ -63,6 +63,40 @@ end
 #------------------------------------------------------------------------------
 
 """
+    dennums_to_fractions(dennums)
+    
+Returns the field generators represented by fractions.
+
+Input: an array of arrays of polynomials, as in 
+`[[f1, f2, f3, ...], [g1, g2, g3, ...], ...]`
+
+Output: an array of fractions `[f2/f1, f3/f1, ..., g2/g1, g3/g1, ...]`
+"""
+function dennums_to_fractions(dennums::Vector{Vector{T}}) where {T}
+    fractions = Vector{AbstractAlgebra.Generic.Frac{T}}()
+    for dni in dennums
+        den, nums = dni[1], dni[2:end]
+        append!(fractions, map(c -> c // den, nums))
+    end
+    fractions
+end
+
+"""
+    fractions_to_dennums(fractions)
+    
+Returns the field generators represented by denominators and numerators.
+
+Input: an array of fractions, as in `[f2/f1, f3/f1, ..., g2/g1, g3/g1, ...]`
+
+Output: an array of arrays of polynomials, as in 
+`[[f1, f2, f3, ...], [g1, g2, g3, ...], ...]`
+"""
+function fractions_to_dennums(fractions)
+    # NOTE: Maybe collapse similar denominators
+    map(f -> [denominator(f), numerator(f)], fractions)
+end
+
+"""
     saturate(I, Q)
 
 """
@@ -176,6 +210,7 @@ function simplify_identifiable_functions(funcs_den_nums::Vector{Vector{T}}) wher
         union!(id_coeffs_set, id_coeff)
     end
     @info "The coefficients of the Groebner basis are presented by $(length(id_coeffs_set)) rational functions"
+    time_start = time_ns()
     id_funcs = collect(id_coeffs_set)
     filter!(!is_ratfunc_const, id_funcs)
     @assert all(is_ratfunc_normalized, id_funcs)
@@ -193,11 +228,23 @@ function simplify_identifiable_functions(funcs_den_nums::Vector{Vector{T}}) wher
         id_funcs[i] = func
     end
     sort!(id_funcs, lt = ratfunc_cmp)
+    _runtime_logger[:id_filter_time] = (time_ns() - time_start) / 1e9
+    @info "Functions filtered and sorted in $(_runtime_logger[:id_filter_time]) seconds"
     @info "$(length(id_funcs)) functions after simplification"
     # Convert back into the [denominator, numerators...] format
-    id_funcs_den_nums = map(f -> [denominator(f), numerator(f)], id_funcs)
+    id_funcs_den_nums = fractions_to_dennums(id_funcs)
+    original_id_funcs = dennums_to_fractions(funcs_den_nums)
     # Check inclusion: <original generators> in <simplified generators>
-    # TODO:
+    p = 0.99
+    @info "Checking two-sided inclusion with probability $p"
+    time_start = time_ns()
+    inclusion = check_field_membership(id_funcs_den_nums, original_id_funcs, p)
+    @assert all(inclusion)
+    # Check inclusion: <original generators> in <simplified generators>
+    inclusion = check_field_membership(funcs_den_nums, id_funcs, p)
+    @assert all(inclusion)
+    _runtime_logger[:id_inclusion_check] = (time_ns() - time_start) / 1e9
+    @info "Inclusion checked in $(_runtime_logger[:id_inclusion_check]) seconds"
     id_funcs_den_nums
 end
 
@@ -255,12 +302,8 @@ function find_identifiable_functions(
     if simplify
         funcs_den_nums = simplify_identifiable_functions(funcs_den_nums)
     end
-    id_funcs = Vector{AbstractAlgebra.Generic.Frac{T}}()
-    for den_nums in funcs_den_nums
-        den, nums = den_nums[1], den_nums[2:end]
-        append!(id_funcs, map(c -> c // den, nums))
-    end
-    _runtime_logger[:id_total] = time_ns() - runtime_start
+    id_funcs = dennums_to_fractions(funcs_den_nums)
+    _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1e9
     @info "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds"
     return id_funcs
 end

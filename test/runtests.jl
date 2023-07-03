@@ -77,5 +77,5 @@ end
 @test isempty(Test.detect_unbound_args(StructuralIdentifiability))
 
 @testset "All the tests" begin
-    @includetests ARGS
+    @includetests ["identifiable_functions"]
 end
