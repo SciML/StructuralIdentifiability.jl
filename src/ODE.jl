@@ -22,8 +22,13 @@ struct ODE{P}
         # Initialize ODE
         # x_eqs is a dictionary x_i => f_i(x, u, params)
         # y_eqs is a dictionary y_i => g_i(x, u, params)
-
-        num, den = unpack_fraction(collect(values(x_eqs))[1])
+        if !isempty(x_eqs)
+            num, _ = unpack_fraction(first(values(x_eqs)))
+        elseif !isempty(y_eqs)
+            num, _ = unpack_fraction(first(values(y_eqs)))
+        else
+            throw(DomainError("Cannot create an ODE{$P} with no states and no observables :("))
+        end
         poly_ring = parent(num)
         x_vars = collect(keys(x_eqs))
         y_vars = collect(keys(y_eqs))
