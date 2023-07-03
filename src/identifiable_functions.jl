@@ -183,7 +183,10 @@ end
 
 TODO: describe the format of the output.
 """
-function simplify_identifiable_functions(funcs_den_nums::Vector{Vector{T}}) where {T}
+function simplify_identifiable_functions(
+    funcs_den_nums::Vector{Vector{T}};
+    p = 0.99,
+) where {T}
     # Generate the ideal
     @info "Simplifying identifiable functions"
     runtime = @elapsed dideal = field_to_ideal(funcs_den_nums)
@@ -233,9 +236,9 @@ function simplify_identifiable_functions(funcs_den_nums::Vector{Vector{T}}) wher
     @info "$(length(id_funcs)) functions after simplification"
     # Convert back into the [denominator, numerators...] format
     id_funcs_den_nums = fractions_to_dennums(id_funcs)
+    isempty(id_funcs) && return id_funcs_den_nums
     original_id_funcs = dennums_to_fractions(funcs_den_nums)
     # Check inclusion: <original generators> in <simplified generators>
-    p = 0.99
     @info "Checking two-sided inclusion with probability $p"
     time_start = time_ns()
     inclusion = check_field_membership(id_funcs_den_nums, original_id_funcs, p)
@@ -300,7 +303,7 @@ function find_identifiable_functions(
     # NOTE(Alex): perhaps we would want to get rid of the back and forth
     # conversion of formats at some point
     if simplify
-        funcs_den_nums = simplify_identifiable_functions(funcs_den_nums)
+        funcs_den_nums = simplify_identifiable_functions(funcs_den_nums, p = p)
     end
     id_funcs = dennums_to_fractions(funcs_den_nums)
     _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1e9
