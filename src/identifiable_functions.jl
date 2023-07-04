@@ -109,14 +109,14 @@ function saturate(I, Q; varname = "t", append_front = true)
     varnames =
         append_front ? pushfirst!(existing_varnames, varname) :
         push!(existing_varnames, varname)
-    _, vt = Nemo.PolynomialRing(K, varnames, ordering = ord)
+    Rt, vt = Nemo.PolynomialRing(K, varnames, ordering = ord)
     if append_front
         xs, t = vt[2:end], first(vt)
     else
         xs, t = vt[1:(end - 1)], last(vt)
     end
-    It = map(f -> evaluate(f, xs), I)
-    Qt = evaluate(Q, xs)
+    It = map(f -> parent_ring_change(f, Rt), I)
+    Qt = parent_ring_change(Q, Rt)
     sat = 1 - Qt * t
     push!(It, sat)
     It, t
@@ -133,6 +133,7 @@ function field_to_ideal(
 ) where {T}
     @assert !isempty(funcs_den_nums)
     R = parent(first(first(funcs_den_nums)))
+    @info "Producing the ideal generators in $R"
     K, n = base_ring(R), nvars(R)
     Q = reduce(lcm, map(first, funcs_den_nums))
     @debug "Rational functions common denominator" Q
@@ -144,10 +145,24 @@ function field_to_ideal(
     end
     ystrs = ["$top_level_var$i" for i in 1:n]
     Ry, ys = Nemo.PolynomialRing(R, ystrs, ordering = top_level_ord)
-    Fy = map(f -> change_base_ring(R, f, parent = Ry), Fx)
-    Qy = change_base_ring(R, Q, parent = Ry)
-    # TODO: ensure that the polys are primitive
-    I = [Fyi * Qx - Fxi * Qy for (Fyi, Fxi) in zip(Fy, Fx)]
+    Fy = map(f -> parent_ring_change(f, Ry, matching = :byindex), Fx)
+    Qy = parent_ring_change(Qx, Ry, matching = :byindex)
+    # return Fx, Qx, Fy, Qy
+    # NOTE(Alex): I think we want to clean up Fx before creating the
+    # ideal. For example, it is possible that some of Fx are duplicates. Would
+    # make sense to do so in ParamPunPam.jl, but here we have an advantage that
+    # the polynomials are not constructed yet
+    #
+    # one backward gaussian elimination pass for Fx?
+    #
+    I = empty(ys)
+    for (Fyi, Fxi) in zip(Fy, Fx)
+        Gx = gcd(Qx, Fxi)
+        Qxg = divexact(Qx, Gx)
+        Fxig = divexact(Fxi, Gx)
+        F = Fyi * Qxg - Fxig * Qy
+        push!(I, F)
+    end
     I, t = saturate(I, Qy)
     # TODO: remove this line
     I_rat = map(f -> map_coefficients(c -> c // one(R), f), I)
@@ -178,6 +193,38 @@ function ratfunc_cmp(f, g)
     return false
 end
 
+function ideal_generators(ode::ODE{T}, p::Float64 = 0.99) where {T}
+    runtime_start = time_ns()
+    @info "Computing IO-equations"
+    runtime = @elapsed io_equations = find_ioequations(ode)
+    @info "IO-equations computed in $runtime seconds"
+    _runtime_logger[:id_io_time] = runtime
+
+    @info "Assessing global identifiability"
+    runtime = @elapsed global_result = check_identifiability(
+        collect(values(io_equations)),
+        ode.parameters,
+        empty(ode.parameters),
+        p,
+    )
+    @info "Global identifiability assessed in $runtime seconds"
+    _runtime_logger[:id_global_time] = runtime
+
+    known_params = Array{fmpq_mpoly, 1}()
+    for (glob, p) in zip(global_result, ode.parameters)
+        if glob
+            push!(known_params, p)
+        end
+    end
+    runtime = @elapsed funcs_den_nums = extract_identifiable_functions(
+        collect(values(io_equations)),
+        ode.parameters,
+        known_params,
+    )
+    runtime = @elapsed dideal = field_to_ideal(funcs_den_nums)
+    dideal
+end
+
 """
     simplify_identifiable_functions(X)
 
@@ -201,9 +248,37 @@ function simplify_identifiable_functions(
     # find_identifiable_functions
     @info "Computing a Groebner basis"
     @debug "The polynomial ring is $(parent(first(dideal)))"
-    runtime = @elapsed gb = ParamPunPam.paramgb(dideal)
-    @info "Groebner basis computed in $runtime seconds"
-    _runtime_logger[:id_groebner_time] = runtime
+
+    # runtime = @elapsed gb = ParamPunPam.paramgb(dideal)
+    # @info "Groebner basis computed in $runtime seconds"
+    _runtime_logger[:id_groebner_time] = 0.0
+    two_sided_inclusion = false
+    gb = nothing
+    # deg = 2
+    deg = 100
+    while !two_sided_inclusion
+        @info "Computing GB with parameters up to degrees $((deg, deg))"
+        runtime = @elapsed gb = ParamPunPam.paramgb(dideal, up_to_degree = (deg, deg))
+        _runtime_logger[:id_groebner_time] += runtime
+
+        id_coeffs = map(collect ∘ coefficients, gb)
+        id_coeffs_set = Set{AbstractAlgebra.Generic.Frac{T}}()
+        for id_coeff in id_coeffs
+            union!(id_coeffs_set, id_coeff)
+        end
+        id_funcs = collect(id_coeffs_set)
+        @info "Identifiable functions up to degrees $((deg, deg)) are" id_funcs 
+        id_funcs_den_nums = fractions_to_dennums(id_funcs)
+        original_id_funcs = dennums_to_fractions(funcs_den_nums)
+        # Check inclusion: <simplified generators> in <original generators> 
+        inclusion = check_field_membership(id_funcs_den_nums, original_id_funcs, p)
+        two_sided_inclusion = two_sided_inclusion || all(inclusion)
+        # Check inclusion: <original generators> in <simplified generators>
+        inclusion = check_field_membership(funcs_den_nums, id_funcs, p)
+        two_sided_inclusion = two_sided_inclusion && all(inclusion)
+        deg += 1
+    end
+
     # Simplify.
     # NOTE(Alex): We can check redundancy of each of the new generators, but
     # let's not do that for now.

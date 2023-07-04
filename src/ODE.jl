@@ -401,7 +401,7 @@ macro ODEmodel(ex::Expr...)
     ]
 
     # creating the ode object
-    ode_expr = :(ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(
+    ode_expr = :(StructuralIdentifiability.ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(
         $x_dict,
         $y_dict,
         Array{StructuralIdentifiability.Nemo.fmpq_mpoly}([$(u_vars...)]),
