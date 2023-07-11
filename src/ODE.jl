@@ -41,6 +41,10 @@ struct ODE{P}
     end
 end
 
+function Base.parent(ode::ODE)
+    return ode.poly_ring
+end
+
 #------------------------------------------------------------------------------
 
 function add_outputs(ode::ODE{P}, extra_y::Dict{String, <:RingElem}) where {P <: MPolyElem}

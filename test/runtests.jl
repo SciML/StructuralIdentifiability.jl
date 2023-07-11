@@ -53,7 +53,8 @@ using StructuralIdentifiability:
     differentiate_sequence_solution,
     differentiate_sequence_output,
     _assess_local_identifiability_discrete,
-    extract_coefficients_ratfunc
+    extract_coefficients_ratfunc,
+    lie_derivative
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)

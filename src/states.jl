@@ -22,3 +22,27 @@ function extract_coefficients_ratfunc(f::AbstractAlgebra.Generic.Frac{<: P}, var
     divisor = total_coeffs[argmin(map(c -> (total_degree(c), length(c)), total_coeffs))]
     return [x // divisor for x in total_coeffs]
 end
+
+#------------------------------------------------------------------------------
+"""
+    lie_derivative(f, ode)
+
+Input:
+- `f` - rational function in states, parameters  (not inputs) of `ode`
+- `ode' - an ODE model
+
+Output:
+- Lie derivative of `f` with respect to `ode` 
+"""
+function lie_derivative(f::Generic.Frac{<: P}, ode::ODE{<: P}) where {P <: MPolyElem{<: FieldElem}}
+    @assert all([(x in ode.parameters) || (x in ode.x_vars) for x in vars(f)])
+    res = zero(parent(ode)) // 1
+    for (x, eq) in ode.x_equations
+        res += derivative(f, x) * eq
+    end
+    return res
+end
+
+function lie_derivative(f::P, ode::ODE{<: P}) where {P <: MPolyElem{<: FieldElem}}
+    return lie_derivative(f // 1, ode)
+end
