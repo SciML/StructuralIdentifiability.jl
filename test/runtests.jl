@@ -52,7 +52,8 @@ using StructuralIdentifiability:
     sequence_solution,
     differentiate_sequence_solution,
     differentiate_sequence_output,
-    _assess_local_identifiability_discrete
+    _assess_local_identifiability_discrete,
+    extract_coefficients_ratfunc
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)
@@ -77,5 +78,5 @@ end
 @test isempty(Test.detect_unbound_args(StructuralIdentifiability))
 
 @testset "All the tests" begin
-    @includetests ["identifiable_functions"]
+    @includetests ARGS
 end
