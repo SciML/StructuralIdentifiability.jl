@@ -86,17 +86,17 @@ function check_field_membership(
     #
     # to uncomment certify
     # gb = groebner(eqs; certify=true, linalg=:prob)
-    gb_loglevel = Logging.Warn
+    gb_loglevel = 0
     if Logging.min_enabled_level(Logging.current_logger()) == Logging.Debug
-        gb_loglevel = Logging.Debug
+        gb_loglevel = -2
     end
     gb = nothing
-    # TODO(Alex): remove once Groebner.jl v0.4 is out
+    # TODO(Alex): remove once Groebner.jl v0.4.1 is out
     try
-        gb = groebner(eqs; linalg = :prob, loglevel = gb_loglevel)
+        gb = groebner(eqs; linalg = :randomized, loglevel = gb_loglevel)
     catch AssertionError
         @warn "Probabilistic linear algebra failed in Groebner.jl, switching to the deterministic one"
-        gb = groebner(eqs; linalg = :det, loglevel = gb_loglevel)
+        gb = groebner(eqs; linalg = :deterministic, loglevel = gb_loglevel)
     end
 
     @debug "Producing the result"
