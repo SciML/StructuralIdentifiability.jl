@@ -370,13 +370,14 @@ end
     decompose_derivative(varname, prefixes)
 
 Determines if it is possible to represent the `varname` as `a_number` where `a` is an element of `prefixes`
+If yes, returns a pair (a, number), otherwise nothing
 """
 function decompose_derivative(varname::String, prefixes::Array{String})
     for pr in prefixes
         if startswith(varname, pr) && length(varname) > length(pr) + 1
             if varname[length(pr) + 1] == '_' &&
                all(map(isdigit, collect(varname[(length(pr) + 2):end])))
-                return (pr, parse(Int, varname[(length(pr) + 2):end]))
+               return (pr, parse(Int, varname[(length(pr) + 2):end]))
             end
         end
     end
