@@ -1,5 +1,6 @@
 # import StructuralIdentifiability: parent_ring_change
 
+# TODO: verify that Maple returns the same
 @testset "Identifiable functions of parameters" begin
     # For each ODE system we check the equality (in terms of fields of rational
     # functions) of the true set of identifiable functions and the obtained
@@ -150,6 +151,38 @@
     )
     ident_funcs = [g, mu, b0, nu, M^2]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    # SEIR_1_io
+    # TODO: something wrong happens here with van der Hoeven - Lecerf
+    # interpolation.
+    ode = StructuralIdentifiability.@ODEmodel(
+        S'(t) = -beta * S(t) * I(t),
+        E'(t) = beta * S(t) * I(t) - v * E(t),
+        I'(t) = v * E(t) - psi * I(t) - (1 - psi) * gamma * I(t),
+        R'(t) = gamma * Q(t) + (1 - psi) * gamma * I(t),
+        Q'(t) = -gamma * Q(t) + psi * I(t),
+        y1(t) = Q(t)
+    )
+    ident_funcs = [gamma, beta // psi, gamma * psi - v - psi, gamma * psi - v * psi]
+    # push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    # Bilirubin2_io
+    # TODO: something wrong happens here with van der Hoeven - Lecerf
+    # interpolation.
+    ode = StructuralIdentifiability.@ODEmodel(
+        x1'(t) =
+            -(k21 + k31 + k41 + k01) * x1(t) +
+            k12 * x2(t) +
+            k13 * x3(t) +
+            k14 * x4(t) +
+            u(t),
+        x2'(t) = k21 * x1(t) - k12 * x2(t),
+        x3'(t) = k31 * x1(t) - k13 * x3(t),
+        x4'(t) = k41 * x1(t) - k14 * x4(t),
+        y1(t) = x1(t)
+    )
+    # ident_funcs = 
+    # push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     p = 0.99
     for case in test_cases

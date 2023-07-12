@@ -112,7 +112,7 @@ function check_field_membership(
         # poly_ext = evaluate(poly_ext, shift)
         push!(polys_ext, poly_ext)
     end
-    result = map(iszero, normalform(gb, polys_ext))
+    result = map(iszero, normalform(gb, polys_ext, check = false))
     return result
 end
 

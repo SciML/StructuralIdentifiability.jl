@@ -44,11 +44,21 @@ mutable struct IdealMQS{PolyQQ} <: AbstractBlackboxIdeal
         isone(Q) && (@warn "Common denominator of the field generators is one" Q)
         existing_varnames = map(String, symbols(R))
         @info "Saturating variable if $sat_varname"
-        @assert !(sat_varname in existing_varnames)
         # NOTE: what about F4-sat? 
-        varnames = pushfirst!(existing_varnames, sat_varname)
+        # NOTE: if this becomes a bottleneck, one of
+        # the two ring conversions can be removed
+        ystrs = ["y$i" for i in 1:length(existing_varnames)]
+        R_y, _ = Nemo.PolynomialRing(K, ystrs, ordering = ord)
+        funcs_den_nums = map(
+            dennums ->
+                map(f -> parent_ring_change(f, R_y, matching = :byindex), dennums),
+            funcs_den_nums,
+        )
+        Q = parent_ring_change(Q, R_y, matching = :byindex)
+        @assert !(sat_varname in ystrs)
+        varnames = pushfirst!(ystrs, sat_varname)
         R_sat, v_sat = Nemo.PolynomialRing(K, varnames, ordering = ord)
-        xs_sat, t_sat = v_sat[2:end], first(v_sat)
+        t_sat = first(v_sat)
         Q_sat = parent_ring_change(Q, R_sat)
         sat_qq = Q_sat * t_sat - 1
         nums_qq = empty(funcs_den_nums[1])
