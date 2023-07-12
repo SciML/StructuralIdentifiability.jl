@@ -21,39 +21,34 @@ function eval_at_dict(poly::P, d::Dict{P, <:RingElem}) where {P <: MPolyElem}
     return evaluate(poly, point)
 end
 
-function eval_at_dict(
-    rational::Generic.Frac{<:P},
-    d::Dict{P, <:RingElem},
-) where {P <: MPolyElem}
-    f, g = unpack_fraction(rational)
-    return eval_at_dict(f, d) * inv(eval_at_dict(g, d))
+function eval_at_dict(poly::P, d::Dict{P, S}) where {P <: MPolyElem, S <: Num}
+    R = parent(poly)
+    xs = gens(parent(first(keys(d))))
+    xs_sym = [d[x] for x in xs if string(x) in map(string, gens(R))]
+    accum = zero(valtype(d))
+    for t in terms(poly)
+        cf = coeff(t, 1)
+        # Nemo.QQ --> Rational{BigInt}
+        # NOTE: what about Nemo.GF|ZZ?
+        cf_ = BigInt(numerator(cf)) // BigInt(denominator(cf))
+        ex = exponent_vector(t, 1)
+        accum += cf_ * prod(xs_sym .^ ex)
+    end
+    return accum
 end
 
-# TODO: merge the three functions below
-
-function eval_at_dict(
-    rational::Generic.Frac{<:P},
-    d::Dict{<:P, <:Union{<:Generic.Frac, <:P}},
-) where {P <: MPolyElem}
+function eval_at_dict(rational::Generic.Frac{T}, d::Dict{T, V}) where {T <: MPolyElem, V}
     f, g = unpack_fraction(rational)
     return eval_at_dict(f, d) // eval_at_dict(g, d)
 end
 
-#function eval_at_dict(
-#    rational::Generic.Frac{<:P},
-#    d::Dict{P, <:Generic.Frac},
-#) where {P <: MPolyElem}
-#    f, g = unpack_fraction(rational)
-#    return eval_at_dict(f, d) // eval_at_dict(g, d)
-#end
-
-#function eval_at_dict(
-#    rational::Generic.Frac{<:P},
-#    d::Dict{P, <:MPolyElem},
-#) where {P <: MPolyElem}
-#    f, g = unpack_fraction(rational)
-#    return eval_at_dict(f, d) // eval_at_dict(g, d)
-#end
+function eval_at_dict(
+    rational::Generic.Frac{T},
+    d::Dict{T, <:RingElem},
+) where {T <: MPolyElem}
+    f, g = unpack_fraction(rational)
+    return eval_at_dict(f, d) * inv(eval_at_dict(g, d))
+end
 
 # ------------------------------------------------------------------------------
 

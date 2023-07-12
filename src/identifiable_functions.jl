@@ -1,4 +1,6 @@
 
+function find_identifiable_functions end
+
 """
     IdealMQS
 
@@ -452,20 +454,37 @@ function simplify_identifiable_functions(
     id_funcs_den_nums
 end
 
+# TODO: add a meaningful simplification step for field generators
 """
-    find_identifiable_functions(ode::ODE)
+    find_identifiable_functions(ode::ODE, p = 0.99)
 
 Finds all functions of parameters that are identifiable for the given ODE
 system.
 
 Input:
 - `ode` - `ODE`-system.
-
 Output:
 - a set of generators of the field of identifiable functions. Any function in
-the returned set (or a combination thereof) is globally identifiable.
+  the returned set (or a combination thereof) is globally identifiable.
 
 ## Example
+
+```jldoctest
+using StructuralIdentifiability
+
+de = @ODEmodel(
+    x0'(t) = -(a01 + a21) * x0(t) + a12 * x1(t),
+    x1'(t) = a21 * x0(t) - a12 * x1(t),
+    y(t) = x0(t)
+)
+
+find_identifiable_functions(de)
+# prints
+3-element Vector{AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}}:
+ a12 + a01 + a21
+ a12*a01
+```
+
 """
 function find_identifiable_functions(
     ode::ODE{T},
@@ -485,4 +504,47 @@ function find_identifiable_functions(
     _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1e9
     @info "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds"
     return id_funcs
+end
+
+"""
+    find_identifiable_functions(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[])
+
+Finds all functions of parameters that are identifiable for the given ODE
+system.
+    
+Input:
+- `ode` - the ModelingToolkit.ODESystem object that defines the model
+- `measured_quantities` - the output functions of the model
+
+"""
+function find_identifiable_functions(
+    ode::ModelingToolkit.ODESystem;
+    measured_quantities = Array{ModelingToolkit.Equation}[],
+    p = 0.99,
+    simplify = true,
+    seed = 42,
+)
+    if length(measured_quantities) == 0
+        if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
+            @info "Measured quantities are not provided, trying to find the outputs in input ODE."
+            measured_quantities = filter(
+                eq -> (ModelingToolkit.isoutput(eq.lhs)),
+                ModelingToolkit.equations(ode),
+            )
+        else
+            throw(
+                error(
+                    "Measured quantities (output functions) were not provided and no outputs were found.",
+                ),
+            )
+        end
+    end
+    params = ModelingToolkit.parameters(ode)
+    ode, conversion = preprocess_ode(ode, measured_quantities)
+    out_funcs = Vector{Num}()
+    params_ = [eval_at_nemo(each, conversion) for each in params]
+    result = find_identifiable_functions(ode, p, simplify = simplify, seed = seed)
+    nemo2mtk = Dict(params_ .=> map(Num, params))
+    out_funcs = [eval_at_dict(func, nemo2mtk) for func in result]
+    return out_funcs
 end
