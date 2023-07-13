@@ -119,63 +119,70 @@ end
 # ------------------------------------------------------------------------------
 
 function check_identifiability(
-    io_equations::Array{P, 1},
-    parameters::Array{P, 1},
+    io_equations::Dict{P, P},
+    ode::ODE{P},
     known::Array{P, 1},
     funcs_to_check::Array{<:Any, 1},
     p::Float64 = 0.99,
 ) where {P <: MPolyElem{fmpq}}
+    states_needed = false
+    for f in funcs_to_check
+        @info f
+        num, den = unpack_fraction(f)
+        if !all(v -> v in ode.parameters, union(vars(num), vars(den)))
+            @info "Functions to check involve states"
+            states_needed = true
+            break
+        end
+    end
+    @info states_needed
+
+    coeff_lists = Array{Array{P, 1}, 1}()
+    bring = nothing
+    if states_needed
+        @debug "Computing Lie derivatives"
+        for f in states_generators(ode, io_equations)
+            num, den = unpack_fraction(f)
+            push!(coeff_lists, [den, num])
+        end
+        bring = parent(first(first(coeff_lists)))
+    end
+    @info coeff_lists
+
     @debug "Extracting coefficients"
     flush(stdout)
     nonparameters = filter(
-        v -> !(var_to_str(v) in map(var_to_str, parameters)),
-        gens(parent(io_equations[1])),
+        v -> !(var_to_str(v) in map(var_to_str, ode.parameters)),
+        gens(parent(first(values(io_equations)))),
     )
-    coeff_lists = Array{Array{P, 1}, 1}()
-    for eq in io_equations
-        push!(coeff_lists, collect(values(extract_coefficients(eq, nonparameters))))
+    for eq in values(io_equations)
+        eq_coefs = collect(values(extract_coefficients(eq, nonparameters)))
+        if !isnothing(bring)
+            eq_coefs = [parent_ring_change(c, bring) for c in eq_coefs]
+        end
+        push!(coeff_lists, eq_coefs)
     end
-    bring = parent(first(first(coeff_lists)))
+    if isnothing(bring)
+        bring = parent(first(first(coeff_lists)))
+    end
     for p in known
         push!(coeff_lists, [one(bring), parent_ring_change(p, bring)])
     end
-    for p in coeff_lists
-        @debug sort(map(total_degree, p))
-    end
-    ring = parent(first(first(coeff_lists)))
-    funcs_to_check = map(f -> parent_ring_change(f, ring), funcs_to_check)
+
+    funcs_to_check = map(f -> parent_ring_change(f, bring), funcs_to_check)
 
     return check_field_membership(coeff_lists, funcs_to_check, p)
 end
 
 function check_identifiability(
-    io_equation::P,
-    parameters::Array{P, 1},
-    known::Array{P, 1},
-    funcs_to_check::Array{<:Any, 1},
-    p::Float64 = 0.99,
-) where {P <: MPolyElem{fmpq}}
-    return check_identifiability([io_equation], parameters, known, funcs_to_check, p)
-end
-
-function check_identifiability(
-    io_equations::Array{P, 1},
-    parameters::Array{P, 1},
+    io_equations::Dict{P, P},
+    ode::ODE{P},
     known::Array{P, 1},
     p::Float64 = 0.99,
 ) where {P <: MPolyElem{fmpq}}
-    check_identifiability(io_equations, parameters, known, parameters, p)
+     return check_identifiability(io_equations, ode, known, ode.parameters, p)
 end
-
-function check_identifiability(
-    io_equation::P,
-    parameters::Array{P, 1},
-    known::Array{P, 1},
-    p::Float64 = 0.99,
-) where {P <: MPolyElem{fmpq}}
-    return check_identifiability([io_equation], parameters, known, p)
-end
-
+ 
 #------------------------------------------------------------------------------
 """
     assess_global_identifiability(ode::ODE{P}, p::Float64=0.99; var_change=:default) where P <: MPolyElem{fmpq}
@@ -266,8 +273,8 @@ function assess_global_identifiability(
 
     @info "Assessing global identifiability using the coefficients of the io-equations"
     check_time = @elapsed result = check_identifiability(
-        collect(values(io_equations)),
-        ode.parameters,
+        io_equations,
+        ode,
         known,
         funcs_to_check,
         p,

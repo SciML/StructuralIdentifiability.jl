@@ -394,16 +394,25 @@ function assess_local_identifiability(
                 push!(nonpivots, i)
             end
         end
-        @debug "Jac sizes $(size(Jac)), params $(ode.parameters)"
+        
         # selecting the trbasis of polynomials
-        trbasis_indices = [
+        trbasis_indices_param = [
             size(Jac)[1] - i + 1 for
             i in nonpivots if i > size(Jac)[1] - length(ode.parameters)
         ]
-        for i in trbasis_indices
+        for i in trbasis_indices_param
             push!(trbasis, ode.parameters[i])
         end
-        @debug "Transcendence basis $trbasis with indices $(trbasis_indices)"
+       
+        # NB: states are in the inverted order (to be refactored...)
+        trbasis_indices_states = [
+            i for
+            i in nonpivots if i <= size(Jac)[1] - length(ode.parameters)
+        ]
+        for i in trbasis_indices_states
+            push!(trbasis, ode.x_vars[i])
+        end
+        @debug "Transcendence basis $trbasis"
     end
 
     @debug "Computing the result"
