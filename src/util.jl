@@ -43,11 +43,19 @@ function eval_at_dict(rational::Generic.Frac{T}, d::Dict{T, V}) where {T <: MPol
 end
 
 function eval_at_dict(
-    rational::Generic.Frac{T},
+    rational::Generic.Frac{<:T},
     d::Dict{T, <:RingElem},
 ) where {T <: MPolyElem}
     f, g = unpack_fraction(rational)
     return eval_at_dict(f, d) * inv(eval_at_dict(g, d))
+end
+
+function eval_at_dict(
+    rational::Generic.Frac{<:P},
+    d::Dict{<:P, <:Union{<:Generic.Frac, <:P}},
+) where {P <: MPolyElem}
+    f, g = unpack_fraction(rational)
+    return eval_at_dict(f, d) // eval_at_dict(g, d)
 end
 
 # ------------------------------------------------------------------------------

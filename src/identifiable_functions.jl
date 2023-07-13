@@ -134,6 +134,7 @@ function ParamPunPam.evaluate_mod_p(mqs::IdealMQS, point)
     # TODO: Assuming the saturating variable is the first one
     point_sat = vcat(one(K_1), point)
     nums_gf_spec = map(num -> evaluate(num, point_sat), nums_gf)
+    # TODO: a single denominator can be evaluated once per batch of numerators
     dens_gf_spec = map(den -> evaluate(den, point_sat), dens_gf)
     polys = Vector{typeof(sat_gf)}(undef, length(nums_gf_spec) + 1)
     for i in 1:length(nums_gf_spec)
