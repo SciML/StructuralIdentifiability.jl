@@ -123,18 +123,47 @@ qwwc = @ODEmodel(
 )
 
 fujita = @ODEmodel(
-	EGFR'(t) = -reaction_1_k1*EGF_EGFR(t) + reaction_1_k2*EGF_EGFR(t) - EGFR(t)*EGFR_turnover + EGFR_turnover*pro_EGFR(t),
-	pAkt'(t) = -pAkt(t)*reaction_7_k1 - pAkt(t)*reaction_5_k1*S6(t) + reaction_6_k1*pAkt_S6(t) + reaction_3_k1*pEGFR_Akt(t) + pAkt_S6(t)*reaction_5_k2,
-	pEGFR_Akt'(t) = pEGFR(t)*Akt(t)*reaction_2_k1 - reaction_3_k1*pEGFR_Akt(t) - pEGFR_Akt(t)*reaction_2_k2,
-	S6'(t) = pS6(t)*reaction_8_k1 - pAkt(t)*reaction_5_k1*S6(t) + pAkt_S6(t)*reaction_5_k2,
-	pEGFR'(t) = -reaction_4_k1*pEGFR(t) + reaction_9_k1*EGF_EGFR(t) - pEGFR(t)*Akt(t)*reaction_2_k1 + reaction_3_k1*pEGFR_Akt(t) + pEGFR_Akt(t)*reaction_2_k2,
-	EGF_EGFR'(t) = reaction_1_k1*EGF_EGFR(t) - reaction_9_k1*EGF_EGFR(t) - reaction_1_k2*EGF_EGFR(t),
-	Akt'(t) = pAkt(t)*reaction_7_k1 - pEGFR(t)*Akt(t)*reaction_2_k1 + pEGFR_Akt(t)*reaction_2_k2,
-	pAkt_S6'(t) = pAkt(t)*reaction_5_k1*S6(t) - reaction_6_k1*pAkt_S6(t) - pAkt_S6(t)*reaction_5_k2,
-	pS6'(t) = -pS6(t)*reaction_8_k1 + reaction_6_k1*pAkt_S6(t),
-	y1(t) = pEGFR(t)*a1 + a1*pEGFR_Akt(t),
-	y2(t) = a2*pAkt(t) + a2*pAkt_S6(t),
-	y3(t) = pS6(t)*a3
+    EGFR'(t) =
+        -reaction_1_k1 * EGF_EGFR(t) + reaction_1_k2 * EGF_EGFR(t) -
+        EGFR(t) * EGFR_turnover + EGFR_turnover * pro_EGFR(t),
+    pAkt'(t) =
+        -pAkt(t) * reaction_7_k1 - pAkt(t) * reaction_5_k1 * S6(t) +
+        reaction_6_k1 * pAkt_S6(t) +
+        reaction_3_k1 * pEGFR_Akt(t) +
+        pAkt_S6(t) * reaction_5_k2,
+    pEGFR_Akt'(t) =
+        pEGFR(t) * Akt(t) * reaction_2_k1 - reaction_3_k1 * pEGFR_Akt(t) -
+        pEGFR_Akt(t) * reaction_2_k2,
+    S6'(t) =
+        pS6(t) * reaction_8_k1 - pAkt(t) * reaction_5_k1 * S6(t) +
+        pAkt_S6(t) * reaction_5_k2,
+    pEGFR'(t) =
+        -reaction_4_k1 * pEGFR(t) + reaction_9_k1 * EGF_EGFR(t) -
+        pEGFR(t) * Akt(t) * reaction_2_k1 +
+        reaction_3_k1 * pEGFR_Akt(t) +
+        pEGFR_Akt(t) * reaction_2_k2,
+    EGF_EGFR'(t) =
+        reaction_1_k1 * EGF_EGFR(t) - reaction_9_k1 * EGF_EGFR(t) -
+        reaction_1_k2 * EGF_EGFR(t),
+    Akt'(t) =
+        pAkt(t) * reaction_7_k1 - pEGFR(t) * Akt(t) * reaction_2_k1 +
+        pEGFR_Akt(t) * reaction_2_k2,
+    pAkt_S6'(t) =
+        pAkt(t) * reaction_5_k1 * S6(t) - reaction_6_k1 * pAkt_S6(t) -
+        pAkt_S6(t) * reaction_5_k2,
+    pS6'(t) = -pS6(t) * reaction_8_k1 + reaction_6_k1 * pAkt_S6(t),
+    y1(t) = pEGFR(t) * a1 + a1 * pEGFR_Akt(t),
+    y2(t) = a2 * pAkt(t) + a2 * pAkt_S6(t),
+    y3(t) = pS6(t) * a3
+)
+
+Bilirubin2_io = @ODEmodel(
+    x1'(t) =
+        -(k21 + k31 + k41 + k01) * x1(t) + k12 * x2(t) + k13 * x3(t) + k14 * x4(t) + u(t),
+    x2'(t) = k21 * x1(t) - k12 * x2(t),
+    x3'(t) = k31 * x1(t) - k13 * x3(t),
+    x4'(t) = k41 * x1(t) - k14 * x4(t),
+    y1(t) = x1(t)
 )
 
 using Nemo
@@ -143,22 +172,54 @@ ParamPunPam = StructuralIdentifiability.ParamPunPam
 
 @time StructuralIdentifiability.find_identifiable_functions(fujita)
 
+@time StructuralIdentifiability.find_identifiable_functions(Bilirubin2_io)
+
+#=
+ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    8-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0), (2, 0), (3, 0)]
+│     [(0, 0), (0, 0), (1, 0), (2, 0)]
+│     [(0, 0), (0, 0), (1, 0), (2, 0), (1, 0), (2, 0), (3, 0)]
+│     [(0, 0), (0, 0), (0, 0), (1, 0), (2, 0)]
+│     [(0, 0), (0, 0), (1, 0), (2, 0), (1, 0), (2, 0), (3, 0)]
+│     [(0, 0), (0, 0), (1, 0), (2, 0), (1, 0), (2, 0), (3, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (0, 3)]
+
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    13-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (0, 0), (0, 0), (1, 0)]
+│     [(0, 0), (0, 0), (0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (0, 3)]
+│     [(0, 0), (0, 0), (1, 0), (2, 0)]
+│     [(0, 0), (1, 0), (1, 0), (2, 0)]
+│     [(0, 0), (1, 0), (0, 0), (1, 0), (2, 0)]
+│     [(0, 0), (1, 0), (0, 0), (2, 0)]
+│     [(0, 0), (0, 0), (1, 0), (1, 0), (2, 0)]
+│     [(0, 0), (0, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)]
+│     [(0, 0), (0, 0), (1, 0), (0, 0), (2, 0)]
+│     [(0, 0), (0, 0), (1, 0), (1, 0), (1, 0), (2, 0)]
+└     [(0, 0), (1, 0), (0, 0), (0, 0), (2, 0)]
+=#
+
 @myprof find_identifiable_functions(fujita)
 
-
-@time StructuralIdentifiability.find_identifiable_functions(siwr)
+@time StructuralIdentifiability.find_identifiable_functions(Bilirubin2_io)
 
 fg = StructuralIdentifiability.field_generators(siwr);
 id = StructuralIdentifiability.field_to_ideal(fg);
 
 mqs = StructuralIdentifiability.IdealMQS(fg);
-p = Nemo.GF(2^31-1)
+p = Nemo.GF(2^31 - 1)
 StructuralIdentifiability.ParamPunPam.reduce_mod_p!(mqs, p)
 point = rand(p, length(Nemo.gens(StructuralIdentifiability.ParamPunPam.parent_params(mqs))))
 mqs_spec = StructuralIdentifiability.ParamPunPam.evaluate_mod_p(mqs, point);
 
-@time graph1, gb = Groebner.groebner_learn(mqs_spec, loglevel=-3);
-@time graph2, gb_2 = Groebner.groebner_learn(mqs_spec, loglevel=0, sweep=true);
+@time graph1, gb = Groebner.groebner_learn(mqs_spec, loglevel = -3);
+@time graph2, gb_2 = Groebner.groebner_learn(mqs_spec, loglevel = 0, sweep = true);
 
 flag1, gb1 = Groebner.groebner_apply!(graph1, mqs_spec);
 
