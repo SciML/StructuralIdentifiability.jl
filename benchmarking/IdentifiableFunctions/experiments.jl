@@ -145,6 +145,9 @@ ParamPunPam = StructuralIdentifiability.ParamPunPam
 
 @myprof find_identifiable_functions(fujita)
 
+
+@time StructuralIdentifiability.find_identifiable_functions(siwr)
+
 fg = StructuralIdentifiability.field_generators(siwr);
 id = StructuralIdentifiability.field_to_ideal(fg);
 
@@ -154,6 +157,11 @@ StructuralIdentifiability.ParamPunPam.reduce_mod_p!(mqs, p)
 point = rand(p, length(Nemo.gens(StructuralIdentifiability.ParamPunPam.parent_params(mqs))))
 mqs_spec = StructuralIdentifiability.ParamPunPam.evaluate_mod_p(mqs, point);
 
-graph, gb = Groebner.groebner_learn(mqs_spec, loglevel=0);
-@myprof Groebner.groebner_apply!(graph, mqs_spec);
+@time graph1, gb = Groebner.groebner_learn(mqs_spec, loglevel=-3);
+@time graph2, gb_2 = Groebner.groebner_learn(mqs_spec, loglevel=0, sweep=true);
 
+flag1, gb1 = Groebner.groebner_apply!(graph1, mqs_spec);
+
+@myprof Groebner.groebner_apply!(graph2, mqs_spec);
+
+@assert flag1 && flag2 && gb1 == gb2
