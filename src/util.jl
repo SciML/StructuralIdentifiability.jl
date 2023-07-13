@@ -136,12 +136,13 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :by
         throw(Base.ArgumentError("Unknown matching type: $matching"))
     end
     builder = MPolyBuildCtx(new_ring)
+    xs = gens(new_ring)
     for term in zip(exponent_vectors(poly), coefficients(poly))
         exp, coef = term
-        new_exp = [0 for _ in gens(new_ring)]
-        for i in 1:length(exp)
+        new_exp = [0 for _ in xs]
+        @inbounds for i in 1:length(exp)
             if exp[i] != 0
-                if var_mapping[i] == nothing
+                if var_mapping[i] === nothing
                     throw(
                         Base.ArgumentError(
                             "The polynomial contains a variable $(gens(old_ring)[i]) not present in the new ring $poly",
@@ -255,17 +256,21 @@ Output:
 function extract_coefficients(poly::P, variables::Array{P, 1}) where {P <: MPolyElem}
     var_to_ind = Dict((v, findfirst(e -> (e == v), gens(parent(poly)))) for v in variables)
     indices = [var_to_ind[v] for v in variables]
-
-    coeff_vars =
-        filter(v -> !(var_to_str(v) in map(var_to_str, variables)), gens(parent(poly)))
-    new_ring, new_vars =
-        Nemo.PolynomialRing(base_ring(parent(poly)), map(var_to_str, coeff_vars))
-    coeff_var_to_ind =
-        Dict((v, findfirst(e -> (e == v), gens(parent(poly)))) for v in coeff_vars)
+    xs = gens(parent(poly))
+    coeff_vars = filter(
+        v -> !(var_to_str(v, xs = xs) in map(vv -> var_to_str(vv, xs = xs), variables)),
+        xs,
+    )
+    new_ring, new_vars = Nemo.PolynomialRing(
+        base_ring(parent(poly)),
+        map(vv -> var_to_str(vv, xs = xs), coeff_vars),
+    )
+    coeff_var_to_ind = Dict((v, findfirst(e -> (e == v), xs)) for v in coeff_vars)
     FieldType = typeof(one(base_ring(new_ring)))
 
     result = Dict{Array{Int, 1}, Dict{Array{Int, 1}, FieldType}}()
 
+    coeff_var_to_ind_precomputed = [coeff_var_to_ind[coeff_vars[i]] for i in 1:length(coeff_vars)]
     for (monom, coef) in zip(exponent_vectors(poly), coefficients(poly))
         var_slice = [monom[i] for i in indices]
         if !haskey(result, var_slice)
@@ -273,7 +278,7 @@ function extract_coefficients(poly::P, variables::Array{P, 1}) where {P <: MPoly
         end
         new_monom = [0 for _ in 1:length(coeff_vars)]
         for i in 1:length(new_monom)
-            new_monom[i] = monom[coeff_var_to_ind[coeff_vars[i]]]
+            new_monom[i] = monom[coeff_var_to_ind_precomputed[i]]
         end
         result[var_slice][new_monom] = coef
     end
@@ -293,8 +298,8 @@ end
 
 # ------------------------------------------------------------------------------
 
-function var_to_str(v::MPolyElem)
-    ind = findfirst(vv -> vv == v, gens(parent(v)))
+function var_to_str(v::MPolyElem; xs = gens(parent(v)))
+    ind = findfirst(vv -> vv == v, xs)
     return string(symbols(parent(v))[ind])
 end
 

@@ -107,12 +107,20 @@ function check_field_membership(
     polys_ext = Vector{typeof(gb[1])}()
     for f in rat_funcs
         num, den = unpack_fraction(f)
+        # TODO(Alex): why the ring change?
         poly = num * evaluate(den, point) - den * evaluate(num, point)
         poly_ext = parent_ring_change(poly, ring_ext)
         # poly_ext = evaluate(poly_ext, shift)
         push!(polys_ext, poly_ext)
     end
+    # TODO: performance of normalform over the rationals in Groebner.jl is not
+    # fantastic at the very least. 
+    # Consider:
+    #   improving Groebner.normalform,
+    #   or using AbstractAlgebra.normal_form
+    # UPD(Alex): AbstractAlgebra.normal_form is not better here
     result = map(iszero, normalform(gb, polys_ext, check = false))
+    # result = [iszero(Nemo.normal_form(p, gb)) for p in polys_ext]
     return result
 end
 

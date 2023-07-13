@@ -12,7 +12,7 @@ function check_primality_zerodim(J::Array{fmpq_mpoly, 1})
     for v in gens(parent(first(J)))
         M = zero(S)
         for (i, vec) in enumerate(basis)
-            image = Groebner.normalform(J, v * vec)
+            image = Groebner.normalform(J, v * vec, check = false)
             for (j, base_vec) in enumerate(basis)
                 M[i, j] = Nemo.QQ(coeff(image, base_vec))
             end

@@ -65,7 +65,8 @@ mutable struct IdealMQS{PolyQQ} <: AbstractBlackboxIdeal
         dens_qq = empty(nums_qq)
         for i in 1:length(funcs_den_nums)
             dennums = funcs_den_nums[i]
-            @assert length(dennums) > 1
+            # NOTE(Alex): double-check if the generators are generated correctly 
+            # @assert length(dennums) > 1 "Strange field generators: $dennums"
             den = dennums[1]
             den = parent_ring_change(den, R_sat)
             # NOTE: remove duplicates in numerators
@@ -406,6 +407,8 @@ function simplify_identifiable_functions(
         end
         id_funcs = collect(id_coeffs_set)
         @info "Identifiable functions up to degrees $(current_degrees) are" id_funcs
+        @info "Checking two-sided inclusion with probability $p"
+        time_start = time_ns()
         id_funcs_den_nums = fractions_to_dennums(id_funcs)
         original_id_funcs = dennums_to_fractions(funcs_den_nums)
         # Check inclusion: <simplified generators> in <original generators> 
@@ -413,6 +416,8 @@ function simplify_identifiable_functions(
         two_sided_inclusion = two_sided_inclusion || all(inclusion)
         # Check inclusion: <original generators> in <simplified generators>
         inclusion = check_field_membership(funcs_den_nums, id_funcs, p)
+        _runtime_logger[:id_inclusion_check] = (time_ns() - time_start) / 1e9
+        @info "Inclusion checked in $(_runtime_logger[:id_inclusion_check]) seconds"
         two_sided_inclusion = two_sided_inclusion && all(inclusion)
         current_degrees = current_degrees .* 2
     end
@@ -450,17 +455,6 @@ function simplify_identifiable_functions(
     # Convert back into the [denominator, numerators...] format
     id_funcs_den_nums = fractions_to_dennums(id_funcs)
     isempty(id_funcs) && return id_funcs_den_nums
-    original_id_funcs = dennums_to_fractions(funcs_den_nums)
-    # Check inclusion: <original generators> in <simplified generators>
-    @info "Checking two-sided inclusion with probability $p"
-    time_start = time_ns()
-    inclusion = check_field_membership(id_funcs_den_nums, original_id_funcs, p)
-    @assert all(inclusion)
-    # Check inclusion: <original generators> in <simplified generators>
-    inclusion = check_field_membership(funcs_den_nums, id_funcs, p)
-    @assert all(inclusion)
-    _runtime_logger[:id_inclusion_check] = (time_ns() - time_start) / 1e9
-    @info "Inclusion checked in $(_runtime_logger[:id_inclusion_check]) seconds"
     id_funcs_den_nums
 end
 

@@ -1,7 +1,4 @@
-using CpuId
-using Logging
-using Pkg
-using Printf
+using CpuId, Logging, Pkg, Printf
 
 using StructuralIdentifiability
 using StructuralIdentifiability: _runtime_logger, ODE
@@ -16,7 +13,6 @@ runtimes = Dict()
 ID_TIME_CATEGORIES = [
     :id_io_time,
     :id_global_time,
-    :id_extract_funcs_time,
     :id_ideal_time,
     :id_filter_time,
     :id_inclusion_check,

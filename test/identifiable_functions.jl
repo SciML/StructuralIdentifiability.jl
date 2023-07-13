@@ -1,4 +1,5 @@
 # import StructuralIdentifiability: parent_ring_change
+using AbstractAlgebra
 
 # TODO: verify that Maple returns the same
 @testset "Identifiable functions of parameters" begin
