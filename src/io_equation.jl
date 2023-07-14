@@ -86,7 +86,7 @@ Finds the input-output projections of an ODE system
 Input:
 - `ode` - the ODE system
 - `auto_var_change` - whether to perform automatic variable change
-- `extra_projection` - a linear formin the derivatives of outputs (in any ring) to be
+- `extra_projection` - a linear form in the derivatives of outputs (in any ring) to be
   used for extra projection
 
 Output:
@@ -119,7 +119,7 @@ function find_ioprojections(
             y_name, ord =
                 decompose_derivative(var_to_str(y), [var_to_str(v) for v in ode.y_vars])
             y0 = str_to_var(y_name * "_0", ring)
-            # basically a vector of Lie derivtaives of y encoded as equations
+            # basically a vector of Lie deriviatives of y encoded as equations
             # on the derivtaives over x's, params, and derivatives of u's
             y_ders = [(y0, y_equations[y0])]
             for i in 1:ord

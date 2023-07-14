@@ -498,10 +498,12 @@ function find_identifiable_functions(
     seed = 42,
 ) where {T <: MPolyElem{fmpq}}
     runtime_start = time_ns()
+
     # TODO: Can we still provide parameter `p=0.99` here?
     runtime = @elapsed funcs_den_nums = field_generators(ode, p)
     # TODO: Check if all parameters are globally id.
     _runtime_logger[:id_field_generators] = runtime
+
     if simplify
         funcs_den_nums = simplify_identifiable_functions(funcs_den_nums, p, seed)
     end

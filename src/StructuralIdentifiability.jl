@@ -55,6 +55,7 @@ include("wronskian.jl")
 include("elimination.jl")
 include("primality_check.jl")
 include("io_equation.jl")
+include("states.jl")
 include("global_identifiability.jl")
 include("identifiable_functions.jl")
 include("lincomp.jl")
@@ -73,7 +74,7 @@ at least `p`.
 
 """
 function assess_identifiability(ode::ODE{P}, p::Float64 = 0.99) where {P <: MPolyElem{fmpq}}
-    result = assess_identifiability(ode, ode.parameters, p)
+    result = assess_identifiability(ode, vcat(ode.parameters, ode.x_vars), p)
     return result #Dict(param => res for (param, res) in zip(ode.parameters, result_list))
 end
 
@@ -103,16 +104,11 @@ function assess_identifiability(
 
     @info "Assessing local identifiability"
     trbasis = Array{fmpq_mpoly, 1}()
-    runtime = @elapsed local_result, bound =
-        assess_local_identifiability(ode, funcs_to_check, p_loc, :ME, trbasis)
+    runtime = @elapsed local_result =
+        assess_local_identifiability(ode, funcs_to_check, p_loc, :SE, trbasis)
     @info "Local identifiability assessed in $runtime seconds"
     @debug "Trasncendence basis to be specialized is $trbasis"
     _runtime_logger[:loc_time] = runtime
-
-    if bound > 1
-        @warn "For this model single-experiment identifiable functions are not the same as multi-experiment identifiable. The analysis performed by this program is right now for multi-experiment only. If you still  would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)"
-        @debug "Bound: $bound"
-    end
 
     loc_id = [local_result[each] for each in funcs_to_check]
     locally_identifiable = Array{Any, 1}()
