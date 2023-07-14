@@ -135,7 +135,6 @@ function check_identifiability(
 ) where {P <: MPolyElem{fmpq}}
     states_needed = false
     for f in funcs_to_check
-        @info f
         num, den = unpack_fraction(f)
         if !all(v -> v in ode.parameters, union(vars(num), vars(den)))
             @info "Functions to check involve states"
@@ -143,7 +142,6 @@ function check_identifiability(
             break
         end
     end
-    @info states_needed
 
     coeff_lists = Array{Array{P, 1}, 1}()
     bring = nothing
@@ -155,7 +153,6 @@ function check_identifiability(
         end
         bring = parent(first(first(coeff_lists)))
     end
-    @info coeff_lists
 
     @debug "Extracting coefficients"
     flush(stdout)
