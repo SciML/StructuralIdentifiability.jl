@@ -15,6 +15,11 @@
         correct,
         assess_identifiability(de; measured_quantities = [(y1 ~ x0).rhs]),
     )
+
+    # TODO: uncomment when simplification is done.
+    # correct = [a01 * a12, a01 + a12 + a12]
+    # @test isequal(correct, find_identifiable_functions(de; measured_quantities = [y1 ~ x0]))
+
     # --------------------------------------------------------------------------
     @parameters a01 a21 a12
     @variables t x0(t) x1(t) y1(t) [output = true]
