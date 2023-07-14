@@ -1,5 +1,5 @@
 # import StructuralIdentifiability: parent_ring_change
-using AbstractAlgebra
+# using AbstractAlgebra
 
 # TODO: verify that Maple returns the same
 @testset "Identifiable functions of parameters" begin
@@ -25,7 +25,7 @@ using AbstractAlgebra
         x2'(t) = x1(t) + a,
         y(t) = x1(t) + x2(t)
     )
-    ident_funcs = Vector{AbstractAlgebra.Generic.Frac{typeof(x1)}}()
+    ident_funcs = Vector{StructuralIdentifiability.AbstractAlgebra.Generic.Frac{typeof(x1)}}()
 
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
