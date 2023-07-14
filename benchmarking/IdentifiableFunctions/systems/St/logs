@@ -1,90 +1,88 @@
 ┌ Info: Processing St
 └ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:54
 ┌ Info: Computing IO-equations
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:268
-┌ Info: IO-equations computed in 4.131617824 seconds
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:270
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:269
+┌ Info: IO-equations computed in 4.131259694 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:271
 ┌ Info: Assessing global identifiability
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:273
-┌ Info: Global identifiability assessed in 4.201506783 seconds
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:280
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:274
+┌ Info: Global identifiability assessed in 4.029092041 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:281
 ERROR: LoadError: Overflow may happen with the entry 130 of type UInt8.
 Stacktrace:
   [1] __monom_overflow_error(c::UInt64, B::Type)
-    @ Groebner ~/.julia/packages/Groebner/MydHC/src/monomials/common.jl:72
+    @ Groebner ~/Groebner.jl/src/monomials/common.jl:72
   [2] _monom_overflow_check
-    @ ~/.julia/packages/Groebner/MydHC/src/monomials/common.jl:80 [inlined]
+    @ ~/Groebner.jl/src/monomials/common.jl:80 [inlined]
   [3] _monom_overflow_check
-    @ ~/.julia/packages/Groebner/MydHC/src/monomials/packedtuples.jl:41 [inlined]
+    @ ~/Groebner.jl/src/monomials/packedtuples.jl:41 [inlined]
   [4] monom_product!
-    @ ~/.julia/packages/Groebner/MydHC/src/monomials/packedtuples.jl:426 [inlined]
+    @ ~/Groebner.jl/src/monomials/packedtuples.jl:426 [inlined]
   [5] insert_multiplied_poly_in_hash_table!(row::Vector{Int32}, htmp::UInt32, etmp::Groebner.PackedTuple2{UInt64, UInt8}, poly::Vector{Int32}, ht::Groebner.MonomialHashtable{Groebner.PackedTuple2{UInt64, UInt8}, Groebner.Lex{Nothing}}, symbol_ht::Groebner.MonomialHashtable{Groebner.PackedTuple2{UInt64, UInt8}, Groebner.Lex{Nothing}})
-    @ Groebner ~/.julia/packages/Groebner/MydHC/src/f4/hashtable.jl:492
+    @ Groebner ~/Groebner.jl/src/f4/hashtable.jl:492
   [6] multiplied_poly_to_matrix_row!
-    @ ~/.julia/packages/Groebner/MydHC/src/f4/hashtable.jl:550 [inlined]
+    @ ~/Groebner.jl/src/f4/hashtable.jl:550 [inlined]
   [7] find_multiplied_reducer!(basis::Groebner.Basis{UInt128}, matrix::Groebner.MacaulayMatrix{UInt128}, ht::Groebner.MonomialHashtable{Groebner.PackedTuple2{UInt64, UInt8}, Groebner.Lex{Nothing}}, symbol_ht::Groebner.MonomialHashtable{Groebner.PackedTuple2{UInt64, UInt8}, Groebner.Lex{Nothing}}, vidx::Int32)
-    @ Groebner ~/.julia/packages/Groebner/MydHC/src/f4/f4.jl:433
+    @ Groebner ~/Groebner.jl/src/f4/f4.jl:433
   [8] symbolic_preprocessing!(basis::Groebner.Basis{UInt128}, matrix::Groebner.MacaulayMatrix{UInt128}, ht::Groebner.MonomialHashtable{Groebner.PackedTuple2{UInt64, UInt8}, Groebner.Lex{Nothing}}, symbol_ht::Groebner.MonomialHashtable{Groebner.PackedTuple2{UInt64, UInt8}, Groebner.Lex{Nothing}})
-    @ Groebner ~/.julia/packages/Groebner/MydHC/src/f4/f4.jl:497
+    @ Groebner ~/Groebner.jl/src/f4/f4.jl:497
   [9] symbolic_preprocessing!(graph::Groebner.ComputationGraphF4{UInt128, Groebner.PackedTuple2{UInt64, UInt8}, Groebner.Lex{Nothing}}, basis::Groebner.Basis{UInt128}, matrix::Groebner.MacaulayMatrix{UInt128}, hashtable::Groebner.MonomialHashtable{Groebner.PackedTuple2{UInt64, UInt8}, Groebner.Lex{Nothing}}, symbol_ht::Groebner.MonomialHashtable{Groebner.PackedTuple2{UInt64, UInt8}, Groebner.Lex{Nothing}})
-    @ Groebner ~/.julia/packages/Groebner/MydHC/src/f4/learn-apply.jl:385
+    @ Groebner ~/Groebner.jl/src/f4/learn-apply.jl:385
  [10] f4_learn!(graph::Groebner.ComputationGraphF4{UInt128, Groebner.PackedTuple2{UInt64, UInt8}, Groebner.Lex{Nothing}}, ring::Groebner.PolyRing{Groebner.Lex{Nothing}}, basis::Groebner.Basis{UInt128}, pairset::Groebner.Pairset{UInt32}, hashtable::Groebner.MonomialHashtable{Groebner.PackedTuple2{UInt64, UInt8}, Groebner.Lex{Nothing}}, params::Groebner.AlgorithmParameters{Groebner.Lex{Nothing}, Groebner.Lex{Nothing}})
-    @ Groebner ~/.julia/packages/Groebner/MydHC/src/f4/learn-apply.jl:549
+    @ Groebner ~/Groebner.jl/src/f4/learn-apply.jl:549
  [11] _groebner_learn(ring::Groebner.PolyRing{Groebner.Lex{Nothing}}, monoms::Vector{Vector{Groebner.PackedTuple2{UInt64, UInt8}}}, coeffs::Vector{Vector{UInt128}}, params::Groebner.AlgorithmParameters{Groebner.Lex{Nothing}, Groebner.Lex{Nothing}})
-    @ Groebner ~/.julia/packages/Groebner/MydHC/src/groebner/groebner.jl:187
+    @ Groebner ~/Groebner.jl/src/groebner/groebner.jl:187
  [12] _groebner_learn(polynomials::Vector{Nemo.gfp_mpoly}, kws::Groebner.KeywordsHandler{Groebner.InputOrdering})
-    @ Groebner ~/.julia/packages/Groebner/MydHC/src/groebner/groebner.jl:99
- [13] #groebner_learn#517
-    @ ~/.julia/packages/Groebner/MydHC/src/interface.jl:91 [inlined]
- [14] groebner_learn(polynomials::Vector{Nemo.gfp_mpoly})
-    @ Groebner ~/.julia/packages/Groebner/MydHC/src/interface.jl:90
- [15] discover_shape!(state::ParamPunPam.GroebnerState{StructuralIdentifiability.IdealMQS{Nemo.fmpq_mpoly}}, modular::ParamPunPam.ModularTracker{Nemo.GaloisField}; η::Int64)
-    @ ParamPunPam ~/ParamPunPam.jl/src/groebner/paramgb.jl:83
- [16] discover_shape!
-    @ ~/ParamPunPam.jl/src/groebner/paramgb.jl:73 [inlined]
- [17] _paramgb(blackbox::StructuralIdentifiability.IdealMQS{Nemo.fmpq_mpoly}, up_to_degree::Tuple{Int64, Int64}, guess_degrees::Symbol, rational_interpolator::ParamPunPam.VanDerHoevenLecerf, polynomial_interpolator::Symbol)
-    @ ParamPunPam ~/ParamPunPam.jl/src/groebner/paramgb.jl:50
- [18] paramgb(blackbox::StructuralIdentifiability.IdealMQS{Nemo.fmpq_mpoly}; kwargs::Base.Pairs{Symbol, Tuple{Int64, Int64}, Tuple{Symbol}, NamedTuple{(:up_to_degree,), Tuple{Tuple{Int64, Int64}}}})
-    @ ParamPunPam ~/ParamPunPam.jl/src/groebner/paramgb.jl:32
- [19] paramgb
-    @ ~/ParamPunPam.jl/src/groebner/paramgb.jl:23 [inlined]
- [20] macro expansion
+    @ Groebner ~/Groebner.jl/src/groebner/groebner.jl:99
+ [13] groebner_learn(polynomials::Vector{Nemo.gfp_mpoly}; options::Base.Pairs{Symbol, Bool, Tuple{Symbol}, NamedTuple{(:sweep,), Tuple{Bool}}})
+    @ Groebner ~/Groebner.jl/src/interface.jl:91
+ [14] discover_shape!(state::ParamPunPam.GroebnerState{StructuralIdentifiability.IdealMQS{Nemo.fmpq_mpoly}}, modular::ParamPunPam.ModularTracker{Nemo.GaloisField}; η::Int64)
+    @ ParamPunPam ~/ParamPunPam.jl/src/groebner/paramgb.jl:98
+ [15] discover_shape!
+    @ ~/ParamPunPam.jl/src/groebner/paramgb.jl:88 [inlined]
+ [16] _paramgb(blackbox::StructuralIdentifiability.IdealMQS{Nemo.fmpq_mpoly}, up_to_degree::Tuple{Int64, Int64}, guess_degrees::Symbol, rational_interpolator::ParamPunPam.VanDerHoevenLecerf, polynomial_interpolator::Symbol)
+    @ ParamPunPam ~/ParamPunPam.jl/src/groebner/paramgb.jl:68
+ [17] paramgb(blackbox::StructuralIdentifiability.IdealMQS{Nemo.fmpq_mpoly}; kwargs::Base.Pairs{Symbol, Tuple{Int64, Int64}, Tuple{Symbol}, NamedTuple{(:up_to_degree,), Tuple{Tuple{Int64, Int64}}}})
+    @ ParamPunPam ~/ParamPunPam.jl/src/groebner/paramgb.jl:46
+ [18] paramgb
+    @ ~/ParamPunPam.jl/src/groebner/paramgb.jl:40 [inlined]
+ [19] macro expansion
     @ ./timing.jl:393 [inlined]
- [21] simplify_identifiable_functions(funcs_den_nums::Vector{Vector{Nemo.fmpq_mpoly}}, p::Float64, seed::Int64)
-    @ StructuralIdentifiability ~/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:399
- [22] find_identifiable_functions(ode::ODE{Nemo.fmpq_mpoly}, p::Float64; simplify::Bool, seed::Int64)
-    @ StructuralIdentifiability ~/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:505
- [23] find_identifiable_functions
-    @ ~/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:493 [inlined]
- [24] find_identifiable_functions(ode::ODE{Nemo.fmpq_mpoly})
-    @ StructuralIdentifiability ~/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:493
- [25] process_system()
+ [20] simplify_identifiable_functions(funcs_den_nums::Vector{Vector{Nemo.fmpq_mpoly}}, p::Float64, seed::Int64)
+    @ StructuralIdentifiability ~/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:400
+ [21] find_identifiable_functions(ode::ODE{Nemo.fmpq_mpoly}, p::Float64; simplify::Bool, seed::Int64)
+    @ StructuralIdentifiability ~/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:506
+ [22] find_identifiable_functions
+    @ ~/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:494 [inlined]
+ [23] find_identifiable_functions(ode::ODE{Nemo.fmpq_mpoly})
+    @ StructuralIdentifiability ~/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:494
+ [24] process_system()
     @ Main ~/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:57
- [26] top-level scope
+ [25] top-level scope
     @ ~/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:96
 in expression starting at /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:96
 ┌ Info: Simplifying identifiable functions
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:381
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:382
 ┌ Info: Recording the ideal generators in Multivariate Polynomial Ring in 9 variables e, rR, dr, d, ..., Dd over Rational Field
 └ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:40
 ┌ Info: Saturating variable if t
 └ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:46
 ┌ Info: Generated MQS ideal in Multivariate Polynomial Ring in 10 variables t, y1, y2, y3, ..., y9 over Rational Field with 42 elements
 └ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:84
-┌ Info: Differential ideal created in 0.078647306 seconds
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:383
+┌ Info: Differential ideal created in 0.082005722 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:384
 ┌ Info: Computing a Groebner basis
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:392
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:393
 ┌ Info: Computing GB with parameters up to degrees (2, 2)
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:398
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:399
 ┌ Info: Computing parametric GB
 │   up_to_degree = (2, 2)
 │   rational_interpolator = ParamPunPam.VanDerHoevenLecerf()
 │   polynomial_interpolator = primes_benortiwari
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:31
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:45
 ┌ Info: Given 42 functions in Rational Field(e, rR, dr, d, g, r, a, T, Dd)[t, y1, y2, y3, y4, y5, y6, y7, y8, y9]
 └ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/groebnerstate.jl:23
 ┌ Info: Specializing at 1 + 2 random points to guess the basis shape..
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:75
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:90
 ┌ Info: Reducing MQS ideal modulo Galois field with characteristic 4611686018427388073..
 └ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:110

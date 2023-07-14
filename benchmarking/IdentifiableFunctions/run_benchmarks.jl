@@ -31,7 +31,7 @@ HUMAN_READABLE = Dict(
 
 TO_SKIP = []
 TO_RUN = []
-TIMEOUT = 3600
+TIMEOUT = 18_000
 
 function run_benchmarks()
     dirnames = first(walkdir((@__DIR__) * "/systems/"))[2]
