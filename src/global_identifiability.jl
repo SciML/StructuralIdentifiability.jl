@@ -126,26 +126,15 @@ end
 
 # ------------------------------------------------------------------------------
 
-function check_identifiability(
+function extract_identifiable_functions_raw(
     io_equations::Dict{P, P},
     ode::ODE{P},
     known::Array{P, 1},
-    funcs_to_check::Array{<:Any, 1},
-    p::Float64 = 0.99,
-) where {P <: MPolyElem{fmpq}}
-    states_needed = false
-    for f in funcs_to_check
-        num, den = unpack_fraction(f)
-        if !all(v -> v in ode.parameters, union(vars(num), vars(den)))
-            @info "Functions to check involve states"
-            states_needed = true
-            break
-        end
-    end
-
+    with_states::Bool
+) where  {P <: MPolyElem{fmpq}}
     coeff_lists = Array{Array{P, 1}, 1}()
     bring = nothing
-    if states_needed
+    if with_states
         @debug "Computing Lie derivatives"
         for f in states_generators(ode, io_equations)
             num, den = unpack_fraction(f)
@@ -171,12 +160,40 @@ function check_identifiability(
         bring = parent(first(first(coeff_lists)))
     end
     for p in known
-        push!(coeff_lists, [one(bring), parent_ring_change(p, bring)])
+        if all(in.(map(var_to_str, vars(p)), [map(var_to_str, gens(bring))]))
+            push!(coeff_lists, [one(bring), parent_ring_change(p, bring)])
+        else
+            @debug "Known quantity $p cannot be casted and is thus dropped"
+        end
     end
+    return coeff_lists
+end
+
+# ------------------------------------------------------------------------------
+
+function check_identifiability(
+    io_equations::Dict{P, P},
+    ode::ODE{P},
+    known::Array{P, 1},
+    funcs_to_check::Array{<:Any, 1},
+    p::Float64 = 0.99,
+) where {P <: MPolyElem{fmpq}}
+    states_needed = false
+    for f in funcs_to_check
+        num, den = unpack_fraction(f)
+        if !all(v -> v in ode.parameters, union(vars(num), vars(den)))
+            @info "Functions to check involve states"
+            states_needed = true
+            break
+        end
+    end
+
+    identifiable_functions_raw = extract_identifiable_functions_raw(io_equations, ode, known, states_needed)
+    bring = parent(first(first(identifiable_functions_raw)))
 
     funcs_to_check = map(f -> parent_ring_change(f, bring), funcs_to_check)
 
-    return check_field_membership(coeff_lists, funcs_to_check, p)
+    return check_field_membership(identifiable_functions_raw, funcs_to_check, p)
 end
 
 function check_identifiability(
