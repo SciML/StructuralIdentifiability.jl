@@ -273,8 +273,8 @@ function field_generators(ode::ODE{T}, p::Float64 = 0.99) where {T}
 
     @info "Assessing global identifiability"
     runtime = @elapsed global_result = check_identifiability(
-        collect(values(io_equations)),
-        ode.parameters,
+        io_equations,
+        ode,
         empty(ode.parameters),
         p,
     )
