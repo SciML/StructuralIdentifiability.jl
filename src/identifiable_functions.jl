@@ -43,7 +43,7 @@ mutable struct IdealMQS{PolyQQ} <: AbstractBlackboxIdeal
         @debug "Rational functions common denominator" Q
         isone(Q) && (@warn "Common denominator of the field generators is one" Q)
         existing_varnames = map(String, symbols(R))
-        @info "Saturating variable if $sat_varname"
+        @info "Saturating variable is $sat_varname"
         # NOTE: what about F4-sat? 
         # NOTE: if this becomes a bottleneck, one of
         # the two ring conversions can be removed
@@ -147,67 +147,6 @@ function ParamPunPam.evaluate_mod_p(mqs::IdealMQS, point)
 end
 
 """
-    extract_identifiable_functions(io_equations, parameters)
-
-For the io_equation and the list of all parameter variables, returns a set of generators of a field of all functions of parameters
-Note: an experimental functionality at the moment, may fail and may be inefficient
-"""
-function extract_identifiable_functions(
-    io_equations::Array{P, 1},
-    parameters::Array{P, 1},
-    known_functions::Array{P, 1},
-) where {P <: MPolyElem{fmpq}}
-    @debug "Extracting coefficients"
-    flush(stdout)
-    nonparameters = filter(
-        v -> !(var_to_str(v) in map(var_to_str, parameters)),
-        gens(parent(io_equations[1])),
-    )
-    coeff_lists = Array{Array{P, 1}, 1}()
-    for eq in io_equations
-        push!(coeff_lists, collect(values(extract_coefficients(eq, nonparameters))))
-    end
-    R = parent(first(first(coeff_lists)))
-    for f in known_functions
-        push!(coeff_lists, [one(R), parent_ring_change(f, R)])
-    end
-    for p in coeff_lists
-        @debug sort(map(total_degree, p))
-    end
-
-    @debug "Resulting Coefficient List: $coeff_lists"
-
-    return coeff_lists
-end
-
-"""
-    extract_identifiable_functions_raw(io_equations, parameters)
-
-For the io_equation and the list of all parameter variables, returns a set of *raw* *generators of a field of all functions of parameters
-"""
-function extract_identifiable_functions_raw(
-    io_equations::Array{P, 1},
-    parameters::Array{P, 1},
-) where {P <: MPolyElem{fmpq}}
-    @debug "Extracting coefficients"
-    flush(stdout)
-    nonparameters = filter(
-        v -> !(var_to_str(v) in map(var_to_str, parameters)),
-        gens(parent(io_equations[1])),
-    )
-    result = []
-    for eq in io_equations
-        coeffs = sort(
-            collect(values(extract_coefficients(eq, nonparameters))),
-            by = total_degree,
-        )
-        append!(result, [c // first(coeffs) for c in coeffs[2:end]])
-    end
-
-    return result
-end
-
-"""
     dennums_to_fractions(dennums)
     
 Returns the field generators represented by fractions.
@@ -223,7 +162,7 @@ function dennums_to_fractions(dennums::Vector{Vector{T}}) where {T}
         den, nums = dni[1], dni[2:end]
         append!(fractions, map(c -> c // den, nums))
     end
-    fractions
+    return fractions
 end
 
 """
@@ -265,34 +204,37 @@ function ratfunc_cmp(f, g)
     return false
 end
 
-function field_generators(ode::ODE{T}, p::Float64 = 0.99) where {T}
+function field_generators(ode::ODE{T}, p::Float64 = 0.99; with_states::Bool = false) where {T}
     @info "Computing IO-equations"
     runtime = @elapsed io_equations = find_ioequations(ode)
     @info "IO-equations computed in $runtime seconds"
     _runtime_logger[:id_io_time] = runtime
 
     @info "Assessing global identifiability"
+    known_quantities = Array{T, 1}()
+    to_check = ode.parameters
+    if with_states
+        to_check = vcat(to_check, ode.x_vars)
+    end
     runtime = @elapsed global_result = check_identifiability(
         io_equations,
         ode,
         empty(ode.parameters),
+        to_check,
         p,
     )
     @info "Global identifiability assessed in $runtime seconds"
     _runtime_logger[:id_global_time] = runtime
 
-    known_params = Array{fmpq_mpoly, 1}()
-    for (glob, p) in zip(global_result, ode.parameters)
+    for (glob, p) in zip(global_result, to_check)
         if glob
-            push!(known_params, p)
+            push!(known_quantities, p)
         end
     end
-    runtime = @elapsed funcs_den_nums = extract_identifiable_functions(
-        collect(values(io_equations)),
-        ode.parameters,
-        known_params,
+    runtime = @elapsed funcs_den_nums = extract_identifiable_functions_raw(
+        io_equations, ode, known_quantities, with_states
     )
-    funcs_den_nums
+    return funcs_den_nums
 end
 
 """
@@ -496,11 +438,12 @@ function find_identifiable_functions(
     p::Float64 = 0.99;
     simplify = true,
     seed = 42,
+    with_states::Bool = false,
 ) where {T <: MPolyElem{fmpq}}
     runtime_start = time_ns()
 
     # TODO: Can we still provide parameter `p=0.99` here?
-    runtime = @elapsed funcs_den_nums = field_generators(ode, p)
+    runtime = @elapsed funcs_den_nums = field_generators(ode, p, with_states = with_states)
     # TODO: Check if all parameters are globally id.
     _runtime_logger[:id_field_generators] = runtime
 
@@ -527,9 +470,10 @@ Input:
 function find_identifiable_functions(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
+    with_states::Bool = false,
     p = 0.99,
     simplify = true,
-    seed = 42,
+    seed = 42
 )
     if length(measured_quantities) == 0
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
@@ -550,7 +494,7 @@ function find_identifiable_functions(
     ode, conversion = preprocess_ode(ode, measured_quantities)
     out_funcs = Vector{Num}()
     params_ = [eval_at_nemo(each, conversion) for each in params]
-    result = find_identifiable_functions(ode, p, simplify = simplify, seed = seed)
+    result = find_identifiable_functions(ode, p, simplify = simplify, seed = seed, with_states = with_states)
     nemo2mtk = Dict(params_ .=> map(Num, params))
     out_funcs = [eval_at_dict(func, nemo2mtk) for func in result]
     return out_funcs

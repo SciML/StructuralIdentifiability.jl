@@ -5,7 +5,7 @@ using Logging
 
 using StructuralIdentifiability
 
-logger = Logging.SimpleLogger(stdout, Logging.Info)
+logger = Logging.SimpleLogger(stdout, Logging.Debug)
 global_logger(logger)
 
 ode = @ODEmodel(
@@ -18,4 +18,4 @@ ode = @ODEmodel(
     y1(t) = x0(t)
 )
 
-@time println(assess_global_identifiability(ode))
+@time println(assess_identifiability(ode))
