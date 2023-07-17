@@ -15,7 +15,6 @@ using AbstractAlgebra
 using Nemo
 using Groebner
 using ParamPunPam
-import ParamPunPam: AbstractBlackboxIdeal
 
 using ModelingToolkit
 

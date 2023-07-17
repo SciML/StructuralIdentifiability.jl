@@ -131,6 +131,18 @@
     ident_funcs = [b1 * b2, a1 + a2 + b1 + b2, a1 * a2 + a1 * b2 + b1 * b2]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
+    # Example 3 from
+    # "On the identifiability and distinguishability of nonlinear parametric
+    # models",
+    # DOI: https://doi.org/10.1016/0378-4754(95)00123-9
+    ode = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = p1 * x1^2 + p2 * x1 * x2,
+        x2'(t) = p3 * x1^2 + p4 * x1 * x2,
+        y(t) = x1
+    )
+    ident_funcs = [p1 + p4, p2 * p3 - p4 * p1]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
     # Goowdin oscillator
     ode = StructuralIdentifiability.@ODEmodel(
         x1'(t) = -b * x1(t) + 1 / (c + x4(t)),
@@ -156,8 +168,6 @@
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     # SEIR_1_io
-    # TODO: something wrong happens here with van der Hoeven - Lecerf
-    # interpolation.
     ode = StructuralIdentifiability.@ODEmodel(
         S'(t) = -beta * S(t) * I(t),
         E'(t) = beta * S(t) * I(t) - v * E(t),
@@ -167,11 +177,9 @@
         y1(t) = Q(t)
     )
     ident_funcs = [gamma, beta // psi, gamma * psi - v - psi, gamma * psi - v * psi]
-    # push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     # Bilirubin2_io
-    # TODO: something wrong happens here with van der Hoeven - Lecerf
-    # interpolation.
     ode = StructuralIdentifiability.@ODEmodel(
         x1'(t) =
             -(k21 + k31 + k41 + k01) * x1(t) +
@@ -184,7 +192,7 @@
         x4'(t) = k41 * x1(t) - k14 * x4(t),
         y1(t) = x1(t)
     )
-    # ident_funcs = 
+    # ident_funcs = [k01, k31 + k21 + k41, k31 * k21 * k41, k31 * k21 + k31 * k41 + k21 * k41]
     # push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     p = 0.99
