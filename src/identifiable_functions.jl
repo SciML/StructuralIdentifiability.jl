@@ -1,6 +1,4 @@
 
-function find_identifiable_functions end
-
 """
     IdealMQS
 
@@ -8,8 +6,9 @@ Relations between elements of Q(x) encoded with an ideal in Q(x)[y]:
 
     <num_i(x) den_i(y) - num_i(y) den_i(x), Q(y) t - 1>
 
-`IdealMQS` provides all of the functions that `AbstractBlackboxIdeal` requires.
-See `?ParamPunPam.AbstractBlackboxIdeal` for details.
+`IdealMQS` provides all of the functions that the interface
+`AbstractBlackboxIdeal` requires. See `?ParamPunPam.AbstractBlackboxIdeal` for
+details.
 
 """
 mutable struct IdealMQS{PolyQQ} <: AbstractBlackboxIdeal
@@ -17,38 +16,45 @@ mutable struct IdealMQS{PolyQQ} <: AbstractBlackboxIdeal
     nums_qq::Vector{PolyQQ}
     dens_qq::Vector{PolyQQ}
     sat_qq::PolyQQ
+    dens_indices::Vector{Tuple{Int, Int}}
     nums_gf::Any
     dens_gf::Any
     sat_gf::Any
     parent_ring_param::Any
+    sat_index::Int
 
     """
-        IdealMQS(funcs_den_nums)
-    
-    ## Example
+        IdealMQS(funcs_den_nums::Vector{Vector})
 
-    ```jldoctest
+    Given an array of polynomials, that is the field generators of form
+        
+        [[f1, f2, f3, ...], [g1, g2, g3, ...], ...]
 
-    ```
+    constructs an MQS ideal with generators
+
+        fi(X) f1(Y) - fi(Y) f1(X)
+        gi(X) g1(Y) - gi(Y) g1(X)
+        f1*g1*...*t - 1
+
     """
     function IdealMQS(
         funcs_den_nums::Vector{Vector{PolyQQ}};
         sat_varname = "t",
+        ordering = :degrevlex,
     ) where {PolyQQ}
         @assert !isempty(funcs_den_nums)
         R = parent(first(first(funcs_den_nums)))
-        @info "Recording the ideal generators in $R"
-        K, n, ord = base_ring(R), nvars(R), Nemo.ordering(R)
+        @info "Constructing the MQS ideal in $R"
+        K, n = base_ring(R), nvars(R)
         Q = reduce(lcm, map(first, funcs_den_nums))
         @debug "Rational functions common denominator" Q
         isone(Q) && (@warn "Common denominator of the field generators is one" Q)
         existing_varnames = map(String, symbols(R))
-        @info "Saturating variable is $sat_varname"
-        # NOTE: what about F4-sat? 
-        # NOTE: if this becomes a bottleneck, one of
-        # the two ring conversions can be removed
+        @debug "Saturating variable is $sat_varname"
+        # NOTE: if this becomes a bottleneck, one of the two ring conversions
+        # can be removed
         ystrs = ["y$i" for i in 1:length(existing_varnames)]
-        R_y, _ = Nemo.PolynomialRing(K, ystrs, ordering = ord)
+        R_y, _ = Nemo.PolynomialRing(K, ystrs, ordering = ordering)
         funcs_den_nums = map(
             dennums ->
                 map(f -> parent_ring_change(f, R_y, matching = :byindex), dennums),
@@ -57,40 +63,48 @@ mutable struct IdealMQS{PolyQQ} <: AbstractBlackboxIdeal
         Q = parent_ring_change(Q, R_y, matching = :byindex)
         @assert !(sat_varname in ystrs)
         varnames = pushfirst!(ystrs, sat_varname)
-        R_sat, v_sat = Nemo.PolynomialRing(K, varnames, ordering = ord)
-        t_sat = first(v_sat)
+        R_sat, v_sat = Nemo.PolynomialRing(K, varnames, ordering = ordering)
+        sat_index, t_sat = 1, first(v_sat)
         Q_sat = parent_ring_change(Q, R_sat)
         sat_qq = Q_sat * t_sat - 1
         nums_qq = empty(funcs_den_nums[1])
         dens_qq = empty(nums_qq)
+        dens_indices = Vector{Tuple{Int, Int}}()
+        # We construct the array of numerators nums_qq and the array of
+        # denominators dens_qq. Since the denominators are usually non-unique,
+        # we condense the array dens_qq and produce an additional array
+        # dens_indices. The element dens_indices[i] tells us the indices of the
+        # numerators that correspond to a given denominator dens_qq[i]
         for i in 1:length(funcs_den_nums)
+            # NOTE: we can remove duplicates in numerators. Check if this helps
             dennums = funcs_den_nums[i]
-            # NOTE(Alex): double-check if the generators are generated correctly 
-            # @assert length(dennums) > 1 "Strange field generators: $dennums"
+            dennums = filter(!iszero, dennums)
             den = dennums[1]
             den = parent_ring_change(den, R_sat)
-            # NOTE: remove duplicates in numerators
+            push!(dens_qq, den)
+            push!(
+                dens_indices,
+                (length(nums_qq) + 1, length(nums_qq) + length(dennums) - 1),
+            )
             for j in 2:length(dennums)
                 num = dennums[j]
                 num = parent_ring_change(num, R_sat)
-                if iszero(num)
-                    continue
-                end
                 push!(nums_qq, num)
-                push!(dens_qq, den)
             end
         end
-        parent_ring_param, _ = PolynomialRing(R, varnames, ordering = ord)
-        @info "Generated MQS ideal in $R_sat with $(length(nums_qq) + 1) elements"
+        parent_ring_param, _ = PolynomialRing(R, varnames, ordering = ordering)
+        @info "Constructed MQS ideal in $R_sat with $(length(nums_qq) + 1) elements"
         new{elem_type(R_sat)}(
             funcs_den_nums,
             nums_qq,
             dens_qq,
             sat_qq,
+            dens_indices,
             nothing,
             nothing,
             nothing,
             parent_ring_param,
+            sat_index,
         )
     end
 end
@@ -107,13 +121,11 @@ function ideal_generators_raw(mqs::IdealMQS)
 end
 
 function ParamPunPam.reduce_mod_p!(mqs::IdealMQS, ff)
-    @info "Reducing MQS ideal modulo $(ff).."
+    @info "Reducing MQS ideal modulo $(ff)"
     # TODO: check that the reduction is lucky
     nums_qq, dens_qq, sat_qq = mqs.nums_qq, mqs.dens_qq, mqs.sat_qq
-    nums_gf, dens_gf = map(
-        polys -> map(poly -> map_coefficients(c -> ff(c), poly), polys),
-        (nums_qq, dens_qq),
-    )
+    nums_gf = map(poly -> map_coefficients(c -> ff(c), poly), nums_qq)
+    dens_gf = map(poly -> map_coefficients(c -> ff(c), poly), dens_qq)
     sat_gf = map_coefficients(c -> ff(c), sat_qq)
     mqs.nums_gf = nums_gf
     mqs.dens_gf = dens_gf
@@ -124,6 +136,7 @@ end
 function ParamPunPam.evaluate_mod_p(mqs::IdealMQS, point)
     @debug "Evaluating MQS ideal at $point"
     nums_gf, dens_gf, sat_gf = mqs.nums_gf, mqs.dens_gf, mqs.sat_gf
+    dens_indices = mqs.dens_indices
     @assert !isnothing(nums_gf) && !isnothing(dens_gf) && !isnothing(sat_gf)
     K_1 = ParamPunPam.base_ring_mod_p(mqs)
     K_2 = parent(first(point))
@@ -131,16 +144,19 @@ function ParamPunPam.evaluate_mod_p(mqs::IdealMQS, point)
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
     # +1 actual variable because of the saturation!
     @assert length(point) + 1 == nvars(parent(nums_gf[1]))
-    # TODO: Assuming the saturating variable is the first one
+    # NOTE: Assuming the saturating variable is the first one
+    @assert mqs.sat_index == 1
     point_sat = vcat(one(K_1), point)
     nums_gf_spec = map(num -> evaluate(num, point_sat), nums_gf)
-    # TODO: a single denominator can be evaluated once per batch of numerators
     dens_gf_spec = map(den -> evaluate(den, point_sat), dens_gf)
     polys = Vector{typeof(sat_gf)}(undef, length(nums_gf_spec) + 1)
-    for i in 1:length(nums_gf_spec)
-        num, num_spec = nums_gf[i], nums_gf_spec[i]
+    for i in 1:length(dens_gf_spec)
         den, den_spec = dens_gf[i], dens_gf_spec[i]
-        polys[i] = num * den_spec - den * num_spec
+        span = dens_indices[i]
+        for j in span[1]:span[2]
+            num, num_spec = nums_gf[j], nums_gf_spec[j]
+            polys[j] = num * den_spec - den * num_spec
+        end
     end
     polys[end] = sat_gf
     return polys
@@ -160,6 +176,7 @@ function dennums_to_fractions(dennums::Vector{Vector{T}}) where {T}
     fractions = Vector{AbstractAlgebra.Generic.Frac{T}}()
     for dni in dennums
         den, nums = dni[1], dni[2:end]
+        isempty(nums) && continue
         append!(fractions, map(c -> c // den, nums))
     end
     return fractions
@@ -176,35 +193,75 @@ Output: an array of arrays of polynomials, as in
 `[[f1, f2, f3, ...], [g1, g2, g3, ...], ...]`
 """
 function fractions_to_dennums(fractions)
-    # NOTE: Maybe collapse similar denominators
     map(f -> [denominator(f), numerator(f)], fractions)
 end
 
-is_ratfunc_const(f) = is_constant(numerator(f)) && is_constant(denominator(f))
-is_ratfunc_normalized(f) =
-    (leading_coefficient(denominator(f)) > 0) && isone(gcd(numerator(f), denominator(f)))
+function is_rational_func_const(f)
+    is_constant(numerator(f)) && is_constant(denominator(f))
+end
 
-"""
-    ratfunc_cmp(f, g)
+function is_rational_func_normalized(f)
+    leading_coefficient(denominator(f)) > 0 && isone(gcd(numerator(f), denominator(f)))
+end
 
-Returns `f < g`.
-
-`f < g` iff the total degree of the numerator of `f` is less than that of `g`.
-Breaks ties by comparing num(f) < num(g) and den(f) < den(g) with the current
-monomial ordering.
-"""
-function ratfunc_cmp(f, g)
+function compare_rational_func_by(f, g, by::By, priority = :numerator) where {By}
+    # specializes on the type of `by`
     numf, denf = unpack_fraction(f)
     numg, deng = unpack_fraction(g)
-    total_degree(numf) < total_degree(numg) && return true
-    total_degree(numf) > total_degree(numg) && return false
-    leading_monomial(numf) < leading_monomial(numg) && return true
-    leading_monomial(numf) > leading_monomial(numg) && return false
-    leading_monomial(denf) < leading_monomial(deng) && return true
+    keynumf, keydenf = by(numf), by(denf)
+    keynumg, keydeng = by(numg), by(deng)
+    if priority === :numerator
+        keynumf < keynumg && return -1
+        keynumf > keynumg && return 1
+        keydenf < keydeng && return -1
+        keydenf > keydeng && return 1
+    elseif priority === :denominator
+        keydenf < keydeng && return -1
+        keydenf > keydeng && return 1
+        keynumf < keynumg && return -1
+        keynumf > keynumg && return 1
+    elseif priority === :additive
+        keydenf + keynumf < keynumg + keydeng && return -1
+        keydenf + keynumf > keynumg + keydeng && return 1
+    else
+        throw(DomainError("Unknown value for keyword argument priority", priority))
+    end
+    return 0
+end
+
+"""
+    rational_func_cmp(f, g)
+
+Returns `f < g`. 
+
+*This is a strict total order, which ensures the uniqueness of the sorting
+permutation.*
+
+First compare the total number of terms in the numerators and denominators.
+Break ties by comparing the total degrees of the numerators and denominators.
+Break ties by comparing the monomials of the numerators and denominators.
+"""
+function rational_func_cmp(f, g)
+    flag = compare_rational_func_by(f, g, length, :additive)
+    flag == 1 && return false
+    flag == -1 && return true
+    flag = compare_rational_func_by(f, g, total_degree)
+    flag == 1 && return false
+    flag == -1 && return true
+    flag = compare_rational_func_by(f, g, leading_monomial)
+    flag == 1 && return false
+    flag == -1 && return true
+    flag = compare_rational_func_by(f, g, collect ∘ monomials)
+    flag == 1 && return false
+    flag == -1 && return true
     return false
 end
 
-function field_generators(ode::ODE{T}, p::Float64 = 0.99; with_states::Bool = false) where {T}
+function field_generators(
+    ode::ODE{T},
+    p::Float64 = 0.99;
+    with_states::Bool = false,
+) where {T}
     @info "Computing IO-equations"
     runtime = @elapsed io_equations = find_ioequations(ode)
     @info "IO-equations computed in $runtime seconds"
@@ -216,13 +273,8 @@ function field_generators(ode::ODE{T}, p::Float64 = 0.99; with_states::Bool = fa
     if with_states
         to_check = vcat(to_check, ode.x_vars)
     end
-    runtime = @elapsed global_result = check_identifiability(
-        io_equations,
-        ode,
-        empty(ode.parameters),
-        to_check,
-        p,
-    )
+    runtime = @elapsed global_result =
+        check_identifiability(io_equations, ode, empty(ode.parameters), to_check, p)
     @info "Global identifiability assessed in $runtime seconds"
     _runtime_logger[:id_global_time] = runtime
 
@@ -232,15 +284,15 @@ function field_generators(ode::ODE{T}, p::Float64 = 0.99; with_states::Bool = fa
         end
     end
     runtime = @elapsed funcs_den_nums = extract_identifiable_functions_raw(
-        io_equations, ode, known_quantities, with_states
+        io_equations,
+        ode,
+        known_quantities,
+        with_states,
     )
     return funcs_den_nums
 end
 
-"""
-    saturate(I, Q)
-
-"""
+# Only used for debugging
 function saturate(I, Q; varname = "t", append_front = true)
     @info "Saturating the ideal, saturating variable is $varname"
     R = parent(first(I))
@@ -263,10 +315,7 @@ function saturate(I, Q; varname = "t", append_front = true)
     It, t
 end
 
-"""
-    field_to_ideal(X)
-
-"""
+# Only used for debugging
 function field_to_ideal(
     funcs_den_nums::Vector{Vector{T}};
     top_level_var = "y",
@@ -288,13 +337,6 @@ function field_to_ideal(
     Ry, ys = Nemo.PolynomialRing(R, ystrs, ordering = top_level_ord)
     Fy = map(f -> parent_ring_change(f, Ry, matching = :byindex), Fx)
     Qy = parent_ring_change(Qx, Ry, matching = :byindex)
-    # NOTE(Alex): I think we want to clean up Fx before creating the
-    # ideal. For example, it is possible that some of Fx are duplicates. Would
-    # make sense to do so in ParamPunPam.jl, but here we have an advantage that
-    # the polynomials are not constructed yet
-    #
-    # one backward gaussian elimination pass for Fx?
-    #
     I = empty(ys)
     for (Fyi, Fxi) in zip(Fy, Fx)
         Gx = gcd(Qx, Fxi)
@@ -332,11 +374,12 @@ function simplify_identifiable_functions(
     # NOTE(Alex): The algorithms highly depend on randomness, we really want to
     # fix the random seed here. Maybe provide a keyword argument in
     # find_identifiable_functions
-    @info "Computing a Groebner basis"
+    @debug "Computing a Groebner basis"
     _runtime_logger[:id_groebner_time] = 0.0
     two_sided_inclusion = false
     gb = nothing
     current_degrees = (2, 2)
+    # TODO: log also the number of iterations
     while !two_sided_inclusion
         @info "Computing GB with parameters up to degrees $(current_degrees)"
         runtime = @elapsed gb = ParamPunPam.paramgb(mqs, up_to_degree = current_degrees)
@@ -376,8 +419,8 @@ function simplify_identifiable_functions(
     @info "The coefficients of the Groebner basis are presented by $(length(id_coeffs_set)) rational functions"
     time_start = time_ns()
     id_funcs = collect(id_coeffs_set)
-    filter!(!is_ratfunc_const, id_funcs)
-    @assert all(is_ratfunc_normalized, id_funcs)
+    filter!(!is_rational_func_const, id_funcs)
+    @assert all(is_rational_func_normalized, id_funcs)
     for i in 1:length(id_funcs)
         func = id_funcs[i]
         num, den = unpack_fraction(func)
@@ -391,7 +434,7 @@ function simplify_identifiable_functions(
         end
         id_funcs[i] = func
     end
-    sort!(id_funcs, lt = ratfunc_cmp)
+    sort!(id_funcs, lt = rational_func_cmp)
     _runtime_logger[:id_filter_time] = (time_ns() - time_start) / 1e9
     @info "Functions filtered and sorted in $(_runtime_logger[:id_filter_time]) seconds"
     @info "$(length(id_funcs)) functions after simplification"
@@ -441,7 +484,6 @@ function find_identifiable_functions(
     with_states::Bool = false,
 ) where {T <: MPolyElem{fmpq}}
     runtime_start = time_ns()
-
     # TODO: Can we still provide parameter `p=0.99` here?
     runtime = @elapsed funcs_den_nums = field_generators(ode, p, with_states = with_states)
     # TODO: Check if all parameters are globally id.
@@ -473,7 +515,7 @@ function find_identifiable_functions(
     with_states::Bool = false,
     p = 0.99,
     simplify = true,
-    seed = 42
+    seed = 42,
 )
     if length(measured_quantities) == 0
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
@@ -494,7 +536,13 @@ function find_identifiable_functions(
     ode, conversion = preprocess_ode(ode, measured_quantities)
     out_funcs = Vector{Num}()
     params_ = [eval_at_nemo(each, conversion) for each in params]
-    result = find_identifiable_functions(ode, p, simplify = simplify, seed = seed, with_states = with_states)
+    result = find_identifiable_functions(
+        ode,
+        p,
+        simplify = simplify,
+        seed = seed,
+        with_states = with_states,
+    )
     nemo2mtk = Dict(params_ .=> map(Num, params))
     out_funcs = [eval_at_dict(func, nemo2mtk) for func in result]
     return out_funcs

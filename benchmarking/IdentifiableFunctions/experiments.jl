@@ -9,7 +9,7 @@ macro myprof(ex)
     VSCodeServer.view_profile(;))
 end
 
-mapk_6_out = @ODEmodel(
+mapk_6_out = StructuralIdentifiability.@ODEmodel(
     KS00'(t) =
         -a00 * K(t) * S00(t) +
         b00 * KS00(t) +
@@ -54,7 +54,7 @@ mapk_6_out = @ODEmodel(
     y5(t) = S11(t)
 )
 
-siwr = @ODEmodel(
+siwr = StructuralIdentifiability.@ODEmodel(
     S'(t) = mu - bi * S(t) * I(t) - bw * S(t) * W(t) - mu * S(t) + a * R(t),
     I'(t) = bw * S(t) * W(t) + bi * S(t) * I(t) - (gam + mu) * I(t),
     W'(t) = xi * (I(t) - W(t)),
@@ -62,7 +62,7 @@ siwr = @ODEmodel(
     y(t) = k * I(t)
 )
 
-sirs = @ODEmodel(
+sirs = StructuralIdentifiability.@ODEmodel(
     s'(t) = mu - mu * s(t) - b0 * (1 + b1 * x1(t)) * i(t) * s(t) + g * r(t),
     i'(t) = b0 * (1 + b1 * x1(t)) * i(t) * s(t) - (nu + mu) * i(t),
     r'(t) = nu * i(t) - (mu + g) * r(t),
@@ -72,7 +72,7 @@ sirs = @ODEmodel(
     y2(t) = r(t)
 )
 
-covid = @ODEmodel(
+covid = StructuralIdentifiability.@ODEmodel(
     S'(t) = -b * S(t) * (I(t) + J(t) + q * A(t)) * Ninv(t),
     E'(t) = b * S(t) * (I(t) + J(t) + q * A(t)) * Ninv(t) - k * E(t),
     A'(t) = k * (1 - r) * E(t) - g1 * A(t),
@@ -84,7 +84,7 @@ covid = @ODEmodel(
     y2(t) = Ninv(t)
 )
 
-pharm = @ODEmodel(
+pharm = StructuralIdentifiability.@ODEmodel(
     x0'(t) =
         a1 * (x1(t) - x0(t)) - (ka * n * x0(t)) / (kc * ka + kc * x2(t) + ka * x0(t)),
     x1'(t) = a2 * (x0(t) - x1(t)),
@@ -94,7 +94,7 @@ pharm = @ODEmodel(
     y1(t) = x0(t)
 )
 
-St = @ODEmodel(
+St = StructuralIdentifiability.@ODEmodel(
     S'(t) = r * S(t) - (e + a * W(t)) * S(t) - d * W(t) * S(t) + g * R(t),
     R'(t) = rR * R(t) + (e + a * W(t)) * S(t) - dr * W(t) * R(t) - g * R(t),
     W'(t) = Dd * (T - W(t)),
@@ -102,7 +102,7 @@ St = @ODEmodel(
     y2(t) = T
 )
 
-cd8 = @ODEmodel(
+cd8 = StructuralIdentifiability.@ODEmodel(
     N'(t) = -N(t) * mu_N - N(t) * P(t) * delta_NE,
     E'(t) =
         N(t) * P(t) * delta_NE - E(t)^2 * mu_EE - E(t) * delta_EL + E(t) * P(t) * rho_E,
@@ -114,7 +114,7 @@ cd8 = @ODEmodel(
     y3(t) = M(t)
 )
 
-qwwc = @ODEmodel(
+qwwc = StructuralIdentifiability.@ODEmodel(
     x'(t) = a * (y(t) - x(t)) + y(t) * z(t),
     y'(t) = b * (x(t) + y(t)) - x(t) * z(t),
     z'(t) = -c * z(t) - d * w(t) + x(t) * y(t),
@@ -122,7 +122,7 @@ qwwc = @ODEmodel(
     g(t) = x(t)
 )
 
-fujita = @ODEmodel(
+fujita = StructuralIdentifiability.@ODEmodel(
     EGFR'(t) =
         -reaction_1_k1 * EGF_EGFR(t) + reaction_1_k2 * EGF_EGFR(t) -
         EGFR(t) * EGFR_turnover + EGFR_turnover * pro_EGFR(t),
@@ -157,7 +157,7 @@ fujita = @ODEmodel(
     y3(t) = pS6(t) * a3
 )
 
-Bilirubin2_io = @ODEmodel(
+Bilirubin2_io = StructuralIdentifiability.@ODEmodel(
     x1'(t) =
         -(k21 + k31 + k41 + k01) * x1(t) + k12 * x2(t) + k13 * x3(t) + k14 * x4(t) + u(t),
     x2'(t) = k21 * x1(t) - k12 * x2(t),
@@ -172,42 +172,9 @@ ParamPunPam = StructuralIdentifiability.ParamPunPam
 
 @time StructuralIdentifiability.find_identifiable_functions(fujita)
 
-@time StructuralIdentifiability.find_identifiable_functions(Bilirubin2_io)
+@time StructuralIdentifiability.find_identifiable_functions(covid)
 
-#=
- Info: The total degrees in the coefficients
-│   state.param_degrees =
-│    8-element Vector{Vector{Tuple{Int64, Int64}}}:
-│     [(0, 0), (1, 0), (2, 0), (3, 0)]
-│     [(0, 0), (0, 0), (1, 0), (2, 0)]
-│     [(0, 0), (0, 0), (1, 0), (2, 0), (1, 0), (2, 0), (3, 0)]
-│     [(0, 0), (0, 0), (0, 0), (1, 0), (2, 0)]
-│     [(0, 0), (0, 0), (1, 0), (2, 0), (1, 0), (2, 0), (3, 0)]
-│     [(0, 0), (0, 0), (1, 0), (2, 0), (1, 0), (2, 0), (3, 0)]
-│     [(0, 0), (1, 0)]
-└     [(0, 0), (0, 3)]
-
-┌ Info: The total degrees in the coefficients
-│   state.param_degrees =
-│    13-element Vector{Vector{Tuple{Int64, Int64}}}:
-│     [(0, 0), (0, 0), (0, 0), (1, 0)]
-│     [(0, 0), (0, 0), (0, 0), (1, 0)]
-│     [(0, 0), (1, 0)]
-│     [(0, 0), (0, 3)]
-│     [(0, 0), (0, 0), (1, 0), (2, 0)]
-│     [(0, 0), (1, 0), (1, 0), (2, 0)]
-│     [(0, 0), (1, 0), (0, 0), (1, 0), (2, 0)]
-│     [(0, 0), (1, 0), (0, 0), (2, 0)]
-│     [(0, 0), (0, 0), (1, 0), (1, 0), (2, 0)]
-│     [(0, 0), (0, 0), (1, 0), (1, 0), (1, 0), (1, 0), (1, 0)]
-│     [(0, 0), (0, 0), (1, 0), (0, 0), (2, 0)]
-│     [(0, 0), (0, 0), (1, 0), (1, 0), (1, 0), (2, 0)]
-└     [(0, 0), (1, 0), (0, 0), (0, 0), (2, 0)]
-=#
-
-@myprof find_identifiable_functions(fujita)
-
-@time StructuralIdentifiability.find_identifiable_functions(Bilirubin2_io)
+@myprof StructuralIdentifiability.find_identifiable_functions(covid)
 
 fg = StructuralIdentifiability.field_generators(siwr);
 id = StructuralIdentifiability.field_to_ideal(fg);
