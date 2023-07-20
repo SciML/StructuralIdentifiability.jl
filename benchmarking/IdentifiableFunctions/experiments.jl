@@ -166,11 +166,21 @@ Bilirubin2_io = StructuralIdentifiability.@ODEmodel(
     y1(t) = x1(t)
 )
 
+# PK1 
+pk1 = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = u1(t)-(k1+k2)*x1(t),
+    x2'(t) = k1*x1(t)-(k3+k6+k7)*x2(t)+k5*x4(t),
+    x3'(t) = k2*x1(t)+k3*x2(t)-k4*x3(t),
+    x4'(t) = k6*x2(t)-k5*x4(t),
+    y1(t) = s2*x2(t),
+    y2(t) = s3*x3(t)
+)
+
 using Nemo
 Groebner = StructuralIdentifiability.Groebner
 ParamPunPam = StructuralIdentifiability.ParamPunPam
 
-@time StructuralIdentifiability.find_identifiable_functions(fujita)
+@time StructuralIdentifiability.find_identifiable_functions(siwr)
 
 @time StructuralIdentifiability.find_identifiable_functions(covid)
 
@@ -183,7 +193,7 @@ mqs = StructuralIdentifiability.IdealMQS(fg);
 p = Nemo.GF(2^31 - 1)
 StructuralIdentifiability.ParamPunPam.reduce_mod_p!(mqs, p)
 point = rand(p, length(Nemo.gens(StructuralIdentifiability.ParamPunPam.parent_params(mqs))))
-mqs_spec = StructuralIdentifiability.ParamPunPam.evaluate_mod_p(mqs, point);
+mqs_spec = StructuralIdentifiability.ParamPunPam.specialize_mod_p(mqs, point);
 
 @time graph1, gb = Groebner.groebner_learn(mqs_spec, loglevel = -3);
 @time graph2, gb_2 = Groebner.groebner_learn(mqs_spec, loglevel = 0, sweep = true);

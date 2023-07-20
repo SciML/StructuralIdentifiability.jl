@@ -16,9 +16,28 @@
         assess_identifiability(de; measured_quantities = [(y1 ~ x0).rhs]),
     )
 
-    # TODO: uncomment when simplification is done.
-    # correct = [a01 * a12, a01 + a12 + a12]
-    # @test isequal(correct, find_identifiable_functions(de; measured_quantities = [y1 ~ x0]))
+    # check identifiabile functions
+    correct = [a01 * a12, a01 + a12 + a21]
+    result = find_identifiable_functions(de, measured_quantities = [y1 ~ x0])
+    @test isequal(correct, result)
+
+    # --------------------------------------------------------------------------
+
+    # check identifiabile functions
+    @parameters V_m k_m k01 c
+    @variables t x(t) y1(t) [output = true]
+    D = Differential(t)
+
+    eqs = [D(x) ~ (-V_m * x) / (k_m + x) + k01 * x, y1 ~ c * x]
+    de = ODESystem(eqs, t, name = :Test)
+
+    correct = [k01, V_m * c, k_m / V_m]
+    result = find_identifiable_functions(de)
+    @test isequal(correct, result)
+
+    correct = [k01, c*x, k_m*c + c*x, V_m / x]
+    result = find_identifiable_functions(de, with_states=true)
+    @test isequal(correct, result)
 
     # --------------------------------------------------------------------------
     @parameters a01 a21 a12
@@ -124,6 +143,11 @@
             type = :ME,
         ),
     )
+
+    # checking identifiabile functions
+    correct = [a, bw, χ, bi, k, γ, μ]
+    result = find_identifiable_functions(de, measured_quantities = measured_quantities)
+    @test isequal(correct, result) 
 
     # --------------------------------------------------------------------------
     @parameters mu bi bw a xi gm k
@@ -248,6 +272,12 @@
             funcs_to_check = to_check,
         ),
     )
+
+    # check identifiabile functions
+    result = find_identifiable_functions(de, measured_quantities=measured_quantities)
+    correct = [a, b, c^2]
+    @test isequal(result, correct)
+
     # ----------
     @parameters a b
     @variables t c(t) x1(t) x2(t) y1(t) y2(t)
@@ -324,6 +354,9 @@
     measured_quantities = [w ~ x]
     result = assess_identifiability(sys, measured_quantities = measured_quantities)
     @test result[a] == :globally
+
+    result = find_identifiable_functions(sys, measured_quantities = measured_quantities)
+    @test isequal(result, [a])
 
     #----------------------------------
 

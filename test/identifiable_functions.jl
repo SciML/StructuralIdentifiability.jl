@@ -8,24 +8,18 @@
     # simplified set
     test_cases = []
 
-    # TODO: uncomment when global identifiability can handle states.
-    # ode = StructuralIdentifiability.@ODEmodel(x'(t) = x(t), y(t) = x(t))
-    # T = typeof(x)
-    # ident_funcs = Vector{AbstractAlgebra.Generic.Frac{T}}()
-    # push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
-
     ode = StructuralIdentifiability.@ODEmodel(x'(t) = a * x(t) + u(t), y(t) = x(t))
     ident_funcs = [a]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     # Parameter a is not identifiable, and neither are any combinations thereof.
-
     ode = StructuralIdentifiability.@ODEmodel(
         x1'(t) = x2(t) - a,
         x2'(t) = x1(t) + a,
         y(t) = x1(t) + x2(t)
     )
-    ident_funcs = Vector{StructuralIdentifiability.AbstractAlgebra.Generic.Frac{typeof(x1)}}()
+    ident_funcs =
+        Vector{StructuralIdentifiability.AbstractAlgebra.Generic.Frac{typeof(x1)}}()
 
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
@@ -45,12 +39,12 @@
         x'(t) = (-V_m * x(t)) / (k_m + x(t)) + k01 * x(t),
         y(t) = c * x(t)
     )
-    ident_funcs = [k01, k_m // V_m, V_m * c // one(V_m)]
+    ident_funcs = [k01, k_m // V_m, V_m * c]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     # Parameters b and c enter the io equations only as the product b * c.
     ode = StructuralIdentifiability.@ODEmodel(x'(t) = a * x(t) + b * u(t), y(t) = c * x(t))
-    ident_funcs = [b * c // one(b), a // one(a)]
+    ident_funcs = [b * c, a]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     # 2-compartiment model
@@ -62,7 +56,7 @@
     ident_funcs = [(a01 * a12), (a01 + a12 + a21)]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
-    # TODO: uncomment when identifiability can handle zero states 
+    # TODO: uncomment when identifiability can handle nos states 
     # ode = StructuralIdentifiability.@ODEmodel(
     #     y(t) = a*u(t)
     # )
@@ -118,17 +112,7 @@
         x3'(t) = -b2 * x3(t) + a2 * x2(t) + u(t),
         y(t) = x1(t)
     )
-    ident_funcs = [b1 * b2, a1 + a2 + b1 + b2, a1 * a2 + a1 * b2 + b1 * b2]
-    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
-
-    # 
-    ode = StructuralIdentifiability.@ODEmodel(
-        x1'(t) = -a1 * x1(t) + b1 * x2(t),
-        x2'(t) = -(a2 + b1) * x2(t) + a1 * x1(t) + b2 * x3(t),
-        x3'(t) = -b2 * x3(t) + a2 * x2(t) + u(t),
-        y(t) = x1(t)
-    )
-    ident_funcs = [b1 * b2, a1 + a2 + b1 + b2, a1 * a2 + a1 * b2 + b1 * b2]
+    ident_funcs = [b1 * b2, a1 + a2 + b1 + b2, a1 * a2 + a1 * b2]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     # Example 3 from
@@ -179,7 +163,9 @@
     ident_funcs = [gamma, beta // psi, gamma * psi - v - psi, gamma * psi - v * psi]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
-    # Bilirubin2_io
+    # Bilirubin2_io.
+    # Regression test: failed before, as the total degrees were being estimated
+    # incorrectly in the interpolation
     ode = StructuralIdentifiability.@ODEmodel(
         x1'(t) =
             -(k21 + k31 + k41 + k01) * x1(t) +
@@ -192,20 +178,102 @@
         x4'(t) = k41 * x1(t) - k14 * x4(t),
         y1(t) = x1(t)
     )
+    # TODO
     # ident_funcs = [k01, k31 + k21 + k41, k31 * k21 * k41, k31 * k21 + k31 * k41 + k21 * k41]
     # push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    # Biohydrogenation_io
+    ode = StructuralIdentifiability.@ODEmodel(
+        x5'(t) =
+            (
+                k5 * k8 * x4(t) + k5 * x6(t) * x4(t) + k5 * x5(t) * x4(t) -
+                k6 * x5(t) * k7 - x5(t) * k7 * x4(t)
+            ) // (
+                k8 * k6 +
+                k8 * x4(t) +
+                k6 * x6(t) +
+                k6 * x5(t) +
+                x6(t) * x4(t) +
+                x5(t) * x4(t)
+            ),
+        x7'(t) = (k9 * k10 * x6(t) - k9 * x6(t)^2) // k10,
+        x4'(t) = (-k5 * x4(t)) // (k6 + x4(t)),
+        x6'(t) =
+            (
+                -k8 * k9 * k10 * x6(t) + k8 * k9 * x6(t)^2 - k9 * k10 * x6(t)^2 -
+                k9 * k10 * x6(t) * x5(t) +
+                k9 * x6(t)^3 +
+                k9 * x6(t)^2 * x5(t) +
+                k10 * x5(t) * k7
+            ) // (k8 * k10 + k10 * x6(t) + k10 * x5(t)),
+        y1(t) = x4(t),
+        y2(t) = x5(t)
+    )
+    # TODO: simplify?
+    #   k9 // k10, k10^2
+    # into
+    #   k9 * k10, k10^2
+    ident_funcs = [k7, k6, k5, k9 // k10, k10^2, k8 + 1 // 2 * k10]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    # SLIQR
+    ode = StructuralIdentifiability.@ODEmodel(
+        S'(t) = -b * In(t) * S(t) * Ninv - S(t) * Ninv * u(t),
+        In'(t) = -In(t) * g + s * Q(t) + a * L(t),
+        L'(t) = b * In(t) * S(t) * Ninv - a * L(t),
+        Q'(t) = -e * In(t) * g + In(t) * g - s * Q(t),
+        y(t) = In(t) * Ninv
+    )
+    ident_funcs = [
+        g + a,
+        s + g + a,
+        s,
+        Ninv,
+        b,
+        (e * s - s + a) // (e * s^2 * g - s^2 * g - s^2 * a + s * g * a + s * a^2),
+        e * s * g + s * a + g * a,
+        (e * s^2 + e * s * g - s^2 - s * g + g * a + a^2) //
+        (e * s^2 * g - s^2 * g - s^2 * a + s * g * a + s * a^2),
+        e * s * g * a,
+        2 * e * Ninv * s * g + 2 * Ninv * s * a + 2 * Ninv * g * a,
+    ]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    # St.
+    # Regression test:
+    # Failed before, as the degrees of Groebner basis were too large
+    ode = StructuralIdentifiability.@ODEmodel(
+        S'(t) = -e * S(t) - S(t) * d * W(t) + S(t) * r - S(t) * a * W(t) + R(t) * g,
+        R'(t) = e * S(t) + rR * R(t) + S(t) * a * W(t) - dr * R(t) * W(t) - R(t) * g,
+        W'(t) = T * Dd - W(t) * Dd,
+        y1(t) = S(t) + R(t),
+        y2(t) = T
+    )
+    ident_funcs = [
+        T,
+        Dd,
+        e - rR + dr * T + d * T + g - r + a * T,
+        (2 * rR * d - 2 * dr * r) // (dr - d),
+        (dr^2 + d^2 + 2 * d * a + a^2) // (dr * d + dr * a),
+        (e * dr - e * d + rR * a + dr * g - d * g - r * a) // (dr - d),
+        (e * dr^2 - e * dr * d + rR * dr * a + dr * d * g - dr * r * a - d^2 * g) //
+        (dr^2 + dr * a - d^2 - d * a),
+    ]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     p = 0.99
     for case in test_cases
         ode = case.ode
         true_ident_funcs = case.ident_funcs
         result_funcs = StructuralIdentifiability.find_identifiable_functions(ode)
-        result_dennums = StructuralIdentifiability.fractions_to_dennums(result_funcs)
+        result_funcs_non_simplified =
+            StructuralIdentifiability.find_identifiable_functions(ode, simplify = false)
+
         if isempty(true_ident_funcs)
             @test isempty(result_funcs)
             continue
         end
-        R = parent(result_dennums[1][1])
+        R = parent(numerator(result_funcs[1]))
         true_ident_funcs = map(f -> f // one(f), true_ident_funcs)
         true_ident_funcs = map(
             f ->
@@ -213,17 +281,143 @@
                 StructuralIdentifiability.parent_ring_change(denominator(f), R),
             true_ident_funcs,
         )
-        true_dennums = StructuralIdentifiability.fractions_to_dennums(true_ident_funcs)
+
         # Check inclusion <true funcs> in <result funcs>
         inclusion = StructuralIdentifiability.check_field_membership(
-            result_dennums,
+            result_funcs,
             true_ident_funcs,
             p,
         )
         @test all(inclusion)
-        # Check inclusion <new funcs> in <true funcs>
-        inclusion =
-            StructuralIdentifiability.check_field_membership(true_dennums, result_funcs, p)
+
+        # Check inclusion <result funcs> in <result funcs non simplified>
+        # inclusion = StructuralIdentifiability.check_field_membership(
+        #     result_funcs_non_simplified,
+        #     result_funcs,
+        #     p,
+        # )
+        # @test all(inclusion)
+
+        # Check inclusion <result funcs non simplified> in <true funcs>
+        # inclusion = StructuralIdentifiability.check_field_membership(
+        #     true_ident_funcs,
+        #     result_funcs_non_simplified,
+        #     p,
+        # )
+        # @test all(inclusion)
+
+        # Check inclusion <result funcs> in <true funcs>
+        inclusion = StructuralIdentifiability.check_field_membership(
+            true_ident_funcs,
+            result_funcs,
+            p,
+        )
+        @test all(inclusion)
+    end
+end
+
+@testset "Identifiable functions of states" begin
+    test_cases = []
+
+    # TODO: uncomment when this is handled!
+    # ode = StructuralIdentifiability.@ODEmodel(x'(t) = x(t), y(t) = x(t))
+    # T = typeof(x)
+    # ident_funcs = [x]
+    # push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    ode = StructuralIdentifiability.@ODEmodel(x'(t) = a * x(t) + u(t), y(t) = x(t))
+    ident_funcs = [a, x]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    ode = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = a * x1(t) - b * x1(t) * x2(t),
+        x2'(t) = -c * x2(t) + d * x1(t) * x2(t),
+        y(t) = x1(t)
+    )
+    ident_funcs = [x1, c, d, a, b*x2]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    ode = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = a * x1(t) - b * x1(t) * x2(t),
+        x2'(t) = -c * x2(t) + d * x1(t) * x2(t),
+        y(t) = x1(t)
+    )
+    ident_funcs = [x1, c, d, a, b*x2]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    # Diagonal with simple spectrum and observable states
+    ode = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = λ1 * x1(t) + β1 * u1(t),
+        x2'(t) = λ2 * x2(t) + β2 * u2(t),
+        x3'(t) = λ3 * x3(t) + β3 * u3(t),
+        y(t) = x1(t) + x2(t) + x3(t)
+    )
+    ident_funcs = [λ1, λ2, λ3, β1, β2, β3, x1, x2, x3]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    ode = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = x1(t) + Θ * x2(t),
+        x2'(t) = 0,
+        y(t) = x1(t)
+    )
+    ident_funcs = [x1, x2 * Θ]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    ode = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = α * x2(t),
+        x2'(t) = x3(t),
+        x3'(t) = C,
+        y(t) = x1(t)
+    )
+    ident_funcs = [x1, α * x2, α * x3, α * C]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    ode = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = α*(x1 - x2),
+        x2'(t) = α*(x1 + x2),
+        y(t) = (x1^2 + x2^2) // 2,
+    )
+    ident_funcs = [α, x1^2 + x2^2]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    ode = StructuralIdentifiability.@ODEmodel(x'(t) = a * x(t) + b * u(t), y(t) = c * x(t))
+    ident_funcs = [b * c, a, x//b]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    p = 0.99
+    for case in test_cases
+        ode = case.ode
+        true_ident_funcs = case.ident_funcs
+        result_funcs =
+            StructuralIdentifiability.find_identifiable_functions(ode, with_states = true)
+
+        if isempty(true_ident_funcs)
+            @test isempty(result_funcs)
+            continue
+        end
+        R = parent(numerator(result_funcs[1]))
+        true_ident_funcs = map(f -> f // one(f), true_ident_funcs)
+        true_ident_funcs = map(
+            f ->
+                StructuralIdentifiability.parent_ring_change(numerator(f), R) //
+                StructuralIdentifiability.parent_ring_change(denominator(f), R),
+            true_ident_funcs,
+        )
+
+        # Check inclusion <true funcs> in <result funcs>
+        inclusion = StructuralIdentifiability.check_field_membership(
+            result_funcs,
+            true_ident_funcs,
+            p,
+        )
+        @test all(inclusion)
+
+        # Check inclusion <result funcs> in <true funcs>
+        inclusion = StructuralIdentifiability.check_field_membership(
+            true_ident_funcs,
+            result_funcs,
+            p,
+        )
         @test all(inclusion)
     end
 end

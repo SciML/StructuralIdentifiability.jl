@@ -1,93 +1,72 @@
+⌜ # Computing specializations..  	 Time: 0:00:04[K✓ # Computing specializations..  	 Time: 0:00:04[K
+⌜ # Computing specializations.. 	 Time: 0:00:01[K
+  Points:  13[K[K[A✓ # Computing specializations.. 	 Time: 0:00:01[K
 ┌ Info: Processing SIWR with extra output
-└ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:54
+└ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:63
 ┌ Info: Computing IO-equations
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:269
-┌ Info: IO-equations computed in 3.220264016 seconds
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:271
-┌ Info: Assessing global identifiability
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:274
-┌ Info: Global identifiability assessed in 0.090050287 seconds
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:281
-┌ Info: Simplifying identifiable functions
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:382
-┌ Info: Recording the ideal generators in Multivariate Polynomial Ring in 7 variables bi, gam, mu, bw, ..., a over Rational Field
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:40
-┌ Info: Saturating variable if t
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:44
+┌ Info: IO-equations computed in 3.00815671 seconds
 └ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:46
-┌ Info: Generated MQS ideal in Multivariate Polynomial Ring in 8 variables t, y1, y2, y3, ..., y7 over Rational Field with 142 elements
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:84
-┌ Info: Differential ideal created in 0.026123832 seconds
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:384
-┌ Info: Computing a Groebner basis
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:393
-┌ Info: Computing GB with parameters up to degrees (2, 2)
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:399
-┌ Info: Computing parametric GB
-│   up_to_degree = (2, 2)
-│   rational_interpolator = ParamPunPam.VanDerHoevenLecerf()
-│   polynomial_interpolator = primes_benortiwari
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:45
+┌ Info: Assessing global identifiability
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:54
+┌ Info: Global identifiability assessed in 0.052506682 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:64
+┌ Info: Simplifying identifiable functions
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:325
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering: degrevlex
+│ Estimate degrees: true
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:57
 ┌ Info: Given 142 functions in Rational Field(bi, gam, mu, bw, k, xi, a)[t, y1, y2, y3, y4, y5, y6, y7]
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/groebnerstate.jl:23
-┌ Info: Specializing at 1 + 2 random points to guess the basis shape..
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:90
-┌ Info: Reducing MQS ideal modulo Galois field with characteristic 4611686018427388073..
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:110
-┌ Info: The shape of the basis is: 8 polynomials with monomials
-│   state.shape = Vector{Nemo.gfp_mpoly}[[y7, 1], [y6, 1], [y5, 1], [y4, 1], [y3, 1], [y2, 1], [y1, 1], [t, 1]]
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:114
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/groebnerstate.jl:24
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:122
 ┌ Info: Specializing at random points to guess the total degrees in parameters..
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:121
-┌ Info: Using 6 points..
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:156
-┌ Info: Using 10 points..
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:156
-┌ Info: Using 18 points..
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:156
-┌ Info: Using 34 points..
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:156
-┌ Info: Using 66 points..
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:156
-┌ Info: Success! 66 points used.
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:192
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:169
+┌ Info: Success! 34 points used.
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:252
 ┌ Info: The total degrees in the coefficients
-│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (0, 12)]]
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:193
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (0, 3)]]
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:253
 ┌ Info: Interpolating the exponents in parameters..
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:203
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:263
 ┌ Info: Interpolating for degrees:
-│ numerator 1, denominator 3
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:240
-┌ Info: Using 12 points..
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:246
+│ Numerator: 1, Denominator: 3
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:311
 ┌ Info: Success! 12 points used.
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:288
-┌ Info: Output summary:
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:388
+┌ Info: Basis exponents summary:
 │     Maximal interpolated degrees are: 1 for num. and 0 for den.
 │     Maximal number of interpolated terms are: 1 for num. and 1 for den.
 │     
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:293
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:393
 ┌ Info: Recovering the coefficients..
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:301
-┌ Info: Success! Used 1 prime in total :)
-└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:325
-┌ Info: Groebner basis computed in 1.307054692 seconds
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:402
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:401
+┌ Info: Success! Used 1 prime in total
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:426
+┌ Info: Groebner basis computed in 0.377873382 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:337
 ┌ Info: Identifiable functions up to degrees (2, 2) are
 │   id_funcs = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[-bi, -bw, 1, -xi, -mu, -a, -k, -gam]
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:410
-┌ Info: Checking two-sided inclusion with probability 0.99
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:411
-┌ Info: Inclusion checked in 4.052103749 seconds
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:421
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:341
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:342
+┌ Info: Inclusion checked in 0.059272051 seconds. Result: true
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:352
 ┌ Info: The coefficients of the Groebner basis are presented by 8 rational functions
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:434
-┌ Info: Functions filtered and sorted in 0.000149521 seconds
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:454
-┌ Info: 7 functions after simplification
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:455
-┌ Info: The search for identifiable functions concluded in 9.229545018 seconds
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:510
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:356
+┌ Info: Functions filtered in 0.026071534 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:363
+┌ Info: Checking inclusion with probability 0.99
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:364
+┌ Info: Inclusion checked in 0.043768139 seconds. Result: true
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:368
+┌ Info: Out of 141 initial generators there are 7 non redundant
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:374
+┌ Info: The search for identifiable functions concluded in 4.076054278 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:83
 ┌ Info: Identifiable functions are
 │   funcs = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[a, xi, k, bw, mu, gam, bi]
-└ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:59
+└ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:69
