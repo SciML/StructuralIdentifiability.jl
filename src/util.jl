@@ -307,37 +307,41 @@ Output:
 - dictionary with keys being tuples of length `lenght(variables)` and values being polynomials in the variables other than those which are the coefficients at the corresponding monomials (in a smaller polynomial ring)
 """
 function extract_coefficients(poly::P, variables::Array{P, 1}) where {P <: MPolyElem}
-    var_to_ind = Dict((v, findfirst(e -> (e == v), gens(parent(poly)))) for v in variables)
-    indices = [var_to_ind[v] for v in variables]
     xs = gens(parent(poly))
-    coeff_vars = filter(
-        v -> !(var_to_str(v, xs = xs) in map(vv -> var_to_str(vv, xs = xs), variables)),
-        xs,
-    )
-    new_ring, new_vars = Nemo.PolynomialRing(
-        base_ring(parent(poly)),
-        map(vv -> var_to_str(vv, xs = xs), coeff_vars),
-    )
+    @assert all(in(xs), variables)
+    cut_indices = map(v -> findfirst(x -> x == v, xs), variables)
+    coeff_indices = setdiff(collect(1:length(xs)), cut_indices)
+    coeff_vars = xs[coeff_indices]
+
+    K = base_ring(parent(poly))
+    new_ring, _ = Nemo.PolynomialRing(K, map(vv -> var_to_str(vv, xs = xs), coeff_vars))
+    FieldType = elem_type(K)
+
+    coeff_var_to_ind = []
     coeff_var_to_ind = Dict((v, findfirst(e -> (e == v), xs)) for v in coeff_vars)
-    FieldType = typeof(one(base_ring(new_ring)))
 
-    result = Dict{Array{Int, 1}, Dict{Array{Int, 1}, FieldType}}()
+    result = Dict{Vector{Int}, Tuple{Vector{Vector{Int}}, Vector{FieldType}}}()
 
-    coeff_var_to_ind_precomputed =
-        [coeff_var_to_ind[coeff_vars[i]] for i in 1:length(coeff_vars)]
-    for (monom, coef) in zip(exponent_vectors(poly), coefficients(poly))
-        var_slice = [monom[i] for i in indices]
+    @inbounds for i in 1:length(poly)
+        coef = coeff(poly, i)
+        evec = exponent_vector(poly, i)
+        var_slice = [evec[i] for i in cut_indices]
         if !haskey(result, var_slice)
-            result[var_slice] = Dict{Array{Int, 1}, FieldType}()
+            monom_vect, coef_vect = Vector{Vector{Int}}(), Vector{FieldType}()
+            sizehint!(monom_vect, 8)
+            sizehint!(coef_vect, 8)
+            result[var_slice] = (monom_vect, coef_vect)
         end
-        new_monom = [0 for _ in 1:length(coeff_vars)]
+        monom_vect, coef_vect = result[var_slice]
+        new_monom = Vector{Int}(undef, length(coeff_vars))
         for i in 1:length(new_monom)
-            new_monom[i] = monom[coeff_var_to_ind_precomputed[i]]
+            new_monom[i] = evec[coeff_indices[i]]
         end
-        result[var_slice][new_monom] = coef
+        push!(monom_vect, new_monom)
+        push!(coef_vect, coef)
     end
 
-    return Dict(k => dict_to_poly(v, new_ring) for (k, v) in result)
+    return Dict(k => new_ring(v[2], v[1]) for (k, v) in result)
 end
 
 # ------------------------------------------------------------------------------
