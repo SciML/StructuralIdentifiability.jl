@@ -74,6 +74,9 @@ function find_identifiable_functions(
     end
     id_funcs = vcat(identifiable_functions_raw, known_quantities)
     if simplify
+        if isempty(id_funcs)
+            id_funcs = [one(bring)]
+        end
         id_funcs_fracs =
             simplified_generating_set(RationalFunctionField(id_funcs), p = p, seed = seed)
     else

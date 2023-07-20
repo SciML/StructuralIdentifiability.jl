@@ -92,6 +92,9 @@ function check_field_membership(generators, rat_funcs, p)
         # TODO: RationalFunctionField of empty set is an error currently
         return fill(false, length(rat_funcs))
     end
+    if isempty(rat_funcs)
+        return Bool[]
+    end
     check_field_membership(
         RationalFunctionField(generators),
         RationalFunctionField(rat_funcs),
@@ -115,6 +118,13 @@ Output:
    the i-th function belongs to ``F``
 """
 function check_field_membership_mod_p(generators, rat_funcs)
+    if isempty(generators)
+        # TODO: RationalFunctionField of empty set is an error currently
+        return fill(false, length(rat_funcs))
+    end
+    if isempty(rat_funcs)
+        return Bool[]
+    end
     check_field_membership_mod_p!(
         RationalFunctionField(generators),
         RationalFunctionField(rat_funcs),

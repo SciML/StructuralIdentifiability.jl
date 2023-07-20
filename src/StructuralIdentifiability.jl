@@ -44,7 +44,11 @@ export PBRepresentation, diffreduce, io_switch!, pseudodivision
 export find_submodels
 
 # would be great to merge with the Julia logger
-const _runtime_logger = Dict()
+const _runtime_logger = Dict(
+    :id_uncertain_factorization => 0.0,
+    :id_primality_evaluate => 0.0,
+    :id_certain_factors => [],
+)
 
 include("util.jl")
 include("power_series_utils.jl")
