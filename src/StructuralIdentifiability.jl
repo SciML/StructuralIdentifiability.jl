@@ -2,19 +2,20 @@ module StructuralIdentifiability
 
 # General purpose packages
 using Base.Iterators
+using DataStructures
 using Dates
 using IterTools
 using LinearAlgebra
 using Logging
 using MacroTools
 using Primes
-using DataStructures
 
 # Algebra packages
 using AbstractAlgebra
 using Nemo
 using Groebner
 using ParamPunPam
+using ParamPunPam: reduce_mod_p!, specialize_mod_p
 
 using ModelingToolkit
 
@@ -55,6 +56,8 @@ include("elimination.jl")
 include("primality_check.jl")
 include("io_equation.jl")
 include("states.jl")
+include("RationalFunctionFields/IdealMQS.jl")
+include("RationalFunctionFields/RationalFunctionField.jl")
 include("global_identifiability.jl")
 include("identifiable_functions.jl")
 include("lincomp.jl")
@@ -62,15 +65,21 @@ include("pb_representation.jl")
 include("submodels.jl")
 include("discrete.jl")
 
+# TODO: error/warn if there are no outputs in the ODEmodel
+# TODO: error if there are two or more equations on the same internal variable
+# in the ODEmodel
+# TODO: print equations in ODEmodel in the order they were given in the macro
+# TODO: handle finding identifiabile functions in case there are no parameters
+
 """
     assess_identifiability(ode::ODE{P}, p::Float64=0.99) where P <: MPolyElem{fmpq}
+
 Input:
 - `ode` - the ODE model
 - `p` - probability of correctness.
 
 Assesses identifiability (both local and global) of a given ODE model (parameters detected automatically). The result is guaranteed to be correct with the probability
 at least `p`.
-
 """
 function assess_identifiability(ode::ODE{P}, p::Float64 = 0.99) where {P <: MPolyElem{fmpq}}
     result = assess_identifiability(ode, vcat(ode.parameters, ode.x_vars), p)
@@ -143,6 +152,7 @@ end
 
 """
     assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], p = 0.99)
+
 Input:
 - `ode` - the ModelingToolkit.ODESystem object that defines the model
 - `measured_quantities` - the output functions of the model
@@ -151,7 +161,6 @@ Input:
 
 Assesses identifiability (both local and global) of a given ODE model (parameters detected automatically). The result is guaranteed to be correct with the probability
 at least `p`.
-
 """
 function assess_identifiability(
     ode::ModelingToolkit.ODESystem;
@@ -159,20 +168,8 @@ function assess_identifiability(
     funcs_to_check = [],
     p = 0.99,
 )
-    if length(measured_quantities) == 0
-        if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
-            @info "Measured quantities are not provided, trying to find the outputs in input ODE."
-            measured_quantities = filter(
-                eq -> (ModelingToolkit.isoutput(eq.lhs)),
-                ModelingToolkit.equations(ode),
-            )
-        else
-            throw(
-                error(
-                    "Measured quantities (output functions) were not provided and no outputs were found.",
-                ),
-            )
-        end
+    if isempty(measured_quantities)
+        measured_quantities = get_measured_quantities(ode)
     end
     if length(funcs_to_check) == 0
         funcs_to_check = ModelingToolkit.parameters(ode)

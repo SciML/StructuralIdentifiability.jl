@@ -77,6 +77,49 @@ function simplify_frac(numer::P, denom::P) where {P <: MPolyElem}
     return sub_numer, sub_denom
 end
 
+function is_rational_func_const(f)
+    is_constant(numerator(f)) && is_constant(denominator(f))
+end
+
+function is_rational_func_normalized(f)
+    leading_coefficient(denominator(f)) > 0 && isone(gcd(numerator(f), denominator(f)))
+end
+
+"""
+    compare_rational_func_by(f, g, by)
+
+Returns 
+- `-1` if `f < g`,
+- `0` if `f = g`, and 
+- `1` if `f > g`.
+
+Functions' numerators and denominators are compared using `by`.
+"""
+function compare_rational_func_by(f, g, by::By, priority = :numerator) where {By}
+    # Specializes on the type of `by`
+    numf, denf = unpack_fraction(f)
+    numg, deng = unpack_fraction(g)
+    keynumf, keydenf = by(numf), by(denf)
+    keynumg, keydeng = by(numg), by(deng)
+    if priority === :numerator
+        keynumf < keynumg && return -1
+        keynumf > keynumg && return 1
+        keydenf < keydeng && return -1
+        keydenf > keydeng && return 1
+    elseif priority === :denominator
+        keydenf < keydeng && return -1
+        keydenf > keydeng && return 1
+        keynumf < keynumg && return -1
+        keynumf > keynumg && return 1
+    elseif priority === :additive
+        keydenf + keynumf < keynumg + keydeng && return -1
+        keydenf + keynumf > keynumg + keydeng && return 1
+    else
+        throw(DomainError("Unknown value for keyword argument priority", priority))
+    end
+    return 0
+end
+
 # ------------------------------------------------------------------------------
 
 """
@@ -229,7 +272,8 @@ end
 # ------------------------------------------------------------------------------
 
 function fast_factor(poly::MPolyElem{fmpq})
-    prelim_factors = uncertain_factorization(poly)
+    runtime = @elapsed prelim_factors = uncertain_factorization(poly)
+    _runtime_logger[:id_uncertain_factorization] += runtime
     cert_factors = map(pair -> pair[1], filter(f -> f[2], prelim_factors))
     uncert_factors = map(pair -> pair[1], filter(f -> !f[2], prelim_factors))
     for p in uncert_factors
@@ -237,6 +281,7 @@ function fast_factor(poly::MPolyElem{fmpq})
             push!(cert_factors, f[1])
         end
     end
+    push!(_runtime_logger[:id_certain_factors], cert_factors)
     return cert_factors
 end
 
@@ -278,7 +323,8 @@ function extract_coefficients(poly::P, variables::Array{P, 1}) where {P <: MPoly
 
     result = Dict{Array{Int, 1}, Dict{Array{Int, 1}, FieldType}}()
 
-    coeff_var_to_ind_precomputed = [coeff_var_to_ind[coeff_vars[i]] for i in 1:length(coeff_vars)]
+    coeff_var_to_ind_precomputed =
+        [coeff_var_to_ind[coeff_vars[i]] for i in 1:length(coeff_vars)]
     for (monom, coef) in zip(exponent_vectors(poly), coefficients(poly))
         var_slice = [monom[i] for i in indices]
         if !haskey(result, var_slice)
@@ -385,7 +431,7 @@ function decompose_derivative(varname::String, prefixes::Array{String})
         if startswith(varname, pr) && length(varname) > length(pr) + 1
             if varname[length(pr) + 1] == '_' &&
                all(map(isdigit, collect(varname[(length(pr) + 2):end])))
-               return (pr, parse(Int, varname[(length(pr) + 2):end]))
+                return (pr, parse(Int, varname[(length(pr) + 2):end]))
             end
         end
     end
@@ -409,4 +455,20 @@ function difforder(diffpoly::MPolyElem, prefix::String)
         end
     end
     return max(orders...)
+end
+
+function get_measured_quantities(ode::ModelingToolkit.ODESystem)
+    if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
+        @info "Measured quantities are not provided, trying to find the outputs in input ODE."
+        return filter(
+            eq -> (ModelingToolkit.isoutput(eq.lhs)),
+            ModelingToolkit.equations(ode),
+        )
+    else
+        throw(
+            error(
+                "Measured quantities (output functions) were not provided and no outputs were found.",
+            ),
+        )
+    end
 end

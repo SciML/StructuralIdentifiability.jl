@@ -1,4 +1,4 @@
-PROJECTION_VARNAME = "rand_proj_var"
+const PROJECTION_VARNAME = "rand_proj_var"
 
 # ------------------------------------------------------------------------------
 

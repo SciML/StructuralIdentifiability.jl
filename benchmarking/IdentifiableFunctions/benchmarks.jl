@@ -535,6 +535,204 @@ benchmarks = [
             y1(t) = Q(t)
         ),
     ),
+    Dict(
+        # https://arxiv.org/pdf/2207.09745.pdf
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Pharmacokinetics/PK1.jl
+        :name => "PK1",
+        :ode => @ODEmodel(
+            x1'(t) = u1(t) - (k1 + k2) * x1(t),
+            x2'(t) = k1 * x1(t) - (k3 + k6 + k7) * x2(t) + k5 * x4(t),
+            x3'(t) = k2 * x1(t) + k3 * x2(t) - k4 * x3(t),
+            x4'(t) = k6 * x2(t) - k5 * x4(t),
+            y1(t) = s2 * x2(t),
+            y2(t) = s3 * x3(t)
+        ),
+    ),
+    Dict(
+        # https://arxiv.org/pdf/2207.09745.pdf
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Pharmacokinetics/PK2.jl
+        :name => "PK2",
+        :ode => @ODEmodel(
+            x0'(t) =
+                a1 * (x1(t) - x0(t)) -
+                (ka * n * x0(t)) / (kc * ka + kc * x2(t) + ka * x0(t)),
+            x1'(t) = a2 * (x0(t) - x1(t)),
+            x2'(t) =
+                b1 * (x3(t) - x2(t)) -
+                (kc * n * x2(t)) / (kc * ka + kc * x2(t) + ka * x0(t)),
+            x3'(t) = b2 * (x2(t) - x3(t)),
+            y1(t) = x0(t)
+        ),
+    ),
+    Dict(
+        # https://arxiv.org/pdf/2207.09745.pdf
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Cellular%20signalling/JAKSTAT1.jl
+        :name => "JAK-STAT 1",
+        :ode => @ODEmodel(
+            x1'(t) = -t1 * x1(t) * 2 * u(t) - t5 * x1(t) + t6 * x2(t),
+            x2'(t) = t5 * x1(t) - t6 * x2(t),
+            x3'(t) = t1 * 2 * u(t) * x1(t) - t2 * x3(t) * (-x6(t) + 3),
+            x4'(t) = t2 * x3(t) * (-x6(t) + 3) - t3 * x4(t),
+            x5'(t) = t3 * x4(t) - t4 * x5(t),
+            x6'(t) =
+                -t7 * x3(t) * x6(t) / (1 + t13 * x1(t)) -
+                t7 * x4(t) * x6(t) / (1 + t13 * x10(t)) + t8 * (-x6(t) + 3) * 92,
+            x7'(t) = -t9 * x7(t) * (-x6(t) + 3) + t10 * (-x7(t) + 165) * 92,
+            x8'(t) = t11 * (-x7(t) + 165),
+            x9'(t) = -t12 * 2 * u(t) * x9(t),
+            x10'(t) = x8(t) * t14 / (t15 + x8(t)) - t16 * x10(t),
+            y1(t) = x1(t) + x3(t) + x4(t),
+            y2(t) = t18 * (x3(t) + x4(t) + x5(t) + (1 / 3 - x9(t))),
+            y3(t) = t19 * (x4(t) + x5(t)),
+            y4(t) = t20 * (-x6(t) + 3),
+            y5(t) = t21 * x8(t),
+            y6(t) = t22 * x8(t) * t17 / t11,
+            y7(t) = x10(t),
+            y8(t) = -x7(t) + 165
+        ),
+    ),
+    Dict(
+        # https://arxiv.org/pdf/2006.14295.pdf
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SIR_24.jl
+        :name => "SIR 24",
+        :ode => @ODEmodel(
+            A'(t) = 0,
+            S'(t) = A(t) - mu + S(t) - c * phi * I(t) * S(t) / (I(t) + S(t)),
+            I'(t) =
+                -mu * I(t) + c * phi * I(t) * S(t) / (I(t) + S(t)) - gamma * I(t) -
+                I(t) * u1(t) / (S(t) + I(t)),
+            R'(t) = -mu * R(t) + gamma * I(t) + I(t) * u1(t) / (S(t) + I(t)),
+            y1(t) = K * I(t)
+        ),
+    ),
+    Dict(
+        # https://arxiv.org/pdf/2006.14295.pdf
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SIR_21.jl
+        :name => "SIR 21",
+        :ode => @ODEmodel(
+            N'(t) = 0,
+            S'(t) = -beta * S(t) * I(t) / N(t) - pp * S(t) + q * C(t),
+            I'(t) = beta * S(t) * I(t) / N(t) - (r + mu) * I(t),
+            R'(t) = r * I(t),
+            C'(t) = pp * S(t) - q * C(t),
+            D'(t) = mu * I(t),
+            y1(t) = N(t),
+            y2(t) = D(t),
+            y3(t) = C(t)
+        ),
+    ),
+    Dict(
+        # https://arxiv.org/pdf/2006.14295.pdf
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SIR_19.jl
+        :name => "SIR 19",
+        :ode => @ODEmodel(
+            N'(t) = 0,
+            S'(t) = -beta * S(t) * I(t) / N(t) - pp * S(t) + q * C(t),
+            I'(t) = beta * S(t) * I(t) / N(t) - (r + mu) * I(t),
+            R'(t) = r * I(t),
+            C'(t) = pp * S(t) - q * C(t),
+            D'(t) = mu * I(t),
+            y1(t) = N(t),
+            y2(t) = D(t),
+            y3(t) = C(t)
+        ),
+    ),
+    Dict(
+        # https://arxiv.org/pdf/2006.14295.pdf
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SIR_6.jl
+        :name => "SIR 6",
+        :ode => @ODEmodel(
+            N'(t) = 0,
+            S'(t) = -beta * I(t) * S(t) / N(t),
+            I'(t) = beta * I(t) * S(t) / N(t) - gamma * I(t),
+            R'(t) = gamma * I(t),
+            y1(t) = I(t) * K,
+            y2(t) = N(t)
+        ),
+    ),
+    Dict(
+        # https://arxiv.org/pdf/2006.14295.pdf
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SEIR_34.jl
+        :name => "SEIR 34",
+        :ode => @ODEmodel(
+            A'(t) = 0,
+            N'(t) = 0,
+            S'(t) = A(t) - r * beta * S(t) * I(t) / N(t) - mu * S(t),
+            E'(t) = r * beta * S(t) * I(t) / N(t) - epsilon * E(t) - mu * E(t),
+            I'(t) = epsilon * E(t) - gamma * I(t) - mu * I(t),
+            R'(t) = gamma * I(t) - mu * R(t),
+            y1(t) = K * I(t),
+            y2(t) = A(t),
+            y3(t) = N(t)
+        ),
+    ),
+    Dict(
+        # https://arxiv.org/pdf/2006.14295.pdf
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SEIR_36_ref.jl
+        :name => "SEIR 36 ref",
+        :ode => @ODEmodel(
+            N'(t) = 0,
+            nu'(t) = 0,
+            q'(t) = 0,
+            S'(t) =
+                -beta * S(t) * I(t) / N(t) - q(t) * beta_d * S(t) * Di(t) / N(t) +
+                nu(t) * N(t) - mu_0 * S(t),
+            E'(t) =
+                beta * S(t) * I(t) / N(t) + q(t) * beta_d * S(t) * Di(t) / N(t) - s * E(t) - phi_e * E(t) - mu_0 * E(t),
+            I'(t) = s * E(t) - gamma * I(t) - mu_i * I(t) - phi * I(t) - mu_0 * I(t),
+            De'(t) = phi_e * E(t) - s_d * De(t) - mu_0 * De(t),
+            Di'(t) =
+                phi * I(t) + s_d * De(t) - gamma_d * Di(t) - mu_d * Di(t) - mu_0 * Di(t),
+            R'(t) = gamma * I(t) + gamma_d * Di(t) - mu_0 * R(t),
+            F'(t) = mu_i * I(t) + mu_d * Di(t),
+            y1(t) = De(t),
+            y2(t) = Di(t),
+            y5(t) = F(t),
+            y3(t) = N(t),
+            y4(t) = nu(t),
+            y5(t) = q(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Tumor/TumorHu2019.jl
+        :name => "TumorHu2019",
+        :ode => @ODEmodel(
+            x'(t) =
+                (r1 + b1 * y(t)) * x(t) * (1 - b1 * x(t)) - d1 * x(t) * z(t) / (m1 + w(t)), #pancreatic cancer cell population
+            y'(t) =
+                (r2 + b2 * w(t) / (k2 + w(t))) * y(t) * (1 - b2 * y(t)) - mu2 * y(t), #pancreatic stellate cell population
+            z'(t) = b3 * z(t) * v(t) / ((k3 + v(t)) * (m3 + w(t))) - mu3 * z(t) + r3, #effector cells, including CD8+T cells and NK cells
+            w'(t) =
+                b4 * x(t) * z(t) / (k4 + x(t)) - mu4 * w(t) +
+                r4 * x(t) * y(t) / (m4 + v(t)), #concentration of tumor promoting cytokines, including TGF-beta and IL-6
+            v'(t) = b5 * x(t) * z(t) / (k5 + x(t)) - mu5 * v(t), #concentration of tumor suppressing cytokines, including INF-gamma and IL-2
+            y1(t) = z(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Tumor/TumorPillis2007.jl
+        :name => "TumorPillis2007",
+        :ode => @ODEmodel(
+            T'(t) =
+                a * T(t) * (1 - b * T(t)) - c1 * N(t) * T(t) - D(t) * T(t) -
+                KT * M(t) * T(t), #tumor cells
+            L'(t) =
+                -m * L(t) - q * L(t) * T(t) - ucte * L(t)^2 +
+                r2 * C(t) * T(t) +
+                pI * L(t) * I(t) / (gI + I(t)) +
+                u1(t) - KL * M(t) * L(t), # tumor-specific effector cells, T-celss
+            N'(t) =
+                alpha1 - f * N(t) + g * T(t) * N(t) / (h + T(t)) - p * N(t) * T(t) -
+                KN * M(t) * N(t), # non-specific effector cells, NK cells
+            C'(t) = alpha2 - beta * C(t) - KC * M(t) * C(t), #circulating lymphocytes
+            I'(t) =
+                pt * T(t) * L(t) / (gt + T(t)) + w * L(t) * I(t) - muI * I(t) + u2(t), # IL-2, VI = u2 aplicación directa, terapia de IL2
+            M'(t) = -gamma * M(t) + u1(t), #chemotherapy drug, terapia/aplicación de quimio, u1 = VM
+            y1(t) = L(t),
+            y2(t) = N(t),
+            y3(t) = M(t)
+        ),
+    ),
 ]
 
 # the NFkB example

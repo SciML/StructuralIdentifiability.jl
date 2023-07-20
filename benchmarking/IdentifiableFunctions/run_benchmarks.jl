@@ -1,3 +1,5 @@
+# TODO: read benchmarks.jl, create and populate output directory from scratch
+
 using CpuId, Logging, Pkg, Printf
 using Base.Threads
 using Distributed
@@ -12,9 +14,11 @@ global_logger(logger)
 
 ID_TIME_CATEGORIES = [
     :id_io_time,
+    :id_primality_evaluate,
+    :id_uncertain_factorization,
     :id_global_time,
-    :id_ideal_time,
     :id_inclusion_check,
+    :id_inclusion_check_mod_p,
     :id_groebner_time,
     :id_total,
 ]
@@ -22,16 +26,19 @@ ALL_CATEGORIES = ID_TIME_CATEGORIES
 
 HUMAN_READABLE = Dict(
     :id_io_time => "io",
+    :id_primality_evaluate => "io/primality-evaluate",
+    :id_uncertain_factorization => "io/uncertain-factor",
     :id_global_time => "global id.",
     :id_ideal_time => "gen. ideal",
     :id_inclusion_check => "inclusion",
+    :id_inclusion_check_mod_p => "inclusion Zp",
     :id_groebner_time => "ParamPunPam.jl",
     :id_total => "total",
 )
 
 TO_SKIP = []
 TO_RUN = []
-TIMEOUT = 18_000
+TIMEOUT = 1800
 
 function run_benchmarks()
     dirnames = first(walkdir((@__DIR__) * "/systems/"))[2]

@@ -1,4 +1,5 @@
 using CpuId, Logging, Pkg, Printf
+using Statistics
 
 using StructuralIdentifiability
 using StructuralIdentifiability: _runtime_logger, ODE
@@ -8,16 +9,21 @@ logger = Logging.SimpleLogger(stdout, Logging.Warn)
 global_logger(logger)
 
 runtimes = Dict()
+data = Dict()
 results = Dict()
 
 ID_TIME_CATEGORIES = [
     :id_io_time,
+    :id_primality_evaluate,
+    :id_uncertain_factorization,
     :id_global_time,
-    :id_ideal_time,
-    :id_filter_time,
     :id_inclusion_check,
+    :id_inclusion_check_mod_p,
     :id_groebner_time,
     :id_total,
+]
+ID_DATA_CATEGORIES = [
+    :id_certain_factors,
 ]
 GB_TIME_CATEGORIES = [
     :gb_discover_shape,
@@ -46,6 +52,9 @@ find_identifiable_functions(ode)
 for cat in ID_TIME_CATEGORIES
     StructuralIdentifiability._runtime_logger[cat] = 0.0
 end
+for cat in ID_DATA_CATEGORIES
+    StructuralIdentifiability._runtime_logger[cat] = []
+end
 
 logger = Logging.SimpleLogger(stdout, Logging.Info)
 global_logger(logger)
@@ -53,6 +62,7 @@ global_logger(logger)
 function process_system()
     @info "Processing $NAME"
     runtimes[NAME] = Dict(c => 0.0 for c in ALL_CATEGORIES)
+    data[NAME] = Dict{Any, Any}(c => [] for c in ID_DATA_CATEGORIES)
     for _ in 1:NUM_RUNS
         funcs = find_identifiable_functions(system)
         results[NAME] = funcs
@@ -60,9 +70,9 @@ function process_system()
         for cat in ID_TIME_CATEGORIES
             runtimes[NAME][cat] += StructuralIdentifiability._runtime_logger[cat]
         end
-        # for cat in GB_TIME_CATEGORIES
-        #     runtimes[NAME][cat] += ParamPunPam._runtime_logger[cat]
-        # end
+        for cat in ID_DATA_CATEGORIES
+            data[NAME][cat] = deepcopy(StructuralIdentifiability._runtime_logger[cat])
+        end
     end
     for k in keys(runtimes[NAME])
         runtimes[NAME][k] = runtimes[NAME][k] / NUM_RUNS
@@ -86,9 +96,33 @@ function dump_timings()
 end
 
 function dump_results()
+    # dump identifiabile functions
     open((@__DIR__) * "/systems/$NAME/id_funcs", "w") do io
         if haskey(results, NAME)
             println(io, results[NAME])
+        end
+    end
+    # dump everything else
+    for cat in ID_DATA_CATEGORIES
+        open((@__DIR__) * "/systems/$NAME/$(cat)", "w") do io
+            if haskey(data, NAME)
+                if cat === :id_certain_factors
+                    factors = data[NAME][cat]
+                    number = length(factors)
+                    med = median(map(length, factors))
+                    R = parent(factors[1][1])
+                    factors_str = map(s -> map(repr, s), factors)
+                    factors_str = map(f -> join(f, ", "), factors_str)
+                    factors_str = join(factors_str, "\n")
+                    println(io, "Factors in $R")
+                    println(io, "Factored $number polynomials in total")
+                    println(io, "The median number of factors is $med")
+                    println(io, "\n============================\n")
+                    println(io, factors_str)
+                else
+                    @warn "Skipping printing data: $cat"
+                end
+            end
         end
     end
 end
@@ -113,3 +147,5 @@ dump_results()
 #     println(fd, "system = @ODEmodel(\n$ode\n)")
 #     close(fd)
 # end
+
+# generate_system()

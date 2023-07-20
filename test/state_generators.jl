@@ -1,5 +1,4 @@
 @testset "Generators of observable states" begin
-
     ode = @ODEmodel(
         x1'(t) = a * x1(t) - b * x1(t) * x2(t),
         x2'(t) = -c * x2(t) + d * x1(t) * x2(t),
@@ -7,7 +6,11 @@
     )
 
     sg = states_generators(ode, find_ioequations(ode))
-    @test sg == [x1 // 1, (a * x1 - b * x1 * x2) // 1, ((a - b * x2) * (a * x1 - b * x1 * x2) - b * x1 * (-c * x2 + d * x1 * x2)) // 1]
+    @test sg == [
+        x1 // 1,
+        (a * x1 - b * x1 * x2) // 1,
+        ((a - b * x2) * (a * x1 - b * x1 * x2) - b * x1 * (-c * x2 + d * x1 * x2)) // 1,
+    ]
 
     ode = @ODEmodel(
         x1'(t) = x2(t),
