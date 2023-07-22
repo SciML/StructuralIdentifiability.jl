@@ -199,9 +199,9 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :by
             end
         end
     end
-    FieldType = elem_type(base_ring(new_ring))
+    bring = base_ring(new_ring)
     exps = Vector{Vector{Int}}(undef, length(poly))
-    coefs = map(FieldType, coefficients(poly))
+    coefs = map(c -> bring(c), coefficients(poly))
     @inbounds for i in 1:length(poly)
         evec = exponent_vector(poly, i)
         new_exp = zeros(Int, nvars(new_ring))
