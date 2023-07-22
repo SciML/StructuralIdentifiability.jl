@@ -82,43 +82,38 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         @debug "Rational functions common denominator" den_lcm
         is_constant(den_lcm) && (@debug "Common denominator of the field generators is constant")
         existing_varnames = map(String, symbols(ring))
-        @debug "Saturating variable is $sat_varname"
-        # NOTE: if this becomes a bottleneck, one of the two ring conversions
-        # can be removed
         ystrs = ["y$i" for i in 1:length(existing_varnames)]
-        @assert !(sat_varname in ystrs) "The name of the saturation variable collided with the main variable"
-        R_y, _ = Nemo.PolynomialRing(K, ystrs, ordering = ordering)
-        funcs_den_nums = map(
-            dennums ->
-                map(f -> parent_ring_change(f, R_y, matching = :byindex), dennums),
-            funcs_den_nums,
-        )
-        den_lcm = parent_ring_change(den_lcm, R_y, matching = :byindex)
-        varnames = pushfirst!(ystrs, sat_varname)
+        @assert !(sat_varname in ystrs) "The name of the saturation variable collided with a primary variable"
+        sat_var_index = length(ystrs) + 1
+        varnames = push!(ystrs, sat_varname)
+        @debug "Saturating variable is $sat_varname, index is $sat_var_index"
         R_sat, v_sat = Nemo.PolynomialRing(K, varnames, ordering = ordering)
-        sat_var_index, t_sat = 1, first(v_sat)
+        # Saturation
+        @assert sat_var_index == length(v_sat)
+        t_sat = v_sat[sat_var_index]
+        den_lcm = parent_ring_change(den_lcm, R_sat, matching = :byindex)
         den_lcm_sat = parent_ring_change(den_lcm, R_sat)
         sat_qq = den_lcm_sat * t_sat - 1
-        nums_qq = empty(funcs_den_nums[1])
-        dens_qq = empty(funcs_den_nums[1])
-        dens_indices = Vector{Tuple{Int, Int}}()
         # We construct the array of numerators nums_qq and the array of
         # denominators dens_qq. Since there are usually more unique numerators
         # than denominators, we condense the array dens_qq and produce an
         # additional array dens_indices. The element dens_indices[i] tells us
         # the indices of the numerators that correspond to a given denominator
         # dens_qq[i]
+        nums_qq = empty(funcs_den_nums[1])
+        dens_qq = empty(funcs_den_nums[1])
+        dens_indices = Vector{Tuple{Int, Int}}()
         for i in 1:length(funcs_den_nums)
             # TODO: we can remove duplicates in numerators. Check if this helps
             plist = funcs_den_nums[i]
             den = plist[pivots_indices[i]]
-            den = parent_ring_change(den, R_sat)
+            den = parent_ring_change(den, R_sat, matching = :byindex)
             push!(dens_qq, den)
             push!(dens_indices, (length(nums_qq) + 1, length(nums_qq) + length(plist) - 1))
             for j in 1:length(plist)
                 j == pivots_indices[i] && continue
                 num = plist[j]
-                num = parent_ring_change(num, R_sat)
+                num = parent_ring_change(num, R_sat, matching = :byindex)
                 push!(nums_qq, num)
             end
         end
@@ -184,9 +179,9 @@ function ParamPunPam.specialize_mod_p(
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
     # +1 actual variable because of the saturation!
     @assert length(point) + 1 == nvars(parent(nums_gf[1]))
-    # NOTE: Assuming the saturating variable is the first one
-    @assert mqs.sat_var_index == 1
-    point_sat = vcat(one(K_1), point)
+    # NOTE: Assuming the saturating variable is the last one
+    @assert mqs.sat_var_index == length(point) + 1
+    point_sat = vcat(point, one(K_1))
     nums_gf_spec = map(num -> evaluate(num, point_sat), nums_gf)
     dens_gf_spec = map(den -> evaluate(den, point_sat), dens_gf)
     polys = Vector{typeof(sat_gf)}(undef, length(nums_gf_spec) + 1)
@@ -213,9 +208,9 @@ function specialize(mqs::IdealMQS, point::Vector{Nemo.fmpq}; saturated = true)
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
     # +1 actual variable because of the saturation!
     @assert length(point) + 1 == nvars(parent(nums_qq[1]))
-    # NOTE: Assuming the saturating variable is the first one
-    @assert mqs.sat_var_index == 1
-    point_sat = vcat(one(K), point)
+    # NOTE: Assuming the saturating variable is the last one
+    @assert mqs.sat_var_index == length(point) + 1
+    point_sat = vcat(point, one(K))
     nums_qq_spec = map(num -> evaluate(num, point_sat), nums_qq)
     dens_qq_spec = map(den -> evaluate(den, point_sat), dens_qq)
     polys = Vector{typeof(sat_qq)}(undef, length(nums_qq_spec) + 1)

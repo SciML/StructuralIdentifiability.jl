@@ -1,13 +1,27 @@
 using StructuralIdentifiability
-using BenchmarkTools, Logging
-import Nemo, Profile
 
 begin
-    macro myprof(ex)
+    using BenchmarkTools, Logging
+    import Nemo, Profile
+
+    macro my_profview(ex)
         :((VSCodeServer.Profile).clear();
-        Profile.init(n = 10^8, delay = 0.00001);
-        Profile.@profile $ex;
+        VSCodeServer.Profile.init(n = 10^8, delay = 0.00001);
+        VSCodeServer.Profile.start_timer();
+        $ex;
+        VSCodeServer.Profile.stop_timer();
         VSCodeServer.view_profile(;))
+    end
+
+    macro my_profview_allocs(ex)
+        :((VSCodeServer.Profile).clear();
+        VSCodeServer.Profile.Allocs.start(sample_rate = 1.0);
+        try
+            $ex
+        finally
+            VSCodeServer.Profile.Allocs.stop()
+        end;
+        VSCodeServer.view_profile_allocs(;))
     end
 
     mapk_6_out = StructuralIdentifiability.@ODEmodel(
@@ -289,39 +303,95 @@ begin
         y2(t) = S00(t),
         y3(t) = S01(t)
     )
+
+    pk2 = StructuralIdentifiability.@ODEmodel(
+        x0'(t) =
+            a1 * (x1(t) - x0(t)) - (ka * n * x0(t)) / (kc * ka + kc * x2(t) + ka * x0(t)),
+        x1'(t) = a2 * (x0(t) - x1(t)),
+        x2'(t) =
+            b1 * (x3(t) - x2(t)) - (kc * n * x2(t)) / (kc * ka + kc * x2(t) + ka * x0(t)),
+        x3'(t) = b2 * (x2(t) - x3(t)),
+        y1(t) = x0(t)
+    )
+    using Nemo, Logging
+    Groebner = StructuralIdentifiability.Groebner
+    ParamPunPam = StructuralIdentifiability.ParamPunPam
+    Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-using Nemo, Logging
-Groebner = StructuralIdentifiability.Groebner
-ParamPunPam = StructuralIdentifiability.ParamPunPam
-Base.global_logger(ConsoleLogger(Logging.Info))
-
-@time StructuralIdentifiability.find_identifiable_functions(pharm)
+@time StructuralIdentifiability.find_identifiable_functions(fujita)
 @time StructuralIdentifiability.find_identifiable_functions(
     pharm,
     adjoin_identifiable = false,
 )
 
+@time StructuralIdentifiability.find_identifiable_functions(pk2)
+
+@my_profview io = StructuralIdentifiability.find_ioequations(MAPK_5_outputs_bis);
+
 @time StructuralIdentifiability.find_identifiable_functions(covid)
 
-@myprof io = StructuralIdentifiability.find_ioequations(MAPK_5_outputs_bis);
+io_equations = StructuralIdentifiability.find_ioequations(pk2);
+identifiable_functions_raw = StructuralIdentifiability.extract_identifiable_functions_raw(
+    io_equations,
+    pk2,
+    empty(pk2.parameters),
+    false,
+)
 
-@myprof StructuralIdentifiability.find_identifiable_functions(covid)
+@my_profview StructuralIdentifiability.IdealMQS(identifiable_functions_raw);
 
-fg = StructuralIdentifiability.field_generators(Bilirubin2_io);
-id = StructuralIdentifiability.field_to_ideal(fg);
+p = Nemo.GF(4611686018427388039)
 
-mqs = StructuralIdentifiability.IdealMQS(fg);
-p = Nemo.GF(2^31 - 1)
-StructuralIdentifiability.ParamPunPam.reduce_mod_p!(mqs, p)
+@prof StructuralIdentifiability.ParamPunPam.reduce_mod_p!(mqs, p)
 point = rand(p, length(Nemo.gens(StructuralIdentifiability.ParamPunPam.parent_params(mqs))))
 mqs_spec = StructuralIdentifiability.ParamPunPam.specialize_mod_p(mqs, point);
 
-@time graph1, gb = Groebner.groebner_learn(mqs_spec, loglevel = -3);
-@time graph2, gb_2 = Groebner.groebner_learn(mqs_spec, loglevel = 0, sweep = true);
+Groebner.logging_enabled() = false
 
-flag1, gb1 = Groebner.groebner_apply!(graph1, mqs_spec);
+@time graph, gb = Groebner.groebner_learn(mqs_spec, loglevel = 0, sweep = true);
+@time Groebner.groebner_apply!(graph, mqs_spec, loglevel = 0, sweep = true);
 
-@myprof Groebner.groebner_apply!(graph2, mqs_spec);
+@benchmark Groebner.groebner_apply!($graph, $mqs_spec, loglevel = 0, sweep = true)
 
-@assert flag1 && flag2 && gb1 == gb2
+# Results for covid
+#=
+ Range (min … max):  22.077 ms …  31.445 ms  ┊ GC (min … max): 0.00% … 26.17%
+ Time  (median):     22.180 ms               ┊ GC (median):    0.00%
+ Time  (mean ± σ):   22.271 ms ± 695.467 μs  ┊ GC (mean ± σ):  0.16% ±  1.74%
+
+  ▃██▃▃▁                                                        
+  ██████▄▅▄▁▁▄▁▁▁▁▁▄▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▄▄ ▅
+  22.1 ms       Histogram: log(frequency) by time      24.8 ms <
+
+ Memory estimate: 294.91 KiB, allocs estimate: 2098.
+=#
+
+# Results for MAPK_5_outputs
+#=
+Range (min … max):  42.798 ms … 56.295 ms  ┊ GC (min … max):  0.00% … 9.37%
+ Time  (median):     52.065 ms              ┊ GC (median):    10.16%
+ Time  (mean ± σ):   50.841 ms ±  3.292 ms  ┊ GC (mean ± σ):   9.04% ± 3.76%
+
+                                                   ▃█          
+  ▇▃▁▁▁▁▁▁▁▁▁▁▂▁▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▅▅██▇▁▄▂▁▂▁▂ ▁
+  42.8 ms         Histogram: frequency by time        53.7 ms <
+
+ Memory estimate: 37.81 MiB, allocs estimate: 95346.
+=#
+
+# Results for PK2
+#=
+BenchmarkTools.Trial: 180 samples with 1 evaluation.
+ Range (min … max):  27.501 ms … 37.744 ms  ┊ GC (min … max): 0.00% … 17.99%
+ Time  (median):     27.620 ms              ┊ GC (median):    0.00%
+ Time  (mean ± σ):   27.817 ms ±  1.172 ms  ┊ GC (mean ± σ):  0.39% ±  2.27%
+
+  █▆                                                           
+  ██▄▁▁▄▁▄▁▁▁▁▁▁▁▁▁▁▁▁▄▁▁▁▁▄▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▄ ▄
+  27.5 ms      Histogram: log(frequency) by time      35.6 ms <
+
+ Memory estimate: 775.77 KiB, allocs estimate: 3662.
+=#
+
+@my_profview_allocs Groebner.groebner_apply!(graph, mqs_spec, loglevel = 0, sweep = true);

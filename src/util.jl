@@ -171,42 +171,46 @@ Output:
 """
 function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :byname)
     old_ring = parent(poly)
-    # construct a mapping for the variable indices
-    var_mapping = Array{Any, 1}()
-
-    if matching == :byname
-        for u in symbols(old_ring)
-            push!(var_mapping, findfirst(v -> (string(u) == string(v)), symbols(new_ring)))
+    # Construct a mapping for the variable indices.
+    # Zero indicates no image of the old variable in the new ring  
+    var_mapping = zeros(Int, max(nvars(old_ring), nvars(new_ring)))
+    if matching === :byname
+        old_symbols, new_symbols = symbols(old_ring), symbols(new_ring)
+        for i in 1:length(old_symbols)
+            u = old_symbols[i]
+            found = findfirst(v -> (u === v), new_symbols)
+            isnothing(found) && continue
+            var_mapping[i] = found
         end
-    elseif matching == :byindex
-        append!(var_mapping, 1:nvars(new_ring))
-        if nvars(new_ring) < nvars(old_ring)
-            append!(var_mapping, Array{Any, 1}[nothing, nvars(old_ring) - nvars(new_ring)])
-        end
+    elseif matching === :byindex
+        var_mapping[1:nvars(new_ring)] .= 1:nvars(new_ring)
     else
         throw(Base.ArgumentError("Unknown matching type: $matching"))
     end
-    builder = MPolyBuildCtx(new_ring)
-    xs = gens(new_ring)
-    for term in zip(exponent_vectors(poly), coefficients(poly))
-        exp, coef = term
-        new_exp = [0 for _ in xs]
-        @inbounds for i in 1:length(exp)
-            if exp[i] != 0
-                if var_mapping[i] === nothing
-                    throw(
-                        Base.ArgumentError(
-                            "The polynomial contains a variable $(gens(old_ring)[i]) not present in the new ring $poly",
-                        ),
-                    )
-                else
-                    new_exp[var_mapping[i]] = exp[i]
-                end
+    # Hoist the compatibility check out of the loop
+    for i in 1:nvars(old_ring)
+        if !iszero(degree(poly, i))
+            if iszero(var_mapping[i])
+                throw(
+                    Base.ArgumentError(
+                        "The polynomial contains a variable $(gens(old_ring)[i]) not present in the new ring $poly",
+                    ),
+                )
             end
         end
-        push_term!(builder, base_ring(new_ring)(coef), new_exp)
     end
-    return finish(builder)
+    FieldType = elem_type(base_ring(new_ring))
+    exps = Vector{Vector{Int}}(undef, length(poly))
+    coefs = map(FieldType, coefficients(poly))
+    @inbounds for i in 1:length(poly)
+        evec = exponent_vector(poly, i)
+        new_exp = zeros(Int, nvars(new_ring))
+        for i in 1:length(evec)
+            new_exp[var_mapping[i]] = evec[i]
+        end
+        exps[i] = new_exp
+    end
+    return new_ring(coefs, exps)
 end
 
 function parent_ring_change(
@@ -316,9 +320,6 @@ function extract_coefficients(poly::P, variables::Array{P, 1}) where {P <: MPoly
     K = base_ring(parent(poly))
     new_ring, _ = Nemo.PolynomialRing(K, map(vv -> var_to_str(vv, xs = xs), coeff_vars))
     FieldType = elem_type(K)
-
-    coeff_var_to_ind = []
-    coeff_var_to_ind = Dict((v, findfirst(e -> (e == v), xs)) for v in coeff_vars)
 
     result = Dict{Vector{Int}, Tuple{Vector{Vector{Int}}, Vector{FieldType}}}()
 
