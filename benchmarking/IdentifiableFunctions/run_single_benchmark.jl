@@ -14,8 +14,8 @@ results = Dict()
 
 ID_TIME_CATEGORIES = [
     :id_io_time,
-    :id_primality_evaluate,
-    :id_uncertain_factorization,
+    # :id_primality_evaluate,
+    # :id_uncertain_factorization,
     :id_global_time,
     :id_inclusion_check,
     :id_inclusion_check_mod_p,
@@ -23,7 +23,7 @@ ID_TIME_CATEGORIES = [
     :id_total,
 ]
 ID_DATA_CATEGORIES = [
-    :id_certain_factors,
+    # :id_certain_factors,
 ]
 GB_TIME_CATEGORIES = [
     :gb_discover_shape,
@@ -32,7 +32,7 @@ GB_TIME_CATEGORIES = [
     :gb_recover_coeffs,
     :gb_npoints,
 ]
-ALL_CATEGORIES = union(ID_TIME_CATEGORIES, GB_TIME_CATEGORIES)
+ALL_CATEGORIES = union(ID_TIME_CATEGORIES) #, GB_TIME_CATEGORIES)
 NUM_RUNS = 1
 NAME = ARGS[1]
 
@@ -64,7 +64,7 @@ function process_system()
     runtimes[NAME] = Dict(c => 0.0 for c in ALL_CATEGORIES)
     data[NAME] = Dict{Any, Any}(c => [] for c in ID_DATA_CATEGORIES)
     for _ in 1:NUM_RUNS
-        funcs = find_identifiable_functions(system)
+        funcs = find_identifiable_functions(system, adjoin_identifiable=false)
         results[NAME] = funcs
         @info "Identifiable functions are" funcs
         for cat in ID_TIME_CATEGORIES

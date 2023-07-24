@@ -14,8 +14,8 @@ global_logger(logger)
 
 ID_TIME_CATEGORIES = [
     :id_io_time,
-    :id_primality_evaluate,
-    :id_uncertain_factorization,
+    # :id_primality_evaluate,
+    # :id_uncertain_factorization,
     :id_global_time,
     :id_inclusion_check,
     :id_inclusion_check_mod_p,
@@ -38,7 +38,7 @@ HUMAN_READABLE = Dict(
 
 TO_SKIP = []
 TO_RUN = []
-TIMEOUT = 1800
+TIMEOUT = 10800
 
 function run_benchmarks()
     dirnames = first(walkdir((@__DIR__) * "/systems/"))[2]
