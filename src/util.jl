@@ -21,10 +21,10 @@ function eval_at_dict(poly::P, d::Dict{P, <:RingElem}) where {P <: MPolyElem}
     return evaluate(poly, point)
 end
 
-function eval_at_dict(poly::P, d::Dict{P, S}) where {P <: MPolyElem, S <: Num}
+function eval_at_dict(poly::P, d::Dict{P, S}) where {P <: MPolyElem, S <: Real}
     R = parent(poly)
     xs = gens(parent(first(keys(d))))
-    xs_sym = [d[x] for x in xs if string(x) in map(string, gens(R))]
+    xs_sym = [get(d, x, 0.0) for x in xs if string(x) in map(string, gens(R))]
     accum = zero(valtype(d))
     for t in terms(poly)
         cf = coeff(t, 1)
@@ -39,7 +39,7 @@ end
 
 function eval_at_dict(rational::Generic.Frac{T}, d::Dict{T, V}) where {T <: MPolyElem, V}
     f, g = unpack_fraction(rational)
-    return eval_at_dict(f, d) // eval_at_dict(g, d)
+    return eval_at_dict(f, d) / eval_at_dict(g, d)
 end
 
 function eval_at_dict(
@@ -189,19 +189,17 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :by
     end
     # Hoist the compatibility check out of the loop
     for i in 1:nvars(old_ring)
-        if !iszero(degree(poly, i))
-            if iszero(var_mapping[i])
-                throw(
-                    Base.ArgumentError(
-                        "The polynomial contains a variable $(gens(old_ring)[i]) not present in the new ring $poly",
-                    ),
-                )
-            end
+        if degree(poly, i) > 0 && iszero(var_mapping[i])
+            throw(
+                Base.ArgumentError(
+                    "The polynomial $poly contains a variable $(gens(old_ring)[i]) not present in the new ring",
+                ),
+            )
         end
     end
-    FieldType = elem_type(base_ring(new_ring))
+    bring = base_ring(new_ring)
     exps = Vector{Vector{Int}}(undef, length(poly))
-    coefs = map(FieldType, coefficients(poly))
+    coefs = map(c -> bring(c), coefficients(poly))
     @inbounds for i in 1:length(poly)
         evec = exponent_vector(poly, i)
         new_exp = zeros(Int, nvars(new_ring))
@@ -243,25 +241,29 @@ function uncertain_factorization(f::MPolyElem{fmpq})
     end
     main_var = vars_f[end]
     d = Nemo.degree(f, main_var)
-    lc_f = coeff(f, [main_var], [d])
-    gcd_coef = lc_f
-    for i in (d - 1):-1:0
-        gcd_coef = gcd(gcd_coef, coeff(f, [main_var], [i]))
+    mainvar_coeffs = [coeff(f, [main_var], [i]) for i in 0:d]
+    gcd_coef = mainvar_coeffs[end]
+    for i in d:-1:1
+        #@info "Degrees $(total_degree(gcd_coef)) and $(total_degree(mainvar_coeffs[i]))"
+        gcd_coef = gcd(gcd_coef, mainvar_coeffs[i])
+        #@info "Time $tm and new degree $(total_degree(gcd_coef))"
     end
     f = divexact(f, gcd_coef)
-    lc_f = coeff(f, [main_var], [d])
 
-    is_irr = undef
+    is_irr = false
     while true
-        plugin = rand(5:10, length(vars_f) - 1)
-        if evaluate(lc_f, vars_f[1:(end - 1)], plugin) != 0
-            f_sub = evaluate(f, vars_f[1:(end - 1)], plugin)
-            uni_ring, var_uni = Nemo.PolynomialRing(base_ring(f), string(main_var))
-            f_uni = to_univariate(uni_ring, f_sub)
-            # if !issquarefree(f_uni)
-            if !isone(gcd(f, derivative(f, main_var)))
-                @debug "GCD is $(gcd(f, derivative(f, main_var)))"
-                f = divexact(f, gcd(f, derivative(f, main_var)))
+        plugin = rand(-3:3, length(gens(parent(f))))
+        if evaluate(mainvar_coeffs[end], plugin) != 0
+            uni_ring, T = Nemo.PolynomialRing(base_ring(f), "T")
+            f_uni = sum([evaluate(mainvar_coeffs[i + 1], plugin) * T^i for i in 0:d])
+            if !isone(gcd(f_uni, derivative(f_uni)))
+                factor_out = gcd(f, derivative(f, main_var))
+                if degree(factor_out, main_var) != degree(gcd(f_uni, derivative(f_uni)))
+                    continue
+                end
+                @debug "Nonsquarefree poly, dividing by $factor_out"
+                f = divexact(f, factor_out)
+                f_uni = divexact(f_uni, gcd(f_uni, derivative(f_uni)))
             end
             # end
             is_irr = Nemo.isirreducible(f_uni)
@@ -271,6 +273,7 @@ function uncertain_factorization(f::MPolyElem{fmpq})
 
     coeff_factors = uncertain_factorization(gcd_coef)
     push!(coeff_factors, (f, is_irr))
+    return coeff_factors
 end
 
 # ------------------------------------------------------------------------------

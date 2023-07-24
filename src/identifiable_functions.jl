@@ -80,6 +80,9 @@ function find_identifiable_functions(
         id_funcs = vcat(identifiable_functions_raw, known_quantities)
     end
     if simplify
+        if isempty(id_funcs)
+            id_funcs = [one(bring)]
+        end
         id_funcs_fracs =
             simplified_generating_set(RationalFunctionField(id_funcs), p = p, seed = seed)
     else
@@ -114,13 +117,7 @@ function find_identifiable_functions(
     if isempty(measured_quantities)
         measured_quantities = get_measured_quantities(ode)
     end
-    params = ModelingToolkit.parameters(ode)
-    if with_states
-        params = vcat(ModelingToolkit.states(ode), params)
-    end
     ode, conversion = preprocess_ode(ode, measured_quantities)
-    out_funcs = Vector{Num}()
-    params_ = [eval_at_nemo(each, conversion) for each in params]
     result = find_identifiable_functions(
         ode,
         simplify = simplify,
@@ -128,7 +125,7 @@ function find_identifiable_functions(
         seed = seed,
         with_states = with_states,
     )
-    nemo2mtk = Dict(params_ .=> map(Num, params))
+    nemo2mtk = Dict(v => Num(k) for (k, v) in conversion)
     out_funcs = [eval_at_dict(func, nemo2mtk) for func in result]
     return out_funcs
 end
