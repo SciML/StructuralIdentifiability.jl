@@ -204,6 +204,7 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :by
         evec = exponent_vector(poly, i)
         new_exp = zeros(Int, nvars(new_ring))
         for i in 1:length(evec)
+            iszero(var_mapping[i]) && continue
             new_exp[var_mapping[i]] = evec[i]
         end
         exps[i] = new_exp

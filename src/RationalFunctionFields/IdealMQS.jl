@@ -80,7 +80,8 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
             1:length(funcs_den_nums),
         )
         @debug "Rational functions common denominator" den_lcm
-        is_constant(den_lcm) && (@debug "Common denominator of the field generators is constant")
+        is_constant(den_lcm) &&
+            (@debug "Common denominator of the field generators is constant")
         existing_varnames = map(String, symbols(ring))
         ystrs = ["y$i" for i in 1:length(existing_varnames)]
         @assert !(sat_varname in ystrs) "The name of the saturation variable collided with a primary variable"
@@ -142,6 +143,65 @@ Base.length(ideal::IdealMQS) = length(ideal.nums_qq) + 1
 AbstractAlgebra.base_ring(ideal::IdealMQS) = base_ring(ideal.nums_qq[1])
 AbstractAlgebra.parent(ideal::IdealMQS) = ideal.parent_ring_param
 ParamPunPam.parent_params(ideal::IdealMQS) = base_ring(ideal.parent_ring_param)
+
+# Used only for debugging!
+function ideal_generators_raw(mqs::IdealMQS)
+    return field_to_ideal(mqs.funcs_den_nums)
+end
+
+# Used only for debugging!
+function saturate(I, Q; varname = "t", append_front = true)
+    @info "Saturating the ideal, saturating variable is $varname"
+    R = parent(first(I))
+    K, ord = base_ring(R), ordering(R)
+    existing_varnames = map(String, symbols(R))
+    @assert !(varname in existing_varnames)
+    varnames =
+        append_front ? pushfirst!(existing_varnames, varname) :
+        push!(existing_varnames, varname)
+    Rt, vt = Nemo.PolynomialRing(K, varnames, ordering = ord)
+    if append_front
+        xs, t = vt[2:end], first(vt)
+    else
+        xs, t = vt[1:(end - 1)], last(vt)
+    end
+    It = map(f -> parent_ring_change(f, Rt), I)
+    Qt = parent_ring_change(Q, Rt)
+    sat = 1 - Qt * t
+    push!(It, sat)
+    It, t
+end
+
+# Used only for debugging!
+function field_to_ideal(
+    funcs_den_nums::Vector{Vector{T}};
+    top_level_var = "y",
+    top_level_ord = :degrevlex,
+) where {T}
+    @assert !isempty(funcs_den_nums)
+    R = parent(first(first(funcs_den_nums)))
+    @info "Producing the ideal generators in $R"
+    K, n = base_ring(R), nvars(R)
+    Q = reduce(lcm, map(first, funcs_den_nums))
+    @debug "Rational functions common denominator" Q
+    ystrs = ["$top_level_var$i" for i in 1:n]
+    Ry, ys = Nemo.PolynomialRing(R, ystrs, ordering = top_level_ord)
+    Qy = parent_ring_change(Q, Ry, matching = :byindex)
+    I = empty(ys)
+    for component in funcs_den_nums
+        pivot = component[1]
+        for i in 2:length(component)
+            f = component[i]
+            fy = parent_ring_change(f, Ry, matching = :byindex)
+            qy = parent_ring_change(pivot, Ry, matching = :byindex)
+            F = fy * Q - f * qy
+            push!(I, F)
+        end
+    end
+    I, t = saturate(I, Qy)
+    I_rat = map(f -> map_coefficients(c -> c // one(R), f), I)
+    return I_rat
+end
 
 # TODO: check that the reduction is lucky.
 function ParamPunPam.reduce_mod_p!(

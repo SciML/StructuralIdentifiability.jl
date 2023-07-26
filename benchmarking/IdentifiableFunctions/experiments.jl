@@ -319,13 +319,15 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-@my_profview StructuralIdentifiability.find_identifiable_functions(siwr)
+funcs = StructuralIdentifiability.find_identifiable_functions(Bilirubin2_io)
+
+@time StructuralIdentifiability.find_identifiable_functions(siwr)
 
 for (name, system) in ((:qwwc, qwwc), (:MAPK_5_outputs, MAPK_5_outputs))
-    id_funcs = StructuralIdentifiability.find_identifiable_functions(system) 
+    id_funcs = StructuralIdentifiability.find_identifiable_functions(system)
     rl = StructuralIdentifiability._runtime_logger
-    factors = rl[:id_certain_factors];
-    polys = map(fs -> prod(fs), factors);
+    factors = rl[:id_certain_factors]
+    polys = map(fs -> prod(fs), factors)
     @warn "System $name"
     @warn "Uncertain factor / Nemo.factor / IO (seconds): $(rl[:id_uncertain_factorization]) / $(rl[:id_nemo_factor]) / $(rl[:id_io_time])"
     @warn """
@@ -340,7 +342,7 @@ factors = deepcopy(rl[:id_certain_factors]);
 polys = map(fs -> prod(fs), factors);
 
 @time begin
-    results = empty(factors);
+    results = empty(factors)
     for (i, poly) in enumerate(polys)
         if i in reducible
             # continue

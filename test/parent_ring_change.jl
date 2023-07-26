@@ -18,6 +18,10 @@
 
         @test_throws ArgumentError parent_ring_change(x + z, R_, matching = :byname)
 
+        f = 3y
+        f_ = parent_ring_change(f, R__, matching = :byname)
+        @test f_ == 3y__
+
         f__ = 2x__ + 5t__^3 + 3y__^2
         f = parent_ring_change(f__, R, matching = :byindex)
         @test_throws ArgumentError parent_ring_change(f__, R_, matching = :byindex)
