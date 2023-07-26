@@ -261,6 +261,21 @@
     ]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
+    # STAT-5 model from 
+    # MODELING THE NONLINEAR DYNAMICS OF CELLULAR SIGNAL TRANSDUCTION
+    # DOI: https://doi.org/10.1142/S0218127404010461
+    ode = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = -k1 * x1 * EpoR_A,
+        x2'(t) = k1 * x1 * EpoR_A - k2 * x2^2,
+        x3'(t) = -k3 * x3 + 0.5 * k2 * x2^2,
+        x4'(t) = k3 * x3,
+        y1(t) = k5 * (x2 + 2x3),
+        y2(t) = k6 * (x1 + x2 + 2x3),
+        y3(t) = k7 * EpoR_A
+    )
+    ident_funcs = [k3, k1 // k7, k5 // k2, k6 // k2, k7 * EpoR_A]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
     p = 0.99
     for case in test_cases
         ode = case.ode
@@ -334,7 +349,7 @@ end
         x2'(t) = -c * x2(t) + d * x1(t) * x2(t),
         y(t) = x1(t)
     )
-    ident_funcs = [x1, c, d, a, b*x2]
+    ident_funcs = [x1, c, d, a, b * x2]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     ode = StructuralIdentifiability.@ODEmodel(
@@ -342,7 +357,7 @@ end
         x2'(t) = -c * x2(t) + d * x1(t) * x2(t),
         y(t) = x1(t)
     )
-    ident_funcs = [x1, c, d, a, b*x2]
+    ident_funcs = [x1, c, d, a, b * x2]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     # Diagonal with simple spectrum and observable states
@@ -373,15 +388,15 @@ end
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     ode = StructuralIdentifiability.@ODEmodel(
-        x1'(t) = α*(x1 - x2),
-        x2'(t) = α*(x1 + x2),
+        x1'(t) = α * (x1 - x2),
+        x2'(t) = α * (x1 + x2),
         y(t) = (x1^2 + x2^2) // 2,
     )
     ident_funcs = [α, x1^2 + x2^2]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     ode = StructuralIdentifiability.@ODEmodel(x'(t) = a * x(t) + b * u(t), y(t) = c * x(t))
-    ident_funcs = [b * c, a, x//b]
+    ident_funcs = [b * c, a, x // b]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     p = 0.99

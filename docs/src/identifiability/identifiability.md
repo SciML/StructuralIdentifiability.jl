@@ -1,4 +1,4 @@
-# ָFunctions to Assess Parameter Identifiability
+# ָFunctions to Assess Identifiability
 
 ## Assessing All Types of Identifiability
 
@@ -16,4 +16,10 @@ assess_local_identifiability
 
 ```@docs
 assess_global_identifiability
+```
+
+## Finding Identifiable Functions
+
+```@docs
+find_identifiable_functions
 ```
