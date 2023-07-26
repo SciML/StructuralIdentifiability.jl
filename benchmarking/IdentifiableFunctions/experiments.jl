@@ -319,17 +319,39 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-@time StructuralIdentifiability.find_identifiable_functions(fujita)
+@my_profview StructuralIdentifiability.find_identifiable_functions(siwr)
 
-for (name, system) in ((:fujita, fujita), (:MAPK_5_outputs, MAPK_5_outputs), (:covid, covid), (:siwr, siwr),)
+for (name, system) in ((:qwwc, qwwc), (:MAPK_5_outputs, MAPK_5_outputs))
     id_funcs = StructuralIdentifiability.find_identifiable_functions(system) 
     rl = StructuralIdentifiability._runtime_logger
     factors = rl[:id_certain_factors];
     polys = map(fs -> prod(fs), factors);
     @warn "System $name"
-    @warn "Factorization / IO (seconds) $(rl[:id_uncertain_factorization]) / $(rl[:id_io_time])"
+    @warn "Uncertain factor / Nemo.factor / IO (seconds): $(rl[:id_uncertain_factorization]) / $(rl[:id_nemo_factor]) / $(rl[:id_io_time])"
     @warn """
-    Unique: $(length(unique(polys))) out of $(length(polys))"""
+    Unique polynomials factored: $(length(unique(polys))) out of $(length(polys))"""
+end
+
+system = qwwc
+
+@my_profview io_eqs = StructuralIdentifiability.find_ioequations(system);
+rl = StructuralIdentifiability._runtime_logger;
+factors = deepcopy(rl[:id_certain_factors]);
+polys = map(fs -> prod(fs), factors);
+
+@time begin
+    results = empty(factors);
+    for (i, poly) in enumerate(polys)
+        if i in reducible
+            # continue
+        end
+        # empty!(StructuralIdentifiability._runtime_logger[:id_certain_factors])
+        StructuralIdentifiability.fast_factor(poly)
+        # push!(results, collect(keys(result)))
+    end
+end;
+if !(results == result)
+    @assert false
 end
 
 length(unique(polys))

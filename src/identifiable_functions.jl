@@ -39,6 +39,7 @@ function find_identifiable_functions(
 ) where {T <: MPolyElem{fmpq}}
     runtime_start = time_ns()
     _runtime_logger[:id_uncertain_factorization] = 0.0
+    _runtime_logger[:id_nemo_factor] = 0.0
     _runtime_logger[:id_primality_evaluate] = 0.0
     _runtime_logger[:id_certain_factors] = []
 
