@@ -164,8 +164,6 @@
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     # Bilirubin2_io.
-    # Regression test: failed before, as the total degrees were being estimated
-    # incorrectly in the interpolation
     ode = StructuralIdentifiability.@ODEmodel(
         x1'(t) =
             -(k21 + k31 + k41 + k01) * x1(t) +
@@ -178,7 +176,6 @@
         x4'(t) = k41 * x1(t) - k14 * x4(t),
         y1(t) = x1(t)
     )
-    # TODO
     ident_funcs = [k01, k31 + k21 + k41, k31 * k21 * k41, k31 * k21 + k31 * k41 + k21 * k41,
         k12 * k21 + k13 * k31 + k14 * k41, k12 * k21^2 + k13 * k31^2 + k14 * k41^2, 
         k12 * k21^3 + k13 * k31^3 + k14 * k41^3]
@@ -386,9 +383,16 @@ end
     ident_funcs = [b * c, a, x//b]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
-    #ode = StructuralIdentifiability.@ODEmodel(
-
-    #)
+    # Goodwin
+    ode = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = -b * x1(t) + 1 / (c + x4(t)),
+        x2'(t) = alpha * x1(t) - beta * x2(t),
+        x3'(t) = gama * x2(t) - delta * x3(t),
+        x4'(t) = sigma * x4(t) * (gama * x2(t) - delta * x3(t)) / x3(t),
+        y(t) = x1(t)
+    )
+    ident_funcs = [b, c, sigma, beta + delta, beta * delta, x1, x4,  (alpha * gama) // x3, (gama * x2 + x3 * beta) // x3]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     p = 0.99
     for case in test_cases
