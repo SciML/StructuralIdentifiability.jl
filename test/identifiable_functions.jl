@@ -27,9 +27,9 @@
     # "On Global Identifiability for Arbitrary Model Parametrizations",
     # DOI: 10.1016/0005-1098(94)90029-9
     ode =
-        StructuralIdentifiability.@ODEmodel(x1'(t) = Θ * x2(t)^2, x2'(t) = u, y(t) = x1(t))
+        StructuralIdentifiability.@ODEmodel(x1'(t) = Θ * x2(t)^2, x2'(t) = u(t), y(t) = x1(t))
     # TODO: do we want u^2 Θ or Θ in the output?
-    ident_funcs = [u^2 * Θ]
+    ident_funcs = [Θ]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     # Example 4 from 
@@ -179,8 +179,10 @@
         y1(t) = x1(t)
     )
     # TODO
-    # ident_funcs = [k01, k31 + k21 + k41, k31 * k21 * k41, k31 * k21 + k31 * k41 + k21 * k41]
-    # push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+    ident_funcs = [k01, k31 + k21 + k41, k31 * k21 * k41, k31 * k21 + k31 * k41 + k21 * k41,
+        k12 * k21 + k13 * k31 + k14 * k41, k12 * k21^2 + k13 * k31^2 + k14 * k41^2, 
+        k12 * k21^3 + k13 * k31^3 + k14 * k41^3]
+    push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     # Biohydrogenation_io
     ode = StructuralIdentifiability.@ODEmodel(
@@ -383,6 +385,10 @@ end
     ode = StructuralIdentifiability.@ODEmodel(x'(t) = a * x(t) + b * u(t), y(t) = c * x(t))
     ident_funcs = [b * c, a, x//b]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
+    #ode = StructuralIdentifiability.@ODEmodel(
+
+    #)
 
     p = 0.99
     for case in test_cases
