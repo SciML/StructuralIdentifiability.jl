@@ -6,7 +6,7 @@ begin
 
     macro my_profview(ex)
         :((VSCodeServer.Profile).clear();
-        VSCodeServer.Profile.init(n = 10^8, delay = 0.00001);
+        VSCodeServer.Profile.init(n = 10^8, delay = 0.0000001);
         VSCodeServer.Profile.start_timer();
         $ex;
         VSCodeServer.Profile.stop_timer();
@@ -319,7 +319,46 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-@time StructuralIdentifiability.find_identifiable_functions(fujita)
+funcs = StructuralIdentifiability.find_identifiable_functions(Bilirubin2_io)
+
+@time StructuralIdentifiability.find_identifiable_functions(siwr)
+
+for (name, system) in ((:qwwc, qwwc), (:MAPK_5_outputs, MAPK_5_outputs))
+    id_funcs = StructuralIdentifiability.find_identifiable_functions(system)
+    rl = StructuralIdentifiability._runtime_logger
+    factors = rl[:id_certain_factors]
+    polys = map(fs -> prod(fs), factors)
+    @warn "System $name"
+    @warn "Uncertain factor / Nemo.factor / IO (seconds): $(rl[:id_uncertain_factorization]) / $(rl[:id_nemo_factor]) / $(rl[:id_io_time])"
+    @warn """
+    Unique polynomials factored: $(length(unique(polys))) out of $(length(polys))"""
+end
+
+system = qwwc
+
+@my_profview io_eqs = StructuralIdentifiability.find_ioequations(system);
+rl = StructuralIdentifiability._runtime_logger;
+factors = deepcopy(rl[:id_certain_factors]);
+polys = map(fs -> prod(fs), factors);
+
+@time begin
+    results = empty(factors)
+    for (i, poly) in enumerate(polys)
+        if i in reducible
+            # continue
+        end
+        # empty!(StructuralIdentifiability._runtime_logger[:id_certain_factors])
+        StructuralIdentifiability.fast_factor(poly)
+        # push!(results, collect(keys(result)))
+    end
+end;
+if !(results == result)
+    @assert false
+end
+
+length(unique(polys))
+length(polys)
+
 @time StructuralIdentifiability.find_identifiable_functions(
     pharm,
     adjoin_identifiable = false,
@@ -331,19 +370,99 @@ end
 
 @time StructuralIdentifiability.find_identifiable_functions(covid)
 
-io_equations = StructuralIdentifiability.find_ioequations(pk2);
-identifiable_functions_raw = StructuralIdentifiability.extract_identifiable_functions_raw(
-    io_equations,
-    pk2,
-    empty(pk2.parameters),
-    false,
-)
+#####################
+#####################
 
-@my_profview StructuralIdentifiability.IdealMQS(identifiable_functions_raw);
+io_equations_qwwc = StructuralIdentifiability.find_ioequations(qwwc);
+identifiable_functions_raw_qwwc =
+    StructuralIdentifiability.extract_identifiable_functions_raw(
+        io_equations_qwwc,
+        qwwc,
+        empty(qwwc.parameters),
+        false,
+    );
 
-p = Nemo.GF(4611686018427388039)
+begin
+    par = parent(first(first(identifiable_functions_raw_qwwc)))
+    @info "Base ring is $(base_ring(par)), $(typeof(base_ring(par)))"
+    @info "The number of variables is $(nvars(par))"
+    @info "Ordering is $(Nemo.ordering(par))"
+    # [ Info: Base ring is Rational Field, FlintRationalField
+    # [ Info: The number of variables is 6
+    # [ Info: Ordering is lex
 
-@prof StructuralIdentifiability.ParamPunPam.reduce_mod_p!(mqs, p)
+    s = 0
+    for i in identifiable_functions_raw_qwwc
+        s += sum(length, i)
+    end
+    @info "The number of terms is $s"
+    # [ Info: The number of terms is 6853210
+
+    s = 0
+    for i in identifiable_functions_raw_qwwc
+        s = max(s, maximum(abs, reduce(vcat, map(f -> collect(coefficients(f)), i))))
+    end
+    @info "The biggest coefficient is $s"
+    # [ Info: The biggest coefficient is 1034019026488
+end
+
+@time begin
+    mqs = StructuralIdentifiability.IdealMQS(identifiable_functions_raw_qwwc)
+    p = Nemo.GF(2^62 + 169)
+    StructuralIdentifiability.ParamPunPam.reduce_mod_p!(mqs, p)
+end
+# 9.279456 seconds (55.28 M allocations: 3.532 GiB, 21.47% gc time)
+
+#####################
+#####################
+
+io_equations_mapk = StructuralIdentifiability.find_ioequations(MAPK_5_outputs_bis);
+identifiable_functions_raw_mapk =
+    StructuralIdentifiability.extract_identifiable_functions_raw(
+        io_equations_mapk,
+        MAPK_5_outputs_bis,
+        empty(MAPK_5_outputs_bis.parameters),
+        false,
+    );
+
+begin
+    par = parent(first(first(identifiable_functions_raw_mapk)))
+    @info "Base ring is $(base_ring(par)), $(typeof(base_ring(par)))"
+    @info "The number of variables is $(nvars(par))"
+    @info "Ordering is $(Nemo.ordering(par))"
+    # [ Info: Base ring is Rational Field, FlintRationalField
+    # [ Info: The number of variables is 22
+    # [ Info: Ordering is lex
+
+    s = 0
+    for i in identifiable_functions_raw_mapk
+        s += sum(length, i)
+    end
+    @info "The number of terms is $s"
+    # [ Info: The number of terms is 4481495
+
+    s = 0
+    for i in identifiable_functions_raw_mapk
+        s = max(s, maximum(abs, reduce(vcat, map(f -> collect(coefficients(f)), i))))
+    end
+    @info "The biggest coefficient is $s"
+    # [ Info: The biggest coefficient is 144
+end
+
+@time begin
+    mqs = StructuralIdentifiability.IdealMQS(identifiable_functions_raw_mapk)
+    p = Nemo.GF(2^62 + 169)
+    StructuralIdentifiability.ParamPunPam.reduce_mod_p!(mqs, p)
+end
+
+#####################
+#####################
+
+@time mqs = StructuralIdentifiability.IdealMQS(identifiable_functions_raw)
+
+p = Nemo.GF(2^62 + 169)
+
+@time StructuralIdentifiability.ParamPunPam.reduce_mod_p!(mqs, p)
 point = rand(p, length(Nemo.gens(StructuralIdentifiability.ParamPunPam.parent_params(mqs))))
 mqs_spec = StructuralIdentifiability.ParamPunPam.specialize_mod_p(mqs, point);
 

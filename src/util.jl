@@ -204,6 +204,7 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :by
         evec = exponent_vector(poly, i)
         new_exp = zeros(Int, nvars(new_ring))
         for i in 1:length(evec)
+            iszero(var_mapping[i]) && continue
             new_exp[var_mapping[i]] = evec[i]
         end
         exps[i] = new_exp
@@ -283,11 +284,12 @@ function fast_factor(poly::MPolyElem{fmpq})
     _runtime_logger[:id_uncertain_factorization] += runtime
     cert_factors = map(pair -> pair[1], filter(f -> f[2], prelim_factors))
     uncert_factors = map(pair -> pair[1], filter(f -> !f[2], prelim_factors))
-    for p in uncert_factors
+    runtime = @elapsed for p in uncert_factors
         for f in Nemo.factor(p)
             push!(cert_factors, f[1])
         end
     end
+    _runtime_logger[:id_nemo_factor] += runtime
     push!(_runtime_logger[:id_certain_factors], cert_factors)
     return cert_factors
 end

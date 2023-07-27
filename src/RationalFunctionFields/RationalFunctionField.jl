@@ -171,7 +171,7 @@ function check_field_membership(
     @debug "Computing Groebner basis ($(length(gens_specialized)) equations)"
     @assert parent(first(gens_specialized)) == parent(first(tbr_specialized))
     gb = groebner(gens_specialized)
-    result = map(iszero, normalform(gb, tbr_specialized, check = false))
+    result = map(iszero, normalform(gb, tbr_specialized))
     return result
 end
 
@@ -191,7 +191,8 @@ function check_field_membership_mod_p!(
         ParamPunPam.specialize_mod_p(mqs_tobereduced, point, saturated = false)
     @assert parent(first(gens_specialized)) == parent(first(polys_specialized))
     gb = groebner(gens_specialized)
-    result = map(iszero, normalform(gb, polys_specialized, check = false))
+    nf = normalform(gb, polys_specialized)
+    result = map(iszero, nf)
     return result
 end
 
@@ -204,9 +205,9 @@ standardized generators for `rff`.
 Applies the following passes:
 1. Filter constants,
 2. Remove redundant generators,
-3. Remove some common subexpressions,
+3. Maayybe put generators in the autoreduced state,
 """
-function beautifuly_generators(rff::RationalFunctionField)
+function beautifuly_generators(rff::RationalFunctionField, rewrite_pass = true)
     id_funcs = dennums_to_fractions(rff.dennums)
     # Filter pass
     id_funcs = filter(!is_rational_func_const, id_funcs)
@@ -231,43 +232,18 @@ function beautifuly_generators(rff::RationalFunctionField)
     end
     @debug "Out of $(length(id_funcs)) simplified generators there are $(length(non_redundant)) non redundant"
     id_funcs = id_funcs[non_redundant]
-    # A simple Common Subexpression Elimination pass
-    spling_cleaning_pass!(id_funcs)
-    if false
-        integrals =
-            filter(i -> is_constant(denominator(id_funcs[i])), collect(1:length(id_funcs)))
-        fractions = setdiff!(collect(1:length(id_funcs)), integrals)
-        for i in integrals
-            for j in integrals
-                i == j && continue
-                fi, fj = numerator(id_funcs[i]), denominator(id_funcs[j])
-                q, r = divrem(fi, fj)
-                if is_constant(q) && !iszero(q)
-                    id_funcs[i] = r // one(r)
-                    @debug "Rewritten $fi with $fj. Result: $(id_funcs[i])"
-                end
-            end
-        end
-        for i in fractions
-            for j in integrals
-                frac_i, int_j = id_funcs[i], numerator(id_funcs[j])
-                q1, r1 = divrem(numerator(frac_i), int_j)
-                q2, r2 = divrem(denominator(frac_i), int_j)
-                if is_constant(q1) && !iszero(q1)
-                    id_funcs[i] = r1 // denominator(id_funcs[i])
-                    @debug "Rewritten $frac_i with $int_j. Result: $(id_funcs[i])"
-                end
-                if is_constant(q2) && !iszero(q2)
-                    id_funcs[i] = numerator(id_funcs[i]) // r2
-                    @debug "Rewritten $frac_i with $int_j. Result: $(id_funcs[i])"
-                end
-                if is_constant(numerator(id_funcs[i]))
-                    id_funcs[i] = denominator(id_funcs[i]) // one(r1)
-                end
-            end
-        end
-    end
     sort!(id_funcs, lt = rational_func_cmp)
+    # if rewrite_pass && false
+    #     for i in 2:length(id_funcs)
+    #         func_nf = symbolic_normal_form(id_funcs[1:(i - 1)], id_funcs[i])
+    #         target_orig = length(numerator(id_funcs[i])) + length(denominator(id_funcs[i]))
+    #         target_nf = length(numerator(func_nf)) + length(denominator(func_nf))
+    #         if target_nf < target_orig
+    #             @debug "Rewritten $(id_funcs[i]) with $(func_nf)" target_nf target_orig
+    #             id_funcs[i] = func_nf
+    #         end
+    #     end
+    # end
     spling_cleaning_pass!(id_funcs)
     return id_funcs
 end
@@ -316,7 +292,7 @@ function spling_cleaning_pass!(id_funcs)
             func = func * leading_coefficient(num)
         end
         num, den = unpack_fraction(func)
-        if is_constant(den)
+        if is_constant(den) && is_constant(Nemo.term(num, length(num)))
             func = (num - trailing_coefficient(num)) // one(num)
         end
         id_funcs[i] = func

@@ -39,6 +39,7 @@ function find_identifiable_functions(
 ) where {T <: MPolyElem{fmpq}}
     runtime_start = time_ns()
     _runtime_logger[:id_uncertain_factorization] = 0.0
+    _runtime_logger[:id_nemo_factor] = 0.0
     _runtime_logger[:id_primality_evaluate] = 0.0
     _runtime_logger[:id_certain_factors] = []
 
@@ -53,6 +54,7 @@ function find_identifiable_functions(
         with_states,
     )
     id_funcs = identifiable_functions_raw
+    _runtime_logger[:id_global_time] = 0.0
     if adjoin_identifiable
         @info "Assessing global identifiability"
         to_check = ode.parameters
@@ -65,6 +67,7 @@ function find_identifiable_functions(
             check_field_membership_mod_p(identifiable_functions_raw, to_check)
         @debug "Identifiable parameters and states are" to_check global_result
         @info "Global identifiability assessed in $runtime seconds"
+        _runtime_logger[:id_global_time] = runtime
         known_quantities = Vector{Vector{elem_type(bring)}}()
         for (glob, p) in zip(global_result, to_check)
             if glob
