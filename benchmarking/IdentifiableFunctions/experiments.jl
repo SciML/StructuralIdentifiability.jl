@@ -319,7 +319,7 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-funcs = StructuralIdentifiability.find_identifiable_functions(Bilirubin2_io)
+f = StructuralIdentifiability.find_identifiable_functions(Bilirubin2_io)
 
 @time StructuralIdentifiability.find_identifiable_functions(siwr)
 
