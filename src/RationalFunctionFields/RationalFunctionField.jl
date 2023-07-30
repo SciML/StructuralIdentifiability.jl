@@ -233,18 +233,8 @@ function beautifuly_generators(rff::RationalFunctionField, rewrite_pass = true)
     @debug "Out of $(length(id_funcs)) simplified generators there are $(length(non_redundant)) non redundant"
     id_funcs = id_funcs[non_redundant]
     sort!(id_funcs, lt = rational_func_cmp)
-    # if rewrite_pass && false
-    #     for i in 2:length(id_funcs)
-    #         func_nf = symbolic_normal_form(id_funcs[1:(i - 1)], id_funcs[i])
-    #         target_orig = length(numerator(id_funcs[i])) + length(denominator(id_funcs[i]))
-    #         target_nf = length(numerator(func_nf)) + length(denominator(func_nf))
-    #         if target_nf < target_orig
-    #             @debug "Rewritten $(id_funcs[i]) with $(func_nf)" target_nf target_orig
-    #             id_funcs[i] = func_nf
-    #         end
-    #     end
-    # end
-    spling_cleaning_pass!(id_funcs)
+
+    spring_cleaning_pass!(id_funcs)
     return id_funcs
 end
 
@@ -279,7 +269,7 @@ function rational_func_cmp(f, g)
     return false
 end
 
-function spling_cleaning_pass!(id_funcs)
+function spring_cleaning_pass!(id_funcs)
     @assert all(is_rational_func_normalized, id_funcs)
     for i in 1:length(id_funcs)
         func = id_funcs[i]
@@ -300,13 +290,13 @@ function spling_cleaning_pass!(id_funcs)
     id_funcs
 end
 
-"""
-    simplified_generating_set(rff::RationalFunctionField; p = 0.99, seed = 42)
-
-Returns a simplified set of generators for `rff`. 
-Result is correct (in Monte-Carlo sense) with probability at least `p`.
-"""
-function simplified_generating_set(rff::RationalFunctionField; p = 0.99, seed = 42)
+function generating_set_from_mqs(
+    rff::RationalFunctionField;
+    p = 0.99,
+    seed = 42,
+    ordering = nothing,
+    beautifuly = true,
+)
     # TODO: use seed!
     @info "Simplifying identifiable functions"
     _runtime_logger[:id_groebner_time] = 0.0
@@ -317,8 +307,12 @@ function simplified_generating_set(rff::RationalFunctionField; p = 0.99, seed = 
     two_sided_inclusion = false
     while !two_sided_inclusion
         @debug "Computing GB with parameters up to degrees $(current_degrees)"
-        runtime = @elapsed gb =
-            ParamPunPam.paramgb(mqs, up_to_degree = current_degrees, seed = seed)
+        runtime = @elapsed gb = ParamPunPam.paramgb(
+            mqs,
+            up_to_degree = current_degrees,
+            seed = seed,
+            ordering = ordering,
+        )
         _runtime_logger[:id_groebner_time] += runtime
         @info "Groebner basis computed in $runtime seconds"
         basis_coeffs = map(collect ∘ coefficients, gb)
@@ -340,13 +334,17 @@ function simplified_generating_set(rff::RationalFunctionField; p = 0.99, seed = 
     end
     _runtime_logger[:id_gb_degrees] = current_degrees
     @info "The coefficients of the Groebner basis are presented by $(length(id_funcs)) rational functions"
-    time_start = time_ns()
-    new_id_funcs = beautifuly_generators(new_rff)
-    if isempty(new_id_funcs)
-        return new_id_funcs
+    if beautifuly
+        time_start = time_ns()
+        new_id_funcs = beautifuly_generators(new_rff)
+        if isempty(new_id_funcs)
+            return new_id_funcs
+        end
+        _runtime_logger[:id_filter_time] = (time_ns() - time_start) / 1e9
+        @info "Functions filtered in $(_runtime_logger[:id_filter_time]) seconds"
+    else
+        new_id_funcs = dennums_to_fractions(new_rff.dennums)
     end
-    _runtime_logger[:id_filter_time] = (time_ns() - time_start) / 1e9
-    @info "Functions filtered in $(_runtime_logger[:id_filter_time]) seconds"
     @info "Checking inclusion with probability $p"
     runtime = @elapsed result =
         check_field_membership(RationalFunctionField(new_id_funcs), rff, p)
@@ -359,4 +357,41 @@ function simplified_generating_set(rff::RationalFunctionField; p = 0.99, seed = 
     end
     @info "Out of $(length(rff.mqs.nums_qq)) initial generators there are $(length(new_id_funcs)) non redundant"
     return new_id_funcs
+end
+
+"""
+    simplified_generating_set(rff::RationalFunctionField; p = 0.99, seed = 42)
+
+Returns a simplified set of generators for `rff`. 
+Result is correct (in Monte-Carlo sense) with probability at least `p`.
+
+
+"""
+function simplified_generating_set(rff::RationalFunctionField; p = 0.99, seed = 42)
+    pool = []
+    vars = gens(parent(rff.mqs))
+
+    funcs = generating_set_from_mqs(rff, p = p, seed = seed, ordering = DegRevLex())
+    append!(pool, funcs)
+    funcs = generating_set_from_mqs(rff, p = p, seed = seed, ordering = DegLex())
+    append!(pool, funcs)
+
+    for i in 1:length(vars)
+        ord = DegLex(circshift(vars, i))
+        funcs = generating_set_from_mqs(
+            rff,
+            p = p,
+            seed = seed,
+            ordering = ord,
+            beautifuly = false,
+        )
+        append!(pool, funcs)
+    end
+
+    unique!(pool)
+    sort!(pool, lt = rational_func_cmp)
+    simple_pool = beautifuly_generators(RationalFunctionField(pool))
+    funcs = beautifuly_generators(RationalFunctionField(funcs))
+
+    funcs, simple_pool
 end

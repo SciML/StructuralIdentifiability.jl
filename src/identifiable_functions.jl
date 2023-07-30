@@ -36,6 +36,7 @@ function find_identifiable_functions(
     seed = 42,
     with_states = false,
     adjoin_identifiable = true,
+    emit_pool = false,
 ) where {T <: MPolyElem{fmpq}}
     runtime_start = time_ns()
     _runtime_logger[:id_uncertain_factorization] = 0.0
@@ -84,14 +85,17 @@ function find_identifiable_functions(
         if isempty(id_funcs)
             id_funcs = [one(bring)]
         end
-        id_funcs_fracs =
+        id_funcs_fracs, funcs_pool =
             simplified_generating_set(RationalFunctionField(id_funcs), p = p, seed = seed)
     else
         id_funcs_fracs = dennums_to_fractions(id_funcs)
     end
     _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1e9
     @info "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds"
-    return id_funcs_fracs
+    if emit_pool
+        return id_funcs_fracs, funcs_pool
+    end
+    id_funcs_fracs
 end
 
 """

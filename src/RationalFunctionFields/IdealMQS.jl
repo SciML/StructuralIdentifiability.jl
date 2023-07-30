@@ -7,7 +7,6 @@ with an ideal in Q(x)[y]:
 
     <num_i(x) den_i(y) - num_i(y) den_i(x)> : Q(y)^inf
 
-
 ## Interface 
 
 `IdealMQS` provides all of the functions the interface `AbstractBlackboxIdeal`
