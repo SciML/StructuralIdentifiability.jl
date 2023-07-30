@@ -35,7 +35,15 @@
         y(t) = x0(t)
     )
     funcs_to_test = [a, b, c, d, b * x1, x0, x1]
-    correct = [:globally, :nonidentifiable, :globally, :globally, :globally, :globally, :nonidentifiable]
+    correct = [
+        :globally,
+        :nonidentifiable,
+        :globally,
+        :globally,
+        :globally,
+        :globally,
+        :nonidentifiable,
+    ]
     push!(
         test_cases,
         Dict(
@@ -178,7 +186,17 @@
         y2(t) = N
     )
     funcs_to_test = [b, N, In, a, nu, S, E, a * nu, a + nu]
-    correct = [:globally, :globally, :globally, :locally, :locally, :locally, :locally, :globally, :globally]
+    correct = [
+        :globally,
+        :globally,
+        :globally,
+        :locally,
+        :locally,
+        :locally,
+        :locally,
+        :globally,
+        :globally,
+    ]
     push!(
         test_cases,
         Dict(
@@ -189,8 +207,6 @@
     )
 
     #-------------------------------------------------------------------------- 
-
-
 
     for case in test_cases
         result = assess_identifiability(case[:ode], case[:funcs])

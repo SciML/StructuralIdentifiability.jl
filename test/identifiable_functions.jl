@@ -26,8 +26,11 @@
     # Example 2 from 
     # "On Global Identifiability for Arbitrary Model Parametrizations",
     # DOI: 10.1016/0005-1098(94)90029-9
-    ode =
-        StructuralIdentifiability.@ODEmodel(x1'(t) = Θ * x2(t)^2, x2'(t) = u(t), y(t) = x1(t))
+    ode = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = Θ * x2(t)^2,
+        x2'(t) = u(t),
+        y(t) = x1(t)
+    )
     # TODO: do we want u^2 Θ or Θ in the output?
     ident_funcs = [Θ]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
@@ -176,9 +179,15 @@
         x4'(t) = k41 * x1(t) - k14 * x4(t),
         y1(t) = x1(t)
     )
-    ident_funcs = [k01, k31 + k21 + k41, k31 * k21 * k41, k31 * k21 + k31 * k41 + k21 * k41,
-        k12 * k21 + k13 * k31 + k14 * k41, k12 * k21^2 + k13 * k31^2 + k14 * k41^2, 
-        k12 * k21^3 + k13 * k31^3 + k14 * k41^3]
+    ident_funcs = [
+        k01,
+        k31 + k21 + k41,
+        k31 * k21 * k41,
+        k31 * k21 + k31 * k41 + k21 * k41,
+        k12 * k21 + k13 * k31 + k14 * k41,
+        k12 * k21^2 + k13 * k31^2 + k14 * k41^2,
+        k12 * k21^3 + k13 * k31^3 + k14 * k41^3,
+    ]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     # Biohydrogenation_io
@@ -331,7 +340,7 @@ end
         x2'(t) = -c * x2(t) + d * x1(t) * x2(t),
         y(t) = x1(t)
     )
-    ident_funcs = [x1, c, d, a, b*x2]
+    ident_funcs = [x1, c, d, a, b * x2]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     ode = StructuralIdentifiability.@ODEmodel(
@@ -339,7 +348,7 @@ end
         x2'(t) = -c * x2(t) + d * x1(t) * x2(t),
         y(t) = x1(t)
     )
-    ident_funcs = [x1, c, d, a, b*x2]
+    ident_funcs = [x1, c, d, a, b * x2]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     # Diagonal with simple spectrum and observable states
@@ -370,15 +379,15 @@ end
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     ode = StructuralIdentifiability.@ODEmodel(
-        x1'(t) = α*(x1 - x2),
-        x2'(t) = α*(x1 + x2),
+        x1'(t) = α * (x1 - x2),
+        x2'(t) = α * (x1 + x2),
         y(t) = (x1^2 + x2^2) // 2,
     )
     ident_funcs = [α, x1^2 + x2^2]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     ode = StructuralIdentifiability.@ODEmodel(x'(t) = a * x(t) + b * u(t), y(t) = c * x(t))
-    ident_funcs = [b * c, a, x//b]
+    ident_funcs = [b * c, a, x // b]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     # Goodwin
@@ -389,7 +398,17 @@ end
         x4'(t) = sigma * x4(t) * (gama * x2(t) - delta * x3(t)) / x3(t),
         y(t) = x1(t)
     )
-    ident_funcs = [b, c, sigma, beta + delta, beta * delta, x1, x4,  (alpha * gama) // x3, (gama * x2 + x3 * beta) // x3]
+    ident_funcs = [
+        b,
+        c,
+        sigma,
+        beta + delta,
+        beta * delta,
+        x1,
+        x4,
+        (alpha * gama) // x3,
+        (gama * x2 + x3 * beta) // x3,
+    ]
     push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
     p = 0.99

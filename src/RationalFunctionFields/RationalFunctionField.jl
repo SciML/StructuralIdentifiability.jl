@@ -127,8 +127,8 @@ Output:
    the i-th function belongs to `field`
 """
 function field_contains(
-    field::RationalFunctionField{T}, 
-    ratfuncs::Vector{Vector{T}}, 
+    field::RationalFunctionField{T},
+    ratfuncs::Vector{Vector{T}},
     p,
 ) where {T}
     if isempty(ratfuncs)
@@ -176,26 +176,22 @@ function field_contains(
     point = map(v -> Nemo.QQ(rand((-sampling_bound):sampling_bound)), gens(param_ring))
     mqs_specialized = specialize(mqs, point)
     @debug "Computing Groebner basis ($(length(mqs_specialized)) equations)"
-    mqs_ratfuncs = specialize(IdealMQS(ratfuncs), point; saturated=false)
+    mqs_ratfuncs = specialize(IdealMQS(ratfuncs), point; saturated = false)
     @assert parent(first(mqs_specialized)) == parent(first(mqs_ratfuncs))
     gb = groebner(mqs_specialized)
     result = map(iszero, normalform(gb, mqs_ratfuncs))
     return result
 end
 
-function  field_contains(
-    field::RationalFunctionField{T}, 
-    ratfuncs::Vector{Generic.Frac{T}}, 
+function field_contains(
+    field::RationalFunctionField{T},
+    ratfuncs::Vector{Generic.Frac{T}},
     p,
 ) where {T}
     return field_contains(field, fractions_to_dennums(ratfuncs), p)
 end
 
-function  field_contains(
-    field::RationalFunctionField{T}, 
-    polys::Vector{T},
-    p,
-) where {T}
+function field_contains(field::RationalFunctionField{T}, polys::Vector{T}, p) where {T}
     id = one(parent(first(polys)))
     return field_contains(field, [[id, p] for p in polys], p)
 end
@@ -394,8 +390,7 @@ function simplified_generating_set(rff::RationalFunctionField; p = 0.99, seed = 
     _runtime_logger[:id_filter_time] = (time_ns() - time_start) / 1e9
     @info "Functions filtered in $(_runtime_logger[:id_filter_time]) seconds"
     @info "Checking inclusion with probability $p"
-    runtime = @elapsed result =
-        issubfield(rff, RationalFunctionField(new_id_funcs), p)
+    runtime = @elapsed result = issubfield(rff, RationalFunctionField(new_id_funcs), p)
     _runtime_logger[:id_inclusion_check] = runtime
     @info "Inclusion checked in $(_runtime_logger[:id_inclusion_check]) seconds. Result: $two_sided_inclusion"
     @debug "Results of the check over the rationals:" result

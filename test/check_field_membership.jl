@@ -8,7 +8,12 @@
     ) == [true, true, true, false]
 
     @test field_contains(
-        RationalFunctionField([[x + y + z, x^2 + y^2 + z^2, (x + y + z)^2, x^3 + y^3 + z^3]]),
+        RationalFunctionField([[
+            x + y + z,
+            x^2 + y^2 + z^2,
+            (x + y + z)^2,
+            x^3 + y^3 + z^3,
+        ]]),
         [x + y + z // 1, x * y * z // 1, x + y + 2 * z // 1, x // (y + z)],
         0.99,
     ) == [true, true, false, false]
@@ -17,5 +22,5 @@
         RationalFunctionField([x + y + z // 1, x * y + y * z + z * x // 1, x * y * z // 1]),
         [x^2 + y^2 + z^2, x^6 + y^6 + z^6, x - y + z, x^2 - y^2 + z^2],
         0.99,
-       ) == [true, true, false, false]
+    ) == [true, true, false, false]
 end

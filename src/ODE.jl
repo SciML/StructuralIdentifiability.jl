@@ -27,7 +27,11 @@ struct ODE{P}
         elseif !isempty(y_eqs)
             num, _ = unpack_fraction(first(values(y_eqs)))
         else
-            throw(DomainError("Cannot create an ODE{$P} with no states and no observables :("))
+            throw(
+                DomainError(
+                    "Cannot create an ODE{$P} with no states and no observables :(",
+                ),
+            )
         end
         poly_ring = parent(num)
         x_vars = collect(keys(x_eqs))

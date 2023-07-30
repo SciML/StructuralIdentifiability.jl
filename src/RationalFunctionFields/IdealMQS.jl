@@ -34,7 +34,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     den_lcm::T
     sat_var_index::Int
     sat_qq::T
-    
+
     # Numerators and denominators over GF. 
     # We cache them and maintain a map:
     # a finite field --> an image over this finite field

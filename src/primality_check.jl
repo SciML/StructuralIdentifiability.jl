@@ -21,10 +21,10 @@ function check_primality_zerodim(J::Array{fmpq_mpoly, 1})
     end
     generic_multiplication = sum(Nemo.QQ(rand(1:100)) * M for M in matrices)
     @debug "" generic_multiplication
-    
+
     R, t = Nemo.PolynomialRing(Nemo.QQ, "t")
     @debug "" Nemo.charpoly(R, generic_multiplication)
-    
+
     return Nemo.isirreducible(Nemo.charpoly(R, generic_multiplication))
 end
 
