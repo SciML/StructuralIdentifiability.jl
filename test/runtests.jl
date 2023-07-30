@@ -6,7 +6,7 @@ using TestSetExtensions
 using StructuralIdentifiability.Nemo
 using StructuralIdentifiability.ModelingToolkit
 using StructuralIdentifiability:
-    check_field_membership,
+    field_contains,
     check_identifiability,
     check_primality_zerodim,
     check_primality,
@@ -56,7 +56,8 @@ using StructuralIdentifiability:
     extract_coefficients,
     extract_coefficients_ratfunc,
     lie_derivative,
-    states_generators
+    states_generators,
+    RationalFunctionField
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)

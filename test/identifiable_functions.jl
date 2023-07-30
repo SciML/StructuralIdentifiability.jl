@@ -282,12 +282,11 @@
         )
 
         # Check inclusion <true funcs> in <result funcs>
-        inclusion = StructuralIdentifiability.check_field_membership(
-            result_funcs,
-            true_ident_funcs,
+        @test StructuralIdentifiability.fields_equal(
+            RationalFunctionField(result_funcs),
+            RationalFunctionField(true_ident_funcs),
             p,
         )
-        @test all(inclusion)
 
         # Check inclusion <result funcs> in <result funcs non simplified>
         # inclusion = StructuralIdentifiability.check_field_membership(
@@ -306,12 +305,11 @@
         # @test all(inclusion)
 
         # Check inclusion <result funcs> in <true funcs>
-        inclusion = StructuralIdentifiability.check_field_membership(
-            true_ident_funcs,
-            result_funcs,
+        @test StructuralIdentifiability.fields_equal(
+            RationalFunctionField(true_ident_funcs),
+            RationalFunctionField(result_funcs),
             p,
         )
-        @test all(inclusion)
     end
 end
 
@@ -415,19 +413,17 @@ end
         )
 
         # Check inclusion <true funcs> in <result funcs>
-        inclusion = StructuralIdentifiability.check_field_membership(
-            result_funcs,
-            true_ident_funcs,
+        @test StructuralIdentifiability.fields_equal(
+            RationalFunctionField(result_funcs),
+            RationalFunctionField(true_ident_funcs),
             p,
         )
-        @test all(inclusion)
 
         # Check inclusion <result funcs> in <true funcs>
-        inclusion = StructuralIdentifiability.check_field_membership(
-            true_ident_funcs,
-            result_funcs,
+        @test StructuralIdentifiability.fields_equal(
+            RationalFunctionField(true_ident_funcs),
+            RationalFunctionField(result_funcs),
             p,
         )
-        @test all(inclusion)
     end
 end
