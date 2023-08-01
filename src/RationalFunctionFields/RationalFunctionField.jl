@@ -177,10 +177,10 @@ end
 
 function check_field_membership_mod_p!(
     generators::RationalFunctionField{T},
-    functions::RationalFunctionField{T},
+    tobereduced::RationalFunctionField{T},
 ) where {T}
     mqs_generators = generators.mqs
-    mqs_tobereduced = functions.mqs
+    mqs_tobereduced = tobereduced.mqs
     ff = Nemo.GF(2^31 - 1)
     reduce_mod_p!(mqs_generators, ff)
     reduce_mod_p!(mqs_tobereduced, ff)
@@ -207,35 +207,36 @@ Applies the following passes:
 2. Remove redundant generators,
 3. Maayybe put generators in the autoreduced state,
 """
-function beautifuly_generators(rff::RationalFunctionField, rewrite_pass = true)
-    id_funcs = dennums_to_fractions(rff.dennums)
+function beautifuly_generators(rff::RationalFunctionField; discard_redundant = true)
+    fracs = dennums_to_fractions(rff.dennums)
     # Filter pass
-    id_funcs = filter(!is_rational_func_const, id_funcs)
-    if isempty(id_funcs)
-        @debug "The set of identifiabile functions is empty"
-        return id_funcs
+    fracs = filter(!is_rational_func_const, fracs)
+    if isempty(fracs)
+        @debug "The set of generators is empty"
+        return fracs
     end
     # Remove redundant pass
-    sort!(id_funcs, lt = rational_func_cmp)
-    non_redundant = collect(1:length(id_funcs))
-    for i in length(id_funcs):-1:1
-        func = id_funcs[i]
-        if length(non_redundant) == 1
-            continue
+    if discard_redundant
+        sort!(fracs, lt = rational_func_cmp)
+        non_redundant = collect(1:length(fracs))
+        for i in length(fracs):-1:1
+            func = fracs[i]
+            if length(non_redundant) == 1
+                continue
+            end
+            result = check_field_membership_mod_p(fracs[setdiff(non_redundant, i)], [func])
+            @debug "Simplification: inclusion check" func result
+            if result[1]
+                @debug "The function $func is discarded"
+                setdiff!(non_redundant, i)
+            end
         end
-        result = check_field_membership_mod_p(id_funcs[setdiff(non_redundant, i)], [func])
-        @debug "Simplification: inclusion check" func result
-        if result[1]
-            @debug "The function $func is discarded"
-            setdiff!(non_redundant, i)
-        end
+        @debug "Out of $(length(fracs)) simplified generators there are $(length(non_redundant)) non redundant"
+        fracs = fracs[non_redundant]
     end
-    @debug "Out of $(length(id_funcs)) simplified generators there are $(length(non_redundant)) non redundant"
-    id_funcs = id_funcs[non_redundant]
-    sort!(id_funcs, lt = rational_func_cmp)
-
-    spring_cleaning_pass!(id_funcs)
-    return id_funcs
+    sort!(fracs, lt = rational_func_cmp)
+    spring_cleaning_pass!(fracs)
+    return fracs
 end
 
 """
@@ -269,10 +270,10 @@ function rational_func_cmp(f, g)
     return false
 end
 
-function spring_cleaning_pass!(id_funcs)
-    @assert all(is_rational_func_normalized, id_funcs)
-    for i in 1:length(id_funcs)
-        func = id_funcs[i]
+function spring_cleaning_pass!(fracs)
+    @assert all(is_rational_func_normalized, fracs)
+    for i in 1:length(fracs)
+        func = fracs[i]
         num, den = unpack_fraction(func)
         if is_constant(num)
             func = den // num
@@ -285,24 +286,18 @@ function spring_cleaning_pass!(id_funcs)
         if is_constant(den) && is_constant(Nemo.term(num, length(num)))
             func = (num - trailing_coefficient(num)) // one(num)
         end
-        id_funcs[i] = func
+        fracs[i] = func
     end
-    id_funcs
+    fracs
 end
 
-function generating_set_from_mqs(
+function groebner_basis_coeffs(
     rff::RationalFunctionField;
-    p = 0.99,
     seed = 42,
-    ordering = nothing,
-    beautifuly = true,
+    ordering = Groebner.InputOrdering(),
 )
-    # TODO: use seed!
-    @info "Simplifying identifiable functions"
-    _runtime_logger[:id_groebner_time] = 0.0
-    _runtime_logger[:id_inclusion_check_mod_p] = 0.0
     mqs = rff.mqs
-    gb, id_funcs, new_rff = nothing, nothing, nothing
+    gb, fracs, new_rff = nothing, nothing, nothing
     current_degrees = (2, 2)
     two_sided_inclusion = false
     while !two_sided_inclusion
@@ -317,12 +312,12 @@ function generating_set_from_mqs(
         @info "Groebner basis computed in $runtime seconds"
         basis_coeffs = map(collect ∘ coefficients, gb)
         basis_coeffs_set = mapreduce(Set, union!, basis_coeffs)
-        id_funcs = collect(basis_coeffs_set)
-        @info "Identifiable functions up to degrees $(current_degrees) are" id_funcs
+        fracs = collect(basis_coeffs_set)
+        @info "Identifiable functions up to degrees $(current_degrees) are" fracs
         @info "Checking two-sided inclusion modulo a prime"
         time_start = time_ns()
         # Check inclusion: <simplified generators> in <original generators> 
-        new_rff = RationalFunctionField(id_funcs)
+        new_rff = RationalFunctionField(fracs)
         inclusion = check_field_membership_mod_p!(rff, new_rff)
         two_sided_inclusion = two_sided_inclusion || all(inclusion)
         # Check inclusion: <original generators> in <simplified generators>
@@ -333,30 +328,8 @@ function generating_set_from_mqs(
         current_degrees = current_degrees .* 2
     end
     _runtime_logger[:id_gb_degrees] = current_degrees
-    @info "The coefficients of the Groebner basis are presented by $(length(id_funcs)) rational functions"
-    if beautifuly
-        time_start = time_ns()
-        new_id_funcs = beautifuly_generators(new_rff)
-        if isempty(new_id_funcs)
-            return new_id_funcs
-        end
-        _runtime_logger[:id_filter_time] = (time_ns() - time_start) / 1e9
-        @info "Functions filtered in $(_runtime_logger[:id_filter_time]) seconds"
-    else
-        new_id_funcs = dennums_to_fractions(new_rff.dennums)
-    end
-    @info "Checking inclusion with probability $p"
-    runtime = @elapsed result =
-        check_field_membership(RationalFunctionField(new_id_funcs), rff, p)
-    _runtime_logger[:id_inclusion_check] = runtime
-    @info "Inclusion checked in $(_runtime_logger[:id_inclusion_check]) seconds. Result: $two_sided_inclusion"
-    @debug "Results of the check over the rationals:" result
-    if !all(result)
-        @warn "Field membership check failed. Error will follow."
-        throw("The new subfield generators are not correct.")
-    end
-    @info "Out of $(length(rff.mqs.nums_qq)) initial generators there are $(length(new_id_funcs)) non redundant"
-    return new_id_funcs
+    @info "The coefficients of the Groebner basis are presented by $(length(fracs)) rational functions"
+    return new_rff
 end
 
 """
@@ -364,34 +337,99 @@ end
 
 Returns a simplified set of generators for `rff`. 
 Result is correct (in Monte-Carlo sense) with probability at least `p`.
-
-
 """
 function simplified_generating_set(rff::RationalFunctionField; p = 0.99, seed = 42)
-    pool = []
+    # TODO: use seed!
+    @info "Simplifying identifiable functions"
+    _runtime_logger[:id_groebner_time] = 0.0
+    _runtime_logger[:id_inclusion_check_mod_p] = 0.0
+    new_rff = groebner_basis_coeffs(rff, seed = seed)
+    time_start = time_ns()
+    new_fracs = beautifuly_generators(new_rff)
+    if isempty(new_fracs)
+        return new_fracs
+    end
+    _runtime_logger[:id_filter_time] = (time_ns() - time_start) / 1e9
+    @info "Functions filtered in $(_runtime_logger[:id_filter_time]) seconds"
+    @info "Checking inclusion with probability $p"
+    runtime =
+        @elapsed result = check_field_membership(RationalFunctionField(new_fracs), rff, p)
+    _runtime_logger[:id_inclusion_check] = runtime
+    @info "Inclusion checked in $(_runtime_logger[:id_inclusion_check]) seconds. Result: $(all(result))"
+    if !all(result)
+        @warn "Field membership check failed. Error will follow."
+        throw("The new subfield generators are not correct.")
+    end
+    @info "Out of $(length(rff.mqs.nums_qq)) initial generators there are $(length(new_fracs)) non redundant"
+    return new_fracs
+end
+
+mutable struct FieldGeneratorsFan
+    generators::Any
+    orderings::Any
+    meta::Any
+    simplest_generators::Any
+    all_funcs::Any
+
+    function FieldGeneratorsFan()
+        new([], [], [], [], [])
+    end
+end
+
+function generating_sets_fan(rff::RationalFunctionField{T}; p = 0.99, seed = 42) where {T}
+    _runtime_logger[:id_groebner_time] = 0.0
+    _runtime_logger[:id_inclusion_check_mod_p] = 0.0
+    fan = FieldGeneratorsFan()
     vars = gens(parent(rff.mqs))
 
-    funcs = generating_set_from_mqs(rff, p = p, seed = seed, ordering = DegRevLex())
-    append!(pool, funcs)
-    funcs = generating_set_from_mqs(rff, p = p, seed = seed, ordering = DegLex())
-    append!(pool, funcs)
+    generators = Vector{Vector{Generic.Frac{T}}}()
 
-    for i in 1:length(vars)
-        ord = DegLex(circshift(vars, i))
-        funcs = generating_set_from_mqs(
-            rff,
-            p = p,
-            seed = seed,
-            ordering = ord,
-            beautifuly = false,
-        )
-        append!(pool, funcs)
+    for i in 0:(length(vars) - 1)
+        ord = DegRevLex(circshift(vars, i))
+        runtime = @elapsed new_rff = groebner_basis_coeffs(rff, seed = seed, ordering = ord)
+        cfs = beautifuly_generators(new_rff, discard_redundant = false)
+        meta = (runtime = runtime,)
+        push!(generators, cfs)
+        push!(fan.orderings, cfs)
+        push!(fan.meta, meta)
     end
 
-    unique!(pool)
-    sort!(pool, lt = rational_func_cmp)
-    simple_pool = beautifuly_generators(RationalFunctionField(pool))
-    funcs = beautifuly_generators(RationalFunctionField(funcs))
+    for i in 0:(length(vars) - 1)
+        ord = Lex(Random.shuffle(vars))
+        runtime = @elapsed new_rff = groebner_basis_coeffs(rff, seed = seed, ordering = ord)
+        cfs = beautifuly_generators(new_rff, discard_redundant = false)
+        meta = (runtime = runtime,)
+        push!(generators, cfs)
+        push!(fan.orderings, cfs)
+        push!(fan.meta, meta)
+    end
 
-    funcs, simple_pool
+    for i in 0:(length(vars) - 1)
+        ord = Lex(circshift(vars, i))
+        runtime = @elapsed new_rff = groebner_basis_coeffs(rff, seed = seed, ordering = ord)
+        cfs = beautifuly_generators(new_rff, discard_redundant = false)
+        meta = (runtime = runtime,)
+        push!(generators, cfs)
+        push!(fan.orderings, cfs)
+        push!(fan.meta, meta)
+    end
+
+    fan.generators = generators
+
+    id_funcs = reduce(vcat, generators)
+    spring_cleaning_pass!(id_funcs)
+    id_funcs = unique(id_funcs)
+    sort!(id_funcs, lt = rational_func_cmp)
+
+    if isempty(id_funcs)
+        fan.simplest_generators = id_funcs
+        fan.all_funcs = id_funcs
+        return fan
+    end
+
+    simple_funcs = beautifuly_generators(RationalFunctionField(id_funcs))
+    fan.simplest_generators = simple_funcs
+    fan.all_funcs = id_funcs
+
+    fan
 end

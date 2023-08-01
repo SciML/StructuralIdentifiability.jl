@@ -9,6 +9,7 @@ using LinearAlgebra
 using Logging
 using MacroTools
 using Primes
+using Random
 
 # Algebra packages
 using AbstractAlgebra
