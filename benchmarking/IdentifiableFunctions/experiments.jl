@@ -821,6 +821,16 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
+ode = StructuralIdentifiability.@ODEmodel(x1'(t) = a * x1(t), y(t) = x1)
+
+funcs0 = StructuralIdentifiability.find_identifiable_functions(St, strategy = (:hybrid,))
+
+funcs00 = StructuralIdentifiability.find_identifiable_functions(
+    sliqr,
+    strategy = (:gb,),
+    with_states = true,
+)
+
 funcs1 = StructuralIdentifiability.find_identifiable_functions(sliqr)
 
 funcs2 = StructuralIdentifiability.find_identifiable_functions(

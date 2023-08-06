@@ -314,10 +314,21 @@ function spring_cleaning_pass!(fracs)
     fracs
 end
 
+"""
+    groebner_basis_coeffs(rff; options...)
+
+## Options
+
+- `ordering`: GB ordering; must be one of the orderings exported by
+  `ParamPunPam` or `Groebner`.
+- `up_to_degree`: a tuple of integers, the degrees of numerator and denominator.
+    The result is correct up to the requested degrees.
+"""
 function groebner_basis_coeffs(
     rff::RationalFunctionField;
     seed = 42,
     ordering = Groebner.InputOrdering(),
+    up_to_degree = (typemax(Int), typemax(Int)),
 )
     mqs = rff.mqs
     gb, fracs, new_rff = nothing, nothing, nothing
@@ -332,7 +343,7 @@ function groebner_basis_coeffs(
     _runtime_logger[:id_calls_to_gb] += 1
     current_degrees = (2, 2)
     two_sided_inclusion = false
-    while !two_sided_inclusion
+    while !two_sided_inclusion && all(current_degrees .<= up_to_degree)
         @debug "Computing GB with parameters up to degrees $(current_degrees)"
         runtime = @elapsed gb = ParamPunPam.paramgb(
             mqs,
@@ -401,11 +412,14 @@ function linear_relations_between_normal_forms(
             push!(normal_forms, nf)
         end
     end
+    @info "Computing the normal forms of $(length(monoms)) monomials (variables: $(length(xs)), degree: $(up_to_degree))"
     # Backward Gaussian elimination over QQ.
     #
     # If a polynomial in QQ(a)[x] is reduced to a fraction in QQ(a), then the
     # fraction belongs to the field. 
     # Constants belong to the field by construction.
+    # TODO: this does not handle reduction properly for the case when
+    # normal_forms[i] is a sum of a constant and a polynomial
     constants = map(f -> coeff(f, 1), filter(is_constant, normal_forms))
     @debug "Constant elements of the MQS ideal are" constants
     generators = constants
@@ -457,17 +471,23 @@ function linear_relations_between_normal_forms(
 end
 
 """
-    generating_sets_fan(rff::RationalFunctionField, nbases, orderings)
+    generating_sets_fan(rff::RationalFunctionField, nbases)
 
 Returns a set of Groebner bases for multiple different rankings of variables.
-Computes around `nbases` * `length(orderings)` bases in total.
+
+## Arguments
+
+- `nbases`: How many bases to compute.
+- Keyword `up_to_degree`: a tuple of integers, max. degrees of numerators and
+  denominators. Result is correct up to the requested degrees.
 """
 function generating_sets_fan(
     rff::RationalFunctionField{T},
     nbases::Integer;
     seed = 42,
+    up_to_degree = (3, 3),
 ) where {T}
-    @info "Computing $nbases Groebner bases for each of the orderings: $ordering"
+    @info "Computing $nbases Groebner bases for each of the $nbases block orderings"
     time_start = time_ns()
     vars = gens(parent(rff.mqs))
     ordering_to_generators = Dict()
@@ -488,7 +508,12 @@ function generating_sets_fan(
         n1, n2 = div(n, 2), n - div(n, 2)
         ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
         @info "Computing GB for ordering" ord
-        new_rff = groebner_basis_coeffs(gb_rff, seed = seed, ordering = ord)
+        new_rff = groebner_basis_coeffs(
+            gb_rff,
+            seed = seed,
+            ordering = ord,
+            up_to_degree = up_to_degree,
+        )
         cfs = beautifuly_generators(new_rff, discard_redundant = false)
         ordering_to_generators[ord] = cfs
     end
@@ -509,6 +534,9 @@ function simplified_generating_set(
     strategy = (:gb,),
 )
     # TODO: use seed!
+    # TODO: there are a lot of redundant functions coming from normal forms and
+    # the coefficients of GBs. Maybe filter them preemtively, before creating a
+    # RFF
     @info "Simplifying identifiable functions"
     _runtime_logger[:id_groebner_time] = 0.0
     _runtime_logger[:id_calls_to_gb] = 0
@@ -544,10 +572,17 @@ function simplified_generating_set(
     if first(strategy) === :hybrid
         @assert length(strategy) == 1
         # Compute some normal forms
-        generators, _, _ = linear_relations_between_normal_forms(new_rff, 3; seed = seed)
+        up_to_degree = 3
+        generators, _, _ =
+            linear_relations_between_normal_forms(new_rff, up_to_degree; seed = seed)
         append!(new_fracs, generators)
+        # Now, generators from normal forms may contain simpler functions, so we
+        # update the function field to account for that
+        new_rff =
+            RationalFunctionField(beautifuly_generators(RationalFunctionField(new_fracs)))
         # Compute some GBs
-        fan = generating_sets_fan(new_rff, 3; seed = seed)
+        nbases = 5
+        fan = generating_sets_fan(new_rff, nbases; seed = seed)
         for (ord, generators) in fan
             append!(new_fracs, generators)
         end

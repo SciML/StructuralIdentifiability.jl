@@ -192,7 +192,9 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :by
         if degree(poly, i) > 0 && iszero(var_mapping[i])
             throw(
                 Base.ArgumentError(
-                    "The polynomial $poly contains a variable $(gens(old_ring)[i]) not present in the new ring",
+                    """
+                    The polynomial $poly contains a variable $(gens(old_ring)[i]) not present in the new ring.
+                    New ring variables are $(gens(new_ring)))""",
                 ),
             )
         end
