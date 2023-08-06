@@ -39,7 +39,7 @@ i21 = StructuralIdentifiability.check_field_membership(f2, f1, 0.9999)
 @info "" i12 i21
 
 # Prints: 0, 0, ..., 0
-res = falses(length(f2))
+res = fill(false, length(f2))
 for i in 1:length(f2)
     all_except_i = f2[setdiff(1:length(f2), i)]
     res[i] = StructuralIdentifiability.check_field_membership(all_except_i, [f2[i]], 0.9999)
