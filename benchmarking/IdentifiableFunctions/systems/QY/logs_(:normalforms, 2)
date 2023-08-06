@@ -1,0 +1,132 @@
+⌜ # Computing specializations..  	 Time: 0:00:12[K✓ # Computing specializations..  	 Time: 0:00:13[K
+⌜ # Computing specializations.. 	 Time: 0:00:00[K
+  Points:  2[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:02[K
+  Points:  13[K[K[A✓ # Computing specializations.. 	 Time: 0:00:02[K
+┌ Info: Processing QY
+└ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:40
+┌ Info: Averaging over 1 runs.
+│ Using keyword arguments:
+│ NamedTuple{(:strategy,), Tuple{Tuple{Symbol, Int64}}}
+│ (strategy = (:normalforms, 2),)
+│ ID: (:normalforms, 2)
+└ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:41
+┌ Info: Computing IO-equations
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:160
+┌ Info: IO-equations computed in 0.081048698 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:162
+⌜ # Computing specializations.. 	 Time: 0:00:00[K
+  Points:  111[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:00[K
+  Points:  225[K[K[A⌟ # Computing specializations.. 	 Time: 0:00:00[K
+  Points:  348[K[K[A✓ # Computing specializations.. 	 Time: 0:00:01[K
+ERROR: LoadError: AssertionError: rff.mqs.sat_var_index == length(xs)
+Stacktrace:
+ [1] linear_relations_between_normal_forms(rff::StructuralIdentifiability.RationalFunctionField{Nemo.fmpq_mpoly}, up_to_degree::Int64; seed::Int64)
+   @ StructuralIdentifiability ~/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:446
+ [2] simplified_generating_set(rff::StructuralIdentifiability.RationalFunctionField{Nemo.fmpq_mpoly}; p::Float64, seed::Int64, strategy::Tuple{Symbol, Int64})
+   @ StructuralIdentifiability ~/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:539
+ [3] find_identifiable_functions(ode::ODE{Nemo.fmpq_mpoly}; p::Float64, simplify::Bool, seed::Int64, with_states::Bool, adjoin_identifiable::Bool, strategy::Tuple{Symbol, Int64})
+   @ StructuralIdentifiability ~/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:67
+ [4] process_system()
+   @ Main ~/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:51
+ [5] top-level scope
+   @ ~/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:115
+in expression starting at /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:115
+┌ Info: Simplifying identifiable functions
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:512
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 65 functions in Rational Field(siga1, beta_SI, phi, alpa, M, Ks, Mar, beta, siga2, beta_SA)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, t]
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 66 points used.
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (5, 5), (6, 4), (5, 4)], [(0, 0), (1, 0)], [(0, 0), (5, 5), (7, 5), (6, 5)], [(0, 0), (5, 5), (6, 4), (5, 4)], [(0, 0), (6, 9), (5, 6), (6, 8)], [(0, 0), (0, 0)], [(0, 0), (3, 3), (2, 3), (4, 5), (4, 3), (5, 5)], [(0, 0), (5, 4), (9, 6), (8, 6)], [(0, 0), (7, 5), (2, 1), (6, 5), (4, 3), (10, 7), (9, 7)], [(0, 0), (11, 9), (6, 5), (10, 9), (5, 4), (14, 11), (13, 11)], [(0, 0), (4, 3), (4, 3), (9, 8), (9, 6), (9, 7)], [(0, 0), (7, 5), (2, 1), (6, 5), (10, 7), (9, 7)], [(0, 0), (8, 7), (9, 8), (10, 9), (14, 11), (14, 12)]]
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 3, Denominator: 3
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 64 points used.
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 1 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 1 for den.
+│     
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 1.197386337 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:344
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:349
+┌ Info: Inclusion checked in 0.059625253 seconds. Result: true
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:359
+┌ Info: Computing parametric Groebner basis up to degrees (4, 4)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 65 functions in Rational Field(siga1, beta_SI, phi, alpa, M, Ks, Mar, beta, siga2, beta_SA)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, t]
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 66 points used.
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (5, 5), (6, 4), (5, 4)], [(0, 0), (1, 0)], [(0, 0), (5, 5), (7, 5), (6, 5)], [(0, 0), (5, 5), (6, 4), (5, 4)], [(0, 0), (6, 9), (5, 6), (6, 8)], [(0, 0), (0, 0)], [(0, 0), (3, 3), (2, 3), (4, 5), (4, 3), (5, 5)], [(0, 0), (5, 4), (9, 6), (8, 6)], [(0, 0), (7, 5), (2, 1), (6, 5), (4, 3), (10, 7), (9, 7)], [(0, 0), (11, 9), (6, 5), (10, 9), (5, 4), (14, 11), (13, 11)], [(0, 0), (4, 3), (4, 3), (9, 8), (9, 6), (9, 7)], [(0, 0), (7, 5), (2, 1), (6, 5), (10, 7), (9, 7)], [(0, 0), (8, 7), (9, 8), (10, 9), (14, 11), (14, 12)]]
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 5, Denominator: 5
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 384 points used.
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 4 for num. and 3 for den.
+│     Maximal number of interpolated terms are: 14 for num. and 3 for den.
+│     
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 1.326249541 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:344
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:349
+┌ Info: Inclusion checked in 0.077663948 seconds. Result: true
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:359
+┌ Info: The coefficients of the Groebner basis are presented by 11 rational functions
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:363
+┌ Info: The pool of fractions:
+│ -Mar,
+│ -Ks,
+│ -alpa,
+│ (-siga1 - phi*Mar + Mar)//phi,
+│ (siga1*phi - siga1 - phi*Mar + Mar)//(siga1*phi*beta_SA),
+│ (siga1*beta_SA + beta_SI*phi*siga2 + phi*Mar*beta_SA - phi*siga2*beta_SA - Mar*beta_SA)//(phi*M*siga2),
+│ (siga1*phi*M*siga2 - siga1*M*siga2 - phi*M*Mar*siga2 + M*Mar*siga2)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA),
+│ (siga1*beta_SI*phi*siga2 - siga1*beta_SI*siga2 - siga1*phi*siga2*beta_SA - siga1*M*beta_SA - beta_SI*phi*Mar*siga2 + beta_SI*Mar*siga2 - phi*M*Mar*beta_SA + M*Mar*beta_SA)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA),
+│ (-siga1^2*beta_SA - siga1*beta_SI*phi*siga2 + siga1*beta_SI*siga2 - siga1*phi*Mar*beta_SA + siga1*phi*siga2*beta_SA + siga1*Mar*beta_SA - siga1*siga2*beta_SA + beta_SI*phi*Mar*siga2 - beta_SI*Mar*siga2 - phi*Mar*siga2*beta_SA + Mar*siga2*beta_SA)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA),
+│ (-siga1^2*beta_SA - siga1*beta_SI*phi*siga2 + siga1*beta_SI*siga2 - siga1*phi*Mar*beta_SA + siga1*phi*siga2*beta_SA + siga1*Mar*beta_SA - siga1*siga2*beta_SA - beta_SI*phi*M*siga2 + beta_SI*phi*Mar*siga2 - beta_SI*phi*siga2^2 - beta_SI*Mar*siga2 - phi*Mar*siga2*beta_SA + phi*siga2^2*beta_SA + Mar*siga2*beta_SA)//(phi*M*siga2)
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:225
+┌ Info: Computing linear relations of monomials up to degree 2
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:383
+┌ Info: 
+│   monoms = AbstractAlgebra.Generic.MPoly{AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}}[y1*y10, y3*y10, y1, y3, y10, y1*y4, y1*y6, y1*y7, y3*y4, y3*y6, y3*y7, y4*y10, y6*y10, y7*y10, y10^2, y5, y9, y4*y5, y4*y9, y5*y6, y5*y7, y6*y9, y7*y9, y8, y4*y8, y6*y8, y7*y8, y2, y1*y5, y1*y9, y2^2, y2*y4, y2*y6, y2*y7, y3*y5, y3*y9, y5^2, y5*y9, y9^2, y1*y2, y2*y3, y2*y5, y2*y9, y2*y10, y5*y10, y9*y10, y1*y8, y3*y8, y8*y10, y5*y8, y8*y9, y8^2, y2*y8]
+│   qq_coeffs = Nemo.fmpq[-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+│   normal_forms = AbstractAlgebra.Generic.MPoly{AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}}[t + 2, t + 2, -y10 - t - 1, -y10 - t - 1, y10, -alpa*y10 - alpa*t - alpa, -Ks*y10 - Ks*t - Ks, -Mar*y10 - Mar*t - Mar, -alpa*y10 - alpa*t - alpa, -Ks*y10 - Ks*t - Ks, -Mar*y10 - Mar*t - Mar, alpa*y10, Ks*y10, Mar*y10, -y10 - t - 1, -y9 - y10 - t - 1, y9, -alpa*y9 - alpa*y10 - alpa*t - alpa, alpa*y9, -Ks*y9 - Ks*y10 - Ks*t - Ks, -Mar*y9 - Mar*y10 - Mar*t - Mar, Ks*y9, Mar*y9, y8, alpa*y8, Ks*y8, Mar*y8, y2, (siga1 + phi*Mar - Mar)//phi*y2 + (siga1^2*beta_SA + siga1*beta_SI*phi*siga2 - siga1*beta_SI*siga2 + siga1*phi*Mar*beta_SA - siga1*phi*siga2*beta_SA - siga1*Mar*beta_SA + siga1*siga2*beta_SA - beta_SI*phi*Mar*siga2 + beta_SI*Mar*siga2 + phi*Mar*siga2*beta_SA - Mar*siga2*beta_SA)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA)*y10 - t - 4, (-siga1 - phi*Mar + Mar)//phi*y2 + (-siga1^2*beta_SA - siga1*beta_SI*phi*siga2 + siga1*beta_SI*siga2 - siga1*phi*Mar*beta_SA + siga1*phi*siga2*beta_SA + siga1*Mar*beta_SA - siga1*siga2*beta_SA + beta_SI*phi*Mar*siga2 - beta_SI*Mar*siga2 - phi*Mar*siga2*beta_SA + Mar*siga2*beta_SA)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA)*y10 + t + 1, -y2 - y9 - y10 - t - 1, alpa*y2, Ks*y2, Mar*y2, (siga1 + phi*Mar - Mar)//phi*y2 + (siga1^2*beta_SA + siga1*beta_SI*phi*siga2 - siga1*beta_SI*siga2 + siga1*phi*Mar*beta_SA - siga1*phi*siga2*beta_SA - siga1*Mar*beta_SA + siga1*siga2*beta_SA - beta_SI*phi*Mar*siga2 + beta_SI*Mar*siga2 + phi*Mar*siga2*beta_SA - Mar*siga2*beta_SA)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA)*y10 - t - 4, (-siga1 - phi*Mar + Mar)//phi*y2 + (-siga1^2*beta_SA - siga1*beta_SI*phi*siga2 + siga1*beta_SI*siga2 - siga1*phi*Mar*beta_SA + siga1*phi*siga2*beta_SA + siga1*Mar*beta_SA - siga1*siga2*beta_SA + beta_SI*phi*Mar*siga2 - beta_SI*Mar*siga2 - phi*Mar*siga2*beta_SA + Mar*siga2*beta_SA)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA)*y10 + t + 1, (2*siga1^2*beta_SA - siga1*phi^2*M*siga2 + siga1*phi*M*siga2 + 4*siga1*phi*Mar*beta_SA - 4*siga1*Mar*beta_SA + phi^2*M*Mar*siga2 + 2*phi^2*Mar^2*beta_SA - phi*M*Mar*siga2 - 4*phi*Mar^2*beta_SA + 2*Mar^2*beta_SA)//(siga1*phi*beta_SA + phi^2*Mar*beta_SA - phi*Mar*beta_SA)*y2 + (-siga1*beta_SI*phi*siga2 + siga1*beta_SI*siga2 + siga1*phi*siga2*beta_SA + siga1*M*beta_SA + beta_SI*phi*Mar*siga2 - beta_SI*Mar*siga2 + phi*M*Mar*beta_SA - M*Mar*beta_SA)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA)*y9 + (2*siga1^2*beta_SA + 2*siga1*beta_SI*phi*siga2 - 2*siga1*beta_SI*siga2 + 2*siga1*phi*Mar*beta_SA - 2*siga1*phi*siga2*beta_SA - 2*siga1*Mar*beta_SA + 2*siga1*siga2*beta_SA - siga1*beta_SA - 2*beta_SI*phi*Mar*siga2 + 2*beta_SI*Mar*siga2 + 2*phi*Mar*siga2*beta_SA - phi*Mar*beta_SA - 2*Mar*siga2*beta_SA + Mar*beta_SA)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA)*y10 - 3*t - 6, (-siga1^2*beta_SA + siga1*phi^2*M*siga2 - siga1*phi*M*siga2 - 2*siga1*phi*Mar*beta_SA + 2*siga1*Mar*beta_SA - phi^2*M*Mar*siga2 - phi^2*Mar^2*beta_SA + phi*M*Mar*siga2 + 2*phi*Mar^2*beta_SA - Mar^2*beta_SA)//(siga1*phi*beta_SA + phi^2*Mar*beta_SA - phi*Mar*beta_SA)*y2 + (siga1*beta_SI*phi*siga2 - siga1*beta_SI*siga2 - siga1*phi*siga2*beta_SA - siga1*M*beta_SA - beta_SI*phi*Mar*siga2 + beta_SI*Mar*siga2 - phi*M*Mar*beta_SA + M*Mar*beta_SA)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA)*y9 + (-siga1^2*beta_SA - siga1*beta_SI*phi*siga2 + siga1*beta_SI*siga2 - siga1*phi*Mar*beta_SA + siga1*phi*siga2*beta_SA + siga1*Mar*beta_SA - siga1*siga2*beta_SA + siga1*beta_SA + beta_SI*phi*Mar*siga2 - beta_SI*Mar*siga2 - phi*Mar*siga2*beta_SA + phi*Mar*beta_SA + Mar*siga2*beta_SA - Mar*beta_SA)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA)*y10 + 2*t + 2, (-siga1*phi*M*siga2 + siga1*M*siga2 + phi*M*Mar*siga2 - M*Mar*siga2)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA)*y2 + (-siga1*beta_SI*phi*siga2 + siga1*beta_SI*siga2 + siga1*phi*siga2*beta_SA + siga1*M*beta_SA + beta_SI*phi*Mar*siga2 - beta_SI*Mar*siga2 + phi*M*Mar*beta_SA - M*Mar*beta_SA)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA)*y9 - y10 - t - 1, (siga1*beta_SA + beta_SI*phi*siga2 + phi*M*siga2 + phi*Mar*beta_SA - phi*siga2*beta_SA - Mar*beta_SA)//(phi*M*siga2)*y9*t + (siga1*phi - siga1 - phi*Mar + Mar)//(siga1*phi*beta_SA)*y2 + 2*y9 + y10 + (-siga1^2*beta_SA - siga1*beta_SI*phi*siga2 + siga1*beta_SI*siga2 - siga1*phi*Mar*beta_SA + siga1*phi*siga2*beta_SA + siga1*Mar*beta_SA - siga1*siga2*beta_SA - beta_SI*phi*M*siga2 + beta_SI*phi*Mar*siga2 - beta_SI*phi*siga2^2 - beta_SI*Mar*siga2 + phi*M*siga2 - phi*Mar*siga2*beta_SA + phi*siga2^2*beta_SA + Mar*siga2*beta_SA)//(phi*M*siga2)*t + 2, (siga1*beta_SA + beta_SI*phi*siga2 + phi*M*siga2 + phi*Mar*beta_SA - phi*siga2*beta_SA - Mar*beta_SA)//(phi*M*siga2)*y9*t + (siga1*phi - siga1 - phi*Mar + Mar)//(siga1*phi*beta_SA)*y2 + 2*y9 + y10 + (-siga1^2*beta_SA - siga1*beta_SI*phi*siga2 + siga1*beta_SI*siga2 - siga1*phi*Mar*beta_SA + siga1*phi*siga2*beta_SA + siga1*Mar*beta_SA - siga1*siga2*beta_SA - beta_SI*phi*M*siga2 + beta_SI*phi*Mar*siga2 - beta_SI*phi*siga2^2 - beta_SI*Mar*siga2 + phi*M*siga2 - phi*Mar*siga2*beta_SA + phi*siga2^2*beta_SA + Mar*siga2*beta_SA)//(phi*M*siga2)*t + 2, (siga1*beta_SA + beta_SI*phi*siga2 + 2*phi*M*siga2 + phi*Mar*beta_SA - phi*siga2*beta_SA - Mar*beta_SA)//(phi*M*siga2)*y9*t + (-siga1^2*beta_SA - siga1*phi*Mar*beta_SA + siga1*phi + siga1*Mar*beta_SA - siga1 - phi*Mar + Mar)//(siga1*phi*beta_SA)*y2 + 3*y9 + y10 + (-siga1^2*beta_SA - siga1*beta_SI*phi*siga2 + siga1*beta_SI*siga2 - siga1*phi*Mar*beta_SA + siga1*phi*siga2*beta_SA + siga1*Mar*beta_SA - siga1*siga2*beta_SA - beta_SI*phi*M*siga2 + beta_SI*phi*Mar*siga2 - beta_SI*phi*siga2^2 - beta_SI*Mar*siga2 + 2*phi*M*siga2 - phi*Mar*siga2*beta_SA + phi*siga2^2*beta_SA + Mar*siga2*beta_SA)//(phi*M*siga2)*t + 3, -y9*t + (siga1 + phi*Mar - Mar)//phi*y2 - y9 - t - 1, -y9*t - y2 - y9 - y10 - t - 1, y9*t + (-siga1 - phi*Mar + Mar)//phi*y2 + y9 + (-siga1^2*beta_SA - siga1*beta_SI*phi*siga2 + siga1*beta_SI*siga2 - siga1*phi*Mar*beta_SA + siga1*phi*siga2*beta_SA + siga1*Mar*beta_SA - siga1*siga2*beta_SA + beta_SI*phi*Mar*siga2 - beta_SI*Mar*siga2 - phi*Mar*siga2*beta_SA + Mar*siga2*beta_SA)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA)*y10 + 2*t + 3, -y9*t + (siga1 + phi*Mar - Mar)//phi*y2 - y9 + (siga1^2*beta_SA + siga1*beta_SI*phi*siga2 - siga1*beta_SI*siga2 + siga1*phi*Mar*beta_SA - siga1*phi*siga2*beta_SA - siga1*Mar*beta_SA + siga1*siga2*beta_SA - beta_SI*phi*Mar*siga2 + beta_SI*Mar*siga2 + phi*Mar*siga2*beta_SA - Mar*siga2*beta_SA)//(siga1*beta_SA + phi*Mar*beta_SA - Mar*beta_SA)*y10 - t - 1, -y8*y10 - y8*t - y8, -y8*y10 - y8*t - y8, y8*y10, -y8*y9 - y8*y10 - y8*t - y8, y8*y9, y8^2, y2*y8]
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:443

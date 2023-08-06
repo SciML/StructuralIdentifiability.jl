@@ -37,6 +37,8 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     pivots_indices::Vector{Int}
     den_lcm::T
     sat_var_index::Int
+    # Cached GBs
+    groebner_bases::Dict{Any, Any}
 
     """
         IdealMQS(funcs_den_nums::Vector{Vector})
@@ -134,6 +136,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
             pivots_indices,
             den_lcm,
             sat_var_index,
+            Dict(),
         )
     end
 end

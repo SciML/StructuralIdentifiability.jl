@@ -1,0 +1,140 @@
+⌜ # Computing specializations..  	 Time: 0:00:11[K✓ # Computing specializations..  	 Time: 0:00:12[K
+⌜ # Computing specializations.. 	 Time: 0:00:00[K
+  Points:  2[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:02[K
+  Points:  13[K[K[A✓ # Computing specializations.. 	 Time: 0:00:02[K
+┌ Info: Processing PK1
+└ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:40
+┌ Info: Averaging over 1 runs.
+│ Using keyword arguments:
+│ NamedTuple{(:strategy,), Tuple{Tuple{Symbol, Int64}}}
+│ (strategy = (:normalforms, 3),)
+│ ID: (:normalforms, 3)
+└ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:41
+┌ Info: Computing IO-equations
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:160
+┌ Info: IO-equations computed in 1.918845771 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:162
+┌ Info: Simplifying identifiable functions
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:512
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 11 functions in Rational Field(k5, k3, s3, k4, k2, s2, k6, k1, k7)[y1, y2, y3, y4, y5, y6, y7, y8, y9, t]
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 34 points used.
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (4, 0)], [(0, 0), (1, 0)], [(0, 0), (2, 2), (3, 2)], [(0, 0), (4, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (2, 1), (2, 4)], [(0, 0), (1, 4), (0, 2)], [(0, 0), (1, 0), (2, 1), (3, 1)]]
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 3, Denominator: 3
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 64 points used.
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 2 for den.
+│     
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 0.736957759 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:344
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:349
+┌ Info: Inclusion checked in 0.002472633 seconds. Result: true
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:359
+┌ Info: The coefficients of the Groebner basis are presented by 10 rational functions
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:363
+┌ Info: The pool of fractions:
+│ -1//(s2*k1),
+│ -k6,
+│ -k4,
+│ -k5,
+│ -k2 - k1,
+│ -k3 - k7,
+│ (-s3*k2)//(k2 + k1),
+│ (k2*s2)//(k3*k2 + k3*k1),
+│ (-k3*k2 - k3*k1 - k2*k7)//k2
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:225
+┌ Info: Computing linear relations of monomials up to degree 3
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:383
+┌ Info: Generators from normal forms
+│   generators = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[k5, k4, k6, k5^2, k5*k4, k5*k6, k4^2, k4*k6, k6^2, k5^3, k5^2*k4, k5^2*k6, k5*k4^2, k5*k4*k6, k5*k6^2, k4^3, k4^2*k6, k4*k6^2, k6^3, -k2 - k1, -k5*k2 - k5*k1, -k4*k2 - k4*k1, -k2*k6 - k6*k1, -k5^2*k2 - k5^2*k1, -k5*k4*k2 - k5*k4*k1, -k5*k2*k6 - k5*k6*k1, -k4^2*k2 - k4^2*k1, -k4*k2*k6 - k4*k6*k1, -k2*k6^2 - k6^2*k1, k3 + k7, k5*k3 + k5*k7, k3*k4 + k4*k7, k3*k6 + k6*k7, k5^2*k3 + k5^2*k7, k5*k3*k4 + k5*k4*k7, k5*k3*k6 + k5*k6*k7, k3*k4^2 + k4^2*k7, k3*k4*k6 + k4*k6*k7, k3*k6^2 + k6^2*k7, -1//(s2*k1), -k5//(s2*k1), -k4//(s2*k1), -k6//(s2*k1)]
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:455
+┌ Info: Final cleaning and simplification of generators
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:555
+┌ Info: The pool of fractions:
+│ -1//(s2*k1),
+│ k6,
+│ k6,
+│ k4,
+│ k4,
+│ k5,
+│ k5,
+│ k6^2,
+│ s2*k1,
+│ k4*k6,
+│ k4^2,
+│ k5*k6,
+│ k5*k4,
+│ k5^2,
+│ k6^3,
+│ k4*k6^2,
+│ k4^2*k6,
+│ k4^3,
+│ k5*k6^2,
+│ k5*k4*k6,
+│ k5*k4^2,
+│ k5^2*k6,
+│ k5^2*k4,
+│ k5^3,
+│ k2 + k1,
+│ -k2 - k1,
+│ k3 + k7,
+│ k3 + k7,
+│ -k2*k6 - k6*k1,
+│ -k4*k2 - k4*k1,
+│ k3*k6 + k6*k7,
+│ k3*k4 + k4*k7,
+│ -k5*k2 - k5*k1,
+│ k5*k3 + k5*k7,
+│ -k2*k6^2 - k6^2*k1,
+│ -k4*k2*k6 - k4*k6*k1,
+│ -k4^2*k2 - k4^2*k1,
+│ k3*k6^2 + k6^2*k7,
+│ k3*k4*k6 + k4*k6*k7,
+│ k3*k4^2 + k4^2*k7,
+│ -k5*k2*k6 - k5*k6*k1,
+│ -k5*k4*k2 - k5*k4*k1,
+│ k5*k3*k6 + k5*k6*k7,
+│ k5*k3*k4 + k5*k4*k7,
+│ -k5^2*k2 - k5^2*k1,
+│ k5^2*k3 + k5^2*k7,
+│ -k6//(s2*k1),
+│ -k4//(s2*k1),
+│ -k5//(s2*k1),
+│ (s3*k2)//(k2 + k1),
+│ (k2*s2)//(k3*k2 + k3*k1)
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:225
+┌ Info: Checking inclusion with probability 0.99
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:558
+┌ Info: Inclusion checked in 0.00360804 seconds. Result: true
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:562
+┌ Info: Out of 10 initial generators there are 8 indepdendent
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:567
+┌ Info: The search for identifiable functions concluded in 3.550105901 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:77
+┌ Info: Identifiable functions are
+│   funcs = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[s2*k1, k6, k4, k5, k2 + k1, k3 + k7, (s3*k2)//(k2 + k1), (k2*s2)//(k3*k2 + k3*k1)]
+└ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:53

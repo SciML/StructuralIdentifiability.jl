@@ -266,80 +266,48 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 @testset "Identifiable functions of parameters" begin
     p = 0.99
     for case in test_cases
-        ode = case.ode
-        true_ident_funcs = case.ident_funcs
-        result_funcs = StructuralIdentifiability.find_identifiable_functions(ode)
-        result_funcs_non_simplified =
-            StructuralIdentifiability.find_identifiable_functions(ode, simplify = false)
+        for strategy in [
+            (:gb,),
+            (:normalforms, 2),
+            # (:hybrid,),
+        ]
+            ode = case.ode
+            true_ident_funcs = case.ident_funcs
+            result_funcs = StructuralIdentifiability.find_identifiable_functions(
+                ode,
+                strategy = strategy,
+            )
 
-        if isempty(true_ident_funcs)
-            @test isempty(result_funcs)
-            continue
+            if isempty(true_ident_funcs)
+                @test isempty(result_funcs)
+                continue
+            end
+
+            R = parent(numerator(result_funcs[1]))
+            true_ident_funcs = map(f -> f // one(f), true_ident_funcs)
+            true_ident_funcs = map(
+                f ->
+                    StructuralIdentifiability.parent_ring_change(numerator(f), R) //
+                    StructuralIdentifiability.parent_ring_change(denominator(f), R),
+                true_ident_funcs,
+            )
+
+            # Check inclusion <true funcs> in <result funcs>
+            inclusion = StructuralIdentifiability.check_field_membership(
+                result_funcs,
+                true_ident_funcs,
+                p,
+            )
+            @test all(inclusion)
+
+            # Check inclusion <result funcs> in <true funcs>
+            inclusion = StructuralIdentifiability.check_field_membership(
+                true_ident_funcs,
+                result_funcs,
+                p,
+            )
+            @test all(inclusion)
         end
-        R = parent(numerator(result_funcs[1]))
-        true_ident_funcs = map(f -> f // one(f), true_ident_funcs)
-        true_ident_funcs = map(
-            f ->
-                StructuralIdentifiability.parent_ring_change(numerator(f), R) //
-                StructuralIdentifiability.parent_ring_change(denominator(f), R),
-            true_ident_funcs,
-        )
-
-        # Check inclusion <true funcs> in <result funcs>
-        inclusion = StructuralIdentifiability.check_field_membership(
-            result_funcs,
-            true_ident_funcs,
-            p,
-        )
-        @test all(inclusion)
-
-        # Check inclusion <result funcs> in <true funcs>
-        inclusion = StructuralIdentifiability.check_field_membership(
-            true_ident_funcs,
-            result_funcs,
-            p,
-        )
-        @test all(inclusion)
-    end
-end
-
-@testset "Identifiable pool" begin
-    p = 0.99
-    for case in test_cases
-        continue
-        ode = case.ode
-        true_ident_funcs = case.ident_funcs
-        result_pool = StructuralIdentifiability.describe_identifiable_pool(ode)
-        result_funcs = StructuralIdentifiability.simple_generating_set(result_pool)
-
-        if isempty(true_ident_funcs)
-            @test isempty(result_funcs)
-            continue
-        end
-        R = parent(numerator(result_funcs[1]))
-        true_ident_funcs = map(f -> f // one(f), true_ident_funcs)
-        true_ident_funcs = map(
-            f ->
-                StructuralIdentifiability.parent_ring_change(numerator(f), R) //
-                StructuralIdentifiability.parent_ring_change(denominator(f), R),
-            true_ident_funcs,
-        )
-
-        # Check inclusion <true funcs> in <result funcs>
-        inclusion = StructuralIdentifiability.check_field_membership(
-            result_funcs,
-            true_ident_funcs,
-            p,
-        )
-        @test all(inclusion)
-
-        # Check inclusion <result funcs> in <true funcs>
-        inclusion = StructuralIdentifiability.check_field_membership(
-            true_ident_funcs,
-            result_funcs,
-            p,
-        )
-        @test all(inclusion)
     end
 end
 

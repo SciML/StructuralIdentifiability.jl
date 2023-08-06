@@ -821,13 +821,21 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-pool = StructuralIdentifiability.describe_identifiable_pool(sliqr)
+funcs1 = StructuralIdentifiability.find_identifiable_functions(sliqr)
 
-funcs = StructuralIdentifiability.find_identifiable_functions(sliqr)
+funcs2 = StructuralIdentifiability.find_identifiable_functions(
+    sliqr,
+    strategy = (:normalforms, 3),
+)
 
-@time StructuralIdentifiability.find_identifiable_functions(siwr)
+funcs3 =
+    StructuralIdentifiability.find_identifiable_functions(sliqr, strategy = (:gbfan, 3))
 
-@time StructuralIdentifiability.describe_identifiable_pool(siwr)
+funcs4 = StructuralIdentifiability.find_identifiable_functions(sliqr, strategy = (:hybrid,))
+
+@time StructuralIdentifiability.find_identifiable_functions(sliqr)
+
+@time StructuralIdentifiability.describe_identifiable_pool(sliqr)
 
 for (name, system) in ((:qwwc, qwwc), (:MAPK_5_outputs, MAPK_5_outputs))
     id_funcs = StructuralIdentifiability.find_identifiable_functions(system)

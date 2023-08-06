@@ -280,17 +280,14 @@ end
 # ------------------------------------------------------------------------------
 
 function fast_factor(poly::MPolyElem{fmpq})
-    runtime = @elapsed prelim_factors = uncertain_factorization(poly)
-    _runtime_logger[:id_uncertain_factorization] += runtime
+    prelim_factors = uncertain_factorization(poly)
     cert_factors = map(pair -> pair[1], filter(f -> f[2], prelim_factors))
     uncert_factors = map(pair -> pair[1], filter(f -> !f[2], prelim_factors))
-    runtime = @elapsed for p in uncert_factors
+    for p in uncert_factors
         for f in Nemo.factor(p)
             push!(cert_factors, f[1])
         end
     end
-    _runtime_logger[:id_nemo_factor] += runtime
-    push!(_runtime_logger[:id_certain_factors], cert_factors)
     return cert_factors
 end
 
