@@ -690,7 +690,7 @@ benchmarks = [
             y5(t) = F(t),
             y3(t) = N(t),
             y4(t) = nu(t),
-            y5(t) = q(t)
+            y6(t) = q(t)
         ),
     ),
     Dict(

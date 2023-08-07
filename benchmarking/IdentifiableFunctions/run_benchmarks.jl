@@ -154,7 +154,7 @@ function collect_timings(args, kwargs, names; content = :compare)
 
     $(now())
 
-
+    Timeout: $(args["timeout"]) s
     """
 
     names = sort(names)
@@ -187,7 +187,7 @@ function collect_timings(args, kwargs, names; content = :compare)
 
     if content === :compare
         ids = map(keywords_to_id, kwargs)
-        resulting_md *= "|Model|" * join(map(repr, ids), "|") * "|\n"
+        resulting_md *= "|Model|" * join(map(String ∘ Symbol, ids), "|") * "|\n"
         resulting_md *= "|-----|" * join(["---" for _ in ids], "|") * "|\n"
         for name in names
             times = runtimes[name]

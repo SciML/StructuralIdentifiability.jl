@@ -42,5 +42,16 @@ function parse_keywords(keywords)
 end
 
 function keywords_to_id(keywords)
-    get(keywords, :strategy, :default)
+    id = get(keywords, :strategy, :default)
+    if haskey(keywords, :with_states)
+        if keywords.with_states
+            id = Symbol(id, :_with_states)
+        end
+    end
+    if haskey(keywords, :adjoin_identifiable)
+        if keywords.adjoin_identifiable
+            id = Symbol(id, :_adjoin_identifiable)
+        end
+    end
+    id
 end

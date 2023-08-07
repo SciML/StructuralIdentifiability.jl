@@ -823,7 +823,45 @@ end
 
 ode = StructuralIdentifiability.@ODEmodel(x1'(t) = a * x1(t), y(t) = x1)
 
-funcs0 = StructuralIdentifiability.find_identifiable_functions(St, strategy = (:hybrid,))
+funcs00 = StructuralIdentifiability.find_identifiable_functions(
+    qy,
+    strategy = (:gb,),
+    with_states = false,
+    simplify = false,
+)
+
+funcs0 = StructuralIdentifiability.find_identifiable_functions(
+    qy,
+    strategy = (:gb,),
+    with_states = false,
+)
+
+funcs1 = StructuralIdentifiability.find_identifiable_functions(
+    qy,
+    strategy = (:normalforms, 3),
+    with_states = false,
+)
+
+funcs3 = StructuralIdentifiability.find_identifiable_functions(
+    qy,
+    strategy = (:hybrid,),
+    with_states = false,
+)
+
+R, (a, b, c) = QQ["a", "b", "c"]
+f = [a^2 + a + b + 1, a^2, (a + b) * c]
+StructuralIdentifiability._runtime_logger[:id_inclusion_check_mod_p] = 0.0
+rff = StructuralIdentifiability.RationalFunctionField(f);
+StructuralIdentifiability.linear_relations_between_normal_forms(rff, 1)
+
+rff = StructuralIdentifiability.RationalFunctionField(funcs0)
+@my_profview StructuralIdentifiability.linear_relations_between_normal_forms(rff, 3)
+
+funcs000 = StructuralIdentifiability.find_identifiable_functions(
+    fujita,
+    strategy = (:hybrid,),
+    with_states = true,
+)
 
 funcs00 = StructuralIdentifiability.find_identifiable_functions(
     sliqr,

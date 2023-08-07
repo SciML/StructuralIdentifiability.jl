@@ -1,7 +1,7 @@
-⌜ # Computing specializations..  	 Time: 0:00:08[K✓ # Computing specializations..  	 Time: 0:00:09[K
+⌜ # Computing specializations..  	 Time: 0:00:14[K✓ # Computing specializations..  	 Time: 0:00:15[K
 ⌜ # Computing specializations.. 	 Time: 0:00:00[K
-  Points:  2[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:02[K
-  Points:  13[K[K[A✓ # Computing specializations.. 	 Time: 0:00:02[K
+  Points:  2[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:03[K
+  Points:  13[K[K[A✓ # Computing specializations.. 	 Time: 0:00:03[K
 ┌ Info: Processing Bilirubin2_io
 └ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:40
 ┌ Info: Averaging over 1 runs.
@@ -12,10 +12,10 @@
 └ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:41
 ┌ Info: Computing IO-equations
 └ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:160
-┌ Info: IO-equations computed in 0.014768632 seconds
+┌ Info: IO-equations computed in 0.043286422 seconds
 └ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:162
 ┌ Info: Simplifying identifiable functions
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:512
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:543
 ┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
 │ Ordering, input / target: degrevlex / InputOrdering
 │ Rational interpolator: VanDerHoevenLecerf
@@ -48,12 +48,12 @@
 └ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:416
 ┌ Info: Recovering the coefficients..
 └ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:424
-┌ Info: Groebner basis computed in 0.507703749 seconds
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:344
+┌ Info: Groebner basis computed in 0.966939484 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:355
 ┌ Info: Checking two-sided inclusion modulo a prime
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:349
-┌ Info: Inclusion checked in 0.001928379 seconds. Result: true
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:359
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:360
+┌ Info: Inclusion checked in 0.003744877 seconds. Result: true
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:370
 ┌ Info: Computing parametric Groebner basis up to degrees (4, 4)
 │ Ordering, input / target: degrevlex / InputOrdering
 │ Rational interpolator: VanDerHoevenLecerf
@@ -86,14 +86,14 @@
 └ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:416
 ┌ Info: Recovering the coefficients..
 └ @ ParamPunPam /home/ademin/ParamPunPam.jl/src/groebner/paramgb.jl:424
-┌ Info: Groebner basis computed in 0.316720336 seconds
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:344
+┌ Info: Groebner basis computed in 0.640441024 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:355
 ┌ Info: Checking two-sided inclusion modulo a prime
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:349
-┌ Info: Inclusion checked in 0.085723034 seconds. Result: true
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:359
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:360
+┌ Info: Inclusion checked in 0.007029308 seconds. Result: true
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:370
 ┌ Info: The coefficients of the Groebner basis are presented by 25 rational functions
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:363
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:374
 ┌ Info: The pool of fractions:
 │ -k01,
 │ -k12 - k13 - k14,
@@ -119,41 +119,32 @@
 │ (-k31^2*k12*k13 + k31^2*k13*k14 + k31*k21*k12^2 - k31*k21*k13^2 + k31*k13^2*k41 - k31*k14^2*k41 + k21^2*k12*k13 - k21^2*k12*k14 - k21*k12^2*k41 + k21*k14^2*k41 + k12*k14*k41^2 - k13*k14*k41^2)//(k31*k12 - k31*k14 - k21*k13 + k21*k14 - k12*k41 + k13*k41),
 │ (k31^2*k21*k12 + k31^2*k21*k13 - k31^2*k13*k41 - k31^2*k14*k41 - k31*k21^2*k12 - k31*k21^2*k13 + k31*k13*k41^2 + k31*k14*k41^2 + k21^2*k12*k41 + k21^2*k14*k41 - k21*k12*k41^2 - k21*k14*k41^2)//(k31*k12 - k31*k14 - k21*k13 + k21*k14 - k12*k41 + k13*k41)
 └ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:225
-┌ Info: Computing linear relations of monomials up to degree 3
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:383
+┌ Info: Computing normal forms of monomials in 7 variables up to degree 3
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:456
+┌ Info: Reducing the normal forms over QQ of 119 monomials
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:469
 ┌ Info: Generators from normal forms
-│   generators = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[k01, k01^2, k01^3, k31*k21*k41, k12*k13*k14, k31*k13 + k21*k12 + k14*k41, k01*k31*k13 + k01*k21*k12 + k01*k14*k41, k31^3 + k21^3 + k41^3, k31^2*k13 + k21^2*k12 + k14*k41^2, k31*k13^2 + k21*k12^2 + k14^2*k41, k31*k12*k14 + k21*k13*k14 + k12*k13*k41]
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:455
+│   generators = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[]
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:472
 ┌ Info: Final cleaning and simplification of generators
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:555
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:595
 ┌ Info: The pool of fractions:
 │ k01,
-│ k01,
-│ k01^2,
-│ k12*k13*k14,
-│ k31*k21*k41,
-│ k01^3,
 │ k12 + k13 + k14,
 │ k31 + k21 + k41,
-│ k31*k13 + k21*k12 + k14*k41,
-│ k31*k13^2 + k21*k12^2 + k14^2*k41,
-│ k31*k12*k14 + k21*k13*k14 + k12*k13*k41,
-│ k31^2*k13 + k21^2*k12 + k14*k41^2,
-│ k31^3 + k21^3 + k41^3,
-│ k01*k31*k13 + k01*k21*k12 + k01*k14*k41,
 │ (k12^2*k13 - k12^2*k14 - k12*k13^2 + k12*k14^2 + k13^2*k14 - k13*k14^2)//(k31*k12 - k31*k14 - k21*k13 + k21*k14 - k12*k41 + k13*k41),
 │ (k31*k12*k13 - k31*k13*k14 - k21*k12*k13 + k21*k12*k14 - k12*k14*k41 + k13*k14*k41)//(k31*k12 - k31*k14 - k21*k13 + k21*k14 - k12*k41 + k13*k41),
 │ (k31*k21*k12 - k31*k21*k13 + k31*k13*k41 - k31*k14*k41 - k21*k12*k41 + k21*k14*k41)//(k31*k12 - k31*k14 - k21*k13 + k21*k14 - k12*k41 + k13*k41),
 │ (k31^2*k21 - k31^2*k41 - k31*k21^2 + k31*k41^2 + k21^2*k41 - k21*k41^2)//(k31*k12 - k31*k14 - k21*k13 + k21*k14 - k12*k41 + k13*k41)
 └ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:225
 ┌ Info: Checking inclusion with probability 0.99
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:558
-┌ Info: Inclusion checked in 0.00665276 seconds. Result: true
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:562
-┌ Info: Out of 8 initial generators there are 8 indepdendent
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:567
-┌ Info: The search for identifiable functions concluded in 2.456209265 seconds
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:598
+┌ Info: Inclusion checked in 0.027594145 seconds. Result: true
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:602
+┌ Info: Out of 8 initial generators there are 7 indepdendent
+└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:607
+┌ Info: The search for identifiable functions concluded in 3.682113586 seconds
 └ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:77
 ┌ Info: Identifiable functions are
-│   funcs = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[k01, k12*k13*k14, k31*k21*k41, k12 + k13 + k14, k31 + k21 + k41, k31*k13 + k21*k12 + k14*k41, k31*k13^2 + k21*k12^2 + k14^2*k41, k31*k12*k14 + k21*k13*k14 + k12*k13*k41]
+│   funcs = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[k01, k12 + k13 + k14, k31 + k21 + k41, (k12^2*k13 - k12^2*k14 - k12*k13^2 + k12*k14^2 + k13^2*k14 - k13*k14^2)//(k31*k12 - k31*k14 - k21*k13 + k21*k14 - k12*k41 + k13*k41), (k31*k12*k13 - k31*k13*k14 - k21*k12*k13 + k21*k12*k14 - k12*k14*k41 + k13*k14*k41)//(k31*k12 - k31*k14 - k21*k13 + k21*k14 - k12*k41 + k13*k41), (k31*k21*k12 - k31*k21*k13 + k31*k13*k41 - k31*k14*k41 - k21*k12*k41 + k21*k14*k41)//(k31*k12 - k31*k14 - k21*k13 + k21*k14 - k12*k41 + k13*k41), (k31^2*k21 - k31^2*k41 - k31*k21^2 + k31*k41^2 + k21^2*k41 - k21*k41^2)//(k31*k12 - k31*k14 - k21*k13 + k21*k14 - k12*k41 + k13*k41)]
 └ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:53

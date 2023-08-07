@@ -70,18 +70,16 @@ f2_fracs = [
 @assert length(f2_lists) == length(f2_fracs) == 8
 
 # Prints: true; true
-i12 = StructuralIdentifiability.check_field_membership(f1_lists, f2_fracs, 0.9999)
-i21 = StructuralIdentifiability.check_field_membership(f2_lists, f1_fracs, 0.9999)
+p = 0.99999
+i12 = StructuralIdentifiability.check_field_membership(f1_lists, f2_fracs, p)
+i21 = StructuralIdentifiability.check_field_membership(f2_lists, f1_fracs, p)
 @info "" i12 i21
 
 # Prints: false, false, ..., false
 res = [false for _ in 1:length(f2_lists)]
 for i in 1:length(f2_lists)
     all_except_i = f2_lists[setdiff(1:length(f2_lists), i)]
-    res[i] = StructuralIdentifiability.check_field_membership(
-        all_except_i,
-        [f2_fracs[i]],
-        0.9999,
-    )[1]
+    res[i] =
+        StructuralIdentifiability.check_field_membership(all_except_i, [f2_fracs[i]], p)[1]
 end
 @info "" res

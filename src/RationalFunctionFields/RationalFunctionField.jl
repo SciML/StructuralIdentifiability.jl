@@ -377,6 +377,61 @@ function groebner_basis_coeffs(
     return new_rff
 end
 
+function relations_over_qq(polys, preimages)
+    @assert !isempty(polys)
+    fracfield = base_ring(first(polys))
+    qq_relations = Vector{elem_type(fracfield)}()
+    # Filter out zero normal forms
+    permutation = collect(1:length(polys))
+    zero_inds = filter(i -> iszero(polys[i]), permutation)
+    for ind in zero_inds
+        push!(qq_relations, fracfield(preimages[ind]))
+    end
+    permutation = setdiff(permutation, zero_inds)
+    # Sort, the first monom is the smallest
+    sort!(permutation, by = i -> leading_monomial(polys[i]))
+    polys = polys[permutation]
+    preimages = preimages[permutation]
+    lead_monoms = map(leading_monomial, polys)
+    n = length(polys)
+    # Polynomials live in QQ(params)[vars].
+    # The first several elements are de facto elements of QQ(params).
+    # NOTE: `coeff(f, i)` of a polynomial f in QQ(a)[x] is excruciatingly slow
+    @inbounds for i in 1:n
+        fi = polys[i]
+        @debug "Reducing $i-th polynomial over QQ" fi
+        qq_multipliers = map(_ -> zero(Nemo.QQ), 1:n)
+        qq_multipliers[i] = one(Nemo.QQ)
+        for j in (i - 1):-1:1
+            iszero(fi) && break
+            fj = polys[j]
+            iszero(fj) && continue
+            leadj = lead_monoms[j]
+            ci = coeff(fi, leadj)
+            # If fi contains the lead of fj
+            iszero(ci) && continue
+            cj = leading_coefficient(fj)
+            cij = div(ci, cj)
+            # If the result of division belongs to QQ.
+            !is_rational_func_const(cij) && continue
+            @debug "reducing $fi with $cij x $fj"
+            fi = fi - cij * fj
+            qq_multipliers[j] = -coeff(numerator(cij), 1)
+        end
+        if iszero(fi)
+            @debug "Polynomial at index $i reduced to zero"
+            preimage = zero(fracfield)
+            for k in 1:i
+                if !iszero(qq_multipliers[k])
+                    preimage += qq_multipliers[k] * preimages[k]
+                end
+            end
+            push!(qq_relations, preimage)
+        end
+    end
+    qq_relations, polys, preimages
+end
+
 """
     linear_relations_between_normal_forms(rff, up_to_degree)
 
@@ -391,83 +446,37 @@ function linear_relations_between_normal_forms(
 ) where {T}
     @assert up_to_degree > 0
     time_start = time_ns()
-    @info "Computing linear relations of monomials up to degree $up_to_degree"
     # NOTE: this is not fair regarding mutation and `!`
     groebner_basis_coeffs(rff)
     gb = first(values(rff.mqs.groebner_bases))
     R = parent(gb[1])
-    Rparam = base_ring(base_ring(R))
+    R_param = base_ring(base_ring(R))
     xs = gens(R)
+    xs_param = gens(R_param)
+    # TODO: A dirty hack!
     @assert rff.mqs.sat_var_index == length(xs)
     xs = xs[1:(end - 1)]
-    # Compute normal forms
+    @info "Computing normal forms of monomials in $(length(xs)) variables up to degree $up_to_degree"
     normal_forms = Vector{elem_type(R)}(undef, 0)
-    monoms = Vector{elem_type(R)}(undef, 0)
+    monoms = Vector{elem_type(R_param)}(undef, 0)
+    @debug "GB is" gb
     for deg in 1:up_to_degree
         for combination in Combinatorics.with_replacement_combinations(xs, deg)
             monom = prod(combination)
-            @debug "Computing the normal form of" monom
-            _, nf = divrem(monom, gb)
-            push!(monoms, monom)
+            monom_param = evaluate(monom, vcat(xs_param, one(R_param)))
+            monom_mqs = monom - monom_param
+            @debug "Computing the normal form of" monom R R_param
+            _, nf = divrem(monom_mqs, gb)
+            @debug "Normal form is" nf monom_param
+            push!(monoms, numerator(monom_param))
             push!(normal_forms, nf)
         end
     end
-    @info "Computing the normal forms of $(length(monoms)) monomials (variables: $(length(xs)), degree: $(up_to_degree))"
-    # Backward Gaussian elimination over QQ.
-    #
-    # If a polynomial in QQ(a)[x] is reduced to a fraction in QQ(a), then the
-    # fraction belongs to the field. 
-    # Constants belong to the field by construction.
-    # TODO: this does not handle reduction properly for the case when
-    # normal_forms[i] is a sum of a constant and a polynomial
-    constants = map(f -> coeff(f, 1), filter(is_constant, normal_forms))
-    @debug "Constant elements of the MQS ideal are" constants
-    generators = constants
-    permutation = collect(1:length(normal_forms))
-    filter!(i -> !is_constant(normal_forms[i]), permutation)
-    # The first monom is the smallest
-    sort!(permutation, by = i -> leading_monomial(normal_forms[i]))
-    normal_forms = normal_forms[permutation]
-    monoms = monoms[permutation]
-    n = length(normal_forms)
-    for i in 2:n
-        # Reduce nf[i] with nf[1..i-1]
-        nfi = normal_forms[i]
-        qq_coeffs = map(_ -> Nemo.QQ(0), 1:n)
-        qq_coeffs[i] = one(qq_coeffs[i])
-        @debug "Reducing element over QQ" nfi
-        for j in 1:(i - 1)
-            nfj = normal_forms[j]
-            is_constant(nfj) && continue
-            leadj = leading_monomial(nfj)
-            ci = coeff(nfi, leadj)
-            # If fi contains the lead of fj
-            iszero(ci) && continue
-            cj = leading_coefficient(nfj)
-            cij = div(ci, cj)
-            # If the result of division belongs to QQ.
-            # NOTE: ci, cj, cij are elements of Q(a)
-            !is_rational_func_const(cij) && continue
-            nfi = nfi - cij * nfj
-            qq_coeffs[j] = -coeff(numerator(cij), 1)
-        end
-        # If the result of reduction belongs to QQ(a).
-        # NOTE: normal_forms[i] is an elements of QQ(a)[x] 
-        if iszero(nfi)
-            @info "" monoms qq_coeffs normal_forms
-            preimage = sum(map(i -> monoms[i] * qq_coeffs[i], 1:n))
-            # TODO: A dirty hack!
-            @assert rff.mqs.sat_var_index == length(xs)
-            preimage = parent_ring_change(preimage, Rparam, matching = :byindex)
-            push!(generators, preimage)
-        end
-        if is_constant(nfi)
-            push!(generators, coeff(nfi, 1))
-        end
-    end
+    @info "Reducing the normal forms of $(length(monoms)) monomials over QQ"
+    generators, normal_forms, monoms = relations_over_qq(normal_forms, monoms)
     _runtime_logger[:id_normalforms_time] = (time_ns() - time_start) / 1e9
     @info "Generators from normal forms" generators
-    generators, monoms, normal_forms
+    generators, normal_forms, monoms
 end
 
 """
@@ -491,8 +500,8 @@ function generating_sets_fan(
     time_start = time_ns()
     vars = gens(parent(rff.mqs))
     ordering_to_generators = Dict()
-    # The first basis is in degrevlex
-    ord = DegRevLex()
+    # The first basis in some ordering
+    ord = InputOrdering()
     new_rff = groebner_basis_coeffs(rff, seed = seed, ordering = ord)
     cfs = beautifuly_generators(new_rff)
     ordering_to_generators[ord] = cfs
@@ -576,10 +585,12 @@ function simplified_generating_set(
         generators, _, _ =
             linear_relations_between_normal_forms(new_rff, up_to_degree; seed = seed)
         append!(new_fracs, generators)
-        # Now, generators from normal forms may contain simpler functions, so we
-        # update the function field to account for that
-        new_rff =
-            RationalFunctionField(beautifuly_generators(RationalFunctionField(new_fracs)))
+
+        # # Now, generators from normal forms may contain simpler functions, so we
+        # # update the function field to account for that
+        # new_rff =
+        #     RationalFunctionField(beautifuly_generators(RationalFunctionField(new_fracs)))
+
         # Compute some GBs
         nbases = 5
         fan = generating_sets_fan(new_rff, nbases; seed = seed)
