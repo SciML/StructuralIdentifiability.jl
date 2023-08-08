@@ -9,42 +9,378 @@
 └ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:41
 ┌ Info: Computing IO-equations
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:160
-ERROR: LoadError: MethodError: reducing over an empty collection is not allowed; consider supplying `init` to the reducer
-Stacktrace:
-  [1] mapreduce_empty
-    @ ./reduce.jl:367
-  [2] reduce_empty(op::Base.MappingRF{typeof(identity), typeof(vcat)}, #unused#::Type{Any})
-    @ Base ./reduce.jl:356
-  [3] reduce_empty_iter
-    @ ./reduce.jl:379 [inlined]
-  [4] mapreduce_empty_iter(f::Function, op::Function, itr::Vector{Any}, ItrEltype::Base.HasEltype)
-    @ Base ./reduce.jl:375
-  [5] _mapreduce(f::typeof(identity), op::typeof(vcat), #unused#::IndexLinear, A::Vector{Any})
-    @ Base ./reduce.jl:427
-  [6] _mapreduce_dim(f::Function, op::Function, #unused#::Base._InitialValue, A::Vector{Any}, #unused#::Colon)
-    @ Base ./reducedim.jl:365
-  [7] #mapreduce#800
-    @ ./reducedim.jl:357 [inlined]
-  [8] mapreduce
-    @ ./reducedim.jl:357 [inlined]
-  [9] #reduce#802
-    @ ./reducedim.jl:406 [inlined]
- [10] reduce(op::Function, A::Vector{Any})
-    @ Base ./reducedim.jl:406
- [11] states_generators(ode::ODE{Nemo.fmpq_mpoly}, io_equations::Dict{Nemo.fmpq_mpoly, Nemo.fmpq_mpoly})
-    @ StructuralIdentifiability ~/StructuralIdentifiability.jl/src/states.jl:96
- [12] extract_identifiable_functions_raw(io_equations::Dict{Nemo.fmpq_mpoly, Nemo.fmpq_mpoly}, ode::ODE{Nemo.fmpq_mpoly}, known::Vector{Nemo.fmpq_mpoly}, with_states::Bool)
-    @ StructuralIdentifiability ~/StructuralIdentifiability.jl/src/global_identifiability.jl:12
- [13] initial_identifiable_functions(ode::ODE{Nemo.fmpq_mpoly}; with_states::Bool, adjoin_identifiable::Bool)
-    @ StructuralIdentifiability ~/StructuralIdentifiability.jl/src/identifiable_functions.jl:164
- [14] initial_identifiable_functions
-    @ ~/StructuralIdentifiability.jl/src/identifiable_functions.jl:155 [inlined]
- [15] find_identifiable_functions(ode::ODE{Nemo.fmpq_mpoly}; p::Float64, simplify::Bool, seed::Int64, with_states::Bool, adjoin_identifiable::Bool, strategy::Tuple{Symbol, Int64})
-    @ StructuralIdentifiability ~/StructuralIdentifiability.jl/src/identifiable_functions.jl:57
- [16] process_system()
-    @ Main ~/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:51
- [17] top-level scope
-    @ ~/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:115
-in expression starting at /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:115
-┌ Info: IO-equations computed in 3.151287294 seconds
+┌ Info: IO-equations computed in 2.936616141 seconds
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:162
+┌ Info: Simplifying identifiable functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:515
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 14 functions in Rational Field(D, S, N, R, mu, r, q, I, beta, pp, y3, y1, y2, C)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 34 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (0, 3)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 1, Denominator: 3
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 12 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 1 for num. and 0 for den.
+│     Maximal number of interpolated terms are: 1 for num. and 1 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 0.926079922 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:321
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:326
+┌ Info: Inclusion checked in 0.003064579 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:336
+┌ Info: The coefficients of the Groebner basis are presented by 11 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:340
+┌ Info: The pool of fractions:
+│ -C,
+│ -pp,
+│ -beta,
+│ -I,
+│ -q,
+│ -r,
+│ -mu,
+│ -N,
+│ -S,
+│ -D
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:225
+┌ Info: Computing normal forms of monomials in 14 variables up to degree 3
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:425
+┌ Info: Reducing the normal forms of 679 monomials over QQ
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:441
+┌ Info: Generators from normal forms
+│   generators = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[D, S, N, mu, r, q, I, beta, pp, C, D^2, D*S, D*N, D*mu, D*r, D*q, D*I, D*beta, D*pp, D*C, S^2, S*N, S*mu, S*r, S*q, S*I, S*beta, S*pp, S*C, N^2, N*mu, N*r, N*q, N*I, N*beta, N*pp, N*C, mu^2, mu*r, mu*q, mu*I, mu*beta, mu*pp, mu*C, r^2, r*q, r*I, r*beta, r*pp, r*C, q^2, q*I, q*beta, q*pp, q*C, I^2, I*beta, I*pp, I*C, beta^2, beta*pp, beta*C, pp^2, pp*C, C^2, D^3, D^2*S, D^2*N, D^2*mu, D^2*r, D^2*q, D^2*I, D^2*beta, D^2*pp, D^2*C, D*S^2, D*S*N, D*S*mu, D*S*r, D*S*q, D*S*I, D*S*beta, D*S*pp, D*S*C, D*N^2, D*N*mu, D*N*r, D*N*q, D*N*I, D*N*beta, D*N*pp, D*N*C, D*mu^2, D*mu*r, D*mu*q, D*mu*I, D*mu*beta, D*mu*pp, D*mu*C, D*r^2, D*r*q, D*r*I, D*r*beta, D*r*pp, D*r*C, D*q^2, D*q*I, D*q*beta, D*q*pp, D*q*C, D*I^2, D*I*beta, D*I*pp, D*I*C, D*beta^2, D*beta*pp, D*beta*C, D*pp^2, D*pp*C, D*C^2, S^3, S^2*N, S^2*mu, S^2*r, S^2*q, S^2*I, S^2*beta, S^2*pp, S^2*C, S*N^2, S*N*mu, S*N*r, S*N*q, S*N*I, S*N*beta, S*N*pp, S*N*C, S*mu^2, S*mu*r, S*mu*q, S*mu*I, S*mu*beta, S*mu*pp, S*mu*C, S*r^2, S*r*q, S*r*I, S*r*beta, S*r*pp, S*r*C, S*q^2, S*q*I, S*q*beta, S*q*pp, S*q*C, S*I^2, S*I*beta, S*I*pp, S*I*C, S*beta^2, S*beta*pp, S*beta*C, S*pp^2, S*pp*C, S*C^2, N^3, N^2*mu, N^2*r, N^2*q, N^2*I, N^2*beta, N^2*pp, N^2*C, N*mu^2, N*mu*r, N*mu*q, N*mu*I, N*mu*beta, N*mu*pp, N*mu*C, N*r^2, N*r*q, N*r*I, N*r*beta, N*r*pp, N*r*C, N*q^2, N*q*I, N*q*beta, N*q*pp, N*q*C, N*I^2, N*I*beta, N*I*pp, N*I*C, N*beta^2, N*beta*pp, N*beta*C, N*pp^2, N*pp*C, N*C^2, mu^3, mu^2*r, mu^2*q, mu^2*I, mu^2*beta, mu^2*pp, mu^2*C, mu*r^2, mu*r*q, mu*r*I, mu*r*beta, mu*r*pp, mu*r*C, mu*q^2, mu*q*I, mu*q*beta, mu*q*pp, mu*q*C, mu*I^2, mu*I*beta, mu*I*pp, mu*I*C, mu*beta^2, mu*beta*pp, mu*beta*C, mu*pp^2, mu*pp*C, mu*C^2, r^3, r^2*q, r^2*I, r^2*beta, r^2*pp, r^2*C, r*q^2, r*q*I, r*q*beta, r*q*pp, r*q*C, r*I^2, r*I*beta, r*I*pp, r*I*C, r*beta^2, r*beta*pp, r*beta*C, r*pp^2, r*pp*C, r*C^2, q^3, q^2*I, q^2*beta, q^2*pp, q^2*C, q*I^2, q*I*beta, q*I*pp, q*I*C, q*beta^2, q*beta*pp, q*beta*C, q*pp^2, q*pp*C, q*C^2, I^3, I^2*beta, I^2*pp, I^2*C, I*beta^2, I*beta*pp, I*beta*C, I*pp^2, I*pp*C, I*C^2, beta^3, beta^2*pp, beta^2*C, beta*pp^2, beta*pp*C, beta*C^2, pp^3, pp^2*C, pp*C^2, C^3]
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:444
+┌ Info: Final cleaning and simplification of generators
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:568
+┌ Info: The pool of fractions:
+│ C,
+│ C,
+│ pp,
+│ pp,
+│ beta,
+│ beta,
+│ I,
+│ I,
+│ q,
+│ q,
+│ r,
+│ r,
+│ mu,
+│ mu,
+│ N,
+│ N,
+│ S,
+│ S,
+│ D,
+│ D,
+│ C^2,
+│ pp*C,
+│ pp^2,
+│ beta*C,
+│ beta*pp,
+│ beta^2,
+│ I*C,
+│ I*pp,
+│ I*beta,
+│ I^2,
+│ q*C,
+│ q*pp,
+│ q*beta,
+│ q*I,
+│ q^2,
+│ r*C,
+│ r*pp,
+│ r*beta,
+│ r*I,
+│ r*q,
+│ r^2,
+│ mu*C,
+│ mu*pp,
+│ mu*beta,
+│ mu*I,
+│ mu*q,
+│ mu*r,
+│ mu^2,
+│ N*C,
+│ N*pp,
+│ N*beta,
+│ N*I,
+│ N*q,
+│ N*r,
+│ N*mu,
+│ N^2,
+│ S*C,
+│ S*pp,
+│ S*beta,
+│ S*I,
+│ S*q,
+│ S*r,
+│ S*mu,
+│ S*N,
+│ S^2,
+│ D*C,
+│ D*pp,
+│ D*beta,
+│ D*I,
+│ D*q,
+│ D*r,
+│ D*mu,
+│ D*N,
+│ D*S,
+│ D^2,
+│ C^3,
+│ pp*C^2,
+│ pp^2*C,
+│ pp^3,
+│ beta*C^2,
+│ beta*pp*C,
+│ beta*pp^2,
+│ beta^2*C,
+│ beta^2*pp,
+│ beta^3,
+│ I*C^2,
+│ I*pp*C,
+│ I*pp^2,
+│ I*beta*C,
+│ I*beta*pp,
+│ I*beta^2,
+│ I^2*C,
+│ I^2*pp,
+│ I^2*beta,
+│ I^3,
+│ q*C^2,
+│ q*pp*C,
+│ q*pp^2,
+│ q*beta*C,
+│ q*beta*pp,
+│ q*beta^2,
+│ q*I*C,
+│ q*I*pp,
+│ q*I*beta,
+│ q*I^2,
+│ q^2*C,
+│ q^2*pp,
+│ q^2*beta,
+│ q^2*I,
+│ q^3,
+│ r*C^2,
+│ r*pp*C,
+│ r*pp^2,
+│ r*beta*C,
+│ r*beta*pp,
+│ r*beta^2,
+│ r*I*C,
+│ r*I*pp,
+│ r*I*beta,
+│ r*I^2,
+│ r*q*C,
+│ r*q*pp,
+│ r*q*beta,
+│ r*q*I,
+│ r*q^2,
+│ r^2*C,
+│ r^2*pp,
+│ r^2*beta,
+│ r^2*I,
+│ r^2*q,
+│ r^3,
+│ mu*C^2,
+│ mu*pp*C,
+│ mu*pp^2,
+│ mu*beta*C,
+│ mu*beta*pp,
+│ mu*beta^2,
+│ mu*I*C,
+│ mu*I*pp,
+│ mu*I*beta,
+│ mu*I^2,
+│ mu*q*C,
+│ mu*q*pp,
+│ mu*q*beta,
+│ mu*q*I,
+│ mu*q^2,
+│ mu*r*C,
+│ mu*r*pp,
+│ mu*r*beta,
+│ mu*r*I,
+│ mu*r*q,
+│ mu*r^2,
+│ mu^2*C,
+│ mu^2*pp,
+│ mu^2*beta,
+│ mu^2*I,
+│ mu^2*q,
+│ mu^2*r,
+│ mu^3,
+│ N*C^2,
+│ N*pp*C,
+│ N*pp^2,
+│ N*beta*C,
+│ N*beta*pp,
+│ N*beta^2,
+│ N*I*C,
+│ N*I*pp,
+│ N*I*beta,
+│ N*I^2,
+│ N*q*C,
+│ N*q*pp,
+│ N*q*beta,
+│ N*q*I,
+│ N*q^2,
+│ N*r*C,
+│ N*r*pp,
+│ N*r*beta,
+│ N*r*I,
+│ N*r*q,
+│ N*r^2,
+│ N*mu*C,
+│ N*mu*pp,
+│ N*mu*beta,
+│ N*mu*I,
+│ N*mu*q,
+│ N*mu*r,
+│ N*mu^2,
+│ N^2*C,
+│ N^2*pp,
+│ N^2*beta,
+│ N^2*I,
+│ N^2*q,
+│ N^2*r,
+│ N^2*mu,
+│ N^3,
+│ S*C^2,
+│ S*pp*C,
+│ S*pp^2,
+│ S*beta*C,
+│ S*beta*pp,
+│ S*beta^2,
+│ S*I*C,
+│ S*I*pp,
+│ S*I*beta,
+│ S*I^2,
+│ S*q*C,
+│ S*q*pp,
+│ S*q*beta,
+│ S*q*I,
+│ S*q^2,
+│ S*r*C,
+│ S*r*pp,
+│ S*r*beta,
+│ S*r*I,
+│ S*r*q,
+│ S*r^2,
+│ S*mu*C,
+│ S*mu*pp,
+│ S*mu*beta,
+│ S*mu*I,
+│ S*mu*q,
+│ S*mu*r,
+│ S*mu^2,
+│ S*N*C,
+│ S*N*pp,
+│ S*N*beta,
+│ S*N*I,
+│ S*N*q,
+│ S*N*r,
+│ S*N*mu,
+│ S*N^2,
+│ S^2*C,
+│ S^2*pp,
+│ S^2*beta,
+│ S^2*I,
+│ S^2*q,
+│ S^2*r,
+│ S^2*mu,
+│ S^2*N,
+│ S^3,
+│ D*C^2,
+│ D*pp*C,
+│ D*pp^2,
+│ D*beta*C,
+│ D*beta*pp,
+│ D*beta^2,
+│ D*I*C,
+│ D*I*pp,
+│ D*I*beta,
+│ D*I^2,
+│ D*q*C,
+│ D*q*pp,
+│ D*q*beta,
+│ D*q*I,
+│ D*q^2,
+│ D*r*C,
+│ D*r*pp,
+│ D*r*beta,
+│ D*r*I,
+│ D*r*q,
+│ D*r^2,
+│ D*mu*C,
+│ D*mu*pp,
+│ D*mu*beta,
+│ D*mu*I,
+│ D*mu*q,
+│ D*mu*r,
+│ D*mu^2,
+│ D*N*C,
+│ D*N*pp,
+│ D*N*beta,
+│ D*N*I,
+│ D*N*q,
+│ D*N*r,
+│ D*N*mu,
+│ D*N^2,
+│ D*S*C,
+│ D*S*pp,
+│ D*S*beta,
+│ D*S*I,
+│ D*S*q,
+│ D*S*r,
+│ D*S*mu,
+│ D*S*N,
+│ D*S^2,
+│ D^2*C,
+│ D^2*pp,
+│ D^2*beta,
+│ D^2*I,
+│ D^2*q,
+│ D^2*r,
+│ D^2*mu,
+│ D^2*N,
+│ D^2*S,
+│ D^3
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:225
+┌ Info: Checking inclusion with probability 0.99
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:571
+┌ Info: Inclusion checked in 0.002528995 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:575
+┌ Info: Out of 13 initial generators there are 10 indepdendent
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:580
+┌ Info: The ranking of the new set of generators is 55
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:583
+┌ Info: The search for identifiable functions concluded in 6.134952451 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:77
+┌ Info: Identifiable functions are
+│   funcs = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[C, pp, beta, I, q, r, mu, N, S, D]
+└ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:53
