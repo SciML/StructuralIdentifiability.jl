@@ -857,8 +857,8 @@ end
 
 funcs2 = StructuralIdentifiability.find_identifiable_functions(
     St,
-    strategy = (:hybrid,),
-    with_states = false,
+    strategy = (:gb,),
+    with_states = true,
 )
 
 funcs1 = StructuralIdentifiability.find_identifiable_functions(
