@@ -11,7 +11,10 @@ function rational_function_rank(func)
     r1 = length(num) * total_degree(num)
     # penalize non-constant denominators
     r2 = (3 * length(den) * total_degree(den))^3
-    return r1 + r2
+    # penalize coefficients that are not 1
+    r3 = sum(map(c -> !isone(c), collect(coefficients(num))))
+    r4 = sum(map(c -> !isone(c), collect(coefficients(den))))
+    return r1 + r2 + r3 + r4
 end
 
 """

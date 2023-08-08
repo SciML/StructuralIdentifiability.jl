@@ -82,10 +82,12 @@ function run_benchmarks(args, kwargs)
     to_run_indices = collect(1:length(to_run))
     to_run_names = to_run
 
+    nworkers = cpucores()
+
     @info """
     Running benchmarks.
     Number of benchmarks: $(length(to_run_indices))
-    Workers: $(length(workers()))
+    Workers: $(nworkers)
     Timeout: $timeout sec.
     Keywords for `find_identifiable_functions`:
         $kwargs"""
@@ -93,54 +95,62 @@ function run_benchmarks(args, kwargs)
     Benchmark systems:
     $to_run_names"""
 
-    procs = []
-    log_fd = []
-    keywords = []
-
     start_time = time_ns()
     seconds_passed(start_time) = round((time_ns() - start_time) / 1e9, digits = 2)
 
-    for idx in to_run_indices
-        for kw in kwargs
-            name = to_run_names[idx]
-            id = keywords_to_id(kw)
-            logs = open((@__DIR__) * "/systems/$name/logs_$id", "w")
-            cmd = Cmd(["julia", (@__DIR__) * "/run_single_benchmark.jl", "$name", "$kw"])
-            cmd = Cmd(cmd, ignorestatus = true, detach = false, env = copy(ENV))
-            proc = run(pipeline(cmd, stdout = logs, stderr = logs), wait = false)
-            push!(log_fd, logs)
-            push!(keywords, kw)
-            push!(procs, (index = idx, name = name, proc = proc))
-        end
-    end
-
+    queue = to_run_indices
+    procs = []
+    log_fd = []
+    keywords = []
     exited = []
-    @label Wait
-    sleep(1.0)
-    i = 1
-    for i in 1:length(procs)
-        i in exited && continue
-        proc = procs[i]
-        if process_exited(proc.proc)
-            push!(exited, i)
-            close(log_fd[i])
-            kw = keywords[i]
-            @info "Benchmark $(proc.name) / $(kw) yielded after $(seconds_passed(start_time)) seconds"
+    running = 0
+
+    while true
+        if !isempty(queue) && running < (nworkers + length(kwargs))
+            idx = pop!(queue)
+            for kw in kwargs
+                name = to_run_names[idx]
+                id = keywords_to_id(kw)
+                @info "Running $name / $id"
+                logs = open((@__DIR__) * "/systems/$name/logs_$id", "w")
+                cmd =
+                    Cmd(["julia", (@__DIR__) * "/run_single_benchmark.jl", "$name", "$kw"])
+                cmd = Cmd(cmd, ignorestatus = true, detach = false, env = copy(ENV))
+                proc = run(pipeline(cmd, stdout = logs, stderr = logs), wait = false)
+                push!(log_fd, logs)
+                push!(keywords, kw)
+                push!(procs, (index = idx, name = name, proc = proc))
+                running += 1
+            end
         end
-    end
-    if seconds_passed(start_time) > timeout
-        @warn "Timed out after $(seconds_passed(start_time)) seconds"
+
+        sleep(1.0)
+        i = 1
         for i in 1:length(procs)
             i in exited && continue
-            kill(procs[i].proc)
-            close(log_fd[i])
-            kw = keywords[i]
-            @info "Benchmark $(procs[i].name) / $(kw) killed after $(seconds_passed(start_time)) seconds"
+            proc = procs[i]
+            if process_exited(proc.proc)
+                running -= 1
+                push!(exited, i)
+                close(log_fd[i])
+                kw = keywords[i]
+                @info "Yielded $(proc.name) / $(kw) after $(seconds_passed(start_time)) seconds"
+            end
         end
-    elseif length(exited) == length(procs)
-        @info "All benchmarks finished"
-    else
-        @goto Wait
+        if seconds_passed(start_time) > timeout
+            @warn "Timed out after $(seconds_passed(start_time)) seconds"
+            for i in 1:length(procs)
+                i in exited && continue
+                kill(procs[i].proc)
+                close(log_fd[i])
+                kw = keywords[i]
+                @info "Benchmark $(procs[i].name) / $(kw) killed after $(seconds_passed(start_time)) seconds"
+            end
+            break
+        elseif length(exited) == length(procs)
+            @info "All benchmarks finished"
+            break
+        end
     end
 
     to_run_names

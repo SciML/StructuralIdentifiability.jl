@@ -4,7 +4,6 @@ module StructuralIdentifiability
 using Base.Iterators
 using Combinatorics
 using DataStructures
-using Dates
 using IterTools
 using LinearAlgebra
 using Logging

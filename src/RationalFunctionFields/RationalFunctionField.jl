@@ -559,7 +559,7 @@ function simplified_generating_set(
         #     RationalFunctionField(beautifuly_generators(RationalFunctionField(new_fracs)))
 
         # Compute some GBs
-        nbases = 5
+        nbases = 10
         fan = generating_sets_fan(new_rff, nbases; seed = seed)
         for (ord, generators) in fan
             append!(new_fracs, generators)

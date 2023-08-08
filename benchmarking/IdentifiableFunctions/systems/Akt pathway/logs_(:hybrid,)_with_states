@@ -1,0 +1,1285 @@
+⌜ # Computing specializations..  	 Time: 0:00:02[K✓ # Computing specializations..  	 Time: 0:00:02[K
+⌜ # Computing specializations..  	 Time: 0:00:04[K✓ # Computing specializations..  	 Time: 0:00:04[K
+┌ Info: Processing Akt pathway
+└ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:40
+┌ Info: Averaging over 1 runs.
+│ Using keyword arguments:
+│ NamedTuple{(:strategy, :with_states), Tuple{Tuple{Symbol}, Bool}}
+│ (strategy = (:hybrid,), with_states = true)
+│ ID: (:hybrid,)_with_states
+└ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:41
+┌ Info: Computing IO-equations
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:160
+┌ Info: IO-equations computed in 2.516661085 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:162
+⌜ # Computing specializations..  	 Time: 0:00:03[K✓ # Computing specializations..  	 Time: 0:00:03[K
+⌜ # Computing specializations..  	 Time: 0:00:00[K✓ # Computing specializations..  	 Time: 0:00:00[K
+┌ Info: Simplifying identifiable functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:515
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 229 functions in Rational Field(a2, pS6, a3, reaction_1_k1, reaction_4_k1, pAkt, reaction_9_k1, pEGFR, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, Akt, reaction_3_k1, pEGFR_Akt, reaction_5_k1, EGFR, reaction_2_k1, EGFR_turnover, S6, reaction_5_k2, EGF_EGFR, pAkt_S6, reaction_2_k2, reaction_8_k1, y1, y3, pro_EGFR, y2)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 66 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (2, 0)], [(0, 0), (2, 1)], [(0, 0), (3, 15)], [(0, 0), (16, 2)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 3, Denominator: 3
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 64 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 1 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 1 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 4.865035728 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:321
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:326
+┌ Info: Inclusion checked in 1.122268323 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:336
+┌ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:340
+┌ Info: The pool of fractions:
+│ -reaction_8_k1,
+│ -reaction_2_k2,
+│ -reaction_5_k2,
+│ -reaction_3_k1,
+│ -reaction_6_k1,
+│ -reaction_7_k1,
+│ -reaction_4_k1,
+│ -reaction_2_k1*pAkt_S6,
+│ -reaction_1_k1 + reaction_9_k1 + reaction_1_k2,
+│ -S6//pAkt_S6,
+│ -reaction_5_k1//reaction_2_k1,
+│ -pEGFR_Akt//pAkt_S6,
+│ -Akt//pAkt_S6,
+│ -a1//reaction_2_k1,
+│ -pEGFR//pAkt_S6,
+│ -pAkt//pAkt_S6,
+│ -a3//reaction_2_k1,
+│ -pS6//pAkt_S6,
+│ -a2//reaction_2_k1,
+│ (-reaction_9_k1*EGF_EGFR)//pAkt_S6
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:225
+┌ Info: Computing normal forms of monomials in 29 variables up to degree 3
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:425
+┌ Info: Reducing the normal forms of 4959 monomials over QQ
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:441
+┌ Info: Generators from normal forms
+│   generators = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[reaction_4_k1, reaction_7_k1, reaction_6_k1, reaction_3_k1, reaction_5_k2, reaction_2_k2, reaction_8_k1, a2*pS6, a2*pAkt, a2*pEGFR, a2*Akt, a2*pEGFR_Akt, a2*S6, a2*pAkt_S6, pS6*a3, pS6*a1, pS6*reaction_5_k1, pS6*reaction_2_k1, a3*pAkt, a3*pEGFR, a3*Akt, a3*pEGFR_Akt, a3*S6, a3*pAkt_S6, reaction_4_k1^2, reaction_4_k1*reaction_7_k1, reaction_4_k1*reaction_6_k1, reaction_4_k1*reaction_3_k1, reaction_4_k1*reaction_5_k2, reaction_4_k1*reaction_2_k2, reaction_4_k1*reaction_8_k1, pAkt*a1, pAkt*reaction_5_k1, pAkt*reaction_2_k1, pEGFR*a1, pEGFR*reaction_5_k1, pEGFR*reaction_2_k1, reaction_7_k1^2, reaction_7_k1*reaction_6_k1, reaction_7_k1*reaction_3_k1, reaction_7_k1*reaction_5_k2, reaction_7_k1*reaction_2_k2, reaction_7_k1*reaction_8_k1, reaction_6_k1^2, reaction_6_k1*reaction_3_k1, reaction_6_k1*reaction_5_k2, reaction_6_k1*reaction_2_k2, reaction_6_k1*reaction_8_k1, a1*Akt, a1*pEGFR_Akt, a1*S6, a1*pAkt_S6, Akt*reaction_5_k1, Akt*reaction_2_k1, reaction_3_k1^2, reaction_3_k1*reaction_5_k2, reaction_3_k1*reaction_2_k2, reaction_3_k1*reaction_8_k1, pEGFR_Akt*reaction_5_k1, pEGFR_Akt*reaction_2_k1, reaction_5_k1*S6, reaction_5_k1*pAkt_S6, reaction_2_k1*S6, reaction_2_k1*pAkt_S6, reaction_5_k2^2, reaction_5_k2*reaction_2_k2, reaction_5_k2*reaction_8_k1, reaction_2_k2^2, reaction_2_k2*reaction_8_k1, reaction_8_k1^2, a2*pS6*reaction_4_k1, a2*pS6*reaction_7_k1, a2*pS6*reaction_6_k1, a2*pS6*reaction_3_k1, a2*pS6*reaction_5_k2, a2*pS6*reaction_2_k2, a2*pS6*reaction_8_k1, a2*reaction_4_k1*pAkt, a2*reaction_4_k1*pEGFR, a2*reaction_4_k1*Akt, a2*reaction_4_k1*pEGFR_Akt, a2*reaction_4_k1*S6, a2*reaction_4_k1*pAkt_S6, a2*pAkt*reaction_7_k1, a2*pAkt*reaction_6_k1, a2*pAkt*reaction_3_k1, a2*pAkt*reaction_5_k2, a2*pAkt*reaction_2_k2, a2*pAkt*reaction_8_k1, a2*reaction_9_k1*EGF_EGFR, a2*pEGFR*reaction_7_k1, a2*pEGFR*reaction_6_k1, a2*pEGFR*reaction_3_k1, a2*pEGFR*reaction_5_k2, a2*pEGFR*reaction_2_k2, a2*pEGFR*reaction_8_k1, a2*reaction_7_k1*Akt, a2*reaction_7_k1*pEGFR_Akt, a2*reaction_7_k1*S6, a2*reaction_7_k1*pAkt_S6, a2*reaction_6_k1*Akt, a2*reaction_6_k1*pEGFR_Akt, a2*reaction_6_k1*S6, a2*reaction_6_k1*pAkt_S6, a2*Akt*reaction_3_k1, a2*Akt*reaction_5_k2, a2*Akt*reaction_2_k2, a2*Akt*reaction_8_k1, a2*reaction_3_k1*pEGFR_Akt, a2*reaction_3_k1*S6, a2*reaction_3_k1*pAkt_S6, a2*pEGFR_Akt*reaction_5_k2, a2*pEGFR_Akt*reaction_2_k2, a2*pEGFR_Akt*reaction_8_k1, a2*S6*reaction_5_k2, a2*S6*reaction_2_k2, a2*S6*reaction_8_k1, a2*reaction_5_k2*pAkt_S6, a2*pAkt_S6*reaction_2_k2, a2*pAkt_S6*reaction_8_k1, pS6*a3*reaction_4_k1, pS6*a3*reaction_7_k1, pS6*a3*reaction_6_k1, pS6*a3*reaction_3_k1, pS6*a3*reaction_5_k2, pS6*a3*reaction_2_k2, pS6*a3*reaction_8_k1, pS6*reaction_4_k1*a1, pS6*reaction_4_k1*reaction_5_k1, pS6*reaction_4_k1*reaction_2_k1, pS6*reaction_7_k1*a1, pS6*reaction_7_k1*reaction_5_k1, pS6*reaction_7_k1*reaction_2_k1, pS6*reaction_6_k1*a1, pS6*reaction_6_k1*reaction_5_k1, pS6*reaction_6_k1*reaction_2_k1, pS6*a1*reaction_3_k1, pS6*a1*reaction_5_k2, pS6*a1*reaction_2_k2, pS6*a1*reaction_8_k1, pS6*reaction_3_k1*reaction_5_k1, pS6*reaction_3_k1*reaction_2_k1, pS6*reaction_5_k1*reaction_5_k2, pS6*reaction_5_k1*reaction_2_k2, pS6*reaction_5_k1*reaction_8_k1, pS6*reaction_2_k1*reaction_5_k2, pS6*reaction_2_k1*reaction_2_k2, pS6*reaction_2_k1*reaction_8_k1, a3*reaction_4_k1*pAkt, a3*reaction_4_k1*pEGFR, a3*reaction_4_k1*Akt, a3*reaction_4_k1*pEGFR_Akt, a3*reaction_4_k1*S6, a3*reaction_4_k1*pAkt_S6, a3*pAkt*reaction_7_k1, a3*pAkt*reaction_6_k1, a3*pAkt*reaction_3_k1, a3*pAkt*reaction_5_k2, a3*pAkt*reaction_2_k2, a3*pAkt*reaction_8_k1, a3*reaction_9_k1*EGF_EGFR, a3*pEGFR*reaction_7_k1, a3*pEGFR*reaction_6_k1, a3*pEGFR*reaction_3_k1, a3*pEGFR*reaction_5_k2, a3*pEGFR*reaction_2_k2, a3*pEGFR*reaction_8_k1, a3*reaction_7_k1*Akt, a3*reaction_7_k1*pEGFR_Akt, a3*reaction_7_k1*S6, a3*reaction_7_k1*pAkt_S6, a3*reaction_6_k1*Akt, a3*reaction_6_k1*pEGFR_Akt, a3*reaction_6_k1*S6, a3*reaction_6_k1*pAkt_S6, a3*Akt*reaction_3_k1, a3*Akt*reaction_5_k2, a3*Akt*reaction_2_k2, a3*Akt*reaction_8_k1, a3*reaction_3_k1*pEGFR_Akt, a3*reaction_3_k1*S6, a3*reaction_3_k1*pAkt_S6, a3*pEGFR_Akt*reaction_5_k2, a3*pEGFR_Akt*reaction_2_k2, a3*pEGFR_Akt*reaction_8_k1, a3*S6*reaction_5_k2, a3*S6*reaction_2_k2, a3*S6*reaction_8_k1, a3*reaction_5_k2*pAkt_S6, a3*pAkt_S6*reaction_2_k2, a3*pAkt_S6*reaction_8_k1, reaction_4_k1^3, reaction_4_k1^2*reaction_7_k1, reaction_4_k1^2*reaction_6_k1, reaction_4_k1^2*reaction_3_k1, reaction_4_k1^2*reaction_5_k2, reaction_4_k1^2*reaction_2_k2, reaction_4_k1^2*reaction_8_k1, reaction_4_k1*pAkt*a1, reaction_4_k1*pAkt*reaction_5_k1, reaction_4_k1*pAkt*reaction_2_k1, reaction_4_k1*pEGFR*a1, reaction_4_k1*pEGFR*reaction_5_k1, reaction_4_k1*pEGFR*reaction_2_k1, reaction_4_k1*reaction_7_k1^2, reaction_4_k1*reaction_7_k1*reaction_6_k1, reaction_4_k1*reaction_7_k1*reaction_3_k1, reaction_4_k1*reaction_7_k1*reaction_5_k2, reaction_4_k1*reaction_7_k1*reaction_2_k2, reaction_4_k1*reaction_7_k1*reaction_8_k1, reaction_4_k1*reaction_6_k1^2, reaction_4_k1*reaction_6_k1*reaction_3_k1, reaction_4_k1*reaction_6_k1*reaction_5_k2, reaction_4_k1*reaction_6_k1*reaction_2_k2, reaction_4_k1*reaction_6_k1*reaction_8_k1, reaction_4_k1*a1*Akt, reaction_4_k1*a1*pEGFR_Akt, reaction_4_k1*a1*S6, reaction_4_k1*a1*pAkt_S6, reaction_4_k1*Akt*reaction_5_k1, reaction_4_k1*Akt*reaction_2_k1, reaction_4_k1*reaction_3_k1^2, reaction_4_k1*reaction_3_k1*reaction_5_k2, reaction_4_k1*reaction_3_k1*reaction_2_k2, reaction_4_k1*reaction_3_k1*reaction_8_k1, reaction_4_k1*pEGFR_Akt*reaction_5_k1, reaction_4_k1*pEGFR_Akt*reaction_2_k1, reaction_4_k1*reaction_5_k1*S6, reaction_4_k1*reaction_5_k1*pAkt_S6, reaction_4_k1*reaction_2_k1*S6, reaction_4_k1*reaction_2_k1*pAkt_S6, reaction_4_k1*reaction_5_k2^2, reaction_4_k1*reaction_5_k2*reaction_2_k2, reaction_4_k1*reaction_5_k2*reaction_8_k1, reaction_4_k1*reaction_2_k2^2, reaction_4_k1*reaction_2_k2*reaction_8_k1, reaction_4_k1*reaction_8_k1^2, pAkt*reaction_7_k1*a1, pAkt*reaction_7_k1*reaction_5_k1, pAkt*reaction_7_k1*reaction_2_k1, pAkt*reaction_6_k1*a1, pAkt*reaction_6_k1*reaction_5_k1, pAkt*reaction_6_k1*reaction_2_k1, pAkt*a1*reaction_3_k1, pAkt*a1*reaction_5_k2, pAkt*a1*reaction_2_k2, pAkt*a1*reaction_8_k1, pAkt*reaction_3_k1*reaction_5_k1, pAkt*reaction_3_k1*reaction_2_k1, pAkt*reaction_5_k1*reaction_5_k2, pAkt*reaction_5_k1*reaction_2_k2, pAkt*reaction_5_k1*reaction_8_k1, pAkt*reaction_2_k1*reaction_5_k2, pAkt*reaction_2_k1*reaction_2_k2, pAkt*reaction_2_k1*reaction_8_k1, reaction_9_k1*a1*EGF_EGFR, reaction_9_k1*reaction_5_k1*EGF_EGFR, reaction_9_k1*reaction_2_k1*EGF_EGFR, pEGFR*reaction_7_k1*a1, pEGFR*reaction_7_k1*reaction_5_k1, pEGFR*reaction_7_k1*reaction_2_k1, pEGFR*reaction_6_k1*a1, pEGFR*reaction_6_k1*reaction_5_k1, pEGFR*reaction_6_k1*reaction_2_k1, pEGFR*a1*reaction_3_k1, pEGFR*a1*reaction_5_k2, pEGFR*a1*reaction_2_k2, pEGFR*a1*reaction_8_k1, pEGFR*reaction_3_k1*reaction_5_k1, pEGFR*reaction_3_k1*reaction_2_k1, pEGFR*reaction_5_k1*reaction_5_k2, pEGFR*reaction_5_k1*reaction_2_k2, pEGFR*reaction_5_k1*reaction_8_k1, pEGFR*reaction_2_k1*reaction_5_k2, pEGFR*reaction_2_k1*reaction_2_k2, pEGFR*reaction_2_k1*reaction_8_k1, reaction_7_k1^3, reaction_7_k1^2*reaction_6_k1, reaction_7_k1^2*reaction_3_k1, reaction_7_k1^2*reaction_5_k2, reaction_7_k1^2*reaction_2_k2, reaction_7_k1^2*reaction_8_k1, reaction_7_k1*reaction_6_k1^2, reaction_7_k1*reaction_6_k1*reaction_3_k1, reaction_7_k1*reaction_6_k1*reaction_5_k2, reaction_7_k1*reaction_6_k1*reaction_2_k2, reaction_7_k1*reaction_6_k1*reaction_8_k1, reaction_7_k1*a1*Akt, reaction_7_k1*a1*pEGFR_Akt, reaction_7_k1*a1*S6, reaction_7_k1*a1*pAkt_S6, reaction_7_k1*Akt*reaction_5_k1, reaction_7_k1*Akt*reaction_2_k1, reaction_7_k1*reaction_3_k1^2, reaction_7_k1*reaction_3_k1*reaction_5_k2, reaction_7_k1*reaction_3_k1*reaction_2_k2, reaction_7_k1*reaction_3_k1*reaction_8_k1, reaction_7_k1*pEGFR_Akt*reaction_5_k1, reaction_7_k1*pEGFR_Akt*reaction_2_k1, reaction_7_k1*reaction_5_k1*S6, reaction_7_k1*reaction_5_k1*pAkt_S6, reaction_7_k1*reaction_2_k1*S6, reaction_7_k1*reaction_2_k1*pAkt_S6, reaction_7_k1*reaction_5_k2^2, reaction_7_k1*reaction_5_k2*reaction_2_k2, reaction_7_k1*reaction_5_k2*reaction_8_k1, reaction_7_k1*reaction_2_k2^2, reaction_7_k1*reaction_2_k2*reaction_8_k1, reaction_7_k1*reaction_8_k1^2, reaction_6_k1^3, reaction_6_k1^2*reaction_3_k1, reaction_6_k1^2*reaction_5_k2, reaction_6_k1^2*reaction_2_k2, reaction_6_k1^2*reaction_8_k1, reaction_6_k1*a1*Akt, reaction_6_k1*a1*pEGFR_Akt, reaction_6_k1*a1*S6, reaction_6_k1*a1*pAkt_S6, reaction_6_k1*Akt*reaction_5_k1, reaction_6_k1*Akt*reaction_2_k1, reaction_6_k1*reaction_3_k1^2, reaction_6_k1*reaction_3_k1*reaction_5_k2, reaction_6_k1*reaction_3_k1*reaction_2_k2, reaction_6_k1*reaction_3_k1*reaction_8_k1, reaction_6_k1*pEGFR_Akt*reaction_5_k1, reaction_6_k1*pEGFR_Akt*reaction_2_k1, reaction_6_k1*reaction_5_k1*S6, reaction_6_k1*reaction_5_k1*pAkt_S6, reaction_6_k1*reaction_2_k1*S6, reaction_6_k1*reaction_2_k1*pAkt_S6, reaction_6_k1*reaction_5_k2^2, reaction_6_k1*reaction_5_k2*reaction_2_k2, reaction_6_k1*reaction_5_k2*reaction_8_k1, reaction_6_k1*reaction_2_k2^2, reaction_6_k1*reaction_2_k2*reaction_8_k1, reaction_6_k1*reaction_8_k1^2, a1*Akt*reaction_3_k1, a1*Akt*reaction_5_k2, a1*Akt*reaction_2_k2, a1*Akt*reaction_8_k1, a1*reaction_3_k1*pEGFR_Akt, a1*reaction_3_k1*S6, a1*reaction_3_k1*pAkt_S6, a1*pEGFR_Akt*reaction_5_k2, a1*pEGFR_Akt*reaction_2_k2, a1*pEGFR_Akt*reaction_8_k1, a1*S6*reaction_5_k2, a1*S6*reaction_2_k2, a1*S6*reaction_8_k1, a1*reaction_5_k2*pAkt_S6, a1*pAkt_S6*reaction_2_k2, a1*pAkt_S6*reaction_8_k1, Akt*reaction_3_k1*reaction_5_k1, Akt*reaction_3_k1*reaction_2_k1, Akt*reaction_5_k1*reaction_5_k2, Akt*reaction_5_k1*reaction_2_k2, Akt*reaction_5_k1*reaction_8_k1, Akt*reaction_2_k1*reaction_5_k2, Akt*reaction_2_k1*reaction_2_k2, Akt*reaction_2_k1*reaction_8_k1, reaction_3_k1^3, reaction_3_k1^2*reaction_5_k2, reaction_3_k1^2*reaction_2_k2, reaction_3_k1^2*reaction_8_k1, reaction_3_k1*pEGFR_Akt*reaction_5_k1, reaction_3_k1*pEGFR_Akt*reaction_2_k1, reaction_3_k1*reaction_5_k1*S6, reaction_3_k1*reaction_5_k1*pAkt_S6, reaction_3_k1*reaction_2_k1*S6, reaction_3_k1*reaction_2_k1*pAkt_S6, reaction_3_k1*reaction_5_k2^2, reaction_3_k1*reaction_5_k2*reaction_2_k2, reaction_3_k1*reaction_5_k2*reaction_8_k1, reaction_3_k1*reaction_2_k2^2, reaction_3_k1*reaction_2_k2*reaction_8_k1, reaction_3_k1*reaction_8_k1^2, pEGFR_Akt*reaction_5_k1*reaction_5_k2, pEGFR_Akt*reaction_5_k1*reaction_2_k2, pEGFR_Akt*reaction_5_k1*reaction_8_k1, pEGFR_Akt*reaction_2_k1*reaction_5_k2, pEGFR_Akt*reaction_2_k1*reaction_2_k2, pEGFR_Akt*reaction_2_k1*reaction_8_k1, reaction_5_k1*S6*reaction_5_k2, reaction_5_k1*S6*reaction_2_k2, reaction_5_k1*S6*reaction_8_k1, reaction_5_k1*reaction_5_k2*pAkt_S6, reaction_5_k1*pAkt_S6*reaction_2_k2, reaction_5_k1*pAkt_S6*reaction_8_k1, reaction_2_k1*S6*reaction_5_k2, reaction_2_k1*S6*reaction_2_k2, reaction_2_k1*S6*reaction_8_k1, reaction_2_k1*reaction_5_k2*pAkt_S6, reaction_2_k1*pAkt_S6*reaction_2_k2, reaction_2_k1*pAkt_S6*reaction_8_k1, reaction_5_k2^3, reaction_5_k2^2*reaction_2_k2, reaction_5_k2^2*reaction_8_k1, reaction_5_k2*reaction_2_k2^2, reaction_5_k2*reaction_2_k2*reaction_8_k1, reaction_5_k2*reaction_8_k1^2, reaction_2_k2^3, reaction_2_k2^2*reaction_8_k1, reaction_2_k2*reaction_8_k1^2, reaction_8_k1^3, -reaction_1_k1 + reaction_9_k1 + reaction_1_k2, -reaction_1_k1*reaction_4_k1 + reaction_4_k1*reaction_9_k1 + reaction_4_k1*reaction_1_k2, -reaction_1_k1*reaction_7_k1 + reaction_9_k1*reaction_7_k1 + reaction_1_k2*reaction_7_k1, -reaction_1_k1*reaction_6_k1 + reaction_9_k1*reaction_6_k1 + reaction_1_k2*reaction_6_k1, -reaction_1_k1*reaction_3_k1 + reaction_9_k1*reaction_3_k1 + reaction_1_k2*reaction_3_k1, -reaction_1_k1*reaction_5_k2 + reaction_9_k1*reaction_5_k2 + reaction_1_k2*reaction_5_k2, -reaction_1_k1*reaction_2_k2 + reaction_9_k1*reaction_2_k2 + reaction_1_k2*reaction_2_k2, -reaction_1_k1*reaction_8_k1 + reaction_9_k1*reaction_8_k1 + reaction_1_k2*reaction_8_k1, -a2*pS6*reaction_1_k1 + a2*pS6*reaction_9_k1 + a2*pS6*reaction_1_k2, -a2*reaction_1_k1*pAkt + a2*pAkt*reaction_9_k1 + a2*pAkt*reaction_1_k2, -a2*reaction_1_k1*pEGFR + a2*reaction_9_k1*pEGFR + a2*pEGFR*reaction_1_k2, -a2*reaction_1_k1*Akt + a2*reaction_9_k1*Akt + a2*reaction_1_k2*Akt, -a2*reaction_1_k1*pEGFR_Akt + a2*reaction_9_k1*pEGFR_Akt + a2*reaction_1_k2*pEGFR_Akt, -a2*reaction_1_k1*S6 + a2*reaction_9_k1*S6 + a2*reaction_1_k2*S6, -a2*reaction_1_k1*pAkt_S6 + a2*reaction_9_k1*pAkt_S6 + a2*reaction_1_k2*pAkt_S6, -pS6*a3*reaction_1_k1 + pS6*a3*reaction_9_k1 + pS6*a3*reaction_1_k2, -pS6*reaction_1_k1*a1 + pS6*reaction_9_k1*a1 + pS6*reaction_1_k2*a1, -pS6*reaction_1_k1*reaction_5_k1 + pS6*reaction_9_k1*reaction_5_k1 + pS6*reaction_1_k2*reaction_5_k1, -pS6*reaction_1_k1*reaction_2_k1 + pS6*reaction_9_k1*reaction_2_k1 + pS6*reaction_1_k2*reaction_2_k1, -a3*reaction_1_k1*pAkt + a3*pAkt*reaction_9_k1 + a3*pAkt*reaction_1_k2, -a3*reaction_1_k1*pEGFR + a3*reaction_9_k1*pEGFR + a3*pEGFR*reaction_1_k2, -a3*reaction_1_k1*Akt + a3*reaction_9_k1*Akt + a3*reaction_1_k2*Akt, -a3*reaction_1_k1*pEGFR_Akt + a3*reaction_9_k1*pEGFR_Akt + a3*reaction_1_k2*pEGFR_Akt, -a3*reaction_1_k1*S6 + a3*reaction_9_k1*S6 + a3*reaction_1_k2*S6, -a3*reaction_1_k1*pAkt_S6 + a3*reaction_9_k1*pAkt_S6 + a3*reaction_1_k2*pAkt_S6, -reaction_1_k1*reaction_4_k1^2 + reaction_4_k1^2*reaction_9_k1 + reaction_4_k1^2*reaction_1_k2, -reaction_1_k1*reaction_4_k1*reaction_7_k1 + reaction_4_k1*reaction_9_k1*reaction_7_k1 + reaction_4_k1*reaction_1_k2*reaction_7_k1, -reaction_1_k1*reaction_4_k1*reaction_6_k1 + reaction_4_k1*reaction_9_k1*reaction_6_k1 + reaction_4_k1*reaction_1_k2*reaction_6_k1, -reaction_1_k1*reaction_4_k1*reaction_3_k1 + reaction_4_k1*reaction_9_k1*reaction_3_k1 + reaction_4_k1*reaction_1_k2*reaction_3_k1, -reaction_1_k1*reaction_4_k1*reaction_5_k2 + reaction_4_k1*reaction_9_k1*reaction_5_k2 + reaction_4_k1*reaction_1_k2*reaction_5_k2, -reaction_1_k1*reaction_4_k1*reaction_2_k2 + reaction_4_k1*reaction_9_k1*reaction_2_k2 + reaction_4_k1*reaction_1_k2*reaction_2_k2, -reaction_1_k1*reaction_4_k1*reaction_8_k1 + reaction_4_k1*reaction_9_k1*reaction_8_k1 + reaction_4_k1*reaction_1_k2*reaction_8_k1, -reaction_1_k1*pAkt*a1 + pAkt*reaction_9_k1*a1 + pAkt*reaction_1_k2*a1, -reaction_1_k1*pAkt*reaction_5_k1 + pAkt*reaction_9_k1*reaction_5_k1 + pAkt*reaction_1_k2*reaction_5_k1, -reaction_1_k1*pAkt*reaction_2_k1 + pAkt*reaction_9_k1*reaction_2_k1 + pAkt*reaction_1_k2*reaction_2_k1, -reaction_1_k1*pEGFR*a1 + reaction_9_k1*pEGFR*a1 + pEGFR*reaction_1_k2*a1, -reaction_1_k1*pEGFR*reaction_5_k1 + reaction_9_k1*pEGFR*reaction_5_k1 + pEGFR*reaction_1_k2*reaction_5_k1, -reaction_1_k1*pEGFR*reaction_2_k1 + reaction_9_k1*pEGFR*reaction_2_k1 + pEGFR*reaction_1_k2*reaction_2_k1, -reaction_1_k1*reaction_7_k1^2 + reaction_9_k1*reaction_7_k1^2 + reaction_1_k2*reaction_7_k1^2, -reaction_1_k1*reaction_7_k1*reaction_6_k1 + reaction_9_k1*reaction_7_k1*reaction_6_k1 + reaction_1_k2*reaction_7_k1*reaction_6_k1, -reaction_1_k1*reaction_7_k1*reaction_3_k1 + reaction_9_k1*reaction_7_k1*reaction_3_k1 + reaction_1_k2*reaction_7_k1*reaction_3_k1, -reaction_1_k1*reaction_7_k1*reaction_5_k2 + reaction_9_k1*reaction_7_k1*reaction_5_k2 + reaction_1_k2*reaction_7_k1*reaction_5_k2, -reaction_1_k1*reaction_7_k1*reaction_2_k2 + reaction_9_k1*reaction_7_k1*reaction_2_k2 + reaction_1_k2*reaction_7_k1*reaction_2_k2, -reaction_1_k1*reaction_7_k1*reaction_8_k1 + reaction_9_k1*reaction_7_k1*reaction_8_k1 + reaction_1_k2*reaction_7_k1*reaction_8_k1, -reaction_1_k1*reaction_6_k1^2 + reaction_9_k1*reaction_6_k1^2 + reaction_1_k2*reaction_6_k1^2, -reaction_1_k1*reaction_6_k1*reaction_3_k1 + reaction_9_k1*reaction_6_k1*reaction_3_k1 + reaction_1_k2*reaction_6_k1*reaction_3_k1, -reaction_1_k1*reaction_6_k1*reaction_5_k2 + reaction_9_k1*reaction_6_k1*reaction_5_k2 + reaction_1_k2*reaction_6_k1*reaction_5_k2, -reaction_1_k1*reaction_6_k1*reaction_2_k2 + reaction_9_k1*reaction_6_k1*reaction_2_k2 + reaction_1_k2*reaction_6_k1*reaction_2_k2, -reaction_1_k1*reaction_6_k1*reaction_8_k1 + reaction_9_k1*reaction_6_k1*reaction_8_k1 + reaction_1_k2*reaction_6_k1*reaction_8_k1, -reaction_1_k1*a1*Akt + reaction_9_k1*a1*Akt + reaction_1_k2*a1*Akt, -reaction_1_k1*a1*pEGFR_Akt + reaction_9_k1*a1*pEGFR_Akt + reaction_1_k2*a1*pEGFR_Akt, -reaction_1_k1*a1*S6 + reaction_9_k1*a1*S6 + reaction_1_k2*a1*S6, -reaction_1_k1*a1*pAkt_S6 + reaction_9_k1*a1*pAkt_S6 + reaction_1_k2*a1*pAkt_S6, -reaction_1_k1*Akt*reaction_5_k1 + reaction_9_k1*Akt*reaction_5_k1 + reaction_1_k2*Akt*reaction_5_k1, -reaction_1_k1*Akt*reaction_2_k1 + reaction_9_k1*Akt*reaction_2_k1 + reaction_1_k2*Akt*reaction_2_k1, -reaction_1_k1*reaction_3_k1^2 + reaction_9_k1*reaction_3_k1^2 + reaction_1_k2*reaction_3_k1^2, -reaction_1_k1*reaction_3_k1*reaction_5_k2 + reaction_9_k1*reaction_3_k1*reaction_5_k2 + reaction_1_k2*reaction_3_k1*reaction_5_k2, -reaction_1_k1*reaction_3_k1*reaction_2_k2 + reaction_9_k1*reaction_3_k1*reaction_2_k2 + reaction_1_k2*reaction_3_k1*reaction_2_k2, -reaction_1_k1*reaction_3_k1*reaction_8_k1 + reaction_9_k1*reaction_3_k1*reaction_8_k1 + reaction_1_k2*reaction_3_k1*reaction_8_k1, -reaction_1_k1*pEGFR_Akt*reaction_5_k1 + reaction_9_k1*pEGFR_Akt*reaction_5_k1 + reaction_1_k2*pEGFR_Akt*reaction_5_k1, -reaction_1_k1*pEGFR_Akt*reaction_2_k1 + reaction_9_k1*pEGFR_Akt*reaction_2_k1 + reaction_1_k2*pEGFR_Akt*reaction_2_k1, -reaction_1_k1*reaction_5_k1*S6 + reaction_9_k1*reaction_5_k1*S6 + reaction_1_k2*reaction_5_k1*S6, -reaction_1_k1*reaction_5_k1*pAkt_S6 + reaction_9_k1*reaction_5_k1*pAkt_S6 + reaction_1_k2*reaction_5_k1*pAkt_S6, -reaction_1_k1*reaction_2_k1*S6 + reaction_9_k1*reaction_2_k1*S6 + reaction_1_k2*reaction_2_k1*S6, -reaction_1_k1*reaction_2_k1*pAkt_S6 + reaction_9_k1*reaction_2_k1*pAkt_S6 + reaction_1_k2*reaction_2_k1*pAkt_S6, -reaction_1_k1*reaction_5_k2^2 + reaction_9_k1*reaction_5_k2^2 + reaction_1_k2*reaction_5_k2^2, -reaction_1_k1*reaction_5_k2*reaction_2_k2 + reaction_9_k1*reaction_5_k2*reaction_2_k2 + reaction_1_k2*reaction_5_k2*reaction_2_k2, -reaction_1_k1*reaction_5_k2*reaction_8_k1 + reaction_9_k1*reaction_5_k2*reaction_8_k1 + reaction_1_k2*reaction_5_k2*reaction_8_k1, -reaction_1_k1*reaction_2_k2^2 + reaction_9_k1*reaction_2_k2^2 + reaction_1_k2*reaction_2_k2^2, -reaction_1_k1*reaction_2_k2*reaction_8_k1 + reaction_9_k1*reaction_2_k2*reaction_8_k1 + reaction_1_k2*reaction_2_k2*reaction_8_k1, -reaction_1_k1*reaction_8_k1^2 + reaction_9_k1*reaction_8_k1^2 + reaction_1_k2*reaction_8_k1^2]
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:444
+┌ Info: Computing 10 Groebner bases for each of the 10 block orderings
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:465
+┌ Info: The pool of fractions:
+│ -reaction_8_k1,
+│ -reaction_2_k2,
+│ -reaction_5_k2,
+│ -reaction_3_k1,
+│ -reaction_6_k1,
+│ -reaction_7_k1,
+│ -reaction_4_k1,
+│ -reaction_2_k1*pAkt_S6,
+│ -reaction_1_k1 + reaction_9_k1 + reaction_1_k2,
+│ -S6//pAkt_S6,
+│ -reaction_5_k1//reaction_2_k1,
+│ -pEGFR_Akt//pAkt_S6,
+│ -Akt//pAkt_S6,
+│ -a1//reaction_2_k1,
+│ -pEGFR//pAkt_S6,
+│ -pAkt//pAkt_S6,
+│ -a3//reaction_2_k1,
+│ -pS6//pAkt_S6,
+│ -a2//reaction_2_k1,
+│ (-reaction_9_k1*EGF_EGFR)//pAkt_S6
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:225
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y6, y4, y18, y17, y14, y1, y7, y10, y12, y25, y9, y13, y27, t, y3], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y15, y23, y26, y24, y22, y11, y29, y28, y20, y5, y19, y16, y8, y2, y21], true))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:485
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 21 functions in Rational Field(a2, pS6, a3, reaction_1_k1, reaction_4_k1, pAkt, reaction_9_k1, pEGFR, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, Akt, reaction_3_k1, pEGFR_Akt, reaction_5_k1, EGFR, reaction_2_k1, EGFR_turnover, S6, reaction_5_k2, EGF_EGFR, pAkt_S6, reaction_2_k2, reaction_8_k1, y1, y3, pro_EGFR, y2)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 18 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(1, 1), (0, 0)], [(0, 0), (2, 0)], [(0, 0), (1, 1)], [(0, 0), (0, 2)], [(1, 1), (0, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (2, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (0, 0), (0, 0), (1, 0)], [(1, 1), (0, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 2, Denominator: 2
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 48 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 1 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 0.098017859 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:321
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:326
+┌ Info: Inclusion checked in 0.005866595 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:336
+┌ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:340
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y25, t, y8, y13, y19, y10, y3, y28, y27, y21, y15, y12, y26, y5, y24], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y29, y14, y23, y22, y4, y7, y6, y11, y1, y18, y2, y17, y20, y9, y16], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:485
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 21 functions in Rational Field(a2, pS6, a3, reaction_1_k1, reaction_4_k1, pAkt, reaction_9_k1, pEGFR, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, Akt, reaction_3_k1, pEGFR_Akt, reaction_5_k1, EGFR, reaction_2_k1, EGFR_turnover, S6, reaction_5_k2, EGF_EGFR, pAkt_S6, reaction_2_k2, reaction_8_k1, y1, y3, pro_EGFR, y2)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 18 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 1)], [(1, 1), (0, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (0, 0), (0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 0)], [(0, 0), (2, 0)], [(0, 0), (2, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (0, 2)], [(0, 0), (1, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 2, Denominator: 2
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 48 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 1 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 0.162282664 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:321
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:326
+┌ Info: Inclusion checked in 0.004510846 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:336
+┌ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:340
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[t, y16, y24, y14, y10, y12, y2, y8, y15, y23, y5, y7, y11, y4, y6], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y26, y3, y21, y27, y13, y1, y25, y29, y22, y17, y20, y18, y28, y19, y9], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:485
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 21 functions in Rational Field(a2, pS6, a3, reaction_1_k1, reaction_4_k1, pAkt, reaction_9_k1, pEGFR, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, Akt, reaction_3_k1, pEGFR_Akt, reaction_5_k1, EGFR, reaction_2_k1, EGFR_turnover, S6, reaction_5_k2, EGF_EGFR, pAkt_S6, reaction_2_k2, reaction_8_k1, y1, y3, pro_EGFR, y2)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 18 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (2, 0)], [(0, 0), (1, 1)], [(0, 0), (0, 0), (2, 1), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (0, 0), (1, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (0, 2)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 2, Denominator: 2
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 48 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 1 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 0.170164713 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:321
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:326
+┌ Info: Inclusion checked in 0.004868691 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:336
+┌ Info: The coefficients of the Groebner basis are presented by 24 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:340
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y7, y27, y4, y18, y24, y8, y3, y26, y25, y19, y13, y23, y9, y15, y21], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y29, y11, y5, y16, y10, t, y12, y17, y14, y22, y20, y1, y6, y28, y2], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:485
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 21 functions in Rational Field(a2, pS6, a3, reaction_1_k1, reaction_4_k1, pAkt, reaction_9_k1, pEGFR, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, Akt, reaction_3_k1, pEGFR_Akt, reaction_5_k1, EGFR, reaction_2_k1, EGFR_turnover, S6, reaction_5_k2, EGF_EGFR, pAkt_S6, reaction_2_k2, reaction_8_k1, y1, y3, pro_EGFR, y2)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 18 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(1, 1), (0, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (0, 2)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (2, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(1, 1), (0, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (0, 0), (2, 1), (1, 0)], [(0, 0), (0, 0), (0, 0), (1, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 2, Denominator: 2
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 48 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 1 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 0.180176418 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:321
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:326
+┌ Info: Inclusion checked in 0.006181861 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:336
+┌ Info: The coefficients of the Groebner basis are presented by 24 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:340
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y8, y3, y22, t, y1, y6, y4, y12, y28, y17, y16, y23, y10, y7, y21], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y24, y2, y19, y20, y18, y5, y25, y29, y9, y11, y15, y27, y13, y26, y14], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:485
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 21 functions in Rational Field(a2, pS6, a3, reaction_1_k1, reaction_4_k1, pAkt, reaction_9_k1, pEGFR, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, Akt, reaction_3_k1, pEGFR_Akt, reaction_5_k1, EGFR, reaction_2_k1, EGFR_turnover, S6, reaction_5_k2, EGF_EGFR, pAkt_S6, reaction_2_k2, reaction_8_k1, y1, y3, pro_EGFR, y2)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 18 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (2, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (0, 0), (0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (0, 2)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (2, 1)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 2, Denominator: 2
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 48 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 1 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 0.09059548 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:321
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:326
+┌ Info: Inclusion checked in 0.005852838 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:336
+┌ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:340
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y3, y21, y16, y29, y15, y12, y5, y1, y20, y18, y22, y9, y6, y7, y23], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y24, y10, y2, y4, y27, y8, y13, y19, y17, y28, y14, y26, y11, t, y25], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:485
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 21 functions in Rational Field(a2, pS6, a3, reaction_1_k1, reaction_4_k1, pAkt, reaction_9_k1, pEGFR, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, Akt, reaction_3_k1, pEGFR_Akt, reaction_5_k1, EGFR, reaction_2_k1, EGFR_turnover, S6, reaction_5_k2, EGF_EGFR, pAkt_S6, reaction_2_k2, reaction_8_k1, y1, y3, pro_EGFR, y2)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 18 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (0, 2)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 1)], [(0, 0), (0, 0), (0, 0), (1, 0)], [(0, 0), (2, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(1, 1), (0, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (2, 1)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 2, Denominator: 2
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 48 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 1 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 0.162370036 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:321
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:326
+┌ Info: Inclusion checked in 0.00549711 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:336
+┌ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:340
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y15, y2, y10, y1, y8, y13, y17, y19, y9, y27, y12, y28, y4, y24, y7], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y23, y16, y25, y18, t, y6, y21, y26, y14, y22, y11, y29, y5, y3, y20], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:485
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 21 functions in Rational Field(a2, pS6, a3, reaction_1_k1, reaction_4_k1, pAkt, reaction_9_k1, pEGFR, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, Akt, reaction_3_k1, pEGFR_Akt, reaction_5_k1, EGFR, reaction_2_k1, EGFR_turnover, S6, reaction_5_k2, EGF_EGFR, pAkt_S6, reaction_2_k2, reaction_8_k1, y1, y3, pro_EGFR, y2)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 18 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (0, 2)], [(1, 1), (0, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(1, 1), (0, 0)], [(0, 0), (2, 0)], [(0, 0), (2, 1)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (0, 0), (0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 2, Denominator: 2
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 48 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 1 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 0.16316265 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:321
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:326
+┌ Info: Inclusion checked in 0.004878202 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:336
+┌ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:340
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y26, y11, y16, y5, y10, y1, y6, y2, t, y23, y7, y12, y20, y15, y25], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y22, y24, y9, y14, y19, y13, y29, y28, y18, y27, y8, y17, y3, y4, y21], true))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:485
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 21 functions in Rational Field(a2, pS6, a3, reaction_1_k1, reaction_4_k1, pAkt, reaction_9_k1, pEGFR, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, Akt, reaction_3_k1, pEGFR_Akt, reaction_5_k1, EGFR, reaction_2_k1, EGFR_turnover, S6, reaction_5_k2, EGF_EGFR, pAkt_S6, reaction_2_k2, reaction_8_k1, y1, y3, pro_EGFR, y2)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 18 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(1, 1), (0, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (2, 0)], [(0, 0), (0, 0), (2, 1), (1, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(1, 1), (0, 0)], [(1, 1), (0, 0)], [(0, 0), (0, 0), (0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (0, 2)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 2, Denominator: 2
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 48 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 1 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 0.144512519 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:321
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:326
+┌ Info: Inclusion checked in 0.004697748 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:336
+┌ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:340
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y12, y1, y5, y19, y10, y11, y7, y28, y14, y21, y8, y16, y9, y26, y24], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y3, y2, y4, y27, y15, y17, y20, t, y6, y18, y23, y22, y13, y25, y29], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:485
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 21 functions in Rational Field(a2, pS6, a3, reaction_1_k1, reaction_4_k1, pAkt, reaction_9_k1, pEGFR, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, Akt, reaction_3_k1, pEGFR_Akt, reaction_5_k1, EGFR, reaction_2_k1, EGFR_turnover, S6, reaction_5_k2, EGF_EGFR, pAkt_S6, reaction_2_k2, reaction_8_k1, y1, y3, pro_EGFR, y2)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 18 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 1)], [(0, 0), (0, 2)], [(1, 1), (0, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (2, 0)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (2, 1), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 1)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 2, Denominator: 2
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 48 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 1 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 0.080698123 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:321
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:326
+┌ Info: Inclusion checked in 0.070166887 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:336
+┌ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:340
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y17, y4, y14, y6, y8, y7, y15, y19, t, y18, y11, y13, y20, y21, y5], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y26, y22, y25, y1, y10, y16, y28, y27, y23, y12, y24, y9, y3, y29, y2], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:485
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 21 functions in Rational Field(a2, pS6, a3, reaction_1_k1, reaction_4_k1, pAkt, reaction_9_k1, pEGFR, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, Akt, reaction_3_k1, pEGFR_Akt, reaction_5_k1, EGFR, reaction_2_k1, EGFR_turnover, S6, reaction_5_k2, EGF_EGFR, pAkt_S6, reaction_2_k2, reaction_8_k1, y1, y3, pro_EGFR, y2)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:189
+┌ Info: Success! 18 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:273
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(1, 1), (0, 0)], [(1, 1), (0, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (2, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 0)], [(1, 1), (0, 0)], [(0, 0), (0, 2)], [(1, 1), (0, 0)], [(0, 0), (2, 1)], [(1, 1), (0, 0)], [(1, 1), (0, 0)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (0, 0), (1, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:274
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:284
+┌ Info: Interpolating for degrees:
+│ Numerator: 2, Denominator: 2
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:333
+┌ Info: Success! 48 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:411
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 1 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:416
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:424
+┌ Info: Groebner basis computed in 0.098292228 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:321
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:326
+┌ Info: Inclusion checked in 0.005608861 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:336
+┌ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:340
+┌ Info: Final cleaning and simplification of generators
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:568
+┌ Info: The pool of fractions:
+│ reaction_8_k1,
+│ reaction_8_k1,
+│ reaction_8_k1,
+│ reaction_8_k1,
+│ reaction_8_k1,
+│ reaction_8_k1,
+│ reaction_8_k1,
+│ reaction_8_k1,
+│ reaction_8_k1,
+│ reaction_8_k1,
+│ reaction_8_k1,
+│ reaction_8_k1,
+│ reaction_8_k1,
+│ reaction_2_k2,
+│ reaction_2_k2,
+│ reaction_2_k2,
+│ reaction_2_k2,
+│ reaction_2_k2,
+│ reaction_2_k2,
+│ reaction_2_k2,
+│ reaction_2_k2,
+│ reaction_2_k2,
+│ reaction_2_k2,
+│ reaction_2_k2,
+│ reaction_2_k2,
+│ reaction_2_k2,
+│ reaction_5_k2,
+│ reaction_5_k2,
+│ reaction_5_k2,
+│ reaction_5_k2,
+│ reaction_5_k2,
+│ reaction_5_k2,
+│ reaction_5_k2,
+│ reaction_5_k2,
+│ reaction_5_k2,
+│ reaction_5_k2,
+│ reaction_5_k2,
+│ reaction_5_k2,
+│ reaction_5_k2,
+│ reaction_3_k1,
+│ reaction_3_k1,
+│ reaction_3_k1,
+│ reaction_3_k1,
+│ reaction_3_k1,
+│ reaction_3_k1,
+│ reaction_3_k1,
+│ reaction_3_k1,
+│ reaction_3_k1,
+│ reaction_3_k1,
+│ reaction_3_k1,
+│ reaction_3_k1,
+│ reaction_3_k1,
+│ reaction_6_k1,
+│ reaction_6_k1,
+│ reaction_6_k1,
+│ reaction_6_k1,
+│ reaction_6_k1,
+│ reaction_6_k1,
+│ reaction_6_k1,
+│ reaction_6_k1,
+│ reaction_6_k1,
+│ reaction_6_k1,
+│ reaction_6_k1,
+│ reaction_6_k1,
+│ reaction_6_k1,
+│ reaction_7_k1,
+│ reaction_7_k1,
+│ reaction_7_k1,
+│ reaction_7_k1,
+│ reaction_7_k1,
+│ reaction_7_k1,
+│ reaction_7_k1,
+│ reaction_7_k1,
+│ reaction_7_k1,
+│ reaction_7_k1,
+│ reaction_7_k1,
+│ reaction_7_k1,
+│ reaction_7_k1,
+│ reaction_4_k1,
+│ reaction_4_k1,
+│ reaction_4_k1,
+│ reaction_4_k1,
+│ reaction_4_k1,
+│ reaction_4_k1,
+│ reaction_4_k1,
+│ reaction_4_k1,
+│ reaction_4_k1,
+│ reaction_4_k1,
+│ reaction_4_k1,
+│ reaction_4_k1,
+│ reaction_4_k1,
+│ reaction_8_k1^2,
+│ reaction_2_k2*reaction_8_k1,
+│ reaction_2_k2^2,
+│ reaction_5_k2*reaction_8_k1,
+│ reaction_5_k2*reaction_2_k2,
+│ reaction_5_k2^2,
+│ reaction_2_k1*pAkt_S6,
+│ reaction_2_k1*pAkt_S6,
+│ reaction_2_k1*pAkt_S6,
+│ reaction_2_k1*pAkt_S6,
+│ reaction_2_k1*pAkt_S6,
+│ reaction_2_k1*pAkt_S6,
+│ reaction_2_k1*pAkt_S6,
+│ reaction_2_k1*pAkt_S6,
+│ reaction_2_k1*pAkt_S6,
+│ reaction_2_k1*pAkt_S6,
+│ reaction_2_k1*pAkt_S6,
+│ reaction_2_k1*pAkt_S6,
+│ reaction_2_k1*pAkt_S6,
+│ reaction_2_k1*S6,
+│ reaction_2_k1*S6,
+│ reaction_5_k1*pAkt_S6,
+│ reaction_5_k1*S6,
+│ reaction_5_k1*S6,
+│ pEGFR_Akt*reaction_2_k1,
+│ pEGFR_Akt*reaction_5_k1,
+│ reaction_3_k1*reaction_8_k1,
+│ reaction_3_k1*reaction_2_k2,
+│ reaction_3_k1*reaction_5_k2,
+│ reaction_3_k1^2,
+│ Akt*reaction_2_k1,
+│ Akt*reaction_2_k1,
+│ Akt*reaction_2_k1,
+│ Akt*reaction_2_k1,
+│ Akt*reaction_5_k1,
+│ a1*pAkt_S6,
+│ a1*S6,
+│ a1*pEGFR_Akt,
+│ a1*Akt,
+│ reaction_6_k1*reaction_8_k1,
+│ reaction_6_k1*reaction_2_k2,
+│ reaction_6_k1*reaction_5_k2,
+│ reaction_6_k1*reaction_3_k1,
+│ reaction_6_k1^2,
+│ reaction_7_k1*reaction_8_k1,
+│ reaction_7_k1*reaction_2_k2,
+│ reaction_7_k1*reaction_5_k2,
+│ reaction_7_k1*reaction_3_k1,
+│ reaction_7_k1*reaction_6_k1,
+│ reaction_7_k1^2,
+│ pEGFR*reaction_2_k1,
+│ pEGFR*reaction_5_k1,
+│ pEGFR*a1,
+│ pAkt*reaction_2_k1,
+│ pAkt*reaction_5_k1,
+│ pAkt*a1,
+│ reaction_4_k1*reaction_8_k1,
+│ reaction_4_k1*reaction_2_k2,
+│ reaction_4_k1*reaction_5_k2,
+│ reaction_4_k1*reaction_3_k1,
+│ reaction_4_k1*reaction_6_k1,
+│ reaction_4_k1*reaction_7_k1,
+│ reaction_4_k1^2,
+│ a3*pAkt_S6,
+│ a3*S6,
+│ a3*S6,
+│ a3*pEGFR_Akt,
+│ a3*Akt,
+│ a3*pEGFR,
+│ a3*pEGFR,
+│ a3*pAkt,
+│ pS6*reaction_2_k1,
+│ pS6*reaction_5_k1,
+│ pS6*reaction_5_k1,
+│ pS6*a1,
+│ pS6*a3,
+│ pS6*a3,
+│ a2*pAkt_S6,
+│ a2*S6,
+│ a2*pEGFR_Akt,
+│ a2*Akt,
+│ a2*pEGFR,
+│ a2*pAkt,
+│ a2*pS6,
+│ a2*pS6,
+│ reaction_8_k1^3,
+│ reaction_2_k2*reaction_8_k1^2,
+│ reaction_2_k2^2*reaction_8_k1,
+│ reaction_2_k2^3,
+│ reaction_5_k2*reaction_8_k1^2,
+│ reaction_5_k2*reaction_2_k2*reaction_8_k1,
+│ reaction_5_k2*reaction_2_k2^2,
+│ reaction_5_k2^2*reaction_8_k1,
+│ reaction_5_k2^2*reaction_2_k2,
+│ reaction_5_k2^3,
+│ reaction_2_k1*pAkt_S6*reaction_8_k1,
+│ reaction_2_k1*pAkt_S6*reaction_2_k2,
+│ reaction_2_k1*reaction_5_k2*pAkt_S6,
+│ reaction_2_k1*S6*reaction_8_k1,
+│ reaction_2_k1*S6*reaction_2_k2,
+│ reaction_2_k1*S6*reaction_5_k2,
+│ reaction_5_k1*pAkt_S6*reaction_8_k1,
+│ reaction_5_k1*pAkt_S6*reaction_2_k2,
+│ reaction_5_k1*reaction_5_k2*pAkt_S6,
+│ reaction_5_k1*S6*reaction_8_k1,
+│ reaction_5_k1*S6*reaction_2_k2,
+│ reaction_5_k1*S6*reaction_5_k2,
+│ pEGFR_Akt*reaction_2_k1*reaction_8_k1,
+│ pEGFR_Akt*reaction_2_k1*reaction_2_k2,
+│ pEGFR_Akt*reaction_2_k1*reaction_5_k2,
+│ pEGFR_Akt*reaction_5_k1*reaction_8_k1,
+│ pEGFR_Akt*reaction_5_k1*reaction_2_k2,
+│ pEGFR_Akt*reaction_5_k1*reaction_5_k2,
+│ reaction_3_k1*reaction_8_k1^2,
+│ reaction_3_k1*reaction_2_k2*reaction_8_k1,
+│ reaction_3_k1*reaction_2_k2^2,
+│ reaction_3_k1*reaction_5_k2*reaction_8_k1,
+│ reaction_3_k1*reaction_5_k2*reaction_2_k2,
+│ reaction_3_k1*reaction_5_k2^2,
+│ reaction_3_k1*reaction_2_k1*pAkt_S6,
+│ reaction_3_k1*reaction_2_k1*S6,
+│ reaction_3_k1*reaction_5_k1*pAkt_S6,
+│ reaction_3_k1*reaction_5_k1*S6,
+│ reaction_3_k1*pEGFR_Akt*reaction_2_k1,
+│ reaction_3_k1*pEGFR_Akt*reaction_5_k1,
+│ reaction_3_k1^2*reaction_8_k1,
+│ reaction_3_k1^2*reaction_2_k2,
+│ reaction_3_k1^2*reaction_5_k2,
+│ reaction_3_k1^3,
+│ Akt*reaction_2_k1*reaction_8_k1,
+│ Akt*reaction_2_k1*reaction_2_k2,
+│ Akt*reaction_2_k1*reaction_5_k2,
+│ Akt*reaction_5_k1*reaction_8_k1,
+│ Akt*reaction_5_k1*reaction_2_k2,
+│ Akt*reaction_5_k1*reaction_5_k2,
+│ Akt*reaction_3_k1*reaction_2_k1,
+│ Akt*reaction_3_k1*reaction_5_k1,
+│ a1*pAkt_S6*reaction_8_k1,
+│ a1*pAkt_S6*reaction_2_k2,
+│ a1*reaction_5_k2*pAkt_S6,
+│ a1*S6*reaction_8_k1,
+│ a1*S6*reaction_2_k2,
+│ a1*S6*reaction_5_k2,
+│ a1*pEGFR_Akt*reaction_8_k1,
+│ a1*pEGFR_Akt*reaction_2_k2,
+│ a1*pEGFR_Akt*reaction_5_k2,
+│ a1*reaction_3_k1*pAkt_S6,
+│ a1*reaction_3_k1*S6,
+│ a1*reaction_3_k1*pEGFR_Akt,
+│ a1*Akt*reaction_8_k1,
+│ a1*Akt*reaction_2_k2,
+│ a1*Akt*reaction_5_k2,
+│ a1*Akt*reaction_3_k1,
+│ reaction_6_k1*reaction_8_k1^2,
+│ reaction_6_k1*reaction_2_k2*reaction_8_k1,
+│ reaction_6_k1*reaction_2_k2^2,
+│ reaction_6_k1*reaction_5_k2*reaction_8_k1,
+│ reaction_6_k1*reaction_5_k2*reaction_2_k2,
+│ reaction_6_k1*reaction_5_k2^2,
+│ reaction_6_k1*reaction_2_k1*pAkt_S6,
+│ reaction_6_k1*reaction_2_k1*S6,
+│ reaction_6_k1*reaction_5_k1*pAkt_S6,
+│ reaction_6_k1*reaction_5_k1*S6,
+│ reaction_6_k1*pEGFR_Akt*reaction_2_k1,
+│ reaction_6_k1*pEGFR_Akt*reaction_5_k1,
+│ reaction_6_k1*reaction_3_k1*reaction_8_k1,
+│ reaction_6_k1*reaction_3_k1*reaction_2_k2,
+│ reaction_6_k1*reaction_3_k1*reaction_5_k2,
+│ reaction_6_k1*reaction_3_k1^2,
+│ reaction_6_k1*Akt*reaction_2_k1,
+│ reaction_6_k1*Akt*reaction_5_k1,
+│ reaction_6_k1*a1*pAkt_S6,
+│ reaction_6_k1*a1*S6,
+│ reaction_6_k1*a1*pEGFR_Akt,
+│ reaction_6_k1*a1*Akt,
+│ reaction_6_k1^2*reaction_8_k1,
+│ reaction_6_k1^2*reaction_2_k2,
+│ reaction_6_k1^2*reaction_5_k2,
+│ reaction_6_k1^2*reaction_3_k1,
+│ reaction_6_k1^3,
+│ reaction_7_k1*reaction_8_k1^2,
+│ reaction_7_k1*reaction_2_k2*reaction_8_k1,
+│ reaction_7_k1*reaction_2_k2^2,
+│ reaction_7_k1*reaction_5_k2*reaction_8_k1,
+│ reaction_7_k1*reaction_5_k2*reaction_2_k2,
+│ reaction_7_k1*reaction_5_k2^2,
+│ reaction_7_k1*reaction_2_k1*pAkt_S6,
+│ reaction_7_k1*reaction_2_k1*S6,
+│ reaction_7_k1*reaction_5_k1*pAkt_S6,
+│ reaction_7_k1*reaction_5_k1*S6,
+│ reaction_7_k1*pEGFR_Akt*reaction_2_k1,
+│ reaction_7_k1*pEGFR_Akt*reaction_5_k1,
+│ reaction_7_k1*reaction_3_k1*reaction_8_k1,
+│ reaction_7_k1*reaction_3_k1*reaction_2_k2,
+│ reaction_7_k1*reaction_3_k1*reaction_5_k2,
+│ reaction_7_k1*reaction_3_k1^2,
+│ reaction_7_k1*Akt*reaction_2_k1,
+│ reaction_7_k1*Akt*reaction_5_k1,
+│ reaction_7_k1*a1*pAkt_S6,
+│ reaction_7_k1*a1*S6,
+│ reaction_7_k1*a1*pEGFR_Akt,
+│ reaction_7_k1*a1*Akt,
+│ reaction_7_k1*reaction_6_k1*reaction_8_k1,
+│ reaction_7_k1*reaction_6_k1*reaction_2_k2,
+│ reaction_7_k1*reaction_6_k1*reaction_5_k2,
+│ reaction_7_k1*reaction_6_k1*reaction_3_k1,
+│ reaction_7_k1*reaction_6_k1^2,
+│ reaction_7_k1^2*reaction_8_k1,
+│ reaction_7_k1^2*reaction_2_k2,
+│ reaction_7_k1^2*reaction_5_k2,
+│ reaction_7_k1^2*reaction_3_k1,
+│ reaction_7_k1^2*reaction_6_k1,
+│ reaction_7_k1^3,
+│ pEGFR*reaction_2_k1*reaction_8_k1,
+│ pEGFR*reaction_2_k1*reaction_2_k2,
+│ pEGFR*reaction_2_k1*reaction_5_k2,
+│ pEGFR*reaction_5_k1*reaction_8_k1,
+│ pEGFR*reaction_5_k1*reaction_2_k2,
+│ pEGFR*reaction_5_k1*reaction_5_k2,
+│ pEGFR*reaction_3_k1*reaction_2_k1,
+│ pEGFR*reaction_3_k1*reaction_5_k1,
+│ pEGFR*a1*reaction_8_k1,
+│ pEGFR*a1*reaction_2_k2,
+│ pEGFR*a1*reaction_5_k2,
+│ pEGFR*a1*reaction_3_k1,
+│ pEGFR*reaction_6_k1*reaction_2_k1,
+│ pEGFR*reaction_6_k1*reaction_5_k1,
+│ pEGFR*reaction_6_k1*a1,
+│ pEGFR*reaction_7_k1*reaction_2_k1,
+│ pEGFR*reaction_7_k1*reaction_5_k1,
+│ pEGFR*reaction_7_k1*a1,
+│ reaction_9_k1*reaction_2_k1*EGF_EGFR,
+│ reaction_9_k1*reaction_5_k1*EGF_EGFR,
+│ reaction_9_k1*a1*EGF_EGFR,
+│ pAkt*reaction_2_k1*reaction_8_k1,
+│ pAkt*reaction_2_k1*reaction_2_k2,
+│ pAkt*reaction_2_k1*reaction_5_k2,
+│ pAkt*reaction_5_k1*reaction_8_k1,
+│ pAkt*reaction_5_k1*reaction_2_k2,
+│ pAkt*reaction_5_k1*reaction_5_k2,
+│ pAkt*reaction_3_k1*reaction_2_k1,
+│ pAkt*reaction_3_k1*reaction_5_k1,
+│ pAkt*a1*reaction_8_k1,
+│ pAkt*a1*reaction_2_k2,
+│ pAkt*a1*reaction_5_k2,
+│ pAkt*a1*reaction_3_k1,
+│ pAkt*reaction_6_k1*reaction_2_k1,
+│ pAkt*reaction_6_k1*reaction_5_k1,
+│ pAkt*reaction_6_k1*a1,
+│ pAkt*reaction_7_k1*reaction_2_k1,
+│ pAkt*reaction_7_k1*reaction_5_k1,
+│ pAkt*reaction_7_k1*a1,
+│ reaction_4_k1*reaction_8_k1^2,
+│ reaction_4_k1*reaction_2_k2*reaction_8_k1,
+│ reaction_4_k1*reaction_2_k2^2,
+│ reaction_4_k1*reaction_5_k2*reaction_8_k1,
+│ reaction_4_k1*reaction_5_k2*reaction_2_k2,
+│ reaction_4_k1*reaction_5_k2^2,
+│ reaction_4_k1*reaction_2_k1*pAkt_S6,
+│ reaction_4_k1*reaction_2_k1*S6,
+│ reaction_4_k1*reaction_5_k1*pAkt_S6,
+│ reaction_4_k1*reaction_5_k1*S6,
+│ reaction_4_k1*pEGFR_Akt*reaction_2_k1,
+│ reaction_4_k1*pEGFR_Akt*reaction_5_k1,
+│ reaction_4_k1*reaction_3_k1*reaction_8_k1,
+│ reaction_4_k1*reaction_3_k1*reaction_2_k2,
+│ reaction_4_k1*reaction_3_k1*reaction_5_k2,
+│ reaction_4_k1*reaction_3_k1^2,
+│ reaction_4_k1*Akt*reaction_2_k1,
+│ reaction_4_k1*Akt*reaction_5_k1,
+│ reaction_4_k1*a1*pAkt_S6,
+│ reaction_4_k1*a1*S6,
+│ reaction_4_k1*a1*pEGFR_Akt,
+│ reaction_4_k1*a1*Akt,
+│ reaction_4_k1*reaction_6_k1*reaction_8_k1,
+│ reaction_4_k1*reaction_6_k1*reaction_2_k2,
+│ reaction_4_k1*reaction_6_k1*reaction_5_k2,
+│ reaction_4_k1*reaction_6_k1*reaction_3_k1,
+│ reaction_4_k1*reaction_6_k1^2,
+│ reaction_4_k1*reaction_7_k1*reaction_8_k1,
+│ reaction_4_k1*reaction_7_k1*reaction_2_k2,
+│ reaction_4_k1*reaction_7_k1*reaction_5_k2,
+│ reaction_4_k1*reaction_7_k1*reaction_3_k1,
+│ reaction_4_k1*reaction_7_k1*reaction_6_k1,
+│ reaction_4_k1*reaction_7_k1^2,
+│ reaction_4_k1*pEGFR*reaction_2_k1,
+│ reaction_4_k1*pEGFR*reaction_5_k1,
+│ reaction_4_k1*pEGFR*a1,
+│ reaction_4_k1*pAkt*reaction_2_k1,
+│ reaction_4_k1*pAkt*reaction_5_k1,
+│ reaction_4_k1*pAkt*a1,
+│ reaction_4_k1^2*reaction_8_k1,
+│ reaction_4_k1^2*reaction_2_k2,
+│ reaction_4_k1^2*reaction_5_k2,
+│ reaction_4_k1^2*reaction_3_k1,
+│ reaction_4_k1^2*reaction_6_k1,
+│ reaction_4_k1^2*reaction_7_k1,
+│ reaction_4_k1^3,
+│ a3*pAkt_S6*reaction_8_k1,
+│ a3*pAkt_S6*reaction_2_k2,
+│ a3*reaction_5_k2*pAkt_S6,
+│ a3*S6*reaction_8_k1,
+│ a3*S6*reaction_2_k2,
+│ a3*S6*reaction_5_k2,
+│ a3*pEGFR_Akt*reaction_8_k1,
+│ a3*pEGFR_Akt*reaction_2_k2,
+│ a3*pEGFR_Akt*reaction_5_k2,
+│ a3*reaction_3_k1*pAkt_S6,
+│ a3*reaction_3_k1*S6,
+│ a3*reaction_3_k1*pEGFR_Akt,
+│ a3*Akt*reaction_8_k1,
+│ a3*Akt*reaction_2_k2,
+│ a3*Akt*reaction_5_k2,
+│ a3*Akt*reaction_3_k1,
+│ a3*reaction_6_k1*pAkt_S6,
+│ a3*reaction_6_k1*S6,
+│ a3*reaction_6_k1*pEGFR_Akt,
+│ a3*reaction_6_k1*Akt,
+│ a3*reaction_7_k1*pAkt_S6,
+│ a3*reaction_7_k1*S6,
+│ a3*reaction_7_k1*pEGFR_Akt,
+│ a3*reaction_7_k1*Akt,
+│ a3*pEGFR*reaction_8_k1,
+│ a3*pEGFR*reaction_2_k2,
+│ a3*pEGFR*reaction_5_k2,
+│ a3*pEGFR*reaction_3_k1,
+│ a3*pEGFR*reaction_6_k1,
+│ a3*pEGFR*reaction_7_k1,
+│ a3*reaction_9_k1*EGF_EGFR,
+│ a3*pAkt*reaction_8_k1,
+│ a3*pAkt*reaction_2_k2,
+│ a3*pAkt*reaction_5_k2,
+│ a3*pAkt*reaction_3_k1,
+│ a3*pAkt*reaction_6_k1,
+│ a3*pAkt*reaction_7_k1,
+│ a3*reaction_4_k1*pAkt_S6,
+│ a3*reaction_4_k1*S6,
+│ a3*reaction_4_k1*pEGFR_Akt,
+│ a3*reaction_4_k1*Akt,
+│ a3*reaction_4_k1*pEGFR,
+│ a3*reaction_4_k1*pAkt,
+│ pS6*reaction_2_k1*reaction_8_k1,
+│ pS6*reaction_2_k1*reaction_2_k2,
+│ pS6*reaction_2_k1*reaction_5_k2,
+│ pS6*reaction_5_k1*reaction_8_k1,
+│ pS6*reaction_5_k1*reaction_2_k2,
+│ pS6*reaction_5_k1*reaction_5_k2,
+│ pS6*reaction_3_k1*reaction_2_k1,
+│ pS6*reaction_3_k1*reaction_5_k1,
+│ pS6*a1*reaction_8_k1,
+│ pS6*a1*reaction_2_k2,
+│ pS6*a1*reaction_5_k2,
+│ pS6*a1*reaction_3_k1,
+│ pS6*reaction_6_k1*reaction_2_k1,
+│ pS6*reaction_6_k1*reaction_5_k1,
+│ pS6*reaction_6_k1*a1,
+│ pS6*reaction_7_k1*reaction_2_k1,
+│ pS6*reaction_7_k1*reaction_5_k1,
+│ pS6*reaction_7_k1*a1,
+│ pS6*reaction_4_k1*reaction_2_k1,
+│ pS6*reaction_4_k1*reaction_5_k1,
+│ pS6*reaction_4_k1*a1,
+│ pS6*a3*reaction_8_k1,
+│ pS6*a3*reaction_2_k2,
+│ pS6*a3*reaction_5_k2,
+│ pS6*a3*reaction_3_k1,
+│ pS6*a3*reaction_6_k1,
+│ pS6*a3*reaction_7_k1,
+│ pS6*a3*reaction_4_k1,
+│ a2*pAkt_S6*reaction_8_k1,
+│ a2*pAkt_S6*reaction_2_k2,
+│ a2*reaction_5_k2*pAkt_S6,
+│ a2*S6*reaction_8_k1,
+│ a2*S6*reaction_2_k2,
+│ a2*S6*reaction_5_k2,
+│ a2*pEGFR_Akt*reaction_8_k1,
+│ a2*pEGFR_Akt*reaction_2_k2,
+│ a2*pEGFR_Akt*reaction_5_k2,
+│ a2*reaction_3_k1*pAkt_S6,
+│ a2*reaction_3_k1*S6,
+│ a2*reaction_3_k1*pEGFR_Akt,
+│ a2*Akt*reaction_8_k1,
+│ a2*Akt*reaction_2_k2,
+│ a2*Akt*reaction_5_k2,
+│ a2*Akt*reaction_3_k1,
+│ a2*reaction_6_k1*pAkt_S6,
+│ a2*reaction_6_k1*S6,
+│ a2*reaction_6_k1*pEGFR_Akt,
+│ a2*reaction_6_k1*Akt,
+│ a2*reaction_7_k1*pAkt_S6,
+│ a2*reaction_7_k1*S6,
+│ a2*reaction_7_k1*pEGFR_Akt,
+│ a2*reaction_7_k1*Akt,
+│ a2*pEGFR*reaction_8_k1,
+│ a2*pEGFR*reaction_2_k2,
+│ a2*pEGFR*reaction_5_k2,
+│ a2*pEGFR*reaction_3_k1,
+│ a2*pEGFR*reaction_6_k1,
+│ a2*pEGFR*reaction_7_k1,
+│ a2*reaction_9_k1*EGF_EGFR,
+│ a2*pAkt*reaction_8_k1,
+│ a2*pAkt*reaction_2_k2,
+│ a2*pAkt*reaction_5_k2,
+│ a2*pAkt*reaction_3_k1,
+│ a2*pAkt*reaction_6_k1,
+│ a2*pAkt*reaction_7_k1,
+│ a2*reaction_4_k1*pAkt_S6,
+│ a2*reaction_4_k1*S6,
+│ a2*reaction_4_k1*pEGFR_Akt,
+│ a2*reaction_4_k1*Akt,
+│ a2*reaction_4_k1*pEGFR,
+│ a2*reaction_4_k1*pAkt,
+│ a2*pS6*reaction_8_k1,
+│ a2*pS6*reaction_2_k2,
+│ a2*pS6*reaction_5_k2,
+│ a2*pS6*reaction_3_k1,
+│ a2*pS6*reaction_6_k1,
+│ a2*pS6*reaction_7_k1,
+│ a2*pS6*reaction_4_k1,
+│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+│ -reaction_1_k1 + reaction_9_k1 + reaction_1_k2,
+│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+│ -reaction_1_k1*reaction_8_k1 + reaction_9_k1*reaction_8_k1 + reaction_1_k2*reaction_8_k1,
+│ -reaction_1_k1*reaction_2_k2 + reaction_9_k1*reaction_2_k2 + reaction_1_k2*reaction_2_k2,
+│ -reaction_1_k1*reaction_5_k2 + reaction_9_k1*reaction_5_k2 + reaction_1_k2*reaction_5_k2,
+│ -reaction_1_k1*reaction_3_k1 + reaction_9_k1*reaction_3_k1 + reaction_1_k2*reaction_3_k1,
+│ -reaction_1_k1*reaction_6_k1 + reaction_9_k1*reaction_6_k1 + reaction_1_k2*reaction_6_k1,
+│ -reaction_1_k1*reaction_7_k1 + reaction_9_k1*reaction_7_k1 + reaction_1_k2*reaction_7_k1,
+│ -reaction_1_k1*reaction_4_k1 + reaction_4_k1*reaction_9_k1 + reaction_4_k1*reaction_1_k2,
+│ -reaction_1_k1*reaction_8_k1^2 + reaction_9_k1*reaction_8_k1^2 + reaction_1_k2*reaction_8_k1^2,
+│ -reaction_1_k1*reaction_2_k2*reaction_8_k1 + reaction_9_k1*reaction_2_k2*reaction_8_k1 + reaction_1_k2*reaction_2_k2*reaction_8_k1,
+│ -reaction_1_k1*reaction_2_k2^2 + reaction_9_k1*reaction_2_k2^2 + reaction_1_k2*reaction_2_k2^2,
+│ -reaction_1_k1*reaction_5_k2*reaction_8_k1 + reaction_9_k1*reaction_5_k2*reaction_8_k1 + reaction_1_k2*reaction_5_k2*reaction_8_k1,
+│ -reaction_1_k1*reaction_5_k2*reaction_2_k2 + reaction_9_k1*reaction_5_k2*reaction_2_k2 + reaction_1_k2*reaction_5_k2*reaction_2_k2,
+│ -reaction_1_k1*reaction_5_k2^2 + reaction_9_k1*reaction_5_k2^2 + reaction_1_k2*reaction_5_k2^2,
+│ -reaction_1_k1*reaction_2_k1*pAkt_S6 + reaction_9_k1*reaction_2_k1*pAkt_S6 + reaction_1_k2*reaction_2_k1*pAkt_S6,
+│ -reaction_1_k1*reaction_2_k1*S6 + reaction_9_k1*reaction_2_k1*S6 + reaction_1_k2*reaction_2_k1*S6,
+│ -reaction_1_k1*reaction_5_k1*pAkt_S6 + reaction_9_k1*reaction_5_k1*pAkt_S6 + reaction_1_k2*reaction_5_k1*pAkt_S6,
+│ -reaction_1_k1*reaction_5_k1*S6 + reaction_9_k1*reaction_5_k1*S6 + reaction_1_k2*reaction_5_k1*S6,
+│ -reaction_1_k1*pEGFR_Akt*reaction_2_k1 + reaction_9_k1*pEGFR_Akt*reaction_2_k1 + reaction_1_k2*pEGFR_Akt*reaction_2_k1,
+│ -reaction_1_k1*pEGFR_Akt*reaction_5_k1 + reaction_9_k1*pEGFR_Akt*reaction_5_k1 + reaction_1_k2*pEGFR_Akt*reaction_5_k1,
+│ -reaction_1_k1*reaction_3_k1*reaction_8_k1 + reaction_9_k1*reaction_3_k1*reaction_8_k1 + reaction_1_k2*reaction_3_k1*reaction_8_k1,
+│ -reaction_1_k1*reaction_3_k1*reaction_2_k2 + reaction_9_k1*reaction_3_k1*reaction_2_k2 + reaction_1_k2*reaction_3_k1*reaction_2_k2,
+│ -reaction_1_k1*reaction_3_k1*reaction_5_k2 + reaction_9_k1*reaction_3_k1*reaction_5_k2 + reaction_1_k2*reaction_3_k1*reaction_5_k2,
+│ -reaction_1_k1*reaction_3_k1^2 + reaction_9_k1*reaction_3_k1^2 + reaction_1_k2*reaction_3_k1^2,
+│ -reaction_1_k1*Akt*reaction_2_k1 + reaction_9_k1*Akt*reaction_2_k1 + reaction_1_k2*Akt*reaction_2_k1,
+│ -reaction_1_k1*Akt*reaction_5_k1 + reaction_9_k1*Akt*reaction_5_k1 + reaction_1_k2*Akt*reaction_5_k1,
+│ -reaction_1_k1*a1*pAkt_S6 + reaction_9_k1*a1*pAkt_S6 + reaction_1_k2*a1*pAkt_S6,
+│ -reaction_1_k1*a1*S6 + reaction_9_k1*a1*S6 + reaction_1_k2*a1*S6,
+│ -reaction_1_k1*a1*pEGFR_Akt + reaction_9_k1*a1*pEGFR_Akt + reaction_1_k2*a1*pEGFR_Akt,
+│ -reaction_1_k1*a1*Akt + reaction_9_k1*a1*Akt + reaction_1_k2*a1*Akt,
+│ -reaction_1_k1*reaction_6_k1*reaction_8_k1 + reaction_9_k1*reaction_6_k1*reaction_8_k1 + reaction_1_k2*reaction_6_k1*reaction_8_k1,
+│ -reaction_1_k1*reaction_6_k1*reaction_2_k2 + reaction_9_k1*reaction_6_k1*reaction_2_k2 + reaction_1_k2*reaction_6_k1*reaction_2_k2,
+│ -reaction_1_k1*reaction_6_k1*reaction_5_k2 + reaction_9_k1*reaction_6_k1*reaction_5_k2 + reaction_1_k2*reaction_6_k1*reaction_5_k2,
+│ -reaction_1_k1*reaction_6_k1*reaction_3_k1 + reaction_9_k1*reaction_6_k1*reaction_3_k1 + reaction_1_k2*reaction_6_k1*reaction_3_k1,
+│ -reaction_1_k1*reaction_6_k1^2 + reaction_9_k1*reaction_6_k1^2 + reaction_1_k2*reaction_6_k1^2,
+│ -reaction_1_k1*reaction_7_k1*reaction_8_k1 + reaction_9_k1*reaction_7_k1*reaction_8_k1 + reaction_1_k2*reaction_7_k1*reaction_8_k1,
+│ -reaction_1_k1*reaction_7_k1*reaction_2_k2 + reaction_9_k1*reaction_7_k1*reaction_2_k2 + reaction_1_k2*reaction_7_k1*reaction_2_k2,
+│ -reaction_1_k1*reaction_7_k1*reaction_5_k2 + reaction_9_k1*reaction_7_k1*reaction_5_k2 + reaction_1_k2*reaction_7_k1*reaction_5_k2,
+│ -reaction_1_k1*reaction_7_k1*reaction_3_k1 + reaction_9_k1*reaction_7_k1*reaction_3_k1 + reaction_1_k2*reaction_7_k1*reaction_3_k1,
+│ -reaction_1_k1*reaction_7_k1*reaction_6_k1 + reaction_9_k1*reaction_7_k1*reaction_6_k1 + reaction_1_k2*reaction_7_k1*reaction_6_k1,
+│ -reaction_1_k1*reaction_7_k1^2 + reaction_9_k1*reaction_7_k1^2 + reaction_1_k2*reaction_7_k1^2,
+│ -reaction_1_k1*pEGFR*reaction_2_k1 + reaction_9_k1*pEGFR*reaction_2_k1 + pEGFR*reaction_1_k2*reaction_2_k1,
+│ -reaction_1_k1*pEGFR*reaction_5_k1 + reaction_9_k1*pEGFR*reaction_5_k1 + pEGFR*reaction_1_k2*reaction_5_k1,
+│ -reaction_1_k1*pEGFR*a1 + reaction_9_k1*pEGFR*a1 + pEGFR*reaction_1_k2*a1,
+│ -reaction_1_k1*pAkt*reaction_2_k1 + pAkt*reaction_9_k1*reaction_2_k1 + pAkt*reaction_1_k2*reaction_2_k1,
+│ -reaction_1_k1*pAkt*reaction_5_k1 + pAkt*reaction_9_k1*reaction_5_k1 + pAkt*reaction_1_k2*reaction_5_k1,
+│ -reaction_1_k1*pAkt*a1 + pAkt*reaction_9_k1*a1 + pAkt*reaction_1_k2*a1,
+│ -reaction_1_k1*reaction_4_k1*reaction_8_k1 + reaction_4_k1*reaction_9_k1*reaction_8_k1 + reaction_4_k1*reaction_1_k2*reaction_8_k1,
+│ -reaction_1_k1*reaction_4_k1*reaction_2_k2 + reaction_4_k1*reaction_9_k1*reaction_2_k2 + reaction_4_k1*reaction_1_k2*reaction_2_k2,
+│ -reaction_1_k1*reaction_4_k1*reaction_5_k2 + reaction_4_k1*reaction_9_k1*reaction_5_k2 + reaction_4_k1*reaction_1_k2*reaction_5_k2,
+│ -reaction_1_k1*reaction_4_k1*reaction_3_k1 + reaction_4_k1*reaction_9_k1*reaction_3_k1 + reaction_4_k1*reaction_1_k2*reaction_3_k1,
+│ -reaction_1_k1*reaction_4_k1*reaction_6_k1 + reaction_4_k1*reaction_9_k1*reaction_6_k1 + reaction_4_k1*reaction_1_k2*reaction_6_k1,
+│ -reaction_1_k1*reaction_4_k1*reaction_7_k1 + reaction_4_k1*reaction_9_k1*reaction_7_k1 + reaction_4_k1*reaction_1_k2*reaction_7_k1,
+│ -reaction_1_k1*reaction_4_k1^2 + reaction_4_k1^2*reaction_9_k1 + reaction_4_k1^2*reaction_1_k2,
+│ -a3*reaction_1_k1*pAkt_S6 + a3*reaction_9_k1*pAkt_S6 + a3*reaction_1_k2*pAkt_S6,
+│ -a3*reaction_1_k1*S6 + a3*reaction_9_k1*S6 + a3*reaction_1_k2*S6,
+│ -a3*reaction_1_k1*pEGFR_Akt + a3*reaction_9_k1*pEGFR_Akt + a3*reaction_1_k2*pEGFR_Akt,
+│ -a3*reaction_1_k1*Akt + a3*reaction_9_k1*Akt + a3*reaction_1_k2*Akt,
+│ -a3*reaction_1_k1*pEGFR + a3*reaction_9_k1*pEGFR + a3*pEGFR*reaction_1_k2,
+│ -a3*reaction_1_k1*pAkt + a3*pAkt*reaction_9_k1 + a3*pAkt*reaction_1_k2,
+│ -pS6*reaction_1_k1*reaction_2_k1 + pS6*reaction_9_k1*reaction_2_k1 + pS6*reaction_1_k2*reaction_2_k1,
+│ -pS6*reaction_1_k1*reaction_5_k1 + pS6*reaction_9_k1*reaction_5_k1 + pS6*reaction_1_k2*reaction_5_k1,
+│ -pS6*reaction_1_k1*a1 + pS6*reaction_9_k1*a1 + pS6*reaction_1_k2*a1,
+│ -pS6*a3*reaction_1_k1 + pS6*a3*reaction_9_k1 + pS6*a3*reaction_1_k2,
+│ -a2*reaction_1_k1*pAkt_S6 + a2*reaction_9_k1*pAkt_S6 + a2*reaction_1_k2*pAkt_S6,
+│ -a2*reaction_1_k1*S6 + a2*reaction_9_k1*S6 + a2*reaction_1_k2*S6,
+│ -a2*reaction_1_k1*pEGFR_Akt + a2*reaction_9_k1*pEGFR_Akt + a2*reaction_1_k2*pEGFR_Akt,
+│ -a2*reaction_1_k1*Akt + a2*reaction_9_k1*Akt + a2*reaction_1_k2*Akt,
+│ -a2*reaction_1_k1*pEGFR + a2*reaction_9_k1*pEGFR + a2*pEGFR*reaction_1_k2,
+│ -a2*reaction_1_k1*pAkt + a2*pAkt*reaction_9_k1 + a2*pAkt*reaction_1_k2,
+│ -a2*pS6*reaction_1_k1 + a2*pS6*reaction_9_k1 + a2*pS6*reaction_1_k2,
+│ pAkt_S6//S6,
+│ pAkt_S6//S6,
+│ pAkt_S6//S6,
+│ pAkt_S6//Akt,
+│ pAkt_S6//Akt,
+│ pAkt_S6//Akt,
+│ pAkt_S6//pEGFR,
+│ pAkt_S6//pS6,
+│ pAkt_S6//pS6,
+│ pAkt_S6//pS6,
+│ S6//pAkt_S6,
+│ S6//pAkt_S6,
+│ S6//Akt,
+│ S6//Akt,
+│ S6//Akt,
+│ S6//pEGFR,
+│ S6//pS6,
+│ S6//pS6,
+│ S6//pS6,
+│ reaction_2_k1//reaction_5_k1,
+│ reaction_2_k1//reaction_5_k1,
+│ reaction_2_k1//a3,
+│ reaction_2_k1//a3,
+│ reaction_2_k1//a3,
+│ reaction_2_k1//a2,
+│ reaction_5_k1//reaction_2_k1,
+│ reaction_5_k1//reaction_2_k1,
+│ reaction_5_k1//reaction_2_k1,
+│ reaction_5_k1//reaction_2_k1,
+│ reaction_5_k1//reaction_2_k1,
+│ reaction_5_k1//reaction_2_k1,
+│ reaction_5_k1//a3,
+│ reaction_5_k1//a3,
+│ reaction_5_k1//a3,
+│ reaction_5_k1//a2,
+│ pEGFR_Akt//pAkt_S6,
+│ pEGFR_Akt//pAkt_S6,
+│ pEGFR_Akt//S6,
+│ pEGFR_Akt//S6,
+│ pEGFR_Akt//S6,
+│ pEGFR_Akt//Akt,
+│ pEGFR_Akt//Akt,
+│ pEGFR_Akt//Akt,
+│ pEGFR_Akt//pEGFR,
+│ pEGFR_Akt//pS6,
+│ pEGFR_Akt//pS6,
+│ pEGFR_Akt//pS6,
+│ Akt//pAkt_S6,
+│ Akt//pAkt_S6,
+│ Akt//S6,
+│ Akt//S6,
+│ Akt//S6,
+│ Akt//pEGFR,
+│ Akt//pS6,
+│ Akt//pS6,
+│ Akt//pS6,
+│ a1//reaction_2_k1,
+│ a1//reaction_2_k1,
+│ a1//reaction_2_k1,
+│ a1//reaction_2_k1,
+│ a1//reaction_2_k1,
+│ a1//reaction_2_k1,
+│ a1//reaction_5_k1,
+│ a1//reaction_5_k1,
+│ a1//a3,
+│ a1//a3,
+│ a1//a3,
+│ a1//a2,
+│ pEGFR//pAkt_S6,
+│ pEGFR//pAkt_S6,
+│ pEGFR//S6,
+│ pEGFR//S6,
+│ pEGFR//S6,
+│ pEGFR//Akt,
+│ pEGFR//Akt,
+│ pEGFR//Akt,
+│ pEGFR//pS6,
+│ pEGFR//pS6,
+│ pEGFR//pS6,
+│ pAkt//pAkt_S6,
+│ pAkt//pAkt_S6,
+│ pAkt//S6,
+│ pAkt//S6,
+│ pAkt//S6,
+│ pAkt//Akt,
+│ pAkt//Akt,
+│ pAkt//Akt,
+│ pAkt//pEGFR,
+│ pAkt//pS6,
+│ pAkt//pS6,
+│ pAkt//pS6,
+│ a3//reaction_2_k1,
+│ a3//reaction_2_k1,
+│ a3//reaction_2_k1,
+│ a3//reaction_2_k1,
+│ a3//reaction_2_k1,
+│ a3//reaction_2_k1,
+│ a3//reaction_5_k1,
+│ a3//reaction_5_k1,
+│ a3//a2,
+│ pS6//pAkt_S6,
+│ pS6//pAkt_S6,
+│ pS6//S6,
+│ pS6//S6,
+│ pS6//S6,
+│ pS6//Akt,
+│ pS6//Akt,
+│ pS6//Akt,
+│ pS6//pEGFR,
+│ a2//reaction_2_k1,
+│ a2//reaction_2_k1,
+│ a2//reaction_2_k1,
+│ a2//reaction_2_k1,
+│ a2//reaction_2_k1,
+│ a2//reaction_2_k1,
+│ a2//reaction_5_k1,
+│ a2//reaction_5_k1,
+│ a2//a3,
+│ a2//a3,
+│ a2//a3,
+│ (reaction_9_k1*EGF_EGFR)//pAkt_S6,
+│ (reaction_9_k1*EGF_EGFR)//pAkt_S6,
+│ (reaction_9_k1*EGF_EGFR)//S6,
+│ (reaction_9_k1*EGF_EGFR)//S6,
+│ (reaction_9_k1*EGF_EGFR)//S6,
+│ (reaction_9_k1*EGF_EGFR)//Akt,
+│ (reaction_9_k1*EGF_EGFR)//Akt,
+│ (reaction_9_k1*EGF_EGFR)//Akt,
+│ (reaction_9_k1*EGF_EGFR)//pEGFR,
+│ (reaction_9_k1*EGF_EGFR)//pS6,
+│ (reaction_9_k1*EGF_EGFR)//pS6,
+│ (reaction_9_k1*EGF_EGFR)//pS6
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:225
+┌ Info: Checking inclusion with probability 0.99
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:571
+┌ Info: Inclusion checked in 2.133200638 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:575
+┌ Info: Out of 228 initial generators there are 20 indepdendent
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:580
+┌ Info: The ranking of the new set of generators is 306
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:583
+┌ Info: The search for identifiable functions concluded in 66.817925708 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:77
+┌ Info: Identifiable functions are
+│   funcs = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[reaction_8_k1, reaction_2_k2, reaction_5_k2, reaction_3_k1, reaction_6_k1, reaction_7_k1, reaction_4_k1, reaction_2_k1*pAkt_S6, reaction_2_k1*S6, reaction_5_k1*pAkt_S6, pEGFR_Akt*reaction_2_k1, Akt*reaction_2_k1, a1*pAkt_S6, pEGFR*reaction_2_k1, pAkt*reaction_2_k1, a3*pAkt_S6, pS6*reaction_2_k1, a2*pAkt_S6, reaction_9_k1*reaction_2_k1*EGF_EGFR, reaction_1_k1 - reaction_9_k1 - reaction_1_k2]
+└ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:53
