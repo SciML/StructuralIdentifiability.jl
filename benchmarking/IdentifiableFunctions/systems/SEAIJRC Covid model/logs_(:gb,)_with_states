@@ -1,52 +1,0 @@
-⌜ # Computing specializations..  	 Time: 0:00:12[K✓ # Computing specializations..  	 Time: 0:00:13[K
-⌜ # Computing specializations.. 	 Time: 0:00:00[K
-  Points:  2[K[K[A✓ # Computing specializations.. 	 Time: 0:00:03[K
-┌ Info: Processing SEAIJRC Covid model
-└ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:40
-┌ Info: Averaging over 1 runs.
-│ Using keyword arguments:
-│ NamedTuple{(:strategy, :with_states), Tuple{Tuple{Symbol}, Bool}}
-│ (strategy = (:gb,), with_states = true)
-│ ID: (:gb,)_with_states
-└ @ Main /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:41
-┌ Info: Computing IO-equations
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:160
-ERROR: LoadError: MethodError: reducing over an empty collection is not allowed; consider supplying `init` to the reducer
-Stacktrace:
-  [1] mapreduce_empty(#unused#::typeof(identity), op::Function, T::Type)
-    @ Base ./reduce.jl:367
-  [2] reduce_empty(op::Base.MappingRF{typeof(identity), typeof(vcat)}, #unused#::Type{Any})
-    @ Base ./reduce.jl:356
-  [3] reduce_empty_iter
-    @ ./reduce.jl:379 [inlined]
-  [4] mapreduce_empty_iter(f::Function, op::Function, itr::Vector{Any}, ItrEltype::Base.HasEltype)
-    @ Base ./reduce.jl:375
-  [5] _mapreduce(f::typeof(identity), op::typeof(vcat), #unused#::IndexLinear, A::Vector{Any})
-    @ Base ./reduce.jl:427
-  [6] _mapreduce_dim(f::Function, op::Function, #unused#::Base._InitialValue, A::Vector{Any}, #unused#::Colon)
-    @ Base ./reducedim.jl:365
-  [7] #mapreduce#800
-    @ ./reducedim.jl:357 [inlined]
-  [8] mapreduce
-    @ ./reducedim.jl:357 [inlined]
-  [9] #reduce#802
-    @ ./reducedim.jl:406 [inlined]
- [10] reduce(op::Function, A::Vector{Any})
-    @ Base ./reducedim.jl:406
- [11] states_generators(ode::ODE{Nemo.fmpq_mpoly}, io_equations::Dict{Nemo.fmpq_mpoly, Nemo.fmpq_mpoly})
-    @ StructuralIdentifiability ~/SI2/StructuralIdentifiability.jl/src/states.jl:96
- [12] extract_identifiable_functions_raw(io_equations::Dict{Nemo.fmpq_mpoly, Nemo.fmpq_mpoly}, ode::ODE{Nemo.fmpq_mpoly}, known::Vector{Nemo.fmpq_mpoly}, with_states::Bool)
-    @ StructuralIdentifiability ~/SI2/StructuralIdentifiability.jl/src/global_identifiability.jl:12
- [13] initial_identifiable_functions(ode::ODE{Nemo.fmpq_mpoly}; with_states::Bool, adjoin_identifiable::Bool)
-    @ StructuralIdentifiability ~/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:164
- [14] initial_identifiable_functions
-    @ ~/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:155 [inlined]
- [15] find_identifiable_functions(ode::ODE{Nemo.fmpq_mpoly}; p::Float64, simplify::Bool, seed::Int64, with_states::Bool, adjoin_identifiable::Bool, strategy::Tuple{Symbol})
-    @ StructuralIdentifiability ~/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:57
- [16] process_system()
-    @ Main ~/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:51
- [17] top-level scope
-    @ ~/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:115
-in expression starting at /home/ademin/SI2/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:115
-┌ Info: IO-equations computed in 21.846032293 seconds
-└ @ StructuralIdentifiability /home/ademin/SI2/StructuralIdentifiability.jl/src/identifiable_functions.jl:162

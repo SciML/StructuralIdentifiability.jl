@@ -75,7 +75,7 @@ function find_identifiable_functions(
     end
     _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1e9
     @info "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds"
-    id_funcs_fracs
+    return id_funcs_fracs
 end
 
 """

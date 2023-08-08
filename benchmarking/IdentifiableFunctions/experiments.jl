@@ -823,16 +823,41 @@ end
 
 ode = StructuralIdentifiability.@ODEmodel(x1'(t) = a * x1(t), y(t) = x1)
 
-funcs00 = StructuralIdentifiability.find_identifiable_functions(
-    qy,
-    strategy = (:gb,),
-    with_states = false,
-    simplify = false,
-)
+funcs0 = StructuralIdentifiability.find_identifiable_functions(St, strategy = (:gb,))
 
-funcs0 = StructuralIdentifiability.find_identifiable_functions(
-    qy,
-    strategy = (:gb,),
+rff = StructuralIdentifiability.RationalFunctionField(funcs0)
+mqs = rff.mqs;
+K = GF(2^31 - 1)
+StructuralIdentifiability.ParamPunPam.reduce_mod_p!(mqs, K)
+R = parent(mqs)
+n = nvars(R)
+xs = gens(R)
+point = map(i -> rand(K), 1:(n - 1))
+F = StructuralIdentifiability.ParamPunPam.specialize_mod_p(mqs, point)
+ordering(parent(F[1]))
+
+include("sugar.jl")
+
+F_lex = map(f -> Groebner.change_ordering(f, :lex)[1], F)
+ordering(parent(F_lex[1]))
+
+gb(F_lex)
+
+Groebner.isgroebner(gb(F))
+
+for i in 1:(n - 1)
+    ord = Groebner.DegRevLex(xs[1:i]) * Groebner.DegRevLex(xs[(i + 1):end])
+    @time Groebner.groebner(F, ordering = ord)
+end
+
+for i in 1:(n - 1)
+    ord = Groebner.DegRevLex(xs[1:i]) * Groebner.DegRevLex(xs[(i + 1):end])
+    @time Groebner.groebner(F, ordering = ord)
+end
+
+funcs2 = StructuralIdentifiability.find_identifiable_functions(
+    St,
+    strategy = (:hybrid,),
     with_states = false,
 )
 

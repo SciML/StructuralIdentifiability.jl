@@ -221,7 +221,7 @@ function beautifuly_generators(
     end
     # Remove redundant pass
     if discard_redundant
-        sort!(fracs, lt = rational_func_cmp)
+        sort!(fracs, lt = rational_function_cmp)
         @info "The pool of fractions:\n$(join(map(repr, fracs), ",\n"))"
         if reversed_order
             non_redundant = collect(1:length(fracs))
@@ -254,43 +254,9 @@ function beautifuly_generators(
         @debug "Out of $(length(fracs)) simplified generators there are $(length(non_redundant)) non redundant"
         fracs = fracs[non_redundant]
     end
-    sort!(fracs, lt = rational_func_cmp)
+    sort!(fracs, lt = rational_function_cmp)
     spring_cleaning_pass!(fracs)
     return fracs
-end
-
-"""
-    rational_func_cmp(f, g)
-
-Returns `true` iff `f < g`. 
-
-*This is a strict total order, which ensures the uniqueness of a sorting
-permutation.*
-
-First compare the number of terms in the numerator and denominator.
-Break ties by comparing the total degrees of the numerator and denominator.
-Break ties by comparing the monomials of the numerator and denominator.
-"""
-function rational_func_cmp(f, g)
-    flag = compare_rational_func_by(f, g, !is_constant)
-    flag == 1 && return false
-    flag == -1 && return true
-    flag = compare_rational_func_by(f, g, is_constant, :denominator)
-    flag == 1 && return false
-    flag == -1 && return true
-    flag = compare_rational_func_by(f, g, length, :additive)
-    flag == 1 && return false
-    flag == -1 && return true
-    flag = compare_rational_func_by(f, g, total_degree)
-    flag == 1 && return false
-    flag == -1 && return true
-    flag = compare_rational_func_by(f, g, leading_monomial)
-    flag == 1 && return false
-    flag == -1 && return true
-    flag = compare_rational_func_by(f, g, collect ∘ monomials)
-    flag == 1 && return false
-    flag == -1 && return true
-    return false
 end
 
 function spring_cleaning_pass!(fracs)
@@ -465,9 +431,9 @@ function linear_relations_between_normal_forms(
             monom = prod(combination)
             monom_param = evaluate(monom, vcat(xs_param, one(R_param)))
             monom_mqs = monom - monom_param
-            @debug "Computing the normal form of" monom R R_param
+            @debug "Computing the normal form of" monom_mqs
             _, nf = divrem(monom_mqs, gb)
-            @debug "Normal form is" nf monom_param
+            @debug "The normal form is" nf
             push!(monoms, numerator(monom_param))
             push!(normal_forms, nf)
         end
@@ -554,6 +520,7 @@ function simplified_generating_set(
     _runtime_logger[:id_beautifulization] = 0.0
     _runtime_logger[:id_gbfan_time] = 0.0
     _runtime_logger[:id_normalforms_time] = 0.0
+    _runtime_logger[:id_ranking] = 0
     # Compute the first GB in some ordering
     new_rff = groebner_basis_coeffs(rff, seed = seed)
     new_fracs = beautifuly_generators(new_rff)
@@ -611,5 +578,8 @@ function simplified_generating_set(
         throw("The new subfield generators are not correct.")
     end
     @info "Out of $(length(rff.mqs.nums_qq)) initial generators there are $(length(new_fracs)) indepdendent"
+    ranking = generating_set_rank(new_fracs)
+    _runtime_logger[:id_ranking] = ranking
+    @info "The ranking of the new set of generators is $ranking"
     return new_fracs
 end
