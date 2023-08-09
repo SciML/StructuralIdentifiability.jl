@@ -15,8 +15,15 @@ end
 
 # ------------------------------------------------------------------------------
 
-function diff_poly(poly::P, derivation::Dict{P, P}) where {P <: MPolyElem}
+function diff_poly(poly::P, derivation::Dict{P, T}) where {P <: MPolyElem, T}
     return sum(derivative(poly, x) * xd for (x, xd) in derivation)
+end
+
+function diff_frac(frac::Generic.Frac{F}, derivation::Dict{P, T}) where {F, P, T}
+    num, den = unpack_fraction(frac)
+    numd = den * diff_poly(num, derivation) - num * diff_poly(den, derivation)
+    dend = den^2
+    return numd // dend
 end
 
 # ------------------------------------------------------------------------------

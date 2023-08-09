@@ -821,6 +821,10 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
+StructuralIdentifiability.find_identifiable_functions(sliqr)
+
+StructuralIdentifiability.reparametrize(sliqr)
+
 ode = StructuralIdentifiability.@ODEmodel(x1'(t) = a * x1(t), y(t) = x1)
 
 funcs0 = StructuralIdentifiability.find_identifiable_functions(St, strategy = (:gb,))
