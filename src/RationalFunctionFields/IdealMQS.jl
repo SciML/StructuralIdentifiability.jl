@@ -7,7 +7,6 @@ with an ideal in Q(x)[y]:
 
     <num_i(x) den_i(y) - num_i(y) den_i(x)> : Q(y)^inf
 
-
 ## Interface 
 
 `IdealMQS` provides all of the functions the interface `AbstractBlackboxIdeal`
@@ -33,14 +32,8 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     pivots_indices::Vector{Int}
     den_lcm::T
     sat_var_index::Int
-    sat_qq::T
-
-    # Numerators and denominators over GF. 
-    # We cache them and maintain a map:
-    # a finite field --> an image over this finite field
-    nums_gf::Dict{Any, Any}
-    dens_gf::Dict{Any, Any}
-    sat_gf::Dict{Any, Any}
+    # Cached GBs
+    groebner_bases::Dict{Any, Any}
 
     """
         IdealMQS(funcs_den_nums::Vector{Vector})
@@ -137,9 +130,6 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
             pivots_indices,
             den_lcm,
             sat_var_index,
-            sat_qq,
-            Dict(),
-            Dict(),
             Dict(),
         )
     end

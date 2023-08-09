@@ -48,9 +48,8 @@ function check_primality(
     Rspec, vspec = Nemo.PolynomialRing(Nemo.QQ, [var_to_str(l) for l in leaders])
     eval_point = [v in keys(polys) ? v : ring(rand(1:100)) for v in gens(ring)]
     all_polys = vcat(collect(values(polys)), extra_relations)
-    runtime = @elapsed zerodim_ideal =
+    zerodim_ideal =
         collect(map(p -> parent_ring_change(evaluate(p, eval_point), Rspec), all_polys))
-    _runtime_logger[:id_primality_evaluate] += runtime
 
     return check_primality_zerodim(zerodim_ideal)
 end

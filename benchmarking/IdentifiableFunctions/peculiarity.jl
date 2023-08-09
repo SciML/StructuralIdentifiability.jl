@@ -1,43 +1,85 @@
-mapk = @ODEmodel(
-    KS00'(t) =
-        -a00 * K(t) * S00(t) +
-        b00 * KS00(t) +
-        gamma0100 * FS01(t) +
-        gamma1000 * FS10(t) +
-        gamma1100 * FS11(t),
-    KS01'(t) =
-        -a01 * K(t) * S01(t) + b01 * KS01(t) + c0001 * KS00(t) - alpha01 * F(t) * S01(t) +
-        beta01 * FS01(t) +
-        gamma1101 * FS11(t),
-    KS10'(t) =
-        -a10 * K(t) * S10(t) + b10 * KS10(t) + c0010 * KS00(t) - alpha10 * F(t) * S10(t) +
-        beta10 * FS10(t) +
-        gamma1110 * FS11(t),
-    FS01'(t) =
-        -alpha11 * F(t) * S11(t) +
-        beta11 * FS11(t) +
-        c0111 * KS01(t) +
-        c1011 * KS10(t) +
-        c0011 * KS00(t),
-    FS10'(t) = a00 * K(t) * S00(t) - (b00 + c0001 + c0010 + c0011) * KS00(t),
-    FS11'(t) = a01 * K(t) * S01(t) - (b01 + c0111) * KS01(t),
-    K'(t) = a10 * K(t) * S10(t) - (b10 + c1011) * KS10(t),
-    F'(t) = alpha01 * F(t) * S01(t) - (beta01 + gamma0100) * FS01(t),
-    S00'(t) = alpha10 * F(t) * S10(t) - (beta10 + gamma1000) * FS10(t),
-    S01'(t) =
-        alpha11 * F(t) * S11(t) - (beta11 + gamma1101 + gamma1110 + gamma1100) * FS11(t),
-    S10'(t) =
-        -a00 * K(t) * S00(t) + (b00 + c0001 + c0010 + c0011) * KS00(t) -
-        a01 * K(t) * S01(t) + (b01 + c0111) * KS01(t) - a10 * K(t) * S10(t) +
-        (b10 + c1011) * KS10(t),
-    S11'(t) =
-        -alpha01 * F(t) * S01(t) + (beta01 + gamma0100) * FS01(t) -
-        alpha10 * F(t) * S10(t) + (beta10 + gamma1000) * FS10(t) -
-        alpha11 * F(t) * S11(t) +
-        (beta11 + gamma1101 + gamma1110 + gamma1100) * FS11(t),
-    y0(t) = K(t),
-    y1(t) = F(t),
-    y2(t) = S00(t),
-    y3(t) = S01(t) + S10(t),
-    y4(t) = S11(t)
-)
+using Nemo
+using StructuralIdentifiability
+
+R, (k01, k31, k21, k12, k13, k14, k41) =
+    QQ[["k01", "k31", "k21", "k12", "k13", "k14", "k41"]...]
+
+# Note: 7 elements
+f1_lists = [
+    [R(1), k01],
+    [R(1), k12 + k13 + k14],
+    [R(1), k31 + k21 + k41],
+    [
+        k31 * k12 - k31 * k14 - k21 * k13 + k21 * k14 - k12 * k41 + k13 * k41,
+        k12^2 * k13 - k12^2 * k14 - k12 * k13^2 + k12 * k14^2 + k13^2 * k14 - k13 * k14^2,
+    ],
+    [
+        k31 * k12 - k31 * k14 - k21 * k13 + k21 * k14 - k12 * k41 + k13 * k41,
+        k31 * k12 * k13 - k31 * k13 * k14 - k21 * k12 * k13 + k21 * k12 * k14 -
+        k12 * k14 * k41 + k13 * k14 * k41,
+    ],
+    [
+        k31 * k12 - k31 * k14 - k21 * k13 + k21 * k14 - k12 * k41 + k13 * k41,
+        k31 * k21 * k12 - k31 * k21 * k13 + k31 * k13 * k41 - k31 * k14 * k41 -
+        k21 * k12 * k41 + k21 * k14 * k41,
+    ],
+    [
+        k31 * k12 - k31 * k14 - k21 * k13 + k21 * k14 - k12 * k41 + k13 * k41,
+        k31^2 * k21 - k31^2 * k41 - k31 * k21^2 + k31 * k41^2 + k21^2 * k41 - k21 * k41^2,
+    ],
+]
+f1_fracs = [
+    k01,
+    k12 + k13 + k14,
+    k31 + k21 + k41,
+    (k12^2 * k13 - k12^2 * k14 - k12 * k13^2 + k12 * k14^2 + k13^2 * k14 - k13 * k14^2) // (k31 * k12 - k31 * k14 - k21 * k13 + k21 * k14 - k12 * k41 + k13 * k41),
+    (
+        k31 * k12 * k13 - k31 * k13 * k14 - k21 * k12 * k13 + k21 * k12 * k14 -
+        k12 * k14 * k41 + k13 * k14 * k41
+    ) // (k31 * k12 - k31 * k14 - k21 * k13 + k21 * k14 - k12 * k41 + k13 * k41),
+    (
+        k31 * k21 * k12 - k31 * k21 * k13 + k31 * k13 * k41 - k31 * k14 * k41 -
+        k21 * k12 * k41 + k21 * k14 * k41
+    ) // (k31 * k12 - k31 * k14 - k21 * k13 + k21 * k14 - k12 * k41 + k13 * k41),
+    (k31^2 * k21 - k31^2 * k41 - k31 * k21^2 + k31 * k41^2 + k21^2 * k41 - k21 * k41^2) // (k31 * k12 - k31 * k14 - k21 * k13 + k21 * k14 - k12 * k41 + k13 * k41),
+]
+
+# Note: 8 elements
+f2_lists = [
+    [R(1), k01],
+    [R(1), k12 * k13 * k14],
+    [R(1), k31 * k21 * k41],
+    [R(1), k12 + k13 + k14],
+    [R(1), k31 + k21 + k41],
+    [R(1), k12 * k13 + k12 * k14 + k13 * k14],
+    [R(1), k31 * k13 + k21 * k12 + k14 * k41],
+    [R(1), k31 * k21 + k31 * k41 + k21 * k41],
+]
+f2_fracs = [
+    (k01) // R(1),
+    (k12 * k13 * k14) // R(1),
+    (k31 * k21 * k41) // R(1),
+    (k12 + k13 + k14) // R(1),
+    (k31 + k21 + k41) // R(1),
+    (k12 * k13 + k12 * k14 + k13 * k14) // R(1),
+    (k31 * k13 + k21 * k12 + k14 * k41) // R(1),
+    (k31 * k21 + k31 * k41 + k21 * k41) // R(1),
+]
+
+@assert length(f1_lists) == length(f1_fracs) == 7
+@assert length(f2_lists) == length(f2_fracs) == 8
+
+# Prints: true; true
+p = 0.99999
+i12 = StructuralIdentifiability.check_field_membership(f1_lists, f2_fracs, p)
+i21 = StructuralIdentifiability.check_field_membership(f2_lists, f1_fracs, p)
+@info "" i12 i21
+
+# Prints: false, false, ..., false
+res = [false for _ in 1:length(f2_lists)]
+for i in 1:length(f2_lists)
+    all_except_i = f2_lists[setdiff(1:length(f2_lists), i)]
+    res[i] =
+        StructuralIdentifiability.check_field_membership(all_except_i, [f2_fracs[i]], p)[1]
+end
+@info "" res

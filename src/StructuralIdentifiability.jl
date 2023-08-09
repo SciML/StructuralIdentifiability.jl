@@ -2,13 +2,14 @@ module StructuralIdentifiability
 
 # General purpose packages
 using Base.Iterators
+using Combinatorics
 using DataStructures
-using Dates
 using IterTools
 using LinearAlgebra
 using Logging
 using MacroTools
 using Primes
+using Random
 
 # Algebra packages
 using AbstractAlgebra
@@ -44,12 +45,7 @@ export PBRepresentation, diffreduce, io_switch!, pseudodivision
 export find_submodels
 
 # would be great to merge with the Julia logger
-const _runtime_logger = Dict(
-    :id_uncertain_factorization => 0.0,
-    :id_nemo_factor => 0.0,
-    :id_primality_evaluate => 0.0,
-    :id_certain_factors => [],
-)
+const _runtime_logger = Dict(:id_calls_to_gb => 0, :id_groebner_time => 0.0)
 
 include("util.jl")
 include("power_series_utils.jl")
@@ -62,6 +58,7 @@ include("primality_check.jl")
 include("io_equation.jl")
 include("states.jl")
 include("RationalFunctionFields/IdealMQS.jl")
+include("RationalFunctionFields/rankings.jl")
 include("RationalFunctionFields/RationalFunctionField.jl")
 include("global_identifiability.jl")
 include("identifiable_functions.jl")
@@ -70,9 +67,6 @@ include("pb_representation.jl")
 include("submodels.jl")
 include("discrete.jl")
 
-# TODO: error/warn if there are no outputs in the ODEmodel
-# TODO: error if there are two or more equations on the same internal variable
-# in the ODEmodel
 # TODO: print equations in ODEmodel in the order they were given in the macro
 # TODO: handle finding identifiabile functions in case there are no parameters
 

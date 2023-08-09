@@ -313,15 +313,602 @@ begin
         x3'(t) = b2 * (x2(t) - x3(t)),
         y1(t) = x0(t)
     )
+
+    hiv = StructuralIdentifiability.@ODEmodel(
+        w'(t) = -b * w(t) + c * w(t) * x(t) * y(t) - c * w(t) * q * y(t),
+        v'(t) = k * y(t) - v(t) * u,
+        x'(t) = lm - x(t) * d - x(t) * v(t) * beta,
+        z'(t) = c * w(t) * q * y(t) - h * z(t),
+        y'(t) = x(t) * v(t) * beta - a * y(t),
+        y2(t) = z(t),
+        y1(t) = w(t)
+    )
+
+    hiv2 = StructuralIdentifiability.@ODEmodel(
+        x3'(t) = b * x1(t) * q2 * x4(t) - x3(t) * w2 + k1 * x2(t),
+        x1'(t) = -b * x1(t) * x4(t) - d * x1(t) + s,
+        x2'(t) = b * q1 * x1(t) * x4(t) - w1 * x2(t) - k1 * x2(t),
+        x4'(t) = -c * x4(t) + k2 * x3(t),
+        y1(t) = x1(t),
+        y2(t) = x4(t)
+    )
+
+    qy = StructuralIdentifiability.@ODEmodel(
+        P3'(t) = P4(t),
+        P0'(t) = P1(t),
+        P5'(t) =
+            (
+                -P0(t) * beta_SI * phi * Mar * Ks * siga2 +
+                P0(t) * beta_SI * Mar * Ks * siga2 -
+                P0(t) * phi * M * Mar * Ks * beta_SA +
+                P0(t) * phi * M * Ks * siga2 * beta_SA +
+                P0(t) * M * Mar * Ks * beta_SA - P1(t) * beta_SI * phi * Mar * siga2 -
+                P1(t) * beta_SI * phi * Ks * siga2 +
+                P1(t) * beta_SI * Mar * siga2 +
+                P1(t) * beta_SI * Ks * siga2 - P1(t) * phi * M * Mar * beta_SA +
+                P1(t) * phi * M * siga2 * beta_SA - P1(t) * phi * Mar * Ks * beta_SA +
+                P1(t) * phi * Ks * siga2 * beta_SA +
+                P1(t) * M * Mar * beta_SA +
+                P1(t) * M * Ks * beta_SA +
+                P1(t) * Mar * Ks * beta_SA - beta_SI * phi * P2(t) * siga2 +
+                beta_SI * P2(t) * siga2 +
+                P3(t) * beta_SA - phi * M * Mar * P5(t) * siga2 -
+                phi * M * beta * siga2 - phi * P2(t) * Mar * beta_SA +
+                phi * P2(t) * siga2 * beta_SA +
+                M * P2(t) * beta_SA +
+                M * Mar * P5(t) * siga2 +
+                M * beta * siga2 +
+                P2(t) * Mar * beta_SA +
+                P2(t) * Ks * beta_SA
+            ) // (phi * M * siga2 - M * siga2),
+        P4'(t) =
+            (
+                -siga1 * P0(t)^2 * beta_SI * phi * M * Mar * Ks^2 * siga2^2 +
+                siga1 * P0(t)^2 * beta_SI * M * Mar * Ks^2 * siga2^2 -
+                siga1 * P0(t)^2 * phi * M^2 * Mar * Ks^2 * siga2 * beta_SA +
+                siga1 * P0(t)^2 * phi * M^2 * Ks^2 * siga2^2 * beta_SA +
+                siga1 * P0(t)^2 * M^2 * Mar * Ks^2 * siga2 * beta_SA -
+                siga1 * P0(t) * P1(t) * beta_SI * phi * M * Mar * Ks^2 * siga2 -
+                2 * siga1 * P0(t) * P1(t) * beta_SI * phi * M * Mar * Ks * siga2^2 -
+                siga1 * P0(t) * P1(t) * beta_SI * phi * M * Ks^2 * siga2^2 -
+                siga1 * P0(t) * P1(t) * beta_SI * phi * Mar * Ks^2 * siga2^2 +
+                siga1 * P0(t) * P1(t) * beta_SI * M * Mar * Ks^2 * siga2 +
+                2 * siga1 * P0(t) * P1(t) * beta_SI * M * Mar * Ks * siga2^2 +
+                siga1 * P0(t) * P1(t) * beta_SI * M * Ks^2 * siga2^2 +
+                siga1 * P0(t) * P1(t) * beta_SI * Mar * Ks^2 * siga2^2 -
+                siga1 * P0(t) * P1(t) * phi * M^2 * Mar * Ks^2 * beta_SA -
+                2 * siga1 * P0(t) * P1(t) * phi * M^2 * Mar * Ks * siga2 * beta_SA +
+                siga1 * P0(t) * P1(t) * phi * M^2 * Ks^2 * siga2 * beta_SA +
+                2 * siga1 * P0(t) * P1(t) * phi * M^2 * Ks * siga2^2 * beta_SA -
+                2 * siga1 * P0(t) * P1(t) * phi * M * Mar * Ks^2 * siga2 * beta_SA +
+                2 * siga1 * P0(t) * P1(t) * phi * M * Ks^2 * siga2^2 * beta_SA +
+                siga1 * P0(t) * P1(t) * M^2 * Mar * Ks^2 * beta_SA +
+                2 * siga1 * P0(t) * P1(t) * M^2 * Mar * Ks * siga2 * beta_SA +
+                siga1 * P0(t) * P1(t) * M^2 * Ks^2 * siga2 * beta_SA +
+                2 * siga1 * P0(t) * P1(t) * M * Mar * Ks^2 * siga2 * beta_SA -
+                siga1 * P0(t) * beta_SI * P3(t) * phi * Mar * Ks * siga2 +
+                siga1 * P0(t) * beta_SI * P3(t) * Mar * Ks * siga2 -
+                siga1 * P0(t) * beta_SI * phi * M * P2(t) * Mar * Ks * siga2 -
+                siga1 * P0(t) * beta_SI * phi * M * P2(t) * Ks * siga2^2 -
+                siga1 * P0(t) * beta_SI * phi * P2(t) * Mar * Ks^2 * siga2 -
+                siga1 * P0(t) * beta_SI * phi * P2(t) * Mar * Ks * siga2^2 +
+                siga1 * P0(t) * beta_SI * M * P2(t) * Mar * Ks * siga2 +
+                siga1 * P0(t) * beta_SI * M * P2(t) * Ks * siga2^2 +
+                siga1 * P0(t) * beta_SI * P2(t) * Mar * Ks^2 * siga2 +
+                siga1 * P0(t) * beta_SI * P2(t) * Mar * Ks * siga2^2 -
+                siga1 * P0(t) * P3(t) * phi * M * Mar * Ks * beta_SA +
+                siga1 * P0(t) * P3(t) * phi * M * Ks * siga2 * beta_SA +
+                siga1 * P0(t) * P3(t) * M * Mar * Ks * beta_SA +
+                siga1 * P0(t) * P3(t) * M * Ks * siga2 * beta_SA -
+                siga1 * P0(t) * phi * M^2 * P2(t) * Mar * Ks * beta_SA +
+                siga1 * P0(t) * phi * M^2 * P2(t) * Ks * siga2 * beta_SA -
+                siga1 * P0(t) * phi * M^2 * Mar * P5(t) * Ks * siga2^2 -
+                siga1 * P0(t) * phi * M^2 * Ks * beta * siga2^2 -
+                siga1 * P0(t) * phi * M * P2(t) * Mar * Ks^2 * beta_SA -
+                2 * siga1 * P0(t) * phi * M * P2(t) * Mar * Ks * siga2 * beta_SA +
+                siga1 * P0(t) * phi * M * P2(t) * Ks^2 * siga2 * beta_SA +
+                2 * siga1 * P0(t) * phi * M * P2(t) * Ks * siga2^2 * beta_SA +
+                siga1 * P0(t) * M^2 * P2(t) * Mar * Ks * beta_SA +
+                siga1 * P0(t) * M^2 * P2(t) * Ks * siga2 * beta_SA +
+                siga1 * P0(t) * M^2 * Mar * P5(t) * Ks * siga2^2 +
+                siga1 * P0(t) * M^2 * Ks * beta * siga2^2 +
+                siga1 * P0(t) * M * P2(t) * Mar * Ks^2 * beta_SA +
+                2 * siga1 * P0(t) * M * P2(t) * Mar * Ks * siga2 * beta_SA +
+                siga1 * P0(t) * M * P2(t) * Ks^2 * siga2 * beta_SA -
+                siga1 * P1(t)^2 * beta_SI * phi * M * Mar * Ks * siga2 -
+                siga1 * P1(t)^2 * beta_SI * phi * M * Mar * siga2^2 -
+                siga1 * P1(t)^2 * beta_SI * phi * M * Ks^2 * siga2 -
+                siga1 * P1(t)^2 * beta_SI * phi * M * Ks * siga2^2 -
+                siga1 * P1(t)^2 * beta_SI * phi * Mar * Ks * siga2^2 -
+                siga1 * P1(t)^2 * beta_SI * phi * Ks^2 * siga2^2 +
+                siga1 * P1(t)^2 * beta_SI * M * Mar * Ks * siga2 +
+                siga1 * P1(t)^2 * beta_SI * M * Mar * siga2^2 +
+                siga1 * P1(t)^2 * beta_SI * M * Ks^2 * siga2 +
+                siga1 * P1(t)^2 * beta_SI * M * Ks * siga2^2 +
+                siga1 * P1(t)^2 * beta_SI * Mar * Ks * siga2^2 +
+                siga1 * P1(t)^2 * beta_SI * Ks^2 * siga2^2 -
+                siga1 * P1(t)^2 * phi * M^2 * Mar * Ks * beta_SA -
+                siga1 * P1(t)^2 * phi * M^2 * Mar * siga2 * beta_SA +
+                siga1 * P1(t)^2 * phi * M^2 * Ks * siga2 * beta_SA +
+                siga1 * P1(t)^2 * phi * M^2 * siga2^2 * beta_SA -
+                siga1 * P1(t)^2 * phi * M * Mar * Ks^2 * beta_SA -
+                2 * siga1 * P1(t)^2 * phi * M * Mar * Ks * siga2 * beta_SA +
+                siga1 * P1(t)^2 * phi * M * Ks^2 * siga2 * beta_SA +
+                2 * siga1 * P1(t)^2 * phi * M * Ks * siga2^2 * beta_SA -
+                siga1 * P1(t)^2 * phi * Mar * Ks^2 * siga2 * beta_SA +
+                siga1 * P1(t)^2 * phi * Ks^2 * siga2^2 * beta_SA +
+                siga1 * P1(t)^2 * M^2 * Mar * Ks * beta_SA +
+                siga1 * P1(t)^2 * M^2 * Mar * siga2 * beta_SA +
+                siga1 * P1(t)^2 * M^2 * Ks^2 * beta_SA +
+                siga1 * P1(t)^2 * M^2 * Ks * siga2 * beta_SA +
+                siga1 * P1(t)^2 * M * Mar * Ks^2 * beta_SA +
+                2 * siga1 * P1(t)^2 * M * Mar * Ks * siga2 * beta_SA +
+                siga1 * P1(t)^2 * M * Ks^2 * siga2 * beta_SA +
+                siga1 * P1(t)^2 * Mar * Ks^2 * siga2 * beta_SA -
+                siga1 * P1(t) * beta_SI * P3(t) * phi * Mar * siga2 -
+                siga1 * P1(t) * beta_SI * P3(t) * phi * Ks * siga2 +
+                siga1 * P1(t) * beta_SI * P3(t) * Mar * siga2 +
+                siga1 * P1(t) * beta_SI * P3(t) * Ks * siga2 -
+                siga1 * P1(t) * beta_SI * phi * M * P2(t) * Mar * siga2 -
+                2 * siga1 * P1(t) * beta_SI * phi * M * P2(t) * Ks * siga2 -
+                siga1 * P1(t) * beta_SI * phi * M * P2(t) * siga2^2 -
+                siga1 * P1(t) * beta_SI * phi * P2(t) * Mar * Ks * siga2 -
+                siga1 * P1(t) * beta_SI * phi * P2(t) * Mar * siga2^2 -
+                siga1 * P1(t) * beta_SI * phi * P2(t) * Ks^2 * siga2 -
+                2 * siga1 * P1(t) * beta_SI * phi * P2(t) * Ks * siga2^2 +
+                siga1 * P1(t) * beta_SI * M * P2(t) * Mar * siga2 +
+                2 * siga1 * P1(t) * beta_SI * M * P2(t) * Ks * siga2 +
+                siga1 * P1(t) * beta_SI * M * P2(t) * siga2^2 +
+                siga1 * P1(t) * beta_SI * P2(t) * Mar * Ks * siga2 +
+                siga1 * P1(t) * beta_SI * P2(t) * Mar * siga2^2 +
+                siga1 * P1(t) * beta_SI * P2(t) * Ks^2 * siga2 +
+                2 * siga1 * P1(t) * beta_SI * P2(t) * Ks * siga2^2 -
+                siga1 * P1(t) * P3(t) * phi * M * Mar * beta_SA +
+                siga1 * P1(t) * P3(t) * phi * M * siga2 * beta_SA -
+                siga1 * P1(t) * P3(t) * phi * Mar * Ks * beta_SA +
+                siga1 * P1(t) * P3(t) * phi * Ks * siga2 * beta_SA +
+                siga1 * P1(t) * P3(t) * M * Mar * beta_SA +
+                2 * siga1 * P1(t) * P3(t) * M * Ks * beta_SA +
+                siga1 * P1(t) * P3(t) * M * siga2 * beta_SA +
+                siga1 * P1(t) * P3(t) * Mar * Ks * beta_SA +
+                siga1 * P1(t) * P3(t) * Ks * siga2 * beta_SA -
+                siga1 * P1(t) * phi * M^2 * P2(t) * Mar * beta_SA +
+                siga1 * P1(t) * phi * M^2 * P2(t) * siga2 * beta_SA -
+                siga1 * P1(t) * phi * M^2 * Mar * P5(t) * Ks * siga2 -
+                siga1 * P1(t) * phi * M^2 * Mar * P5(t) * siga2^2 -
+                siga1 * P1(t) * phi * M^2 * Ks * beta * siga2 -
+                siga1 * P1(t) * phi * M^2 * Ks * siga2^2 -
+                siga1 * P1(t) * phi * M^2 * beta * siga2^2 -
+                3 * siga1 * P1(t) * phi * M * P2(t) * Mar * Ks * beta_SA -
+                2 * siga1 * P1(t) * phi * M * P2(t) * Mar * siga2 * beta_SA +
+                3 * siga1 * P1(t) * phi * M * P2(t) * Ks * siga2 * beta_SA +
+                2 * siga1 * P1(t) * phi * M * P2(t) * siga2^2 * beta_SA -
+                siga1 * P1(t) * phi * M * Mar * P5(t) * Ks * siga2^2 -
+                siga1 * P1(t) * phi * M * Ks * beta * siga2^2 -
+                siga1 * P1(t) * phi * P2(t) * Mar * Ks^2 * beta_SA -
+                2 * siga1 * P1(t) * phi * P2(t) * Mar * Ks * siga2 * beta_SA +
+                siga1 * P1(t) * phi * P2(t) * Ks^2 * siga2 * beta_SA +
+                2 * siga1 * P1(t) * phi * P2(t) * Ks * siga2^2 * beta_SA +
+                siga1 * P1(t) * M^2 * P2(t) * Mar * beta_SA +
+                2 * siga1 * P1(t) * M^2 * P2(t) * Ks * beta_SA +
+                siga1 * P1(t) * M^2 * P2(t) * siga2 * beta_SA +
+                siga1 * P1(t) * M^2 * Mar * P5(t) * Ks * siga2 +
+                siga1 * P1(t) * M^2 * Mar * P5(t) * siga2^2 +
+                siga1 * P1(t) * M^2 * Ks * beta * siga2 +
+                siga1 * P1(t) * M^2 * Ks * siga2^2 +
+                siga1 * P1(t) * M^2 * beta * siga2^2 +
+                3 * siga1 * P1(t) * M * P2(t) * Mar * Ks * beta_SA +
+                2 * siga1 * P1(t) * M * P2(t) * Mar * siga2 * beta_SA +
+                2 * siga1 * P1(t) * M * P2(t) * Ks^2 * beta_SA +
+                3 * siga1 * P1(t) * M * P2(t) * Ks * siga2 * beta_SA +
+                siga1 * P1(t) * M * Mar * P5(t) * Ks * siga2^2 +
+                siga1 * P1(t) * M * Ks * beta * siga2^2 +
+                siga1 * P1(t) * P2(t) * Mar * Ks^2 * beta_SA +
+                2 * siga1 * P1(t) * P2(t) * Mar * Ks * siga2 * beta_SA +
+                siga1 * P1(t) * P2(t) * Ks^2 * siga2 * beta_SA -
+                siga1 * beta_SI * P3(t) * phi * P2(t) * siga2 +
+                siga1 * beta_SI * P3(t) * P2(t) * siga2 -
+                siga1 * beta_SI * phi * M * P2(t)^2 * siga2 -
+                siga1 * beta_SI * phi * P2(t)^2 * Ks * siga2 -
+                siga1 * beta_SI * phi * P2(t)^2 * siga2^2 +
+                siga1 * beta_SI * M * P2(t)^2 * siga2 +
+                siga1 * beta_SI * P2(t)^2 * Ks * siga2 +
+                siga1 * beta_SI * P2(t)^2 * siga2^2 +
+                siga1 * P3(t)^2 * beta_SA - siga1 * P3(t) * phi * M^2 * siga2 -
+                siga1 * P3(t) * phi * M * Mar * P5(t) * siga2 -
+                siga1 * P3(t) * phi * M * Ks * siga2 -
+                siga1 * P3(t) * phi * M * beta * siga2 -
+                siga1 * P3(t) * phi * M * siga2^2 -
+                siga1 * P3(t) * phi * P2(t) * Mar * beta_SA +
+                siga1 * P3(t) * phi * P2(t) * siga2 * beta_SA +
+                siga1 * P3(t) * M^2 * siga2 +
+                2 * siga1 * P3(t) * M * P2(t) * beta_SA +
+                siga1 * P3(t) * M * Mar * P5(t) * siga2 +
+                siga1 * P3(t) * M * Ks * siga2 +
+                siga1 * P3(t) * M * beta * siga2 +
+                siga1 * P3(t) * M * siga2^2 +
+                siga1 * P3(t) * P2(t) * Mar * beta_SA +
+                2 * siga1 * P3(t) * P2(t) * Ks * beta_SA +
+                siga1 * P3(t) * P2(t) * siga2 * beta_SA -
+                siga1 * phi * M^2 * P2(t) * Mar * P5(t) * siga2 -
+                siga1 * phi * M^2 * P2(t) * Ks * siga2 -
+                siga1 * phi * M^2 * P2(t) * beta * siga2 -
+                siga1 * phi * M^2 * P2(t) * siga2^2 - siga1 * phi * M * P4(t) * siga2 -
+                siga1 * phi * M * P2(t)^2 * Mar * beta_SA +
+                siga1 * phi * M * P2(t)^2 * siga2 * beta_SA -
+                siga1 * phi * M * P2(t) * Mar * P5(t) * Ks * siga2 -
+                siga1 * phi * M * P2(t) * Mar * P5(t) * siga2^2 -
+                siga1 * phi * M * P2(t) * Ks * beta * siga2 -
+                siga1 * phi * M * P2(t) * Ks * siga2^2 -
+                siga1 * phi * M * P2(t) * beta * siga2^2 -
+                siga1 * phi * P2(t)^2 * Mar * Ks * beta_SA -
+                siga1 * phi * P2(t)^2 * Mar * siga2 * beta_SA +
+                siga1 * phi * P2(t)^2 * Ks * siga2 * beta_SA +
+                siga1 * phi * P2(t)^2 * siga2^2 * beta_SA +
+                siga1 * M^2 * P2(t)^2 * beta_SA +
+                siga1 * M^2 * P2(t) * Mar * P5(t) * siga2 +
+                siga1 * M^2 * P2(t) * Ks * siga2 +
+                siga1 * M^2 * P2(t) * beta * siga2 +
+                siga1 * M^2 * P2(t) * siga2^2 +
+                siga1 * M * P4(t) * siga2 +
+                siga1 * M * P2(t)^2 * Mar * beta_SA +
+                2 * siga1 * M * P2(t)^2 * Ks * beta_SA +
+                siga1 * M * P2(t)^2 * siga2 * beta_SA +
+                siga1 * M * P2(t) * Mar * P5(t) * Ks * siga2 +
+                siga1 * M * P2(t) * Mar * P5(t) * siga2^2 +
+                siga1 * M * P2(t) * Ks * beta * siga2 +
+                siga1 * M * P2(t) * Ks * siga2^2 +
+                siga1 * M * P2(t) * beta * siga2^2 +
+                siga1 * P2(t)^2 * Mar * Ks * beta_SA +
+                siga1 * P2(t)^2 * Mar * siga2 * beta_SA +
+                siga1 * P2(t)^2 * Ks^2 * beta_SA +
+                siga1 * P2(t)^2 * Ks * siga2 * beta_SA -
+                P0(t) * P1(t) * beta_SI * phi * M * Mar * Ks^2 * siga2^2 +
+                P0(t) * P1(t) * beta_SI * M * Mar * Ks^2 * siga2^2 -
+                P0(t) * P1(t) * phi * M^2 * Mar * Ks^2 * siga2 * beta_SA +
+                P0(t) * P1(t) * phi * M^2 * Ks^2 * siga2^2 * beta_SA +
+                P0(t) * P1(t) * M^2 * Mar * Ks^2 * siga2 * beta_SA -
+                P0(t) * beta_SI * P3(t) * phi * M * Mar * Ks * siga2 -
+                P0(t) * beta_SI * P3(t) * phi * Mar * Ks^2 * siga2 -
+                P0(t) * beta_SI * P3(t) * phi * Mar * Ks * siga2^2 +
+                P0(t) * beta_SI * P3(t) * M * Mar * Ks * siga2 +
+                P0(t) * beta_SI * P3(t) * Mar * Ks^2 * siga2 +
+                P0(t) * beta_SI * P3(t) * Mar * Ks * siga2^2 -
+                P0(t) * beta_SI * phi * alpa * Mar * Ks * siga2 -
+                P0(t) * beta_SI * phi * M * P2(t) * Mar * Ks^2 * siga2 -
+                P0(t) * beta_SI * phi * M * P2(t) * Mar * Ks * siga2^2 -
+                P0(t) * beta_SI * phi * P4(t) * Mar * Ks * siga2 -
+                P0(t) * beta_SI * phi * P2(t) * Mar * Ks^2 * siga2^2 +
+                P0(t) * beta_SI * alpa * Mar * Ks * siga2 +
+                P0(t) * beta_SI * M * P2(t) * Mar * Ks^2 * siga2 +
+                P0(t) * beta_SI * M * P2(t) * Mar * Ks * siga2^2 +
+                P0(t) * beta_SI * P4(t) * Mar * Ks * siga2 +
+                P0(t) * beta_SI * P2(t) * Mar * Ks^2 * siga2^2 -
+                P0(t) * P3(t) * phi * M^2 * Mar * Ks * beta_SA +
+                P0(t) * P3(t) * phi * M^2 * Ks * siga2 * beta_SA -
+                P0(t) * P3(t) * phi * M * Mar * Ks^2 * beta_SA -
+                P0(t) * P3(t) * phi * M * Mar * Ks * siga2 * beta_SA +
+                P0(t) * P3(t) * phi * M * Ks^2 * siga2 * beta_SA +
+                P0(t) * P3(t) * phi * M * Ks * siga2^2 * beta_SA +
+                P0(t) * P3(t) * M^2 * Mar * Ks * beta_SA +
+                P0(t) * P3(t) * M * Mar * Ks^2 * beta_SA +
+                P0(t) * P3(t) * M * Mar * Ks * siga2 * beta_SA -
+                P0(t) * phi * alpa * M * Mar * Ks * beta_SA +
+                P0(t) * phi * alpa * M * Ks * siga2 * beta_SA -
+                P0(t) * phi * M^2 * P2(t) * Mar * Ks^2 * beta_SA -
+                P0(t) * phi * M^2 * P2(t) * Mar * Ks * siga2 * beta_SA +
+                P0(t) * phi * M^2 * P2(t) * Ks^2 * siga2 * beta_SA +
+                P0(t) * phi * M^2 * P2(t) * Ks * siga2^2 * beta_SA -
+                P0(t) * phi * M * P4(t) * Mar * Ks * beta_SA +
+                P0(t) * phi * M * P4(t) * Ks * siga2 * beta_SA -
+                P0(t) * phi * M * P2(t) * Mar * Ks^2 * siga2 * beta_SA +
+                P0(t) * phi * M * P2(t) * Ks^2 * siga2^2 * beta_SA +
+                P0(t) * alpa * M * Mar * Ks * beta_SA +
+                P0(t) * M^2 * P2(t) * Mar * Ks^2 * beta_SA +
+                P0(t) * M^2 * P2(t) * Mar * Ks * siga2 * beta_SA +
+                P0(t) * M * P4(t) * Mar * Ks * beta_SA +
+                P0(t) * M * P2(t) * Mar * Ks^2 * siga2 * beta_SA -
+                P1(t)^2 * beta_SI * phi * M * Mar * Ks * siga2^2 -
+                P1(t)^2 * beta_SI * phi * M * Ks^2 * siga2^2 +
+                P1(t)^2 * beta_SI * M * Mar * Ks * siga2^2 +
+                P1(t)^2 * beta_SI * M * Ks^2 * siga2^2 -
+                P1(t)^2 * phi * M^2 * Mar * Ks * siga2 * beta_SA +
+                P1(t)^2 * phi * M^2 * Ks * siga2^2 * beta_SA -
+                P1(t)^2 * phi * M * Mar * Ks^2 * siga2 * beta_SA +
+                P1(t)^2 * phi * M * Ks^2 * siga2^2 * beta_SA +
+                P1(t)^2 * M^2 * Mar * Ks * siga2 * beta_SA +
+                P1(t)^2 * M^2 * Ks^2 * siga2 * beta_SA +
+                P1(t)^2 * M * Mar * Ks^2 * siga2 * beta_SA -
+                P1(t) * beta_SI * P3(t) * phi * M * Mar * siga2 -
+                P1(t) * beta_SI * P3(t) * phi * M * Ks * siga2 -
+                P1(t) * beta_SI * P3(t) * phi * Mar * Ks * siga2 -
+                P1(t) * beta_SI * P3(t) * phi * Mar * siga2^2 -
+                P1(t) * beta_SI * P3(t) * phi * Ks^2 * siga2 -
+                P1(t) * beta_SI * P3(t) * phi * Ks * siga2^2 +
+                P1(t) * beta_SI * P3(t) * M * Mar * siga2 +
+                P1(t) * beta_SI * P3(t) * M * Ks * siga2 +
+                P1(t) * beta_SI * P3(t) * Mar * Ks * siga2 +
+                P1(t) * beta_SI * P3(t) * Mar * siga2^2 +
+                P1(t) * beta_SI * P3(t) * Ks^2 * siga2 +
+                P1(t) * beta_SI * P3(t) * Ks * siga2^2 -
+                P1(t) * beta_SI * phi * alpa * Mar * siga2 -
+                P1(t) * beta_SI * phi * alpa * Ks * siga2 -
+                P1(t) * beta_SI * phi * M * P2(t) * Mar * Ks * siga2 -
+                P1(t) * beta_SI * phi * M * P2(t) * Mar * siga2^2 -
+                P1(t) * beta_SI * phi * M * P2(t) * Ks^2 * siga2 -
+                2 * P1(t) * beta_SI * phi * M * P2(t) * Ks * siga2^2 -
+                P1(t) * beta_SI * phi * P4(t) * Mar * siga2 -
+                P1(t) * beta_SI * phi * P4(t) * Ks * siga2 -
+                P1(t) * beta_SI * phi * P2(t) * Mar * Ks * siga2^2 -
+                P1(t) * beta_SI * phi * P2(t) * Ks^2 * siga2^2 +
+                P1(t) * beta_SI * alpa * Mar * siga2 +
+                P1(t) * beta_SI * alpa * Ks * siga2 +
+                P1(t) * beta_SI * M * P2(t) * Mar * Ks * siga2 +
+                P1(t) * beta_SI * M * P2(t) * Mar * siga2^2 +
+                P1(t) * beta_SI * M * P2(t) * Ks^2 * siga2 +
+                2 * P1(t) * beta_SI * M * P2(t) * Ks * siga2^2 +
+                P1(t) * beta_SI * P4(t) * Mar * siga2 +
+                P1(t) * beta_SI * P4(t) * Ks * siga2 +
+                P1(t) * beta_SI * P2(t) * Mar * Ks * siga2^2 +
+                P1(t) * beta_SI * P2(t) * Ks^2 * siga2^2 -
+                P1(t) * P3(t) * phi * M^2 * Mar * beta_SA +
+                P1(t) * P3(t) * phi * M^2 * siga2 * beta_SA -
+                2 * P1(t) * P3(t) * phi * M * Mar * Ks * beta_SA -
+                P1(t) * P3(t) * phi * M * Mar * siga2 * beta_SA +
+                2 * P1(t) * P3(t) * phi * M * Ks * siga2 * beta_SA +
+                P1(t) * P3(t) * phi * M * siga2^2 * beta_SA -
+                P1(t) * P3(t) * phi * Mar * Ks^2 * beta_SA -
+                P1(t) * P3(t) * phi * Mar * Ks * siga2 * beta_SA +
+                P1(t) * P3(t) * phi * Ks^2 * siga2 * beta_SA +
+                P1(t) * P3(t) * phi * Ks * siga2^2 * beta_SA +
+                P1(t) * P3(t) * M^2 * Mar * beta_SA +
+                P1(t) * P3(t) * M^2 * Ks * beta_SA +
+                2 * P1(t) * P3(t) * M * Mar * Ks * beta_SA +
+                P1(t) * P3(t) * M * Mar * siga2 * beta_SA +
+                P1(t) * P3(t) * M * Ks^2 * beta_SA +
+                2 * P1(t) * P3(t) * M * Ks * siga2 * beta_SA +
+                P1(t) * P3(t) * Mar * Ks^2 * beta_SA +
+                P1(t) * P3(t) * Mar * Ks * siga2 * beta_SA -
+                P1(t) * phi * alpa * M * Mar * beta_SA +
+                P1(t) * phi * alpa * M * siga2 * beta_SA -
+                P1(t) * phi * alpa * Mar * Ks * beta_SA +
+                P1(t) * phi * alpa * Ks * siga2 * beta_SA -
+                P1(t) * phi * M^2 * P2(t) * Mar * Ks * beta_SA -
+                P1(t) * phi * M^2 * P2(t) * Mar * siga2 * beta_SA +
+                P1(t) * phi * M^2 * P2(t) * Ks * siga2 * beta_SA +
+                P1(t) * phi * M^2 * P2(t) * siga2^2 * beta_SA -
+                P1(t) * phi * M^2 * Mar * P5(t) * Ks * siga2^2 -
+                P1(t) * phi * M^2 * Ks * beta * siga2^2 -
+                P1(t) * phi * M * P4(t) * Mar * beta_SA +
+                P1(t) * phi * M * P4(t) * siga2 * beta_SA -
+                P1(t) * phi * M * P2(t) * Mar * Ks^2 * beta_SA -
+                3 * P1(t) * phi * M * P2(t) * Mar * Ks * siga2 * beta_SA +
+                P1(t) * phi * M * P2(t) * Ks^2 * siga2 * beta_SA +
+                3 * P1(t) * phi * M * P2(t) * Ks * siga2^2 * beta_SA -
+                P1(t) * phi * P4(t) * Mar * Ks * beta_SA +
+                P1(t) * phi * P4(t) * Ks * siga2 * beta_SA -
+                P1(t) * phi * P2(t) * Mar * Ks^2 * siga2 * beta_SA +
+                P1(t) * phi * P2(t) * Ks^2 * siga2^2 * beta_SA +
+                P1(t) * alpa * M * Mar * beta_SA +
+                P1(t) * alpa * M * Ks * beta_SA +
+                P1(t) * alpa * Mar * Ks * beta_SA +
+                P1(t) * M^2 * P2(t) * Mar * Ks * beta_SA +
+                P1(t) * M^2 * P2(t) * Mar * siga2 * beta_SA +
+                P1(t) * M^2 * P2(t) * Ks^2 * beta_SA +
+                2 * P1(t) * M^2 * P2(t) * Ks * siga2 * beta_SA +
+                P1(t) * M^2 * Mar * P5(t) * Ks * siga2^2 +
+                P1(t) * M^2 * Ks * beta * siga2^2 +
+                P1(t) * M * P4(t) * Mar * beta_SA +
+                P1(t) * M * P4(t) * Ks * beta_SA +
+                P1(t) * M * P2(t) * Mar * Ks^2 * beta_SA +
+                3 * P1(t) * M * P2(t) * Mar * Ks * siga2 * beta_SA +
+                2 * P1(t) * M * P2(t) * Ks^2 * siga2 * beta_SA +
+                P1(t) * P4(t) * Mar * Ks * beta_SA +
+                P1(t) * P2(t) * Mar * Ks^2 * siga2 * beta_SA -
+                beta_SI * P3(t) * phi * M * P2(t) * siga2 -
+                beta_SI * P3(t) * phi * P2(t) * Ks * siga2 -
+                beta_SI * P3(t) * phi * P2(t) * siga2^2 +
+                beta_SI * P3(t) * M * P2(t) * siga2 +
+                beta_SI * P3(t) * P2(t) * Ks * siga2 +
+                beta_SI * P3(t) * P2(t) * siga2^2 -
+                beta_SI * phi * alpa * P2(t) * siga2 -
+                beta_SI * phi * M * P2(t)^2 * Ks * siga2 -
+                beta_SI * phi * M * P2(t)^2 * siga2^2 -
+                beta_SI * phi * P4(t) * P2(t) * siga2 -
+                beta_SI * phi * P2(t)^2 * Ks * siga2^2 +
+                beta_SI * alpa * P2(t) * siga2 +
+                beta_SI * M * P2(t)^2 * Ks * siga2 +
+                beta_SI * M * P2(t)^2 * siga2^2 +
+                beta_SI * P4(t) * P2(t) * siga2 +
+                beta_SI * P2(t)^2 * Ks * siga2^2 +
+                P3(t)^2 * M * beta_SA +
+                P3(t)^2 * Ks * beta_SA +
+                P3(t)^2 * siga2 * beta_SA - P3(t) * phi * M^2 * Mar * P5(t) * siga2 -
+                P3(t) * phi * M^2 * Ks * siga2 - P3(t) * phi * M^2 * beta * siga2 -
+                P3(t) * phi * M^2 * siga2^2 - P3(t) * phi * M * P2(t) * Mar * beta_SA +
+                P3(t) * phi * M * P2(t) * siga2 * beta_SA -
+                P3(t) * phi * M * Mar * P5(t) * Ks * siga2 -
+                P3(t) * phi * M * Mar * P5(t) * siga2^2 -
+                P3(t) * phi * M * Ks * beta * siga2 - P3(t) * phi * M * Ks * siga2^2 -
+                P3(t) * phi * M * beta * siga2^2 -
+                P3(t) * phi * P2(t) * Mar * Ks * beta_SA -
+                P3(t) * phi * P2(t) * Mar * siga2 * beta_SA +
+                P3(t) * phi * P2(t) * Ks * siga2 * beta_SA +
+                P3(t) * phi * P2(t) * siga2^2 * beta_SA +
+                P3(t) * alpa * beta_SA +
+                P3(t) * M^2 * P2(t) * beta_SA +
+                P3(t) * M^2 * Mar * P5(t) * siga2 +
+                P3(t) * M^2 * Ks * siga2 +
+                P3(t) * M^2 * beta * siga2 +
+                P3(t) * M^2 * siga2^2 +
+                P3(t) * M * P2(t) * Mar * beta_SA +
+                3 * P3(t) * M * P2(t) * Ks * beta_SA +
+                2 * P3(t) * M * P2(t) * siga2 * beta_SA +
+                P3(t) * M * Mar * P5(t) * Ks * siga2 +
+                P3(t) * M * Mar * P5(t) * siga2^2 +
+                P3(t) * M * Ks * beta * siga2 +
+                P3(t) * M * Ks * siga2^2 +
+                P3(t) * M * beta * siga2^2 +
+                P3(t) * P4(t) * beta_SA +
+                P3(t) * P2(t) * Mar * Ks * beta_SA +
+                P3(t) * P2(t) * Mar * siga2 * beta_SA +
+                P3(t) * P2(t) * Ks^2 * beta_SA +
+                2 * P3(t) * P2(t) * Ks * siga2 * beta_SA -
+                phi * alpa * M * Mar * P5(t) * siga2 - phi * alpa * M * beta * siga2 -
+                phi * alpa * P2(t) * Mar * beta_SA +
+                phi * alpa * P2(t) * siga2 * beta_SA - phi * M^2 * P4(t) * siga2 -
+                phi * M^2 * P2(t) * Mar * P5(t) * Ks * siga2 -
+                phi * M^2 * P2(t) * Mar * P5(t) * siga2^2 -
+                phi * M^2 * P2(t) * Ks * beta * siga2 -
+                phi * M^2 * P2(t) * Ks * siga2^2 - phi * M^2 * P2(t) * beta * siga2^2 -
+                phi * M * P4(t) * Mar * P5(t) * siga2 - phi * M * P4(t) * Ks * siga2 -
+                phi * M * P4(t) * beta * siga2 - phi * M * P4(t) * siga2^2 -
+                phi * M * P2(t)^2 * Mar * Ks * beta_SA -
+                phi * M * P2(t)^2 * Mar * siga2 * beta_SA +
+                phi * M * P2(t)^2 * Ks * siga2 * beta_SA +
+                phi * M * P2(t)^2 * siga2^2 * beta_SA -
+                phi * M * P2(t) * Mar * P5(t) * Ks * siga2^2 -
+                phi * M * P2(t) * Ks * beta * siga2^2 -
+                phi * P4(t) * P2(t) * Mar * beta_SA +
+                phi * P4(t) * P2(t) * siga2 * beta_SA -
+                phi * P2(t)^2 * Mar * Ks * siga2 * beta_SA +
+                phi * P2(t)^2 * Ks * siga2^2 * beta_SA +
+                alpa * M * P2(t) * beta_SA +
+                alpa * M * Mar * P5(t) * siga2 +
+                alpa * M * beta * siga2 +
+                alpa * P2(t) * Mar * beta_SA +
+                alpa * P2(t) * Ks * beta_SA +
+                M^2 * P4(t) * siga2 +
+                M^2 * P2(t)^2 * Ks * beta_SA +
+                M^2 * P2(t)^2 * siga2 * beta_SA +
+                M^2 * P2(t) * Mar * P5(t) * Ks * siga2 +
+                M^2 * P2(t) * Mar * P5(t) * siga2^2 +
+                M^2 * P2(t) * Ks * beta * siga2 +
+                M^2 * P2(t) * Ks * siga2^2 +
+                M^2 * P2(t) * beta * siga2^2 +
+                M * P4(t) * P2(t) * beta_SA +
+                M * P4(t) * Mar * P5(t) * siga2 +
+                M * P4(t) * Ks * siga2 +
+                M * P4(t) * beta * siga2 +
+                M * P4(t) * siga2^2 +
+                M * P2(t)^2 * Mar * Ks * beta_SA +
+                M * P2(t)^2 * Mar * siga2 * beta_SA +
+                M * P2(t)^2 * Ks^2 * beta_SA +
+                2 * M * P2(t)^2 * Ks * siga2 * beta_SA +
+                M * P2(t) * Mar * P5(t) * Ks * siga2^2 +
+                M * P2(t) * Ks * beta * siga2^2 +
+                P4(t) * P2(t) * Mar * beta_SA +
+                P4(t) * P2(t) * Ks * beta_SA +
+                P2(t)^2 * Mar * Ks * siga2 * beta_SA +
+                P2(t)^2 * Ks^2 * siga2 * beta_SA
+            ) // (phi * M * siga2 - M * siga2),
+        P1'(t) = P2(t),
+        P2'(t) = P3(t),
+        y(t) = P0(t)
+    )
+
+    sliqr = StructuralIdentifiability.@ODEmodel(
+        S'(t) = -b * In(t) * S(t) * Ninv - u(t) * S(t) * Ninv,
+        L'(t) = b * In(t) * S(t) * Ninv - a * L(t),
+        In'(t) = a * L(t) - g * In(t) + s * Q(t),
+        Q'(t) = (1 - e) * g * In(t) - s * Q(t),
+        y(t) = In(t) * Ninv
+    )
+
     using Nemo, Logging
     Groebner = StructuralIdentifiability.Groebner
     ParamPunPam = StructuralIdentifiability.ParamPunPam
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-funcs = StructuralIdentifiability.find_identifiable_functions(Bilirubin2_io)
+ode = StructuralIdentifiability.@ODEmodel(x1'(t) = a * x1(t), y(t) = x1)
 
-@time StructuralIdentifiability.find_identifiable_functions(siwr)
+funcs0 = StructuralIdentifiability.find_identifiable_functions(St, strategy = (:gb,))
+
+rff = StructuralIdentifiability.RationalFunctionField(funcs0)
+mqs = rff.mqs;
+K = GF(2^31 - 1)
+StructuralIdentifiability.ParamPunPam.reduce_mod_p!(mqs, K)
+R = parent(mqs)
+n = nvars(R)
+xs = gens(R)
+point = map(i -> rand(K), 1:(n - 1))
+F = StructuralIdentifiability.ParamPunPam.specialize_mod_p(mqs, point)
+ordering(parent(F[1]))
+
+include("sugar.jl")
+
+F_lex = map(f -> Groebner.change_ordering(f, :lex)[1], F)
+ordering(parent(F_lex[1]))
+
+gb(F_lex)
+
+Groebner.isgroebner(gb(F))
+
+for i in 1:(n - 1)
+    ord = Groebner.DegRevLex(xs[1:i]) * Groebner.DegRevLex(xs[(i + 1):end])
+    @time Groebner.groebner(F, ordering = ord)
+end
+
+for i in 1:(n - 1)
+    ord = Groebner.DegRevLex(xs[1:i]) * Groebner.DegRevLex(xs[(i + 1):end])
+    @time Groebner.groebner(F, ordering = ord)
+end
+
+funcs2 = StructuralIdentifiability.find_identifiable_functions(
+    St,
+    strategy = (:gb,),
+    with_states = true,
+)
+
+funcs1 = StructuralIdentifiability.find_identifiable_functions(
+    qy,
+    strategy = (:normalforms, 3),
+    with_states = false,
+)
+
+funcs3 = StructuralIdentifiability.find_identifiable_functions(
+    qy,
+    strategy = (:hybrid,),
+    with_states = false,
+)
+
+R, (a, b, c) = QQ["a", "b", "c"]
+f = [a^2 + a + b + 1, a^2, (a + b) * c]
+StructuralIdentifiability._runtime_logger[:id_inclusion_check_mod_p] = 0.0
+rff = StructuralIdentifiability.RationalFunctionField(f);
+StructuralIdentifiability.linear_relations_between_normal_forms(rff, 1)
+
+rff = StructuralIdentifiability.RationalFunctionField(funcs0)
+@my_profview StructuralIdentifiability.linear_relations_between_normal_forms(rff, 3)
+
+funcs000 = StructuralIdentifiability.find_identifiable_functions(
+    fujita,
+    strategy = (:hybrid,),
+    with_states = true,
+)
+
+funcs00 = StructuralIdentifiability.find_identifiable_functions(
+    sliqr,
+    strategy = (:gb,),
+    with_states = true,
+)
+
+funcs1 = StructuralIdentifiability.find_identifiable_functions(sliqr)
+
+funcs2 = StructuralIdentifiability.find_identifiable_functions(
+    sliqr,
+    strategy = (:normalforms, 3),
+)
+
+funcs3 =
+    StructuralIdentifiability.find_identifiable_functions(sliqr, strategy = (:gbfan, 3))
+
+funcs4 = StructuralIdentifiability.find_identifiable_functions(sliqr, strategy = (:hybrid,))
+
+@time StructuralIdentifiability.find_identifiable_functions(sliqr)
+
+@time StructuralIdentifiability.describe_identifiable_pool(sliqr)
 
 for (name, system) in ((:qwwc, qwwc), (:MAPK_5_outputs, MAPK_5_outputs))
     id_funcs = StructuralIdentifiability.find_identifiable_functions(system)
@@ -458,9 +1045,35 @@ end
 #####################
 #####################
 
-@time mqs = StructuralIdentifiability.IdealMQS(identifiable_functions_raw)
+import AbstractAlgebra
 
-p = Nemo.GF(2^62 + 169)
+io_equations = StructuralIdentifiability.find_ioequations(pk2);
+identifiable_functions_raw = StructuralIdentifiability.extract_identifiable_functions_raw(
+    io_equations,
+    pk2,
+    empty(pk2.parameters),
+    false,
+);
+
+@time mqs = StructuralIdentifiability.IdealMQS(identifiable_functions_raw);
+
+p = Nemo.GF(fmpz(2^62 + 135))
+
+prnt = AbstractAlgebra._change_mpoly_ring(
+    AbstractAlgebra.parent(zero(p)),
+    AbstractAlgebra.parent(mqs.dens_qq[1]),
+    true,
+)
+
+f = mqs.nums_qq[1]
+@benchmark map(
+    poly -> map_coefficients(c -> p(Int(numerator(c))), poly, parent = prnt),
+    $(mqs.nums_qq),
+)
+@benchmark map(poly -> map_coefficients(c -> p(Int(numerator(c))), poly), $(mqs.nums_qq))
+@benchmark map(poly -> map_coefficients(c -> p(c), poly), $(mqs.nums_qq))
+
+@my_profview map(poly -> map_coefficients(c -> p(c), poly), (mqs.nums_qq))
 
 @time StructuralIdentifiability.ParamPunPam.reduce_mod_p!(mqs, p)
 point = rand(p, length(Nemo.gens(StructuralIdentifiability.ParamPunPam.parent_params(mqs))))

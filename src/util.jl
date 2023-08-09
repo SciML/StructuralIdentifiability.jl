@@ -192,7 +192,9 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :by
         if degree(poly, i) > 0 && iszero(var_mapping[i])
             throw(
                 Base.ArgumentError(
-                    "The polynomial $poly contains a variable $(gens(old_ring)[i]) not present in the new ring",
+                    """
+                    The polynomial $poly contains a variable $(gens(old_ring)[i]) not present in the new ring.
+                    New ring variables are $(gens(new_ring)))""",
                 ),
             )
         end
@@ -280,17 +282,14 @@ end
 # ------------------------------------------------------------------------------
 
 function fast_factor(poly::MPolyElem{fmpq})
-    runtime = @elapsed prelim_factors = uncertain_factorization(poly)
-    _runtime_logger[:id_uncertain_factorization] += runtime
+    prelim_factors = uncertain_factorization(poly)
     cert_factors = map(pair -> pair[1], filter(f -> f[2], prelim_factors))
     uncert_factors = map(pair -> pair[1], filter(f -> !f[2], prelim_factors))
-    runtime = @elapsed for p in uncert_factors
+    for p in uncert_factors
         for f in Nemo.factor(p)
             push!(cert_factors, f[1])
         end
     end
-    _runtime_logger[:id_nemo_factor] += runtime
-    push!(_runtime_logger[:id_certain_factors], cert_factors)
     return cert_factors
 end
 

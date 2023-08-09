@@ -1,5 +1,6 @@
 # TODO: read benchmarks.jl, create and populate output directory from scratch
 
+using ArgParse
 using CpuId, Logging, Pkg, Printf
 using Base.Threads
 using Distributed
@@ -12,94 +13,150 @@ using StructuralIdentifiability.ParamPunPam
 logger = Logging.SimpleLogger(stdout, Logging.Info)
 global_logger(logger)
 
-ID_TIME_CATEGORIES = [
-    :id_io_time,
-    # :id_primality_evaluate,
-    # :id_uncertain_factorization,
-    :id_global_time,
-    :id_inclusion_check,
-    :id_inclusion_check_mod_p,
-    :id_groebner_time,
-    :id_total,
-]
-ALL_CATEGORIES = ID_TIME_CATEGORIES
+include("benchmarks.jl")
+include("utils.jl")
 
-HUMAN_READABLE = Dict(
-    :id_io_time => "io",
-    :id_primality_evaluate => "io/primality-evaluate",
-    :id_uncertain_factorization => "io/uncertain-factor",
-    :id_global_time => "global id.",
-    :id_ideal_time => "gen. ideal",
-    :id_inclusion_check => "inclusion",
-    :id_inclusion_check_mod_p => "inclusion Zp",
-    :id_groebner_time => "ParamPunPam.jl",
-    :id_total => "total",
-)
+function parse_commandline()
+    s = ArgParseSettings()
+    #! format: off
+    @add_arg_table s begin
+        "--timeout"
+            help = "Timeout, s."
+            arg_type = Int
+            default = 600
+        "--skip"
+            help = "Systems to skip."
+            arg_type = Vector{String}
+            default = ["NFkB"]
+        "--regen"
+            help = "Re-generate the folder with benchmarks from scratch."
+            arg_type = Bool
+            default = true
+        "--keywords"
+            help = """
+            Keyword arguments to `find_identifiable_functions`. 
+            Semicolon-separated list of named tuples."""
+            default = String
+            default = "(strategy=(:gb, ),); (strategy=(:normalforms, 2),)"
+    end
+    #! format: on
 
-TO_SKIP = []
-TO_RUN = []
-TIMEOUT = 10800
+    parse_args(s)
+end
 
-function run_benchmarks()
+function populate_benchmarks(args, kwargs)
+    regen = args["regen"]
+    !regen && return true
+    @info "Re-generating the benchmarks folder"
+    try
+        if isdir((@__DIR__) * "/systems/")
+            rm((@__DIR__) * "/systems/", recursive = true, force = true)
+        end
+    catch err
+        @info "Something went wrong when deleting the benchmarks folder"
+        showerror(stdout, err)
+        println(stdout)
+    end
+    for bmark in benchmarks
+        name = bmark[:name]
+        system = bmark[:ode]
+        @info "Generating $name"
+        mkpath((@__DIR__) * "/systems/$name/")
+        fd = open((@__DIR__) * "/systems/$name/$name.jl", "w")
+        println(fd, "# $name")
+        println(fd, "#! format: off")
+        println(fd, "using StructuralIdentifiability")
+        println(fd, "")
+        ode = join(map(s -> "\t" * s, split(repr(system), "\n")[1:(end - 1)]), ",\n")
+        println(fd, "system = @ODEmodel(\n$ode\n)")
+        close(fd)
+    end
+    true
+end
+
+function run_benchmarks(args, kwargs)
+    to_skip = args["skip"]
+    timeout = args["timeout"]
     dirnames = first(walkdir((@__DIR__) * "/systems/"))[2]
-    to_run = isempty(TO_RUN) ? dirnames : intersect(dirnames, TO_RUN)
-    to_run = setdiff(to_run, TO_SKIP)
+    to_run = setdiff(dirnames, to_skip)
     to_run_indices = collect(1:length(to_run))
     to_run_names = to_run
+
+    nworkers = cpucores()
+
     @info """
     Running benchmarks.
     Number of benchmarks: $(length(to_run_indices))
-    Workers: $(length(workers()))
-    Timeout: $TIMEOUT sec."""
+    Workers: $(nworkers)
+    Timeout: $timeout sec.
+    Keywords for `find_identifiable_functions`:
+        $kwargs"""
     @info """
     Benchmark systems:
     $to_run_names"""
-    procs = []
-    log_fd = []
 
     start_time = time_ns()
-    for idx in to_run_indices
-        name = to_run_names[idx]
-        logs = open((@__DIR__) * "/systems/$name/logs", "w")
-        cmd = Cmd(["julia", (@__DIR__) * "/run_single_benchmark.jl", "$name"])
-        cmd = Cmd(cmd, ignorestatus = true, detach = false, env = copy(ENV))
-        proc = run(pipeline(cmd, stdout = logs, stderr = logs), wait = false)
-        push!(log_fd, logs)
-        push!(procs, (index = idx, name = name, proc = proc))
-    end
+    seconds_passed(start_time) = round((time_ns() - start_time) / 1e9, digits = 2)
 
-    ns_to_sec(start_time) = round((time_ns() - start_time) / 1e9, digits = 2)
-
+    queue = to_run_indices
+    procs = []
+    log_fd = []
+    keywords = []
     exited = []
-    @label Wait
-    sleep(1.0)
-    i = 1
-    for i in 1:length(procs)
-        i in exited && continue
-        proc = procs[i]
-        if process_exited(proc.proc)
-            push!(exited, i)
-            close(log_fd[i])
-            @info "Benchmark $(proc.name) yielded in $(ns_to_sec(start_time)) seconds"
+    running = 0
+
+    while true
+        if !isempty(queue) && running < (nworkers + length(kwargs))
+            idx = pop!(queue)
+            for kw in kwargs
+                name = to_run_names[idx]
+                id = keywords_to_id(kw)
+                @info "Running $name / $id"
+                logs = open((@__DIR__) * "/systems/$name/logs_$id", "w")
+                cmd =
+                    Cmd(["julia", (@__DIR__) * "/run_single_benchmark.jl", "$name", "$kw"])
+                cmd = Cmd(cmd, ignorestatus = true, detach = false, env = copy(ENV))
+                proc = run(pipeline(cmd, stdout = logs, stderr = logs), wait = false)
+                push!(log_fd, logs)
+                push!(keywords, kw)
+                push!(procs, (index = idx, name = name, proc = proc))
+                running += 1
+            end
         end
-    end
-    if ns_to_sec(start_time) > TIMEOUT
-        @warn "Timed out after $(ns_to_sec(start_time)) seconds"
+
+        sleep(1.0)
+        i = 1
         for i in 1:length(procs)
             i in exited && continue
-            kill(procs[i].proc)
-            close(log_fd[i])
+            proc = procs[i]
+            if process_exited(proc.proc)
+                running -= 1
+                push!(exited, i)
+                close(log_fd[i])
+                kw = keywords[i]
+                @info "Yielded $(proc.name) / $(kw) after $(seconds_passed(start_time)) seconds"
+            end
         end
-    elseif length(exited) == length(procs)
-        @info "All benchmarks finished"
-    else
-        @goto Wait
+        if seconds_passed(start_time) > timeout
+            @warn "Timed out after $(seconds_passed(start_time)) seconds"
+            for i in 1:length(procs)
+                i in exited && continue
+                kill(procs[i].proc)
+                close(log_fd[i])
+                kw = keywords[i]
+                @info "Benchmark $(procs[i].name) / $(kw) killed after $(seconds_passed(start_time)) seconds"
+            end
+            break
+        elseif length(exited) == length(procs)
+            @info "All benchmarks finished"
+            break
+        end
     end
 
     to_run_names
 end
 
-function collect_timings(names)
+function collect_timings(args, kwargs, names; content = :compare)
     resulting_md = ""
 
     resulting_md *= """
@@ -107,47 +164,74 @@ function collect_timings(names)
 
     $(now())
 
-
+    Timeout: $(args["timeout"]) s
     """
 
     names = sort(names)
     runtimes = Dict()
     for name in names
-        timings = nothing
         runtimes[name] = Dict()
-        try
-            timings = open((@__DIR__) * "/systems/$name/timings", "r")
-        catch e
-            @warn "Cannot collect timings for $name"
-            continue
+        for kw in kwargs
+            timings = nothing
+            id = keywords_to_id(kw)
+            runtimes[name][id] = Dict()
+            try
+                timings = open((@__DIR__) * "/systems/$name/timings_$id", "r")
+            catch e
+                @warn "Cannot collect timings for $name / $id"
+                continue
+            end
+            lines = readlines(timings)
+            if isempty(lines)
+                @warn "Cannot collect timings for $name / $id"
+                continue
+            end
+            @assert lines[1] == name
+            for line in lines[2:end]
+                k, v = split(line, ", ")
+                runtimes[name][id][Symbol(k)] = parse(Float64, v)
+            end
+            close(timings)
         end
-        lines = readlines(timings)
-        if isempty(lines)
-            @warn "Cannot collect timings for $name"
-            continue
-        end
-        @assert lines[1] == name
-        for line in lines[2:end]
-            k, v = split(line, ", ")
-            runtimes[name][Symbol(k)] = parse(Float64, v)
-        end
-        close(timings)
     end
 
-    resulting_md *=
-        "|Model|" * join(map(c -> HUMAN_READABLE[c], ALL_CATEGORIES), "|") * "|\n"
-    resulting_md *= "|-----|" * join(["---" for _ in ALL_CATEGORIES], "|") * "|\n"
-    for name in names
-        times = runtimes[name]
-        resulting_md *= "|$name|"
-        for c in ALL_CATEGORIES
-            if isempty(times)
-                resulting_md *= " - " * "|"
-            else
-                resulting_md *= @sprintf("%.2f", times[c]) * "|"
+    if content === :compare
+        ids = map(keywords_to_id, kwargs)
+        resulting_md *= "|Model|" * join(map(String ∘ Symbol, ids), "|") * "|\n"
+        resulting_md *= "|-----|" * join(["---" for _ in ids], "|") * "|\n"
+        for name in names
+            times = runtimes[name]
+            resulting_md *= "|$name|"
+            for c in ids
+                if isempty(times[c])
+                    resulting_md *= " - " * "|"
+                else
+                    resulting_md *= @sprintf("%.2f", times[c][:id_total]) * "|"
+                end
             end
+            resulting_md *= "\n"
         end
-        resulting_md *= "\n"
+    else
+        kw = first(kwargs)
+        id = keywords_to_id(kw)
+        resulting_md *= "\nKeywords:\n$kw\n"
+        resulting_md *=
+            "|Model|" *
+            join(map(c -> HUMAN_READABLE_CATEGORIES[c], ALL_CATEGORIES), "|") *
+            "|\n"
+        resulting_md *= "|-----|" * join(["---" for _ in ALL_CATEGORIES], "|") * "|\n"
+        for name in names
+            times = runtimes[name]
+            resulting_md *= "|$name|"
+            for c in ALL_CATEGORIES
+                if isempty(times)
+                    resulting_md *= " - " * "|"
+                else
+                    resulting_md *= @sprintf("%.2f", times[c]) * "|"
+                end
+            end
+            resulting_md *= "\n"
+        end
     end
 
     resulting_md *= "\n*Benchmarking environment:*\n\n"
@@ -169,5 +253,18 @@ function collect_timings(names)
     end
 end
 
-names = run_benchmarks()
-collect_timings(names)
+function main()
+    args = parse_commandline()
+    kwargs = parse_keywords(args["keywords"])
+    @info "Command-line args:"
+    for (arg, val) in args
+        @info "$arg  =>  $val"
+    end
+    @info "Keywords for `find_identifiable_functions`"
+    @info kwargs
+    flag = populate_benchmarks(args, kwargs)
+    systems = run_benchmarks(args, kwargs)
+    collect_timings(args, kwargs, systems, content = :compare)
+end
+
+main()

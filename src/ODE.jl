@@ -22,16 +22,13 @@ struct ODE{P}
         # Initialize ODE
         # x_eqs is a dictionary x_i => f_i(x, u, params)
         # y_eqs is a dictionary y_i => g_i(x, u, params)
+        if isempty(y_eqs)
+            @info "Could not find output variables in the model."
+        end
         if !isempty(x_eqs)
             num, _ = unpack_fraction(first(values(x_eqs)))
-        elseif !isempty(y_eqs)
-            num, _ = unpack_fraction(first(values(y_eqs)))
         else
-            throw(
-                DomainError(
-                    "Cannot create an ODE{$P} with no states and no observables :(",
-                ),
-            )
+            num, _ = unpack_fraction(first(values(y_eqs)))
         end
         poly_ring = parent(num)
         x_vars = collect(keys(x_eqs))
@@ -378,6 +375,18 @@ macro ODEmodel(ex::Expr...)
         else
             throw("Unknown left-hand side $lhs")
         end
+
+        uniqueness_check_expr = quote
+            if haskey($to_insert, $lhs)
+                throw(
+                    DomainError(
+                        $lhs,
+                        "The variable occurs twice in the left-hand-side of the ODE system",
+                    ),
+                )
+            end
+        end
+        push!(eqs_expr, uniqueness_check_expr)
         if isempty(loc_all_symb)
             push!(eqs_expr, :($to_insert[$lhs] = $R($rhs)))
         else

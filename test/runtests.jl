@@ -81,6 +81,6 @@ end
 @test isempty(Test.detect_ambiguities(StructuralIdentifiability))
 @test isempty(Test.detect_unbound_args(StructuralIdentifiability))
 
-@testset "All the tests" begin
+@time @testset "All the tests" verbose = true begin
     @includetests ARGS
 end
