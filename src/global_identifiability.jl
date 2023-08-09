@@ -65,9 +65,15 @@ function check_identifiability(
         extract_identifiable_functions_raw(io_equations, ode, known, states_needed)
     bring = parent(first(first(identifiable_functions_raw)))
 
-    funcs_to_check = map(f -> parent_ring_change(f, bring), funcs_to_check)
+    funcs_to_check = Vector{Generic.Frac{P}}(
+        map(f -> parent_ring_change(f, bring) // one(bring), funcs_to_check),
+    )
 
-    return check_field_membership(identifiable_functions_raw, funcs_to_check, p)
+    return field_contains(
+        RationalFunctionField(identifiable_functions_raw),
+        funcs_to_check,
+        p,
+    )
 end
 
 function check_identifiability(

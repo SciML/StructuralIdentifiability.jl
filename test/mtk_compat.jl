@@ -31,12 +31,12 @@
     eqs = [D(x) ~ (-V_m * x) / (k_m + x) + k01 * x, y1 ~ c * x]
     de = ODESystem(eqs, t, name = :Test)
 
-    correct = [k01, c*k_m, V_m / k_m]
+    correct = [k01, c * k_m, V_m / k_m]
     result = find_identifiable_functions(de)
     @test isequal(Set(correct), Set(result))
 
     correct = [c * k_m + c * x, x / k_m, k01, V_m / k_m]
-    result = find_identifiable_functions(de, with_states=true)
+    result = find_identifiable_functions(de, with_states = true)
     @test isequal(Set(correct), Set(result))
 
     # --------------------------------------------------------------------------
@@ -147,7 +147,7 @@
     # checking identifiabile functions
     correct = [a, bw, χ, bi, k, γ, μ]
     result = find_identifiable_functions(de, measured_quantities = measured_quantities)
-    @test isequal(Set(correct), Set(result)) 
+    @test isequal(Set(correct), Set(result))
 
     # --------------------------------------------------------------------------
     @parameters mu bi bw a xi gm k
@@ -274,7 +274,7 @@
     )
 
     # check identifiabile functions
-    result = find_identifiable_functions(de, measured_quantities=measured_quantities)
+    result = find_identifiable_functions(de, measured_quantities = measured_quantities)
     correct = [b, a, c^2]
     @test isequal(Set(result), Set(correct))
 
