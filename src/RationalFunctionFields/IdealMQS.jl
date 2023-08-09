@@ -25,6 +25,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     # NB: this lists may have different length
     nums_qq::Vector{T}
     dens_qq::Vector{T}
+    sat_qq::T
     # dens_indices[i] is a pair of form (from, to).
     # Denominator as index i corresponds to numerators at indices [from..to]
     dens_indices::Vector{Tuple{Int, Int}}
@@ -32,9 +33,15 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     pivots_indices::Vector{Int}
     den_lcm::T
     sat_var_index::Int
+    # Numerators and denominators over GF. 
+    # We cache them and maintain a map:
+    # a finite field --> an image over this finite field
+    nums_gf::Dict{Any, Any}
+    dens_gf::Dict{Any, Any}
+    sat_gf::Dict{Any, Any}
     # Cached GBs
     groebner_bases::Dict{Any, Any}
-
+ 
     """
         IdealMQS(funcs_den_nums::Vector{Vector})
 
@@ -126,10 +133,14 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
             parent_ring_param,
             nums_qq,
             dens_qq,
+            sat_qq,
             dens_indices,
             pivots_indices,
             den_lcm,
             sat_var_index,
+            Dict(),
+            Dict(),
+            Dict(),
             Dict(),
         )
     end
