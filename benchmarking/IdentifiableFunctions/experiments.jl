@@ -6,7 +6,7 @@ begin
 
     macro my_profview(ex)
         :((VSCodeServer.Profile).clear();
-        VSCodeServer.Profile.init(n = 10^8, delay = 0.0000001);
+        VSCodeServer.Profile.init(n = 10^8, delay = 0.000001);
         VSCodeServer.Profile.start_timer();
         $ex;
         VSCodeServer.Profile.stop_timer();
@@ -140,6 +140,41 @@ begin
         z'(t) = -c * z(t) - d * w(t) + x(t) * y(t),
         w'(t) = e * z(t) - f * w(t) + x(t) * y(t),
         g(t) = x(t)
+    )
+
+    akt = StructuralIdentifiability.@ODEmodel(
+        EGFR'(t) =
+            -reaction_1_k1 * EGF_EGFR(t) + reaction_1_k2 * EGF_EGFR(t) -
+            EGFR(t) * EGFR_turnover + EGFR_turnover * pro_EGFR(t),
+        pAkt'(t) =
+            -pAkt(t) * reaction_7_k1 - pAkt(t) * reaction_5_k1 * S6(t) +
+            reaction_6_k1 * pAkt_S6(t) +
+            reaction_3_k1 * pEGFR_Akt(t) +
+            pAkt_S6(t) * reaction_5_k2,
+        pEGFR_Akt'(t) =
+            pEGFR(t) * Akt(t) * reaction_2_k1 - reaction_3_k1 * pEGFR_Akt(t) -
+            pEGFR_Akt(t) * reaction_2_k2,
+        S6'(t) =
+            pS6(t) * reaction_8_k1 - pAkt(t) * reaction_5_k1 * S6(t) +
+            pAkt_S6(t) * reaction_5_k2,
+        pEGFR'(t) =
+            -reaction_4_k1 * pEGFR(t) + reaction_9_k1 * EGF_EGFR(t) -
+            pEGFR(t) * Akt(t) * reaction_2_k1 +
+            reaction_3_k1 * pEGFR_Akt(t) +
+            pEGFR_Akt(t) * reaction_2_k2,
+        EGF_EGFR'(t) =
+            reaction_1_k1 * EGF_EGFR(t) - reaction_9_k1 * EGF_EGFR(t) -
+            reaction_1_k2 * EGF_EGFR(t),
+        Akt'(t) =
+            pAkt(t) * reaction_7_k1 - pEGFR(t) * Akt(t) * reaction_2_k1 +
+            pEGFR_Akt(t) * reaction_2_k2,
+        pAkt_S6'(t) =
+            pAkt(t) * reaction_5_k1 * S6(t) - reaction_6_k1 * pAkt_S6(t) -
+            pAkt_S6(t) * reaction_5_k2,
+        pS6'(t) = -pS6(t) * reaction_8_k1 + reaction_6_k1 * pAkt_S6(t),
+        y1(t) = pEGFR(t) * a1 + a1 * pEGFR_Akt(t),
+        y2(t) = a2 * pAkt(t) + a2 * pAkt_S6(t),
+        y3(t) = pS6(t) * a3
     )
 
     fujita = StructuralIdentifiability.@ODEmodel(
@@ -816,10 +851,43 @@ begin
     )
 
     using Nemo, Logging
+    using JuliaInterpreter
     Groebner = StructuralIdentifiability.Groebner
     ParamPunPam = StructuralIdentifiability.ParamPunPam
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
+
+#! format: off
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = a * x1(t) + b + c, 
+    x2'(t) = x2(t) + b + c, 
+    y1(t) = x1,
+    y2(t) = x2
+)
+
+funcs = StructuralIdentifiability.find_identifiable_functions(ode, simplify=false)
+
+funcs1 = StructuralIdentifiability.find_identifiable_functions(
+    akt,
+    strategy = (:normalforms, 3),
+    with_states = true,
+)
+
+rff = StructuralIdentifiability.RationalFunctionField(funcs1);
+rels1, _, _ = StructuralIdentifiability.linear_relations_between_normal_forms(rff, 1)
+rels1
+
+rels2, _, _ = StructuralIdentifiability.linear_relations_between_normal_forms(rff, 2)
+rels2
+
+rel3 = StructuralIdentifiability.linear_relations_between_normal_forms(rff, 2)
+length(rel3)
+
+R, (a, b, c) = QQ["a", "b", "c"]
+f = [a^2 + a + b + 1, a^2, (a + b) * c]
+StructuralIdentifiability._runtime_logger[:id_inclusion_check_mod_p] = 0.0
+rff = StructuralIdentifiability.RationalFunctionField(f);
+StructuralIdentifiability.linear_relations_between_normal_forms(rff, 1)
 
 StructuralIdentifiability.find_identifiable_functions(sliqr)
 
@@ -865,23 +933,11 @@ funcs2 = StructuralIdentifiability.find_identifiable_functions(
     with_states = true,
 )
 
-funcs1 = StructuralIdentifiability.find_identifiable_functions(
-    qy,
-    strategy = (:normalforms, 3),
-    with_states = false,
-)
-
 funcs3 = StructuralIdentifiability.find_identifiable_functions(
     qy,
     strategy = (:hybrid,),
     with_states = false,
 )
-
-R, (a, b, c) = QQ["a", "b", "c"]
-f = [a^2 + a + b + 1, a^2, (a + b) * c]
-StructuralIdentifiability._runtime_logger[:id_inclusion_check_mod_p] = 0.0
-rff = StructuralIdentifiability.RationalFunctionField(f);
-StructuralIdentifiability.linear_relations_between_normal_forms(rff, 1)
 
 rff = StructuralIdentifiability.RationalFunctionField(funcs0)
 @my_profview StructuralIdentifiability.linear_relations_between_normal_forms(rff, 3)

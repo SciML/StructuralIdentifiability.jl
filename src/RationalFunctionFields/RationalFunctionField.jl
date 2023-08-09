@@ -347,7 +347,7 @@ function relations_over_qq(polys, preimages)
     @assert !isempty(polys)
     fracfield = base_ring(first(polys))
     qq_relations = Vector{elem_type(fracfield)}()
-    # Filter out zero normal forms
+    # Filter out and stash zero polynomials
     permutation = collect(1:length(polys))
     zero_inds = filter(i -> iszero(polys[i]), permutation)
     for ind in zero_inds
@@ -386,6 +386,78 @@ function relations_over_qq(polys, preimages)
         end
         if iszero(fi)
             @debug "Polynomial at index $i reduced to zero"
+            preimage = zero(fracfield)
+            for k in 1:i
+                if !iszero(qq_multipliers[k])
+                    preimage += qq_multipliers[k] * preimages[k]
+                end
+            end
+            push!(qq_relations, preimage)
+        end
+    end
+    qq_relations, polys, preimages
+end
+
+function relations_over_qq_fast(polys, preimages)
+    @assert !isempty(polys)
+    R = parent(first(polys))
+    fracfield = base_ring(first(polys))
+    paramring = base_ring(fracfield)
+    qq_relations = Vector{elem_type(fracfield)}()
+    # Filter out and stash zero polynomials
+    permutation = collect(1:length(polys))
+    zero_inds = filter(i -> iszero(polys[i]), permutation)
+    for ind in zero_inds
+        push!(qq_relations, fracfield(preimages[ind]))
+    end
+    permutation = setdiff(permutation, zero_inds)
+    # Sort, the first monom is the smallest
+    sort!(permutation, by = i -> leading_monomial(polys[i]))
+    polys = polys[permutation]
+    preimages = preimages[permutation]
+    point = [Nemo.QQ(rand(1:3)) for _ in 1:nvars(paramring)]
+    polys_eval = map(
+        f -> map_coefficients(
+            c -> evaluate(numerator(c), point) // evaluate(denominator(c), point),
+            f,
+        ),
+        polys,
+    )
+    lead_monoms = map(leading_monomial, polys_eval)
+    n = length(polys_eval)
+    qq_multipliers = map(_ -> zero(Nemo.QQ), 1:n)
+    @inbounds for i in 1:n
+        fi = polys_eval[i]
+        @debug "Reducing $i-th polynomial over QQ" fi
+        for j in 1:(n - 1)
+            qq_multipliers[j] = zero(Nemo.QQ)
+        end
+        qq_multipliers[i] = one(Nemo.QQ)
+        for j in (i - 1):-1:1
+            iszero(fi) && break
+            fj = polys_eval[j]
+            iszero(fj) && continue
+            leadj = lead_monoms[j]
+            ci = coeff(fi, leadj)
+            # If fi contains the lead of fj
+            iszero(ci) && continue
+            cj = leading_coefficient(fj)
+            cij = div(ci, cj)
+            @debug "reducing $fi with $cij x $fj"
+            fi = fi - cij * fj
+            qq_multipliers[j] = -cij
+        end
+        if iszero(fi)
+            @debug "Polynomial at index $i reduced to zero"
+            true_relation = zero(R)
+            for k in 1:i
+                if !iszero(qq_multipliers[k])
+                    true_relation += qq_multipliers[k] * polys[k]
+                end
+            end
+            if !iszero(true_relation)
+                continue
+            end
             preimage = zero(fracfield)
             for k in 1:i
                 if !iszero(qq_multipliers[k])
@@ -439,7 +511,7 @@ function linear_relations_between_normal_forms(
         end
     end
     @info "Reducing the normal forms of $(length(monoms)) monomials over QQ"
-    generators, normal_forms, monoms = relations_over_qq(normal_forms, monoms)
+    generators, normal_forms, monoms = relations_over_qq_fast(normal_forms, monoms)
     _runtime_logger[:id_normalforms_time] = (time_ns() - time_start) / 1e9
     @info "Generators from normal forms" generators
     generators, normal_forms, monoms
