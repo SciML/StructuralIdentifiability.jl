@@ -411,20 +411,35 @@ function relations_over_qq_fast(polys, preimages)
         push!(qq_relations, fracfield(preimages[ind]))
     end
     permutation = setdiff(permutation, zero_inds)
-    # Sort, the first monom is the smallest
-    sort!(permutation, by = i -> leading_monomial(polys[i]))
     polys = polys[permutation]
     preimages = preimages[permutation]
     point = [Nemo.QQ(rand(1:3)) for _ in 1:nvars(paramring)]
-    polys_eval = map(
-        f -> map_coefficients(
-            c -> evaluate(numerator(c), point) // evaluate(denominator(c), point),
-            f,
-        ),
-        polys,
-    )
-    lead_monoms = map(leading_monomial, polys_eval)
+    R_eval, _ = PolynomialRing(Nemo.QQ, symbols(R), ordering = ordering(R))
+    polys_eval = Vector{elem_type(R_eval)}(undef, length(polys))
+    @inbounds for i in 1:length(polys)
+        f = polys[i]
+        cfs = collect(coefficients(f))
+        cfs_eval = Vector{Nemo.fmpq}(undef, length(cfs))
+        for j in 1:length(cfs)
+            num, den = unpack_fraction(cfs[j])
+            num_eval = evaluate(num, point)
+            den_eval = evaluate(den, point)
+            # NOTE: here there is no much trouble with unlucky cancellations
+            if iszero(den_eval)
+                den_eval = one(den_eval)
+            end
+            cfs_eval[j] = num_eval // den_eval
+        end
+        polys_eval[i] = R_eval(cfs_eval, collect(exponent_vectors(f)))
+    end
     n = length(polys_eval)
+    lead_monoms = map(poly -> iszero(poly) ? one(poly) : leading_monomial(poly), polys_eval)
+    # Sort, the first monom is the smallest
+    permutation = collect(1:n)
+    sort!(permutation, by = i -> lead_monoms[i])
+    polys_eval = polys_eval[permutation]
+    preimages = preimages[permutation]
+    lead_monoms = lead_monoms[permutation]
     qq_multipliers = map(_ -> zero(Nemo.QQ), 1:n)
     @inbounds for i in 1:n
         fi = polys_eval[i]
