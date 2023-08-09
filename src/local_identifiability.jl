@@ -394,7 +394,7 @@ function assess_local_identifiability(
                 push!(nonpivots, i)
             end
         end
-        
+
         # selecting the trbasis of polynomials
         trbasis_indices_param = [
             size(Jac)[1] - i + 1 for
@@ -403,12 +403,10 @@ function assess_local_identifiability(
         for i in trbasis_indices_param
             push!(trbasis, ode.parameters[i])
         end
-       
+
         # NB: states are in the inverted order (to be refactored...)
-        trbasis_indices_states = [
-            i for
-            i in nonpivots if i <= size(Jac)[1] - length(ode.parameters)
-        ]
+        trbasis_indices_states =
+            [i for i in nonpivots if i <= size(Jac)[1] - length(ode.parameters)]
         for i in trbasis_indices_states
             push!(trbasis, ode.x_vars[i])
         end

@@ -1,6 +1,3 @@
-# import StructuralIdentifiability: parent_ring_change
-# using AbstractAlgebra
-
 # For each ODE system we check the equality (in terms of fields of rational
 # functions) of the true set of identifiable functions and the obtained
 # simplified set
@@ -927,20 +924,11 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
             )
 
             # Check inclusion <true funcs> in <result funcs>
-            inclusion = StructuralIdentifiability.check_field_membership(
-                result_funcs,
-                true_ident_funcs,
+            @test StructuralIdentifiability.fields_equal(
+                RationalFunctionField(result_funcs),
+                RationalFunctionField(true_ident_funcs),
                 p,
             )
-            @test all(inclusion)
-
-            # Check inclusion <result funcs> in <true funcs>
-            inclusion = StructuralIdentifiability.check_field_membership(
-                true_ident_funcs,
-                result_funcs,
-                p,
-            )
-            @test all(inclusion)
         end
     end
 end
