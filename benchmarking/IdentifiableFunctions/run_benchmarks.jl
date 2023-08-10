@@ -78,9 +78,8 @@ function run_benchmarks(args, kwargs)
     to_skip = args["skip"]
     timeout = args["timeout"]
     dirnames = first(walkdir((@__DIR__) * "/systems/"))[2]
-    to_run = setdiff(dirnames, to_skip)
-    to_run_indices = collect(1:length(to_run))
-    to_run_names = to_run
+    to_run_names = setdiff(dirnames, to_skip)
+    to_run_indices = collect(1:length(to_run_names))
 
     nworkers = cpucores()
 
@@ -88,15 +87,14 @@ function run_benchmarks(args, kwargs)
     Running benchmarks.
     Number of benchmarks: $(length(to_run_indices))
     Workers: $(nworkers)
-    Timeout: $timeout sec.
+    Timeout: $timeout seconds
     Keywords for `find_identifiable_functions`:
         $kwargs"""
     @info """
     Benchmark systems:
     $to_run_names"""
 
-    start_time = time_ns()
-    seconds_passed(start_time) = round((time_ns() - start_time) / 1e9, digits = 2)
+    seconds_passed(from_t) = round((time_ns() - from_t) / 1e9, digits = 2)
 
     queue = to_run_indices
     procs = []
@@ -119,7 +117,10 @@ function run_benchmarks(args, kwargs)
                 proc = run(pipeline(cmd, stdout = logs, stderr = logs), wait = false)
                 push!(log_fd, logs)
                 push!(keywords, kw)
-                push!(procs, (index = idx, name = name, proc = proc))
+                push!(
+                    procs,
+                    (index = idx, name = name, proc = proc, start_time = time_ns()),
+                )
                 running += 1
             end
         end
@@ -134,20 +135,23 @@ function run_benchmarks(args, kwargs)
                 push!(exited, i)
                 close(log_fd[i])
                 kw = keywords[i]
+                start_time = proc.start_time
+                running -= 1
                 @info "Yielded $(proc.name) / $(kw) after $(seconds_passed(start_time)) seconds"
             end
-        end
-        if seconds_passed(start_time) > timeout
-            @warn "Timed out after $(seconds_passed(start_time)) seconds"
-            for i in 1:length(procs)
-                i in exited && continue
-                kill(procs[i].proc)
-                close(log_fd[i])
-                kw = keywords[i]
-                @info "Benchmark $(procs[i].name) / $(kw) killed after $(seconds_passed(start_time)) seconds"
+            if process_running(proc.proc)
+                start_time = proc.start_time
+                if seconds_passed(start_time) > timeout
+                    kill(proc.proc)
+                    close(log_fd[i])
+                    kw = keywords[i]
+                    running -= 1
+                    push!(exited, i)
+                    @warn "Timed-out $(proc.name) / $(kw) after $(seconds_passed(start_time)) seconds"
+                end
             end
-            break
-        elseif length(exited) == length(procs)
+        end
+        if length(exited) == length(procs)
             @info "All benchmarks finished"
             break
         end
@@ -160,7 +164,9 @@ function collect_timings(args, kwargs, names; content = :compare)
     resulting_md = ""
 
     resulting_md *= """
-    ## Benchmark results
+    ## Simplification scores
+
+    *Smaller is better.*
 
     $(now())
 
@@ -211,6 +217,25 @@ function collect_timings(args, kwargs, names; content = :compare)
             end
             resulting_md *= "\n"
         end
+    elseif length(content) == 2
+        @assert content[1] === :compare
+        feature = content[2]
+        ids = map(keywords_to_id, kwargs)
+        resulting_md *= "|Model|" * join(map(s -> String(Symbol(s)), ids), "|") * "|\n"
+        resulting_md *= "|-----|" * join(["---" for _ in ids], "|") * "|\n"
+        for name in names
+            times = runtimes[name]
+            resulting_md *= "|$name|"
+            for c in ids
+                if isempty(times[c])
+                    resulting_md *= " - " * "|"
+                else
+                    # resulting_md *= @sprintf("%.2f", times[c][feature]) * "|"
+                    resulting_md *= repr(round(Int, times[c][feature])) * "|"
+                end
+            end
+            resulting_md *= "\n"
+        end
     else
         kw = first(kwargs)
         id = keywords_to_id(kw)
@@ -243,7 +268,7 @@ function collect_timings(args, kwargs, names; content = :compare)
     deps = Pkg.dependencies()
     stid_info = deps[findfirst(x -> x.name == "StructuralIdentifiability", deps)]
     for (s, uid) in stid_info.dependencies
-        if deps[uid].version != nothing
+        if deps[uid].version !== nothing
             resulting_md *= "* $s : $(deps[uid].version)\n"
         end
     end
@@ -264,7 +289,7 @@ function main()
     @info kwargs
     flag = populate_benchmarks(args, kwargs)
     systems = run_benchmarks(args, kwargs)
-    collect_timings(args, kwargs, systems, content = :compare)
+    collect_timings(args, kwargs, systems, content = (:compare, :id_ranking))
 end
 
 main()

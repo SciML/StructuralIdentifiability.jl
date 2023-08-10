@@ -16,7 +16,7 @@ using AbstractAlgebra
 using Nemo
 using Groebner
 using ParamPunPam
-using ParamPunPam: reduce_mod_p!, specialize_mod_p
+using ParamPunPam: reduce_mod_p!, specialize_mod_p, AbstractBlackboxIdeal
 
 using ModelingToolkit
 
@@ -62,6 +62,7 @@ include("RationalFunctionFields/rankings.jl")
 include("RationalFunctionFields/RationalFunctionField.jl")
 include("global_identifiability.jl")
 include("identifiable_functions.jl")
+include("parametrizations.jl")
 include("lincomp.jl")
 include("pb_representation.jl")
 include("submodels.jl")

@@ -925,10 +925,14 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
             # Check inclusion <true funcs> in <result funcs>
             @test StructuralIdentifiability.fields_equal(
-                RationalFunctionField(result_funcs),
-                RationalFunctionField(true_ident_funcs),
+                StructuralIdentifiability.RationalFunctionField(result_funcs),
+                StructuralIdentifiability.RationalFunctionField(true_ident_funcs),
                 p,
             )
         end
     end
+end
+
+@testset "Normal forms over the rationals" begin
+    
 end
