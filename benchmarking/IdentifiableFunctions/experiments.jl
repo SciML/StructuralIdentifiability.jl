@@ -854,7 +854,7 @@ begin
     using JuliaInterpreter
     Groebner = StructuralIdentifiability.Groebner
     ParamPunPam = StructuralIdentifiability.ParamPunPam
-    Base.global_logger(ConsoleLogger(Logging.Debug))
+    Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
 #! format: off
@@ -868,7 +868,7 @@ llw = StructuralIdentifiability.@ODEmodel(
 
 funcs1 = StructuralIdentifiability.find_identifiable_functions(
     llw,
-    strategy = (:normalforms, 2),
+    strategy = (:normalforms, 3),
     with_states = true,
 )
 

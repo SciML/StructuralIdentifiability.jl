@@ -934,5 +934,10 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 end
 
 @testset "Normal forms over the rationals" begin
-    
+    R, (a, b, c) = QQ["a", "b", "c"]
+    f = [a * b // R(1), (b * c + a * b) // (a * b)]
+    StructuralIdentifiability._runtime_logger[:id_inclusion_check_mod_p] = 0.0
+    rff = StructuralIdentifiability.RationalFunctionField(f)
+    rels, _ = StructuralIdentifiability.linear_relations_between_normal_forms(rff, 2)
+    @test rels == [a * b // R(1), b * c // R(1)]
 end

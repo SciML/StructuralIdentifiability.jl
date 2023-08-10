@@ -555,8 +555,8 @@ function linear_relations_between_normal_forms(
     @info "Computing normal forms of monomials in $(length(xs)) variables up to degree $up_to_degree"
     normal_forms = Vector{elem_type(R)}(undef, 0)
     monoms = Vector{elem_type(R_param)}(undef, 0)
-    @debug "GB is" gb
-    @debug """
+    @info "GB is" gb
+    @info """
     The variables rings are:
     nf. parent = $(R)
     parametric parent = $(R_param)
@@ -568,9 +568,9 @@ function linear_relations_between_normal_forms(
             monom = prod(combination)
             monom_param = evaluate(monom, vcat(xs_param, one(R_param)))
             monom_mqs = monom - monom_param
-            @debug "Computing the normal form of" monom_mqs
+            @info "Computing the normal form of" monom_mqs
             _, nf = divrem(monom_mqs, gb)
-            @debug "The normal form is" nf
+            @info "The normal form is" nf
             push!(monoms, numerator(monom_param))
             push!(normal_forms, nf)
         end
