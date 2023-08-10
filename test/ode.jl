@@ -1,10 +1,8 @@
-import AbstractAlgebra
-
 @testset "ODE struct" begin
     # adding outputs
     ode = StructuralIdentifiability.@ODEmodel(x'(t) = x(t) + a)
     ode = StructuralIdentifiability.add_outputs(ode, Dict("y" => a * x))
-    @test AbstractAlgebra.nvars(parent(ode)) == 3
+    @test StructuralIdentifiability.AbstractAlgebra.nvars(parent(ode)) == 3
 
     # two or more equations on the same variable
     @test_throws DomainError StructuralIdentifiability.@ODEmodel(

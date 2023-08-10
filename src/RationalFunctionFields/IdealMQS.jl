@@ -33,15 +33,15 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     pivots_indices::Vector{Int}
     den_lcm::T
     sat_var_index::Int
-    # Cached GBs
-    groebner_bases::Dict{Any, Any}
     # Numerators and denominators over GF. 
     # We cache them and maintain a map:
     # a finite field --> an image over this finite field
     nums_gf::Dict{Any, Any}
     dens_gf::Dict{Any, Any}
     sat_gf::Dict{Any, Any}
-
+    # Cached GBs
+    groebner_bases::Dict{Any, Any}
+ 
     """
         IdealMQS(funcs_den_nums::Vector{Vector})
 

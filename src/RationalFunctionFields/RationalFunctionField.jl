@@ -708,8 +708,8 @@ function simplified_generating_set(
     @info "Checking inclusion with probability $p"
     runtime = @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), p)
     _runtime_logger[:id_inclusion_check] = runtime
-    @info "Inclusion checked in $(_runtime_logger[:id_inclusion_check]) seconds. Result: $(all(result))"
-    if !all(result)
+    @info "Inclusion checked in $(_runtime_logger[:id_inclusion_check]) seconds. Result: $result"
+    if !result
         @warn "Field membership check failed. Error will follow."
         throw("The new subfield generators are not correct.")
     end
