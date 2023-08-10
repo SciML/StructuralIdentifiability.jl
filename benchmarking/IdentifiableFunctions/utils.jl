@@ -1,15 +1,15 @@
 # shared utilities for benchmarking
 
 ID_TIME_CATEGORIES = [
-    :id_io_time,
-    :id_global_time,
-    :id_inclusion_check,
-    :id_inclusion_check_mod_p,
-    :id_groebner_time,
-    :id_beautifulization,
-    :id_normalforms_time,
-    :id_gbfan_time,
-    :id_total,
+    # :id_io_time,
+    # :id_global_time,
+    # :id_inclusion_check,
+    # :id_inclusion_check_mod_p,
+    # :id_groebner_time,
+    # :id_beautifulization,
+    # :id_normalforms_time,
+    # :id_gbfan_time,
+    :id_ranking,
 ]
 ID_DATA_CATEGORIES = []
 ALL_CATEGORIES = union(ID_TIME_CATEGORIES, ID_DATA_CATEGORIES)
@@ -27,6 +27,7 @@ HUMAN_READABLE_CATEGORIES = Dict(
     :id_beautifulization => "beautifulization",
     :id_normalforms_time => "normal forms",
     :id_gbfan_time => "GB fan",
+    :id_ranking => "Score",
 )
 
 function parse_keywords(keywords)

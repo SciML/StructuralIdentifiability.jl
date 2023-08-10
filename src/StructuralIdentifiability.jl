@@ -16,7 +16,7 @@ using AbstractAlgebra
 using Nemo
 using Groebner
 using ParamPunPam
-using ParamPunPam: reduce_mod_p!, specialize_mod_p
+using ParamPunPam: reduce_mod_p!, specialize_mod_p, AbstractBlackboxIdeal
 
 using ModelingToolkit
 

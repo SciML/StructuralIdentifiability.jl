@@ -139,7 +139,6 @@ function field_contains(
     pivots = map(plist -> plist[findmin(map(total_degree, plist))[2]], ratfuncs)
     @debug "\tDegrees are $(map(total_degree, pivots))"
 
-
     @debug "Estimating the sampling bound"
     # uses Theorem 3.3 from https://arxiv.org/pdf/2111.00991.pdf
     # the comments below use the notation from the theorem
@@ -309,6 +308,10 @@ function spring_cleaning_pass!(fracs)
             func = func * leading_coefficient(num)
         end
         num, den = unpack_fraction(func)
+        if !isone(leading_coefficient(num))
+            func = divexact(func, leading_coefficient(num))
+        end
+        num, den = unpack_fraction(func)
         if is_constant(den) && is_constant(Nemo.term(num, length(num)))
             func = (num - trailing_coefficient(num)) // one(num)
         end
@@ -392,6 +395,7 @@ function relations_over_qq(polys, preimages)
     for ind in zero_inds
         push!(qq_relations, fracfield(preimages[ind]))
     end
+    @debug "Zeroed monomials are" preimages[zero_inds]
     permutation = setdiff(permutation, zero_inds)
     # Sort, the first monom is the smallest
     sort!(permutation, by = i -> leading_monomial(polys[i]))
@@ -547,11 +551,18 @@ function linear_relations_between_normal_forms(
     xs_param = gens(R_param)
     # TODO: A dirty hack!
     @assert rff.mqs.sat_var_index == length(xs)
-    xs = xs[1:(end - 1)]
+    # xs = xs[1:(end - 1)]
     @info "Computing normal forms of monomials in $(length(xs)) variables up to degree $up_to_degree"
     normal_forms = Vector{elem_type(R)}(undef, 0)
     monoms = Vector{elem_type(R_param)}(undef, 0)
     @debug "GB is" gb
+    @debug """
+    The variables rings are:
+    nf. parent = $(R)
+    parametric parent = $(R_param)
+    gb parent = $(parent(gb[1]))"""
+    @assert R == parent(gb[1])
+    @assert R_param == base_ring(base_ring(parent(gb[1])))
     for deg in 1:up_to_degree
         for combination in Combinatorics.with_replacement_combinations(xs, deg)
             monom = prod(combination)
@@ -565,7 +576,7 @@ function linear_relations_between_normal_forms(
         end
     end
     @info "Reducing the normal forms of $(length(monoms)) monomials over QQ"
-    generators, normal_forms, monoms = relations_over_qq_fast(normal_forms, monoms)
+    generators, normal_forms, monoms = relations_over_qq(normal_forms, monoms)
     _runtime_logger[:id_normalforms_time] = (time_ns() - time_start) / 1e9
     @info "Generators from normal forms" generators
     generators, normal_forms, monoms
@@ -695,7 +706,7 @@ function simplified_generating_set(
     runtime = @elapsed new_fracs = beautifuly_generators(RationalFunctionField(new_fracs))
     _runtime_logger[:id_beautifulization] += runtime
     @info "Checking inclusion with probability $p"
-    runtime = @elapsed result = issubfield(rff, RationalFunctionField(new_id_funcs), p)
+    runtime = @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), p)
     _runtime_logger[:id_inclusion_check] = runtime
     @info "Inclusion checked in $(_runtime_logger[:id_inclusion_check]) seconds. Result: $(all(result))"
     if !all(result)

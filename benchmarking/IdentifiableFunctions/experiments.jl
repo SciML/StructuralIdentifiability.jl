@@ -6,7 +6,7 @@ begin
 
     macro my_profview(ex)
         :((VSCodeServer.Profile).clear();
-        VSCodeServer.Profile.init(n = 10^8, delay = 0.000001);
+        VSCodeServer.Profile.init(n = 10^8, delay = 0.00001);
         VSCodeServer.Profile.start_timer();
         $ex;
         VSCodeServer.Profile.stop_timer();
@@ -854,22 +854,27 @@ begin
     using JuliaInterpreter
     Groebner = StructuralIdentifiability.Groebner
     ParamPunPam = StructuralIdentifiability.ParamPunPam
-    Base.global_logger(ConsoleLogger(Logging.Info))
+    Base.global_logger(ConsoleLogger(Logging.Debug))
 end
 
 #! format: off
-ode = StructuralIdentifiability.@ODEmodel(
-    x1'(t) = a * x1(t) + b + c, 
-    x2'(t) = x2(t) + b + c, 
-    y1(t) = x1,
-    y2(t) = x2
+
+llw = StructuralIdentifiability.@ODEmodel(
+	x2'(t) = -p3*x2(t) + p4*u(t),
+	x1'(t) = p2*u(t) - p1*x1(t),
+	x3'(t) = p2*x2(t)*u(t) - p3*x3(t) + p4*u(t)*x1(t) - x3(t)*p1,
+	y1(t) = x3(t)
 )
 
-funcs = StructuralIdentifiability.find_identifiable_functions(ode, simplify=false)
-
 funcs1 = StructuralIdentifiability.find_identifiable_functions(
-    akt,
-    strategy = (:normalforms, 3),
+    llw,
+    strategy = (:normalforms, 2),
+    with_states = true,
+)
+
+funcs2 = StructuralIdentifiability.find_identifiable_functions(
+    llw,
+    strategy = (:gbfan, 10),
     with_states = true,
 )
 
@@ -877,17 +882,17 @@ rff = StructuralIdentifiability.RationalFunctionField(funcs1);
 rels1, _, _ = StructuralIdentifiability.linear_relations_between_normal_forms(rff, 1)
 rels1
 
-rels2, _, _ = StructuralIdentifiability.linear_relations_between_normal_forms(rff, 2)
+rels2, nfs, monoms = StructuralIdentifiability.linear_relations_between_normal_forms(rff, 2)
 rels2
 
 rel3 = StructuralIdentifiability.linear_relations_between_normal_forms(rff, 2)
 length(rel3)
 
 R, (a, b, c) = QQ["a", "b", "c"]
-f = [a^2 + a + b + 1, a^2, (a + b) * c]
+f = [a*b // R(1), (b*c + a*b) // (a*b)]
 StructuralIdentifiability._runtime_logger[:id_inclusion_check_mod_p] = 0.0
 rff = StructuralIdentifiability.RationalFunctionField(f);
-StructuralIdentifiability.linear_relations_between_normal_forms(rff, 1)
+StructuralIdentifiability.linear_relations_between_normal_forms(rff, 3)
 
 StructuralIdentifiability.find_identifiable_functions(sliqr)
 
