@@ -35,7 +35,7 @@
     result = find_identifiable_functions(de)
     @test isequal(Set(correct), Set(result))
 
-    correct = [c * k_m + c * x, x / k_m, k01, V_m / k_m]
+    correct = [c * k_m + c * x, c * k_m, k01, V_m / k_m]
     result = find_identifiable_functions(de, with_states = true)
     @test isequal(Set(correct), Set(result))
 

@@ -54,10 +54,11 @@ function find_identifiable_functions(
 ) where {T <: MPolyElem{fmpq}}
     @assert first(strategy) in (:gb, :gbfan, :normalforms, :hybrid)
     runtime_start = time_ns()
-    id_funcs = initial_identifiable_functions(
+    half_p = 0.5 + p / 2
+    id_funcs, bring = initial_identifiable_functions(
         ode,
+        p = half_p,
         with_states = with_states,
-        adjoin_identifiable = adjoin_identifiable,
     )
     if simplify
         if isempty(id_funcs)
@@ -66,7 +67,7 @@ function find_identifiable_functions(
         end
         id_funcs_fracs = simplified_generating_set(
             RationalFunctionField(id_funcs),
-            p = p,
+            p = half_p,
             seed = seed,
             strategy = strategy,
         )
@@ -136,61 +137,4 @@ function find_identifiable_functions(
     nemo2mtk = Dict(v => Num(k) for (k, v) in conversion)
     out_funcs = [eval_at_dict(func, nemo2mtk) for func in result]
     return out_funcs
-end
-
-"""
-    initial_identifiable_functions(ode; options...)
-
-Returns the non-simplified identifiabile functions of the given ODE system.
-These are presented by the coefficients of the IO-equations.
-
-## Options
-
-This functions takes the following optional arguments:
-- `with_states`: Also report the identifiabile functions in states. Default is
-  `false`.
-- `adjoin_identifiable`: Adjoin globally identifiabile parameters to the output.
-  *Global identifiability is assessed modulo a prime.* Default is `true`.
-"""
-function initial_identifiable_functions(
-    ode::ODE{T};
-    with_states = false,
-    adjoin_identifiable = true,
-) where {T}
-    @info "Computing IO-equations"
-    runtime = @elapsed io_equations = find_ioequations(ode)
-    @info "IO-equations computed in $runtime seconds"
-    _runtime_logger[:id_io_time] = runtime
-    id_funcs = extract_identifiable_functions_raw(
-        io_equations,
-        ode,
-        empty(ode.parameters),
-        with_states,
-    )
-    _runtime_logger[:id_global_time] = 0.0
-    if adjoin_identifiable
-        @info "Assessing global identifiability"
-        to_check = ode.parameters
-        if with_states
-            to_check = vcat(to_check, ode.x_vars)
-        end
-        bring = parent(first(first(id_funcs)))
-        to_check = map(f -> parent_ring_change(f, bring), to_check)
-        runtime = @elapsed global_result = check_field_membership_mod_p(id_funcs, to_check)
-        @debug "Identifiable parameters and states are" to_check global_result
-        @info "Global identifiability assessed in $runtime seconds"
-        _runtime_logger[:id_global_time] = runtime
-        known_quantities = Vector{Vector{elem_type(bring)}}()
-        for (glob, p) in zip(global_result, to_check)
-            if glob
-                if all(in.(map(var_to_str, vars(p)), [map(var_to_str, gens(bring))]))
-                    push!(known_quantities, [one(bring), parent_ring_change(p, bring)])
-                else
-                    @warn "Known quantity $p cannot be casted and is thus dropped"
-                end
-            end
-        end
-        id_funcs = vcat(id_funcs, known_quantities)
-    end
-    return id_funcs
 end
