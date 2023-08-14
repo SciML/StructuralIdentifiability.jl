@@ -103,7 +103,7 @@ function initial_identifiable_functions(
 
     if with_states
         @debug "Generators of identifiable functions involve states, the parameter-only part is getting simplified"
-        no_states_simplified = simplified_generating_set(
+        _runtime_logger[:check_time] = @elapsed no_states_simplified = simplified_generating_set(
             RationalFunctionField(id_funcs[:no_states]),
             p = p,
             seed = 42,
@@ -150,11 +150,13 @@ function check_identifiability(
         map(f -> parent_ring_change(f, bring) // one(bring), funcs_to_check),
     )
 
-    return field_contains(
-        RationalFunctionField(identifiable_functions_raw),
-        funcs_to_check,
-        half_p,
-    )
+    _runtime_logger[:check_time] = get(_runtime_logger, :check_time, 0.) + 
+        @elapsed result = field_contains(
+            RationalFunctionField(identifiable_functions_raw),
+            funcs_to_check,
+            half_p,
+        )
+    return result
 end
 
 function check_identifiability(
