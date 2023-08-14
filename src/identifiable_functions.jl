@@ -134,6 +134,7 @@ function find_identifiable_functions(
         with_states = with_states,
         strategy = strategy,
     )
+    result = [parent_ring_change(f, ode.poly_ring) for f in result]
     nemo2mtk = Dict(v => Num(k) for (k, v) in conversion)
     out_funcs = [eval_at_dict(func, nemo2mtk) for func in result]
     return out_funcs

@@ -5,14 +5,18 @@ function extract_identifiable_functions_raw(
     with_states::Bool,
 ) where {P <: MPolyElem{fmpq}}
     coeff_lists = Dict(:with_states => Array{Array{P, 1}, 1}(), :no_states => Array{Array{P, 1}, 1}())
-    bring = nothing
+    varnames = [var_to_str(p) for p in ode.parameters]
+    if with_states
+        append!(varnames, map(var_to_str, ode.x_vars))
+    end
+    bring, _ = Nemo.PolynomialRing(base_ring(ode.poly_ring), varnames)
+
     if with_states
         @debug "Computing Lie derivatives"
         for f in states_generators(ode, io_equations)
-            num, den = unpack_fraction(f)
+            num, den = unpack_fraction(parent_ring_change(f, bring))
             push!(coeff_lists[:with_states], [den, num])
         end
-        bring = parent(first(first(coeff_lists[:with_states])))
     end
 
     @debug "Extracting coefficients"
@@ -23,14 +27,10 @@ function extract_identifiable_functions_raw(
     )
     for eq in values(io_equations)
         eq_coefs = collect(values(extract_coefficients(eq, nonparameters)))
-        if !isnothing(bring)
-            eq_coefs = [parent_ring_change(c, bring) for c in eq_coefs]
-        end
+        eq_coefs = [parent_ring_change(c, bring) for c in eq_coefs]
         push!(coeff_lists[:no_states], eq_coefs)
     end
-    if isnothing(bring)
-        bring = parent(first(first(coeff_lists[:no_states])))
-    end
+    
     for p in known
         if all(in.(map(var_to_str, vars(p)), [map(var_to_str, gens(bring))]))
             as_list = [one(bring), parent_ring_change(p, bring)]
