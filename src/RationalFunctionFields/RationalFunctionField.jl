@@ -37,6 +37,12 @@ end
 
 # ------------------------------------------------------------------------------
 
+function poly_ring(F::RationalFunctionField)
+    return parent(first(first(F.dennums)))
+end
+
+# ------------------------------------------------------------------------------
+
 """
     dennums_to_fractions(dennums)
     
@@ -647,6 +653,7 @@ function simplified_generating_set(
     p = 0.99,
     seed = 42,
     strategy = (:gb,),
+    check_variables = true,
 )
     # TODO: use seed!
     # TODO: there are a lot of redundant functions coming from normal forms and
@@ -661,6 +668,21 @@ function simplified_generating_set(
     _runtime_logger[:id_gbfan_time] = 0.0
     _runtime_logger[:id_normalforms_time] = 0.0
     _runtime_logger[:id_ranking] = 0
+
+    # Checking identifiability of particular variables and adding them to the field
+    if check_variables
+        vars = gens(poly_ring(rff))
+        containment = field_contains(rff, vars, (1. + p) / 2)
+        p = (1. + p) / 2
+        field_gens = rff.dennums
+        for (v, is_contained) in zip(vars, containment)
+            if is_contained
+                push!(field_gens, [one(poly_ring(rff)), v])
+            end
+        end
+        rff = RationalFunctionField(field_gens)
+    end
+
     # Compute the first GB in some ordering
     new_rff = groebner_basis_coeffs(rff, seed = seed)
     new_fracs = beautifuly_generators(new_rff)
