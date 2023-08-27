@@ -23,7 +23,7 @@ function parse_commandline()
         "--timeout"
             help = "Timeout, s."
             arg_type = Int
-            default = 600
+            default = 2500
         "--skip"
             help = "Systems to skip."
             arg_type = Vector{String}
@@ -37,7 +37,7 @@ function parse_commandline()
             Keyword arguments to `find_identifiable_functions`. 
             Semicolon-separated list of named tuples."""
             default = String
-            default = "(strategy=(:gb, ),); (strategy=(:normalforms, 2),)"
+            default = "(strategy=(:gb, ),); (strategy=(:gb, ),with_states=true); (strategy=(:normalforms, 2),); (strategy=(:normalforms, 2),with_states=true); (strategy=(:normalforms, 3),); (strategy=(:normalforms, 3),with_states=true); (strategy=(:hybrid, ),); (strategy=(:hybrid, ),with_states=true)"
     end
     #! format: on
 
@@ -81,7 +81,7 @@ function run_benchmarks(args, kwargs)
     to_run_names = setdiff(dirnames, to_skip)
     to_run_indices = collect(1:length(to_run_names))
 
-    nworkers = cpucores()
+    nworkers = 4
 
     @info """
     Running benchmarks.
@@ -96,7 +96,7 @@ function run_benchmarks(args, kwargs)
 
     seconds_passed(from_t) = round((time_ns() - from_t) / 1e9, digits = 2)
 
-    queue = to_run_indices
+    queue = [(kw, idx) for kw in kwargs for idx in to_run_indices]
     procs = []
     log_fd = []
     keywords = []
@@ -104,25 +104,23 @@ function run_benchmarks(args, kwargs)
     running = 0
 
     while true
-        if !isempty(queue) && running < (nworkers + length(kwargs))
-            idx = pop!(queue)
-            for kw in kwargs
-                name = to_run_names[idx]
-                id = keywords_to_id(kw)
-                @info "Running $name / $id"
-                logs = open((@__DIR__) * "/systems/$name/logs_$id", "w")
-                cmd =
-                    Cmd(["julia", (@__DIR__) * "/run_single_benchmark.jl", "$name", "$kw"])
-                cmd = Cmd(cmd, ignorestatus = true, detach = false, env = copy(ENV))
-                proc = run(pipeline(cmd, stdout = logs, stderr = logs), wait = false)
-                push!(log_fd, logs)
-                push!(keywords, kw)
-                push!(
-                    procs,
-                    (index = idx, name = name, proc = proc, start_time = time_ns()),
-                )
-                running += 1
-            end
+        if !isempty(queue) && running < nworkers
+            (kw, idx) = pop!(queue)
+            name = to_run_names[idx]
+            id = keywords_to_id(kw)
+            @info "Running $name / $id"
+            logs = open((@__DIR__) * "/systems/$name/logs_$id", "w")
+            cmd =
+                Cmd(["julia", (@__DIR__) * "/run_single_benchmark.jl", "$name", "$kw"])
+            cmd = Cmd(cmd, ignorestatus = true, detach = false, env = copy(ENV))
+            proc = run(pipeline(cmd, stdout = logs, stderr = logs), wait = false)
+            push!(log_fd, logs)
+            push!(keywords, kw)
+            push!(
+                procs,
+                (index = idx, name = name, proc = proc, start_time = time_ns()),
+            )
+            running += 1
         end
 
         sleep(1.0)
@@ -136,7 +134,6 @@ function run_benchmarks(args, kwargs)
                 close(log_fd[i])
                 kw = keywords[i]
                 start_time = proc.start_time
-                running -= 1
                 @info "Yielded $(proc.name) / $(kw) after $(seconds_passed(start_time)) seconds"
             end
             if process_running(proc.proc)
@@ -151,7 +148,8 @@ function run_benchmarks(args, kwargs)
                 end
             end
         end
-        if length(exited) == length(procs)
+        if length(exited) == length(to_run_names) * length(kwargs)
+            @info "Exited $exited"
             @info "All benchmarks finished"
             break
         end
@@ -176,12 +174,14 @@ function collect_timings(args, kwargs, names; content = :compare)
     names = sort(names)
     runtimes = Dict()
     for name in names
+        println("==== Reading $name")
         runtimes[name] = Dict()
         for kw in kwargs
             timings = nothing
             id = keywords_to_id(kw)
             runtimes[name][id] = Dict()
             try
+                println("==== Opening /systems/$name/timings_$id")
                 timings = open((@__DIR__) * "/systems/$name/timings_$id", "r")
             catch e
                 @warn "Cannot collect timings for $name / $id"
@@ -289,7 +289,7 @@ function main()
     @info kwargs
     flag = populate_benchmarks(args, kwargs)
     systems = run_benchmarks(args, kwargs)
-    collect_timings(args, kwargs, systems, content = (:compare, :id_ranking))
+    collect_timings(args, kwargs, systems, content = :compare)
 end
 
 main()
