@@ -653,7 +653,7 @@ function simplified_generating_set(
     p = 0.99,
     seed = 42,
     strategy = (:gb,),
-    check_variables = true,
+    check_variables = false, # almost always slows down and thus turned off
 )
     # TODO: use seed!
     # TODO: there are a lot of redundant functions coming from normal forms and
@@ -674,6 +674,9 @@ function simplified_generating_set(
         vars = gens(poly_ring(rff))
         containment = field_contains(rff, vars, (1. + p) / 2)
         p = (1. + p) / 2
+        if all(containment)
+            return [v // one(poly_ring(rff)) for v in vars]
+        end
         field_gens = rff.dennums
         for (v, is_contained) in zip(vars, containment)
             if is_contained
