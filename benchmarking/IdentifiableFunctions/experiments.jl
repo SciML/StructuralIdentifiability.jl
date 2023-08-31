@@ -866,9 +866,11 @@ llw = StructuralIdentifiability.@ODEmodel(
 	y1(t) = x3(t)
 )
 
+funcs0 = StructuralIdentifiability.find_identifiable_functions(llw; with_states=true)
+
 funcs1 = StructuralIdentifiability.find_identifiable_functions(
     llw,
-    strategy = (:normalforms, 3),
+    strategy = (:normalforms, 5),
     with_states = true,
 )
 
@@ -894,8 +896,11 @@ StructuralIdentifiability._runtime_logger[:id_inclusion_check_mod_p] = 0.0
 rff = StructuralIdentifiability.RationalFunctionField(f);
 StructuralIdentifiability.linear_relations_between_normal_forms(rff, 3)
 
-StructuralIdentifiability.find_identifiable_functions(sliqr)
-
+StructuralIdentifiability.find_identifiable_functions(
+    sliqr,
+    strategy = (:normalforms, 5),
+    with_states = true,
+)
 StructuralIdentifiability.reparametrize(sliqr)
 
 ode = StructuralIdentifiability.@ODEmodel(x1'(t) = a * x1(t), y(t) = x1)

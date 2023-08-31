@@ -39,6 +39,18 @@ function extract_identifiable_functions_raw(
             @debug "Known quantity $p cannot be casted and is thus dropped"
         end
     end
+
+    # NOTE: Returned entities live in a new ring, different from the one
+    # attached to the input ODE. 
+    # The new ring includes only parameter variables (and optionally states).
+    new_vars = ode.parameters
+    if with_states
+        new_vars = vcat(new_vars, ode.x_vars)
+    end
+    new_ring, _ = PolynomialRing(Nemo.QQ, map(Symbol, new_vars))
+    coeff_lists =
+        map(coeffs -> map(c -> parent_ring_change(c, new_ring), coeffs), coeff_lists)
+
     return coeff_lists
 end
 

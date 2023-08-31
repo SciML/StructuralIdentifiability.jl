@@ -39,9 +39,10 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     nums_gf::Dict{Any, Any}
     dens_gf::Dict{Any, Any}
     sat_gf::Dict{Any, Any}
-    # Cached GBs
+    # Cached GBs.
+    # monomial ordering --> a GB in this ordering
     groebner_bases::Dict{Any, Any}
- 
+
     """
         IdealMQS(funcs_den_nums::Vector{Vector})
 
@@ -74,9 +75,6 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         pivots = map(plist -> findmin(total_degree, plist)[2], funcs_den_nums)
         pivots_indices = map(last, pivots)
         @debug "\tDegrees are $(map(first, pivots))"
-        # NOTE(Alex): btw, benchmarks show that finding lcm this way is better
-        # than constructing a binary tree with lcm at the root. Will need to
-        # think this over..
         den_lcm = mapreduce(
             i -> funcs_den_nums[i][pivots_indices[i]],
             lcm,

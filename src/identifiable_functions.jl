@@ -170,11 +170,11 @@ function initial_identifiable_functions(
     _runtime_logger[:id_global_time] = 0.0
     if adjoin_identifiable
         @info "Assessing global identifiability"
+        bring = parent(first(first(id_funcs)))
         to_check = ode.parameters
         if with_states
             to_check = vcat(to_check, ode.x_vars)
         end
-        bring = parent(first(first(id_funcs)))
         to_check = map(f -> parent_ring_change(f, bring), to_check)
         runtime = @elapsed global_result = check_field_membership_mod_p(id_funcs, to_check)
         @debug "Identifiable parameters and states are" to_check global_result
