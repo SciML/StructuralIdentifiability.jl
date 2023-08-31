@@ -1,0 +1,741 @@
+┌ Warning: Cache hit with (InputOrdering(), (9223372036854775807, 9223372036854775807))!
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:310
+┌ Info: Processing PK1
+└ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:40
+┌ Info: Averaging over 1 runs.
+│ Using keyword arguments:
+│ NamedTuple{(:strategy,), Tuple{Tuple{Symbol}}}
+│ (strategy = (:hybrid,),)
+│ ID: (:hybrid,)
+└ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:41
+┌ Info: Computing IO-equations
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:88
+┌ Info: Computed in 2.703463042 seconds
+│   :ioeq_time = ioeq_time
+│   ioeq_time = 2.703463042
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:92
+┌ Info: Computing Wronskians
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:95
+┌ Info: Computed in 0.027001742 seconds
+│   :wrnsk_time = wrnsk_time
+│   wrnsk_time = 0.027001742
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:97
+┌ Info: Dimensions of the Wronskians [6, 6]
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:101
+┌ Info: Ranks of the Wronskians computed in 4.9004e-5 seconds
+│   :rank_time = rank_time
+│   rank_times = 4.9004e-5
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:106
+┌ Info: Simplifying identifiable functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:450
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 11 functions in Rational Field(k5, k3, s3, k4, k2, s2, k6, k1, k7)[y1, y2, y3, y4, y5, y6, y7, y8, y9, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:135
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:184
+┌ Info: Success! 34 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:268
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (4, 0)], [(0, 0), (1, 0)], [(0, 0), (2, 2), (3, 2)], [(0, 0), (4, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (2, 1), (2, 4)], [(0, 0), (1, 4), (0, 2)], [(0, 0), (1, 0), (2, 1), (3, 1)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:269
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:279
+┌ Info: Interpolating for degrees:
+│ Numerator: 3, Denominator: 3
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:327
+┌ Info: Success! 64 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:405
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 2 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:410
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:418
+┌ Info: Groebner basis computed in 0.84450252 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:328
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:333
+┌ Info: Inclusion checked in 0.204616332 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:343
+┌ Info: The coefficients of the Groebner basis are presented by 10 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:347
+┌ Info: The pool of fractions:
+│ -1//(s2*k1),
+│ -k6,
+│ -k4,
+│ -k5,
+│ -k2 - k1,
+│ -k3 - k7,
+│ (-s3*k2)//(k2 + k1),
+│ (k2*s2)//(k3*k2 + k3*k1),
+│ (-k3*k2 - k3*k1 - k2*k7)//k2
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:226
+┌ Info: The pool of fractions:
+│ -1//(s2*k1),
+│ -k6,
+│ -k4,
+│ -k5,
+│ -k2 - k1,
+│ -k3 - k7,
+│ (-s3*k2)//(k2 + k1),
+│ (k2*s2)//(k3*k2 + k3*k1),
+│ (-k3*k2 - k3*k1 - k2*k7)//k2
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:226
+┌ Info: Computing normal forms (probabilistic)
+│ Parameters (9 in total): Nemo.fmpq_mpoly[k5, k3, s3, k4, k2, s2, k6, k1, k7]
+│ Up to degree: 3
+│ Modulo: Galois field with characteristic 1073741827
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:135
+┌ Info: Specializing at the 1-th random point: Nemo.gfp_elem[932096712, 187062260, 641542653, 313932767, 810129247, 428360238, 637858313, 716645429, 355046129]
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:145
+┌ Info: Computing relations of 219 normal forms
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:178
+┌ Info: Obtained 210 local relations over FF
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:181
+┌ Info: Specializing at the 2-th random point: Nemo.gfp_elem[695268121, 659326777, 123254569, 147076477, 615434218, 933243470, 198078990, 1030062559, 326152457]
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:145
+┌ Info: Computing relations of 219 normal forms
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:178
+┌ Info: Obtained 210 local relations over FF
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:181
+┌ Info: There are 35 relations in the intersection
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:189
+┌ Info: Specializing at the 3-th random point: Nemo.gfp_elem[482026950, 701207419, 1002955350, 940746278, 267437062, 983030032, 736428344, 405378287, 495310470]
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:145
+┌ Info: Computing relations of 219 normal forms
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:178
+┌ Info: Obtained 210 local relations over FF
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:181
+┌ Info: There are 35 relations in the intersection
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:189
+┌ Info: Reconstructing relations to rationals
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:195
+┌ Info: Computing 10 Groebner bases for each of the 10 block orderings
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:370
+┌ Warning: Cache hit with (InputOrdering(), (9223372036854775807, 9223372036854775807))!
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:310
+┌ Info: The pool of fractions:
+│ -1//(s2*k1),
+│ -k6,
+│ -k4,
+│ -k5,
+│ -k2 - k1,
+│ -k3 - k7,
+│ (-s3*k2)//(k2 + k1),
+│ (k2*s2)//(k3*k2 + k3*k1),
+│ (-k3*k2 - k3*k1 - k2*k7)//k2
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:226
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y8, y1, y6, y5, t], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y2, y7, y3, y4, y9], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:390
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 9 functions in Rational Field(k5, k3, s3, k4, k2, s2, k6, k1, k7)[y1, y2, y3, y4, y5, y6, y7, y8, y9, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:135
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:184
+┌ Info: Success! 34 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:268
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (1, 0)], [(0, 0), (1, 0), (2, 1), (3, 1)], [(0, 3), (0, 0), (1, 3)], [(0, 0), (2, 1), (1, 0), (2, 0)], [(0, 0), (2, 0)], [(0, 0), (2, 2), (3, 2)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (1, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:269
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:279
+┌ Info: Interpolating for degrees:
+│ Numerator: 3, Denominator: 3
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:327
+┌ Info: Success! 64 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:405
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 4 for num. and 2 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:410
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:418
+┌ Info: Groebner basis computed in 0.075249764 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:328
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:333
+┌ Info: Inclusion checked in 0.005432371 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:343
+┌ Info: The coefficients of the Groebner basis are presented by 11 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:347
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y7, y4, y6, t, y9], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y5, y8, y3, y1, y2], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:390
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 9 functions in Rational Field(k5, k3, s3, k4, k2, s2, k6, k1, k7)[y1, y2, y3, y4, y5, y6, y7, y8, y9, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:135
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:184
+┌ Info: Success! 34 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:268
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (0, 0), (1, 0)], [(0, 0), (2, 1), (3, 1)], [(0, 0), (2, 1), (3, 1)], [(0, 0), (1, 0), (2, 0)], [(0, 0), (0, 0), (1, 0)], [(0, 3), (0, 0), (1, 3)], [(2, 2), (0, 0), (2, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:269
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:279
+┌ Info: Interpolating for degrees:
+│ Numerator: 3, Denominator: 3
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:327
+┌ Info: Success! 32 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:405
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:410
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:418
+┌ Info: Groebner basis computed in 0.16171799 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:328
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:333
+┌ Info: Inclusion checked in 0.002893636 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:343
+┌ Info: The coefficients of the Groebner basis are presented by 11 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:347
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y4, y5, y3, y9, y7], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y1, y8, y2, y6, t], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:390
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 9 functions in Rational Field(k5, k3, s3, k4, k2, s2, k6, k1, k7)[y1, y2, y3, y4, y5, y6, y7, y8, y9, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:135
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:184
+┌ Info: Success! 34 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:268
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (2, 2), (2, 1)], [(0, 0), (1, 0)], [(0, 0), (2, 1), (2, 3)], [(0, 0), (1, 3), (1, 0)], [(0, 0), (2, 0)], [(0, 0), (1, 0)], [(2, 2), (0, 0), (2, 1)], [(0, 0), (3, 0), (2, 1)], [(0, 0), (0, 0), (1, 0)], [(0, 0), (1, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:269
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:279
+┌ Info: Interpolating for degrees:
+│ Numerator: 3, Denominator: 3
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:327
+┌ Info: Success! 64 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:405
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 2 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:410
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:418
+┌ Info: Groebner basis computed in 0.056045385 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:328
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:333
+┌ Info: Inclusion checked in 0.14928145 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:343
+┌ Info: The coefficients of the Groebner basis are presented by 12 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:347
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y4, y8, y6, y1, y2], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y5, y3, y7, y9, t], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:390
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 9 functions in Rational Field(k5, k3, s3, k4, k2, s2, k6, k1, k7)[y1, y2, y3, y4, y5, y6, y7, y8, y9, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:135
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:184
+┌ Info: Success! 34 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:268
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (3, 0), (2, 1)], [(0, 0), (1, 0), (0, 1)], [(0, 0), (1, 3), (1, 2)], [(0, 0), (2, 1), (1, 0), (2, 0)], [(0, 0), (0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (2, 2), (3, 2)], [(0, 0), (0, 0), (1, 0)], [(0, 0), (1, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:269
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:279
+┌ Info: Interpolating for degrees:
+│ Numerator: 3, Denominator: 3
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:327
+┌ Info: Success! 64 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:405
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 4 for num. and 2 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:410
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:418
+┌ Info: Groebner basis computed in 0.066425026 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:328
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:333
+┌ Info: Inclusion checked in 0.005227355 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:343
+┌ Info: The coefficients of the Groebner basis are presented by 12 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:347
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y8, y6, y4, y9, t], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y5, y3, y1, y7, y2], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:390
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 9 functions in Rational Field(k5, k3, s3, k4, k2, s2, k6, k1, k7)[y1, y2, y3, y4, y5, y6, y7, y8, y9, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:135
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:184
+┌ Info: Success! 34 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:268
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (2, 1), (3, 1)], [(0, 0), (1, 0), (2, 1)], [(0, 0), (2, 0)], [(0, 3), (0, 0), (1, 3)], [(0, 0), (0, 0), (1, 0)], [(0, 0), (1, 0)], [(2, 2), (0, 0), (2, 1)], [(0, 0), (0, 0), (1, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:269
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:279
+┌ Info: Interpolating for degrees:
+│ Numerator: 3, Denominator: 3
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:327
+┌ Info: Success! 32 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:405
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:410
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:418
+┌ Info: Groebner basis computed in 0.181451417 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:328
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:333
+┌ Info: Inclusion checked in 0.003213819 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:343
+┌ Info: The coefficients of the Groebner basis are presented by 11 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:347
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y5, y7, y3, t, y6], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y2, y9, y4, y1, y8], true))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:390
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 9 functions in Rational Field(k5, k3, s3, k4, k2, s2, k6, k1, k7)[y1, y2, y3, y4, y5, y6, y7, y8, y9, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:135
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:184
+┌ Info: Success! 34 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:268
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (1, 0)], [(0, 0), (2, 1), (3, 1)], [(0, 0), (2, 2), (3, 2)], [(0, 0), (1, 3), (1, 0)], [(0, 0), (1, 0), (0, 1)], [(0, 0), (3, 0), (2, 1)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (1, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:269
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:279
+┌ Info: Interpolating for degrees:
+│ Numerator: 3, Denominator: 3
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:327
+┌ Info: Success! 64 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:405
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 2 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:410
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:418
+┌ Info: Groebner basis computed in 0.054840641 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:328
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:333
+┌ Info: Inclusion checked in 0.003546678 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:343
+┌ Info: The coefficients of the Groebner basis are presented by 10 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:347
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[t, y5, y3, y2, y1], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y4, y9, y8, y7, y6], true))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:390
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 9 functions in Rational Field(k5, k3, s3, k4, k2, s2, k6, k1, k7)[y1, y2, y3, y4, y5, y6, y7, y8, y9, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:135
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:184
+┌ Info: Success! 34 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:268
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(2, 2), (0, 0), (2, 1)], [(0, 0), (1, 0)], [(0, 0), (2, 0)], [(0, 0), (1, 0)], [(0, 0), (2, 2), (2, 1)], [(0, 0), (2, 1), (2, 1)], [(0, 0), (1, 0), (2, 0)], [(0, 0), (0, 0), (1, 0)], [(0, 3), (0, 0), (1, 3)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:269
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:279
+┌ Info: Interpolating for degrees:
+│ Numerator: 2, Denominator: 3
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:327
+┌ Info: Success! 56 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:405
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 2 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:410
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:418
+┌ Info: Groebner basis computed in 0.156528616 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:328
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:333
+┌ Info: Inclusion checked in 0.003700788 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:343
+┌ Info: The coefficients of the Groebner basis are presented by 13 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:347
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y5, y1, t, y9, y8], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y7, y2, y6, y3, y4], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:390
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 9 functions in Rational Field(k5, k3, s3, k4, k2, s2, k6, k1, k7)[y1, y2, y3, y4, y5, y6, y7, y8, y9, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:135
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:184
+┌ Info: Success! 34 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:268
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (2, 2), (2, 1)], [(0, 0), (1, 0)], [(0, 0), (2, 1), (2, 1)], [(0, 0), (1, 0), (2, 0)], [(0, 0), (2, 0)], [(2, 2), (0, 0), (2, 1)], [(0, 3), (0, 0), (1, 3)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (1, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:269
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:279
+┌ Info: Interpolating for degrees:
+│ Numerator: 2, Denominator: 3
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:327
+┌ Info: Success! 56 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:405
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 2 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:410
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:418
+┌ Info: Groebner basis computed in 0.066026102 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:328
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:333
+┌ Info: Inclusion checked in 0.124304964 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:343
+┌ Info: The coefficients of the Groebner basis are presented by 13 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:347
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y8, y7, y5, y6, y9], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y1, t, y2, y4, y3], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:390
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 9 functions in Rational Field(k5, k3, s3, k4, k2, s2, k6, k1, k7)[y1, y2, y3, y4, y5, y6, y7, y8, y9, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:135
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:184
+┌ Info: Success! 34 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:268
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 3), (0, 0), (1, 3)], [(0, 0), (1, 0)], [(0, 0), (2, 1), (3, 1)], [(0, 0), (0, 0), (1, 0)], [(2, 2), (0, 0), (2, 1)], [(0, 0), (2, 0)], [(0, 0), (1, 0), (2, 1)], [(0, 0), (1, 0)], [(0, 0), (0, 0), (1, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:269
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:279
+┌ Info: Interpolating for degrees:
+│ Numerator: 3, Denominator: 3
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:327
+┌ Info: Success! 32 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:405
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:410
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:418
+┌ Info: Groebner basis computed in 0.036369409 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:328
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:333
+┌ Info: Inclusion checked in 0.003440411 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:343
+┌ Info: The coefficients of the Groebner basis are presented by 11 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:347
+┌ Info: Computing GB for ordering
+│   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y9, y2, y8, y3, y7], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y6, t, y5, y4, y1], false))
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:390
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 9 functions in Rational Field(k5, k3, s3, k4, k2, s2, k6, k1, k7)[y1, y2, y3, y4, y5, y6, y7, y8, y9, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:135
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:184
+┌ Info: Success! 34 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:268
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 3), (1, 2)], [(0, 0), (1, 0), (2, 0)], [(0, 0), (2, 1), (2, 3)], [(0, 0), (1, 0)], [(0, 0), (3, 0), (2, 1)], [(0, 0), (0, 0), (1, 0)], [(0, 0), (2, 2), (2, 1)], [(2, 2), (0, 0), (2, 1)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:269
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:279
+┌ Info: Interpolating for degrees:
+│ Numerator: 3, Denominator: 3
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:327
+┌ Info: Success! 64 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:405
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 3 for num. and 2 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:410
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:418
+┌ Info: Groebner basis computed in 0.163099878 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:328
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:333
+┌ Info: Inclusion checked in 0.003081089 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:343
+┌ Info: The coefficients of the Groebner basis are presented by 13 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:347
+┌ Info: Final cleaning and simplification of generators
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:529
+┌ Info: The pool of fractions:
+│ k6,
+│ k6,
+│ k6,
+│ k6,
+│ k6,
+│ k6,
+│ k6,
+│ k6,
+│ k6,
+│ k6,
+│ k6,
+│ k6,
+│ k6,
+│ k4,
+│ k4,
+│ k4,
+│ k4,
+│ k4,
+│ k4,
+│ k4,
+│ k4,
+│ k4,
+│ k4,
+│ k4,
+│ k4,
+│ k4,
+│ k5,
+│ k5,
+│ k5,
+│ k5,
+│ k5,
+│ k5,
+│ k5,
+│ k5,
+│ k5,
+│ k5,
+│ k5,
+│ k5,
+│ k5,
+│ k6^2,
+│ s2*k1,
+│ s2*k1,
+│ s2*k1,
+│ s2*k1,
+│ s2*k1,
+│ s2*k1,
+│ s2*k1,
+│ k4*k6,
+│ k4^2,
+│ s3*k2,
+│ s3*k2,
+│ s3*k2,
+│ s3*k2,
+│ s3*k2,
+│ s3*k2,
+│ s3*k2,
+│ k5*k6,
+│ k5*k4,
+│ k5^2,
+│ k6^3,
+│ s2*k6*k1,
+│ k4*k6^2,
+│ k4*s2*k1,
+│ k4^2*k6,
+│ k4^3,
+│ s3*k2*k6,
+│ s3*k4*k2,
+│ k3*s3*k1,
+│ k5*k6^2,
+│ k5*s2*k1,
+│ k5*k4*k6,
+│ k5*k4^2,
+│ k5*s3*k2,
+│ k5^2*k6,
+│ k5^2*k4,
+│ k5^3,
+│ k2 + k1,
+│ k2 + k1,
+│ k2 + k1,
+│ k2 + k1,
+│ k2 + k1,
+│ k2 + k1,
+│ k2 + k1,
+│ k2 + k1,
+│ k2 + k1,
+│ k2 + k1,
+│ k2 + k1,
+│ k2 + k1,
+│ k2 + k1,
+│ k2 + k1,
+│ k2 + k1,
+│ k3 + k7,
+│ k3 + k7,
+│ k3 + k7,
+│ k3 + k7,
+│ k3 + k7,
+│ k3 + k7,
+│ k3 + k7,
+│ k3 + k7,
+│ k4*k2 + k4*k1,
+│ k5*k2 + k5*k1,
+│ k4^2*k2 + k4^2*k1,
+│ s3*k2^2 + s3*k2*k1,
+│ k5*k4*k2 + k5*k4*k1,
+│ k5^2*k2 + k5^2*k1,
+│ k3*k2 + k3*k1 + k2*k7 + k1*k7,
+│ k3*k2 + k3*k1 + k2*k7 + k1*k7,
+│ k2//(k3*k1),
+│ k2//(k3*k1),
+│ (k3*k1)//k2,
+│ (k3*k1)//k2,
+│ (k3*k1)//k2,
+│ (k3*k1)//k2,
+│ (k3*k1)//k2,
+│ (k3*k1)//k2,
+│ (k3*k1)//k2,
+│ (s2*k1)//(k2 + k1),
+│ (s2*k1)//(k2 + k1),
+│ (s2*k1)//(k2 + k1),
+│ (s2*k1)//(k2 + k1),
+│ (s2*k1)//(k2 + k1),
+│ (s2*k1)//(k2 + k1),
+│ (s2*k1)//(k2 + k1),
+│ (s3*k2)//(k2 + k1),
+│ (s3*k2)//(k2 + k1),
+│ (s3*k2)//(k2 + k1),
+│ (s3*k2)//(k2 + k1),
+│ (s3*k2)//(k2 + k1),
+│ (s3*k2)//(k2 + k1),
+│ (s3*k2)//(k2 + k1),
+│ (s3*k2)//(k2 + k1),
+│ (s3*k2)//(k2 + k1),
+│ (s3*k2)//(k2 + k1),
+│ (s3*k2)//(k2 + k1),
+│ (s3*k2)//(k2 + k1),
+│ (k2*s2)//(k3*k2 + k3*k1),
+│ (k2*s2)//(k3*k2 + k3*k1),
+│ (k2*s2)//(k3*k2 + k3*k1),
+│ (k2*s2)//(k3*k2 + k3*k1),
+│ (k2*s2)//(k3*k2 + k3*k1),
+│ (k2*s2)//(k3*k2 + k3*k1),
+│ (k2*s2)//(k3*k2 + k3*k1),
+│ (k2*s2)//(k3*k2 + k3*k1),
+│ (k3*k2 + k3*k1)//(k2*s2),
+│ (k3*k2 + k3*k1)//(k2*s2),
+│ (k3*k2 + k3*k1)//(k2*s2),
+│ (k3*k2 + k3*k1)//(k2*s2),
+│ (k3*k2 + k3*k1)//(k2*s2),
+│ (k3*k2 + k3*k1)//(k2*s2),
+│ (k3*k2 + k3*k1)//(k2*s2),
+│ (k3*k2 + k3*k1)//(k2*s2),
+│ (k3*k2 + k3*k1 + k2*k7)//k2,
+│ (k3*k2 + k3*k1 + k2*k7)//k2,
+│ (k3*k2 + k3*k1 + k2*k7)//k2,
+│ (k3*k2 + k3*k1 + k2*k7)//k2,
+│ (k3*k2 + k3*k1 + k2*k7)//k2,
+│ (k3*k2 + k3*k1 + k2*k7)//k2,
+│ (k3*k2 + k3*k1 + k2*k7)//k2
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:226
+┌ Info: Checking inclusion with probability 0.995
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:532
+┌ Info: Inclusion checked in 0.019830413 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:535
+┌ Info: Out of 10 initial generators there are 8 indepdendent
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:540
+┌ Info: The ranking of the new set of generators is 54
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:543
+┌ Info: The search for identifiable functions concluded in 7.123488263 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:75
+┌ Info: Identifiable functions are
+│   funcs = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[k6, k4, k5, s2*k1, s3*k2, k3*s3*k1, k2 + k1, k3 + k7]
+└ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:53

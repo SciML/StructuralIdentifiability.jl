@@ -1,0 +1,128 @@
+┌ Info: Processing MAPK model (5 outputs bis)
+└ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:40
+┌ Info: Averaging over 1 runs.
+│ Using keyword arguments:
+│ NamedTuple{(:strategy,), Tuple{Tuple{Symbol, Int64}}}
+│ (strategy = (:normalforms, 3),)
+│ ID: (:normalforms, 3)
+└ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:41
+┌ Info: Computing IO-equations
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:88
+┌ Info: Computed in 585.849110855 seconds
+│   :ioeq_time = ioeq_time
+│   ioeq_time = 585.849110855
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:92
+┌ Info: Computing Wronskians
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:95
+┌ Info: Computed in 37.91812693 seconds
+│   :wrnsk_time = wrnsk_time
+│   wrnsk_time = 37.91812693
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:97
+┌ Info: Dimensions of the Wronskians [60, 459, 48, 44, 101]
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:101
+┌ Info: Ranks of the Wronskians computed in 0.026112909 seconds
+│   :rank_time = rank_time
+│   rank_times = 0.026112909
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:106
+┌ Warning: One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still  would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:110
+
+[2320154] signal (15): Terminated
+in expression starting at /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:115
+__madvise at /lib/x86_64-linux-gnu/libc.so.6 (unknown line)
+jl_gc_free_page at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gc-pages.c:317
+sweep_page at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gc.c:1547 [inlined]
+sweep_pool_page at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gc.c:1646 [inlined]
+sweep_pool_pagetable0 at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gc.c:1666 [inlined]
+sweep_pool_pagetable1 at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gc.c:1686 [inlined]
+sweep_pool_pagetable at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gc.c:1716 [inlined]
+gc_sweep_pool at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gc.c:1797
+_jl_gc_collect at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gc.c:3540
+ijl_gc_collect at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gc.c:3706
+maybe_collect at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gc.c:1078 [inlined]
+ijl_gc_managed_malloc at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gc.c:3981
+_new_array_ at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/array.c:141 [inlined]
+_new_array at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/array.c:198 [inlined]
+ijl_alloc_array_1d at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/array.c:436
+Array at ./boot.jl:477 [inlined]
+Array at ./boot.jl:486 [inlined]
+zeros at ./array.jl:584 [inlined]
+zeros at ./array.jl:580 [inlined]
+resize_hashtable_if_needed! at /home/demin/Groebner.jl/src/f4/hashtable.jl:254
+multiplied_poly_to_matrix_row! at /home/demin/Groebner.jl/src/f4/hashtable.jl:564 [inlined]
+#find_multiplied_reducer!#297 at /home/demin/Groebner.jl/src/f4/f4.jl:345
+find_multiplied_reducer! at /home/demin/Groebner.jl/src/f4/f4.jl:292 [inlined]
+macro expansion at /home/demin/Groebner.jl/src/f4/f4.jl:156 [inlined]
+symbolic_preprocessing! at /home/demin/Groebner.jl/src/utils/performance.jl:114
+symbolic_preprocessing! at /home/demin/Groebner.jl/src/f4/learn-apply.jl:378
+_jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
+f4_learn! at /home/demin/Groebner.jl/src/f4/learn-apply.jl:531
+_groebner_learn at /home/demin/Groebner.jl/src/groebner/learn-apply.jl:74
+unknown function (ip: 0x7f143735dc98)
+_jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
+_groebner_learn at /home/demin/Groebner.jl/src/groebner/learn-apply.jl:39
+_groebner_learn at /home/demin/Groebner.jl/src/groebner/learn-apply.jl:13
+#groebner_learn#577 at /home/demin/Groebner.jl/src/interface.jl:106 [inlined]
+groebner_learn at /home/demin/Groebner.jl/src/interface.jl:105
+unknown function (ip: 0x7f143bf59f66)
+_jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
+#discover_shape!#118 at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:151
+discover_shape! at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:133 [inlined]
+_paramgb at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:96
+#paramgb#115 at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:70
+paramgb at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:46 [inlined]
+macro expansion at ./timing.jl:393 [inlined]
+#groebner_basis_coeffs#476 at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:321
+groebner_basis_coeffs at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:300
+unknown function (ip: 0x7f143bf536f6)
+_jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
+#simplified_generating_set#479 at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:478
+simplified_generating_set at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:439
+unknown function (ip: 0x7f143bf12fd6)
+_jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
+#find_identifiable_functions#505 at /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:65
+find_identifiable_functions at /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:46
+unknown function (ip: 0x7f166df87486)
+_jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
+process_system at /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:51
+unknown function (ip: 0x7f143732d0af)
+_jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
+jl_apply at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/julia.h:1879 [inlined]
+do_call at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/interpreter.c:126
+eval_value at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/interpreter.c:226
+eval_stmt_value at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/interpreter.c:177 [inlined]
+eval_body at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/interpreter.c:624
+jl_interpret_toplevel_thunk at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/interpreter.c:762
+jl_toplevel_eval_flex at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/toplevel.c:912
+jl_toplevel_eval_flex at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/toplevel.c:856
+ijl_toplevel_eval_in at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/toplevel.c:971
+eval at ./boot.jl:370 [inlined]
+include_string at ./loading.jl:1903
+_jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
+_include at ./loading.jl:1963
+include at ./Base.jl:457
+jfptr_include_32440.clone_1 at /home/demin/downloads/julia-1.9.2/lib/julia/sys.so (unknown line)
+_jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
+exec_options at ./client.jl:307
+_start at ./client.jl:522
+jfptr__start_43375.clone_1 at /home/demin/downloads/julia-1.9.2/lib/julia/sys.so (unknown line)
+_jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
+jl_apply at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/julia.h:1879 [inlined]
+true_main at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/jlapi.c:573
+jl_repl_entrypoint at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/jlapi.c:717
+main at julia (unknown line)
+unknown function (ip: 0x7f1684f191c9)
+__libc_start_main at /lib/x86_64-linux-gnu/libc.so.6 (unknown line)
+unknown function (ip: 0x401098)
+unknown function (ip: (nil))
+Allocations: 244850373 (Pool: 244538052; Big: 312321); GC: 2816

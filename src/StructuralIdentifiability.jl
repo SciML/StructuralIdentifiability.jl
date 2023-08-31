@@ -45,7 +45,8 @@ export PBRepresentation, diffreduce, io_switch!, pseudodivision
 export find_submodels
 
 # would be great to merge with the Julia logger
-const _runtime_logger = Dict(:id_calls_to_gb => 0, :id_groebner_time => 0.0)
+const _runtime_logger =
+    Dict(:id_calls_to_gb => 0, :id_groebner_time => 0.0, :id_inclusion_check_mod_p => 0)
 
 include("util.jl")
 include("power_series_utils.jl")
@@ -57,10 +58,11 @@ include("elimination.jl")
 include("primality_check.jl")
 include("io_equation.jl")
 include("states.jl")
+include("RationalFunctionFields/util.jl")
 include("RationalFunctionFields/IdealMQS.jl")
 include("RationalFunctionFields/rankings.jl")
-include("RationalFunctionFields/RationalFunctionField.jl")
 include("RationalFunctionFields/normalforms.jl")
+include("RationalFunctionFields/RationalFunctionField.jl")
 include("global_identifiability.jl")
 include("identifiable_functions.jl")
 include("parametrizations.jl")

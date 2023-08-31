@@ -866,17 +866,37 @@ llw = StructuralIdentifiability.@ODEmodel(
 	y1(t) = x3(t)
 )
 
+R, (x1, p2, p4, y1, x2, x3, u, p1, p3) =
+    QQ["x1", "p2", "p4", "y1", "x2", "x3", "u", "p1", "p3"]
+f = [
+    x3 // one(R),
+    x2 * x1 // one(R),
+    p1 * p3 // one(R),
+    p2 * p4 // one(R),
+    p1 + p3 // one(R),
+    (p2 * x2 + p4 * x1) // (x2 * x1),
+    (p2 * x2 - p4 * x1) // (p1 - p3),
+]
+
+rff = StructuralIdentifiability.RationalFunctionField(f)
+@my_profview StructuralIdentifiability.monomial_generators_up_to_degree(
+    rff,
+    4,
+    strategy = :monte_carlo,
+)
+
 funcs0 = StructuralIdentifiability.find_identifiable_functions(llw; with_states=true)
+println(gens(parent(x2)))
+
 
 funcs1 = StructuralIdentifiability.find_identifiable_functions(
-    llw,
-    strategy = (:normalforms, 5),
+    Bilirubin2_io,
     with_states = true,
 )
 
 funcs2 = StructuralIdentifiability.find_identifiable_functions(
-    llw,
-    strategy = (:gbfan, 10),
+    sliqr,
+    strategy = (:normalforms, 6),
     with_states = true,
 )
 

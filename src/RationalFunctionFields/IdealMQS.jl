@@ -36,12 +36,12 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     # Numerators and denominators over GF. 
     # We cache them and maintain a map:
     # a finite field --> an image over this finite field
-    nums_gf::Dict{Any, Any}
-    dens_gf::Dict{Any, Any}
-    sat_gf::Dict{Any, Any}
-    # Cached GBs.
-    # monomial ordering --> a GB in this ordering
-    groebner_bases::Dict{Any, Any}
+    cached_nums_gf::Dict{Any, Any}
+    cached_dens_gf::Dict{Any, Any}
+    cached_sat_gf::Dict{Any, Any}
+    # Cached GBs. A mapping
+    # (monomial ordering, degree) --> a GB
+    cached_groebner_bases::Dict{Any, Any}
 
     """
         IdealMQS(funcs_den_nums::Vector{Vector})
@@ -215,7 +215,7 @@ function ParamPunPam.reduce_mod_p!(
 ) where {Field <: Union{Nemo.GaloisField, Nemo.GaloisFmpzField}}
     @debug "Reducing MQS ideal modulo $(ff)"
     # If there is a reduction modulo this field already,
-    if haskey(mqs.nums_gf, ff)
+    if haskey(mqs.cached_nums_gf, ff)
         @debug "Cache hit with $(ff)!"
         return nothing
     end
@@ -223,9 +223,9 @@ function ParamPunPam.reduce_mod_p!(
     nums_gf = map(poly -> map_coefficients(c -> ff(c), poly), nums_qq)
     dens_gf = map(poly -> map_coefficients(c -> ff(c), poly), dens_qq)
     sat_gf = map_coefficients(c -> ff(c), sat_qq)
-    mqs.nums_gf[ff] = nums_gf
-    mqs.dens_gf[ff] = dens_gf
-    mqs.sat_gf[ff] = sat_gf
+    mqs.cached_nums_gf[ff] = nums_gf
+    mqs.cached_dens_gf[ff] = dens_gf
+    mqs.cached_sat_gf[ff] = sat_gf
     return nothing
 end
 
@@ -236,8 +236,9 @@ function ParamPunPam.specialize_mod_p(
 ) where {T <: Union{gfp_elem, gfp_fmpz_elem}}
     K_1 = parent(first(point))
     @debug "Evaluating MQS ideal over $K_1 at $point"
-    @assert haskey(mqs.nums_gf, K_1)
-    nums_gf, dens_gf, sat_gf = mqs.nums_gf[K_1], mqs.dens_gf[K_1], mqs.sat_gf[K_1]
+    @assert haskey(mqs.cached_nums_gf, K_1)
+    nums_gf, dens_gf, sat_gf =
+        mqs.cached_nums_gf[K_1], mqs.cached_dens_gf[K_1], mqs.cached_sat_gf[K_1]
     dens_indices = mqs.dens_indices
     K_2 = base_ring(nums_gf[1])
     @assert K_1 == K_2

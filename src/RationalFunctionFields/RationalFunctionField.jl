@@ -44,47 +44,6 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    dennums_to_fractions(dennums)
-    
-Returns the field generators represented by fractions.
-
-Input: an array of arrays of polynomials, as in 
-`[[f1, f2, f3, ...], [g1, g2, g3, ...], ...]`
-
-Output: an array of fractions
-`[f2/f1, f3/f1, ..., g2/g1, g3/g1, ...]`
-"""
-function dennums_to_fractions(dennums::Vector{Vector{T}}) where {T}
-    fractions = Vector{AbstractAlgebra.Generic.Frac{T}}()
-    for dni in dennums
-        den, nums = dni[1], dni[2:end]
-        isempty(nums) && continue
-        append!(fractions, map(c -> c // den, nums))
-    end
-    return fractions
-end
-
-# ------------------------------------------------------------------------------
-
-"""
-    fractions_to_dennums(fractions)
-    
-Returns the field generators represented by lists of denominators and
-numerators.
-
-Input: an array of fractions, as in
-`[f2/f1, f3/f1, ..., g2/g1, g3/g1, ...]`
-
-Output: an array of arrays of polynomials,
-`[[f1, f2, f3, ...], [g1, g2, g3, ...], ...]`
-"""
-function fractions_to_dennums(fractions)
-    return map(f -> [denominator(f), numerator(f)], fractions)
-end
-
-# ------------------------------------------------------------------------------
-
-"""
     check_field_membership_mod_p(generators, rat_funcs)
 
 Checks whether given rational functions belong to a given field of rational
@@ -347,9 +306,9 @@ function groebner_basis_coeffs(
     mqs = rff.mqs
     gb, fracs, new_rff = nothing, nothing, nothing
     # Check if the basis is in cache
-    if haskey(mqs.groebner_bases, ordering)
-        @debug "Cache hit with ($ordering)"
-        gb = mqs.groebner_bases[ordering]
+    if haskey(mqs.cached_groebner_bases, (ordering, up_to_degree))
+        @warn "Cache hit with ($ordering, $up_to_degree)!"
+        gb = mqs.cached_groebner_bases[ordering, up_to_degree]
         basis_coeffs = map(collect ∘ coefficients, gb)
         fracs = collect(mapreduce(Set, union!, basis_coeffs))
         return RationalFunctionField(fracs)
@@ -386,8 +345,8 @@ function groebner_basis_coeffs(
         current_degrees = current_degrees .* 2
     end
     @info "The coefficients of the Groebner basis are presented by $(length(fracs)) rational functions"
-    new_rff.mqs.groebner_bases[ordering] = gb
-    rff.mqs.groebner_bases[ordering] = gb
+    new_rff.mqs.cached_groebner_bases[ordering, up_to_degree] = gb
+    rff.mqs.cached_groebner_bases[ordering, up_to_degree] = gb
     return new_rff
 end
 
@@ -439,10 +398,37 @@ function generating_sets_fan(
         ordering_to_generators[ord] = cfs
     end
     _runtime_logger[:id_gbfan_time] = (time_ns() - time_start) / 1e9
-    ordering_to_generators
+    return ordering_to_generators
 end
 
-function linear_relations_between_normal_forms end
+function monomial_generators_up_to_degree(
+    rff::RationalFunctionField{T},
+    up_to_degree;
+    seed = 42,
+    strategy = :deterministic,
+) where {T}
+    @assert strategy in (:deterministic, :monte_carlo)
+    if strategy === :deterministic
+        groebner_basis_coeffs(
+            rff,
+            seed = seed,
+            up_to_degree = (up_to_degree + 1, up_to_degree + 1),
+        )
+        relations, _, _ = linear_relations_between_normal_forms(
+            beautifuly_generators(rff),
+            rff.mqs,
+            up_to_degree,
+            seed = seed,
+        )
+    else
+        relations = linear_relations_between_normal_forms_mod_p(
+            beautifuly_generators(rff),
+            up_to_degree,
+            seed = seed,
+        )
+    end
+    return relations
+end
 
 """
     simplified_generating_set(rff; p = 0.99, seed = 42)
@@ -474,8 +460,8 @@ function simplified_generating_set(
     # Checking identifiability of particular variables and adding them to the field
     if check_variables
         vars = gens(poly_ring(rff))
-        containment = field_contains(rff, vars, (1. + p) / 2)
-        p = (1. + p) / 2
+        containment = field_contains(rff, vars, (1.0 + p) / 2)
+        p = (1.0 + p) / 2
         if all(containment)
             return [v // one(poly_ring(rff)) for v in vars]
         end
@@ -507,8 +493,12 @@ function simplified_generating_set(
     if first(strategy) === :normalforms
         @assert length(strategy) == 2
         _, up_to_degree = strategy
-        generators, _, _ =
-            linear_relations_between_normal_forms(new_rff, up_to_degree; seed = seed)
+        generators = monomial_generators_up_to_degree(
+            new_rff,
+            up_to_degree;
+            seed = seed,
+            strategy = :monte_carlo,
+        )
         append!(new_fracs, generators)
     end
     # Something in the middle
@@ -516,8 +506,12 @@ function simplified_generating_set(
         @assert length(strategy) == 1
         # Compute some normal forms
         up_to_degree = 3
-        generators, _, _ =
-            linear_relations_between_normal_forms(new_rff, up_to_degree; seed = seed)
+        generators = monomial_generators_up_to_degree(
+            new_rff,
+            up_to_degree;
+            seed = seed,
+            strategy = :monte_carlo,
+        )
         append!(new_fracs, generators)
 
         # # Now, generators from normal forms may contain simpler functions, so we

@@ -53,10 +53,13 @@ function extract_identifiable_functions_raw(
         new_vars = vcat(new_vars, ode.x_vars)
     end
     new_ring, _ = PolynomialRing(Nemo.QQ, map(Symbol, new_vars))
-    coeff_lists =
-        map(coeffs -> map(c -> parent_ring_change(c, new_ring), coeffs), coeff_lists)
+    new_coeff_lists = empty(coeff_lists)
+    for (key, coeff_list) in coeff_lists
+        new_coeff_lists[key] =
+            map(coeffs -> map(c -> parent_ring_change(c, new_ring), coeffs), coeff_list)
+    end
 
-    return coeff_lists, new_ring
+    return new_coeff_lists, new_ring
 end
 
 # ------------------------------------------------------------------------------
