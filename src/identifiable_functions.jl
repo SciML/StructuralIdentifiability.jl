@@ -11,13 +11,13 @@ This functions takes the following optional arguments:
 - `p`: A float in the range from 0 to 1, the probability of correctness. Default
   is `0.99`.
 - `simplify`: When `true`, tries to simplify the identifiabile functions, and
-    returns a minimal algebraically indepdendent set. Default is `true`.
+    returns an algebraically indepdendent set. Default is `true`.
 - `with_states`: When `true`, also reports the identifiabile functions in the
     ODE states. Default is `false`.
 - `strategy`: The simplification strategy. Possible options are:
     - `(:gb, )`: Extract the coefficients of a Groebner basis of the MQS ideal
       (default).
-    - `(:gbfan, N)`: Same as `:gb`, but computes `N` bases for different
+    - `(:gbfan, N)`: Same as `:gb`, but computes `N` bases for different random
         rankings of variables.
     - `(:normalforms, N)`: Same as `:gb`, but adjoins the results of normal form
       computations of monomials up to the total degree `N`. 
@@ -55,11 +55,8 @@ function find_identifiable_functions(
     @assert first(strategy) in (:gb, :gbfan, :normalforms, :hybrid)
     runtime_start = time_ns()
     half_p = 0.5 + p / 2
-    id_funcs, bring = initial_identifiable_functions(
-        ode,
-        p = half_p,
-        with_states = with_states,
-    )
+    id_funcs, bring =
+        initial_identifiable_functions(ode, p = half_p, with_states = with_states)
     if simplify
         if isempty(id_funcs)
             bring = parent(ode)
@@ -82,8 +79,9 @@ end
 """
     find_identifiable_functions(ode::ModelingToolkit.ODESystem; measured_quantities=[], options...)
 
-Finds all functions that are identifiable for the given ODE system.
-    
+Finds all functions of parameters/states that are identifiable in the given ODE
+system.
+
 ## Options
 
 This functions takes the following optional arguments:

@@ -4,7 +4,8 @@ function extract_identifiable_functions_raw(
     known::Array{P, 1},
     with_states::Bool,
 ) where {P <: MPolyElem{fmpq}}
-    coeff_lists = Dict(:with_states => Array{Array{P, 1}, 1}(), :no_states => Array{Array{P, 1}, 1}())
+    coeff_lists =
+        Dict(:with_states => Array{Array{P, 1}, 1}(), :no_states => Array{Array{P, 1}, 1}())
     varnames = [var_to_str(p) for p in ode.parameters]
     if with_states
         append!(varnames, map(var_to_str, ode.x_vars))
@@ -30,7 +31,7 @@ function extract_identifiable_functions_raw(
         eq_coefs = [parent_ring_change(c, bring) for c in eq_coefs]
         push!(coeff_lists[:no_states], eq_coefs)
     end
-    
+
     for p in known
         if all(in.(map(var_to_str, vars(p)), [map(var_to_str, gens(bring))]))
             as_list = [one(bring), parent_ring_change(p, bring)]
@@ -43,7 +44,22 @@ function extract_identifiable_functions_raw(
             @debug "Known quantity $p cannot be casted and is thus dropped"
         end
     end
-    return coeff_lists, bring
+
+    # Returned entities live in a new ring, different from the one
+    # attached to the input ODE. 
+    # The new ring includes only parameter variables and, occasionally, states.
+    new_vars = ode.parameters
+    if with_states
+        new_vars = vcat(new_vars, ode.x_vars)
+    end
+    new_ring, _ = PolynomialRing(Nemo.QQ, map(Symbol, new_vars))
+    new_coeff_lists = empty(coeff_lists)
+    for (key, coeff_list) in coeff_lists
+        new_coeff_lists[key] =
+            map(coeffs -> map(c -> parent_ring_change(c, new_ring), coeffs), coeff_list)
+    end
+
+    return new_coeff_lists, new_ring
 end
 
 # ------------------------------------------------------------------------------
@@ -56,7 +72,7 @@ These are presented by the coefficients of the IO-equations.
 
 ## Options
 
-This functions takes the following optional arguments:
+This function takes the following optional arguments:
 - `p`: probability of correctness
 - `with_states`: Also report the identifiabile functions in states. Default is
   `false`. If this is `true`, the identifiable functions involving parameters only
@@ -103,12 +119,13 @@ function initial_identifiable_functions(
 
     if with_states
         @debug "Generators of identifiable functions involve states, the parameter-only part is getting simplified"
-        _runtime_logger[:check_time] = @elapsed no_states_simplified = simplified_generating_set(
-            RationalFunctionField(id_funcs[:no_states]),
-            p = p,
-            seed = 42,
-            strategy = (:gb,)
-        )
+        _runtime_logger[:check_time] =
+            @elapsed no_states_simplified = simplified_generating_set(
+                RationalFunctionField(id_funcs[:no_states]),
+                p = p,
+                seed = 42,
+                strategy = (:gb,),
+            )
         id_funcs[:no_states] = fractions_to_dennums(no_states_simplified)
     end
 
@@ -141,17 +158,17 @@ function check_identifiability(
     identifiable_functions_raw, bring = initial_identifiable_functions(
         ode,
         known = known,
-        p = p, 
-        var_change_policy = var_change_policy, 
-        with_states = states_needed
+        p = p,
+        var_change_policy = var_change_policy,
+        with_states = states_needed,
     )
 
     funcs_to_check = Vector{Generic.Frac{P}}(
         map(f -> parent_ring_change(f, bring) // one(bring), funcs_to_check),
     )
 
-    _runtime_logger[:check_time] = get(_runtime_logger, :check_time, 0.) + 
-        @elapsed result = field_contains(
+    _runtime_logger[:check_time] =
+        get(_runtime_logger, :check_time, 0.0) + @elapsed result = field_contains(
             RationalFunctionField(identifiable_functions_raw),
             funcs_to_check,
             half_p,
@@ -165,7 +182,13 @@ function check_identifiability(
     p::Float64 = 0.99,
     var_change_policy = :default,
 ) where {P <: MPolyElem{fmpq}}
-    return check_identifiability(ode, ode.parameters, known = known, p = p, var_change_policy = var_change_policy)
+    return check_identifiability(
+        ode,
+        ode.parameters,
+        known = known,
+        p = p,
+        var_change_policy = var_change_policy,
+    )
 end
 
 #------------------------------------------------------------------------------
@@ -231,7 +254,13 @@ function assess_global_identifiability(
         @info "Note: the input model has nontrivial submodels. If the computation for the full model will be too heavy, you may want to try to first analyze one of the submodels. They can be produced using function `find_submodels`"
     end
 
-    result = check_identifiability(ode, funcs_to_check, known = known, p = p, var_change_policy = var_change)
+    result = check_identifiability(
+        ode,
+        funcs_to_check,
+        known = known,
+        p = p,
+        var_change_policy = var_change,
+    )
 
     return result
 end

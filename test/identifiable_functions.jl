@@ -932,7 +932,3 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
         end
     end
 end
-
-@testset "Normal forms over the rationals" begin
-    
-end

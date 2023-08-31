@@ -6,7 +6,7 @@ begin
 
     macro my_profview(ex)
         :((VSCodeServer.Profile).clear();
-        VSCodeServer.Profile.init(n = 10^8, delay = 0.00001);
+        VSCodeServer.Profile.init(n = 10^8, delay = 0.0001);
         VSCodeServer.Profile.start_timer();
         $ex;
         VSCodeServer.Profile.stop_timer();
@@ -854,10 +854,21 @@ begin
     using JuliaInterpreter
     Groebner = StructuralIdentifiability.Groebner
     ParamPunPam = StructuralIdentifiability.ParamPunPam
-    Base.global_logger(ConsoleLogger(Logging.Debug))
+    Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
 #! format: off
+
+funcs1 = StructuralIdentifiability.find_identifiable_functions(
+    fujita,
+    with_states = true,
+)
+
+@profview funcs2 = StructuralIdentifiability.find_identifiable_functions(
+    fujita,
+    with_states = true,
+    strategy=(:normalforms, 3)
+)
 
 llw = StructuralIdentifiability.@ODEmodel(
 	x2'(t) = -p3*x2(t) + p4*u(t),
@@ -866,15 +877,37 @@ llw = StructuralIdentifiability.@ODEmodel(
 	y1(t) = x3(t)
 )
 
+R, (x1, p2, p4, y1, x2, x3, u, p1, p3) =
+    QQ["x1", "p2", "p4", "y1", "x2", "x3", "u", "p1", "p3"]
+f = [
+    x3 // one(R),
+    x2 * x1 // one(R),
+    p1 * p3 // one(R),
+    p2 * p4 // one(R),
+    p1 + p3 // one(R),
+    (p2 * x2 + p4 * x1) // (x2 * x1),
+    (p2 * x2 - p4 * x1) // (p1 - p3),
+]
+
+rff = StructuralIdentifiability.RationalFunctionField(f)
+@my_profview StructuralIdentifiability.monomial_generators_up_to_degree(
+    rff,
+    4,
+    strategy = :monte_carlo,
+)
+
+funcs0 = StructuralIdentifiability.find_identifiable_functions(llw; with_states=true)
+println(gens(parent(x2)))
+
+
 funcs1 = StructuralIdentifiability.find_identifiable_functions(
-    llw,
-    strategy = (:normalforms, 2),
+    Bilirubin2_io,
     with_states = true,
 )
 
 funcs2 = StructuralIdentifiability.find_identifiable_functions(
-    llw,
-    strategy = (:gbfan, 10),
+    sliqr,
+    strategy = (:normalforms, 6),
     with_states = true,
 )
 
@@ -894,8 +927,11 @@ StructuralIdentifiability._runtime_logger[:id_inclusion_check_mod_p] = 0.0
 rff = StructuralIdentifiability.RationalFunctionField(f);
 StructuralIdentifiability.linear_relations_between_normal_forms(rff, 3)
 
-StructuralIdentifiability.find_identifiable_functions(sliqr)
-
+StructuralIdentifiability.find_identifiable_functions(
+    sliqr,
+    strategy = (:normalforms, 5),
+    with_states = true,
+)
 StructuralIdentifiability.reparametrize(sliqr)
 
 ode = StructuralIdentifiability.@ODEmodel(x1'(t) = a * x1(t), y(t) = x1)

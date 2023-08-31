@@ -44,47 +44,6 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    dennums_to_fractions(dennums)
-    
-Returns the field generators represented by fractions.
-
-Input: an array of arrays of polynomials, as in 
-`[[f1, f2, f3, ...], [g1, g2, g3, ...], ...]`
-
-Output: an array of fractions
-`[f2/f1, f3/f1, ..., g2/g1, g3/g1, ...]`
-"""
-function dennums_to_fractions(dennums::Vector{Vector{T}}) where {T}
-    fractions = Vector{AbstractAlgebra.Generic.Frac{T}}()
-    for dni in dennums
-        den, nums = dni[1], dni[2:end]
-        isempty(nums) && continue
-        append!(fractions, map(c -> c // den, nums))
-    end
-    return fractions
-end
-
-# ------------------------------------------------------------------------------
-
-"""
-    fractions_to_dennums(fractions)
-    
-Returns the field generators represented by lists of denominators and
-numerators.
-
-Input: an array of fractions, as in
-`[f2/f1, f3/f1, ..., g2/g1, g3/g1, ...]`
-
-Output: an array of arrays of polynomials,
-`[[f1, f2, f3, ...], [g1, g2, g3, ...], ...]`
-"""
-function fractions_to_dennums(fractions)
-    return map(f -> [denominator(f), numerator(f)], fractions)
-end
-
-# ------------------------------------------------------------------------------
-
-"""
     check_field_membership_mod_p(generators, rat_funcs)
 
 Checks whether given rational functions belong to a given field of rational
@@ -264,7 +223,7 @@ function beautifuly_generators(
     # Remove redundant pass
     if discard_redundant
         sort!(fracs, lt = rational_function_cmp)
-        @info "The pool of fractions:\n$(join(map(repr, fracs), ",\n"))"
+        @debug "The pool of fractions:\n$(join(map(repr, fracs), ",\n"))"
         if reversed_order
             non_redundant = collect(1:length(fracs))
             for i in length(fracs):-1:1
@@ -347,9 +306,9 @@ function groebner_basis_coeffs(
     mqs = rff.mqs
     gb, fracs, new_rff = nothing, nothing, nothing
     # Check if the basis is in cache
-    if haskey(mqs.groebner_bases, ordering)
-        @debug "Cache hit with ($ordering)"
-        gb = mqs.groebner_bases[ordering]
+    if haskey(mqs.cached_groebner_bases, (ordering, up_to_degree))
+        @warn "Cache hit with ($ordering, $up_to_degree)!"
+        gb = mqs.cached_groebner_bases[ordering, up_to_degree]
         basis_coeffs = map(collect ∘ coefficients, gb)
         fracs = collect(mapreduce(Set, union!, basis_coeffs))
         return RationalFunctionField(fracs)
@@ -386,209 +345,9 @@ function groebner_basis_coeffs(
         current_degrees = current_degrees .* 2
     end
     @info "The coefficients of the Groebner basis are presented by $(length(fracs)) rational functions"
-    new_rff.mqs.groebner_bases[ordering] = gb
-    rff.mqs.groebner_bases[ordering] = gb
+    new_rff.mqs.cached_groebner_bases[ordering, up_to_degree] = gb
+    rff.mqs.cached_groebner_bases[ordering, up_to_degree] = gb
     return new_rff
-end
-
-function relations_over_qq(polys, preimages)
-    @assert !isempty(polys)
-    fracfield = base_ring(first(polys))
-    qq_relations = Vector{elem_type(fracfield)}()
-    # Filter out and stash zero polynomials
-    permutation = collect(1:length(polys))
-    zero_inds = filter(i -> iszero(polys[i]), permutation)
-    for ind in zero_inds
-        push!(qq_relations, fracfield(preimages[ind]))
-    end
-    @debug "Zeroed monomials are" preimages[zero_inds]
-    permutation = setdiff(permutation, zero_inds)
-    # Sort, the first monom is the smallest
-    sort!(permutation, by = i -> leading_monomial(polys[i]))
-    polys = polys[permutation]
-    preimages = preimages[permutation]
-    lead_monoms = map(leading_monomial, polys)
-    n = length(polys)
-    # Polynomials live in QQ(params)[vars].
-    # The first several elements are de facto elements of QQ(params).
-    # NOTE: `coeff(f, i)` of a polynomial f in QQ(a)[x] is excruciatingly slow
-    @inbounds for i in 1:n
-        fi = polys[i]
-        @debug "Reducing $i-th polynomial over QQ" fi
-        qq_multipliers = map(_ -> zero(Nemo.QQ), 1:n)
-        qq_multipliers[i] = one(Nemo.QQ)
-        for j in (i - 1):-1:1
-            iszero(fi) && break
-            fj = polys[j]
-            iszero(fj) && continue
-            leadj = lead_monoms[j]
-            ci = coeff(fi, leadj)
-            # If fi contains the lead of fj
-            iszero(ci) && continue
-            cj = leading_coefficient(fj)
-            cij = div(ci, cj)
-            # If the result of division belongs to QQ.
-            !is_rational_func_const(cij) && continue
-            @debug "reducing $fi with $cij x $fj"
-            fi = fi - cij * fj
-            qq_multipliers[j] = -coeff(numerator(cij), 1)
-        end
-        if iszero(fi)
-            @debug "Polynomial at index $i reduced to zero"
-            preimage = zero(fracfield)
-            for k in 1:i
-                if !iszero(qq_multipliers[k])
-                    preimage += qq_multipliers[k] * preimages[k]
-                end
-            end
-            push!(qq_relations, preimage)
-        end
-    end
-    qq_relations, polys, preimages
-end
-
-function relations_over_qq_fast(polys, preimages)
-    @assert !isempty(polys)
-    R = parent(first(polys))
-    fracfield = base_ring(first(polys))
-    paramring = base_ring(fracfield)
-    qq_relations = Vector{elem_type(fracfield)}()
-    # Filter out and stash zero polynomials
-    permutation = collect(1:length(polys))
-    zero_inds = filter(i -> iszero(polys[i]), permutation)
-    for ind in zero_inds
-        push!(qq_relations, fracfield(preimages[ind]))
-    end
-    permutation = setdiff(permutation, zero_inds)
-    polys = polys[permutation]
-    preimages = preimages[permutation]
-    point = [Nemo.QQ(rand(1:3)) for _ in 1:nvars(paramring)]
-    R_eval, _ = PolynomialRing(Nemo.QQ, symbols(R), ordering = ordering(R))
-    polys_eval = Vector{elem_type(R_eval)}(undef, length(polys))
-    @inbounds for i in 1:length(polys)
-        f = polys[i]
-        cfs = collect(coefficients(f))
-        cfs_eval = Vector{Nemo.fmpq}(undef, length(cfs))
-        for j in 1:length(cfs)
-            num, den = unpack_fraction(cfs[j])
-            num_eval = evaluate(num, point)
-            den_eval = evaluate(den, point)
-            # NOTE: here there is no much trouble with unlucky cancellations
-            if iszero(den_eval)
-                den_eval = one(den_eval)
-            end
-            cfs_eval[j] = num_eval // den_eval
-        end
-        polys_eval[i] = R_eval(cfs_eval, collect(exponent_vectors(f)))
-    end
-    n = length(polys_eval)
-    lead_monoms = map(poly -> iszero(poly) ? one(poly) : leading_monomial(poly), polys_eval)
-    # Sort, the first monom is the smallest
-    permutation = collect(1:n)
-    sort!(permutation, by = i -> lead_monoms[i])
-    polys_eval = polys_eval[permutation]
-    preimages = preimages[permutation]
-    lead_monoms = lead_monoms[permutation]
-    qq_multipliers = map(_ -> zero(Nemo.QQ), 1:n)
-    @inbounds for i in 1:n
-        fi = polys_eval[i]
-        @debug "Reducing $i-th polynomial over QQ" fi
-        for j in 1:(n - 1)
-            qq_multipliers[j] = zero(Nemo.QQ)
-        end
-        qq_multipliers[i] = one(Nemo.QQ)
-        for j in (i - 1):-1:1
-            iszero(fi) && break
-            fj = polys_eval[j]
-            iszero(fj) && continue
-            leadj = lead_monoms[j]
-            ci = coeff(fi, leadj)
-            # If fi contains the lead of fj
-            iszero(ci) && continue
-            cj = leading_coefficient(fj)
-            cij = div(ci, cj)
-            @debug "reducing $fi with $cij x $fj"
-            fi = fi - cij * fj
-            qq_multipliers[j] = -cij
-        end
-        if iszero(fi)
-            @debug "Polynomial at index $i reduced to zero"
-            true_relation = zero(R)
-            for k in 1:i
-                if !iszero(qq_multipliers[k])
-                    true_relation += qq_multipliers[k] * polys[k]
-                end
-            end
-            if !iszero(true_relation)
-                continue
-            end
-            preimage = zero(fracfield)
-            for k in 1:i
-                if !iszero(qq_multipliers[k])
-                    preimage += qq_multipliers[k] * preimages[k]
-                end
-            end
-            push!(qq_relations, preimage)
-        end
-    end
-    qq_relations, polys, preimages
-end
-
-"""
-    linear_relations_between_normal_forms(rff, up_to_degree)
-
-Returns the generators of the rational function field `rff` obtained as
-relations over the rationals between the normal forms of the monomials up to the
-degree.
-"""
-function linear_relations_between_normal_forms(
-    rff::RationalFunctionField{T},
-    up_to_degree::Integer;
-    seed = 42,
-) where {T}
-    @assert up_to_degree > 0
-    time_start = time_ns()
-    # NOTE: this is not fair regarding mutation and `!`
-    groebner_basis_coeffs(rff)
-    gb = first(values(rff.mqs.groebner_bases))
-    R = parent(gb[1])
-    R_param = base_ring(base_ring(R))
-    xs = gens(R)
-    xs_param = gens(R_param)
-    # TODO: A dirty hack!
-    @assert rff.mqs.sat_var_index == length(xs)
-    # xs = xs[1:(end - 1)]
-    @info "Computing normal forms of monomials in $(length(xs)) variables up to degree $up_to_degree"
-    normal_forms = Vector{elem_type(R)}(undef, 0)
-    monoms = Vector{elem_type(R_param)}(undef, 0)
-    @info "GB is" gb
-    @info """
-    The variables rings are:
-    nf. parent = $(R)
-    parametric parent = $(R_param)
-    gb parent = $(parent(gb[1]))"""
-    @assert R == parent(gb[1])
-    @assert R_param == base_ring(base_ring(parent(gb[1])))
-    for deg in 1:up_to_degree
-        for combination in Combinatorics.with_replacement_combinations(xs, deg)
-            monom = prod(combination)
-            monom_param = evaluate(monom, vcat(xs_param, one(R_param)))
-            monom_mqs = monom - monom_param
-            @info "Computing the normal form of" monom_mqs
-            b, nf = divrem(monom_mqs, gb)
-            @info "The normal form is" nf, b
-            push!(monoms, numerator(monom_param))
-            push!(normal_forms, nf)
-        end
-    end
-    for a in zip(monoms, normal_forms)
-        @info a
-    end
-    @info "Reducing the normal forms of $(length(monoms)) monomials over QQ"
-    generators, normal_forms, monoms = relations_over_qq(normal_forms, monoms)
-    _runtime_logger[:id_normalforms_time] = (time_ns() - time_start) / 1e9
-    @info "Generators from normal forms" generators
-    generators, normal_forms, monoms
 end
 
 """
@@ -639,7 +398,36 @@ function generating_sets_fan(
         ordering_to_generators[ord] = cfs
     end
     _runtime_logger[:id_gbfan_time] = (time_ns() - time_start) / 1e9
-    ordering_to_generators
+    return ordering_to_generators
+end
+
+function monomial_generators_up_to_degree(
+    rff::RationalFunctionField{T},
+    up_to_degree;
+    seed = 42,
+    strategy = :deterministic,
+) where {T}
+    @assert strategy in (:deterministic, :monte_carlo)
+    if strategy === :deterministic
+        groebner_basis_coeffs(
+            rff,
+            seed = seed,
+            up_to_degree = (up_to_degree + 1, up_to_degree + 1),
+        )
+        relations, _, _ = linear_relations_between_normal_forms(
+            beautifuly_generators(rff),
+            rff.mqs,
+            up_to_degree,
+            seed = seed,
+        )
+    else
+        relations = linear_relations_between_normal_forms_mod_p(
+            beautifuly_generators(rff),
+            up_to_degree,
+            seed = seed,
+        )
+    end
+    return relations
 end
 
 """
@@ -672,8 +460,8 @@ function simplified_generating_set(
     # Checking identifiability of particular variables and adding them to the field
     if check_variables
         vars = gens(poly_ring(rff))
-        containment = field_contains(rff, vars, (1. + p) / 2)
-        p = (1. + p) / 2
+        containment = field_contains(rff, vars, (1.0 + p) / 2)
+        p = (1.0 + p) / 2
         if all(containment)
             return [v // one(poly_ring(rff)) for v in vars]
         end
@@ -705,8 +493,12 @@ function simplified_generating_set(
     if first(strategy) === :normalforms
         @assert length(strategy) == 2
         _, up_to_degree = strategy
-        generators, _, _ =
-            linear_relations_between_normal_forms(new_rff, up_to_degree; seed = seed)
+        generators = monomial_generators_up_to_degree(
+            new_rff,
+            up_to_degree;
+            seed = seed,
+            strategy = :monte_carlo,
+        )
         append!(new_fracs, generators)
     end
     # Something in the middle
@@ -714,8 +506,12 @@ function simplified_generating_set(
         @assert length(strategy) == 1
         # Compute some normal forms
         up_to_degree = 3
-        generators, _, _ =
-            linear_relations_between_normal_forms(new_rff, up_to_degree; seed = seed)
+        generators = monomial_generators_up_to_degree(
+            new_rff,
+            up_to_degree;
+            seed = seed,
+            strategy = :monte_carlo,
+        )
         append!(new_fracs, generators)
 
         # # Now, generators from normal forms may contain simpler functions, so we

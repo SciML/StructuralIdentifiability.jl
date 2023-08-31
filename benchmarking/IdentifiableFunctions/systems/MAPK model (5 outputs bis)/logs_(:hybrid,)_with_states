@@ -1,7 +1,5 @@
-⌜ # Computing specializations..  	 Time: 0:00:22[K✓ # Computing specializations..  	 Time: 0:00:23[K
-⌜ # Computing specializations.. 	 Time: 0:00:00[K
-  Points:  2[K[K[A✓ # Computing specializations.. 	 Time: 0:00:04[K
-⌜ # Computing specializations..  	 Time: 0:00:15[K✓ # Computing specializations..  	 Time: 0:00:15[K
+┌ Warning: Cache hit with (InputOrdering(), (9223372036854775807, 9223372036854775807))!
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:310
 ┌ Info: Processing MAPK model (5 outputs bis)
 └ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:40
 ┌ Info: Averaging over 1 runs.
@@ -11,53 +9,88 @@
 │ ID: (:hybrid,)_with_states
 └ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:41
 ┌ Info: Computing IO-equations
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:160
-┌ Info: IO-equations computed in 790.372542221 seconds
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:162
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:88
+┌ Info: Computed in 647.623450693 seconds
+│   :ioeq_time = ioeq_time
+│   ioeq_time = 647.623450693
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:92
+┌ Info: Computing Wronskians
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:95
+┌ Info: Computed in 74.198365157 seconds
+│   :wrnsk_time = wrnsk_time
+│   wrnsk_time = 74.198365157
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:97
+┌ Info: Dimensions of the Wronskians [60, 459, 48, 44, 101]
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:101
+┌ Info: Ranks of the Wronskians computed in 0.029031228 seconds
+│   :rank_time = rank_time
+│   rank_times = 0.029031228
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:106
+┌ Warning: One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still  would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:110
 
-[1083301] signal (15): Terminated
+[2300603] signal (15): Terminated
 in expression starting at /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:115
-insert_multiplied_poly_in_hash_table! at ./essentials.jl:0
-multiplied_poly_to_matrix_row! at /home/demin/Groebner.jl/src/f4/hashtable.jl:566 [inlined]
-#find_multiplied_reducer!#297 at /home/demin/Groebner.jl/src/f4/f4.jl:340
-find_multiplied_reducer! at /home/demin/Groebner.jl/src/f4/f4.jl:292 [inlined]
-macro expansion at /home/demin/Groebner.jl/src/f4/f4.jl:156 [inlined]
-symbolic_preprocessing! at /home/demin/Groebner.jl/src/utils/performance.jl:135
-symbolic_preprocessing! at /home/demin/Groebner.jl/src/f4/learn-apply.jl:378
+cmp at /home/demin/Groebner.jl/src/f4/sorting.jl:248 [inlined]
+#280 at /home/demin/Groebner.jl/src/f4/sorting.jl:251 [inlined]
+#1 at ./ordering.jl:133 [inlined]
+lt at ./ordering.jl:120 [inlined]
+partition! at ./sort.jl:1003
+#_sort!#25 at ./sort.jl:1039
+_sort! at ./sort.jl:1027
+#_sort!#25 at ./sort.jl:1058
+_sort! at ./sort.jl:1027 [inlined]
+#_sort!#25 at ./sort.jl:1058
+_sort! at ./sort.jl:1027 [inlined]
+_sort! at ./sort.jl:1095 [inlined]
+_sort! at ./sort.jl:693 [inlined]
+_sort! at ./sort.jl:644 [inlined]
+_sort! at ./sort.jl:715
+_sort! at ./sort.jl:660 [inlined]
+_sort! at ./sort.jl:596 [inlined]
+#sort!#28 at ./sort.jl:1374 [inlined]
+sort! at ./sort.jl:1367 [inlined]
+sort_columns_by_labels! at /home/demin/Groebner.jl/src/f4/sorting.jl:253 [inlined]
+column_to_monom_mapping! at /home/demin/Groebner.jl/src/f4/matrix.jl:1368
+reduction_learn! at /home/demin/Groebner.jl/src/f4/learn-apply.jl:383
+unknown function (ip: 0x7f743999db0a)
 _jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
 ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
-f4_learn! at /home/demin/Groebner.jl/src/f4/learn-apply.jl:531
+f4_learn! at /home/demin/Groebner.jl/src/f4/learn-apply.jl:536
 _groebner_learn at /home/demin/Groebner.jl/src/groebner/learn-apply.jl:74
-unknown function (ip: 0x7fd0ad94c338)
+unknown function (ip: 0x7f74399950a8)
 _jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
 ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
 _groebner_learn at /home/demin/Groebner.jl/src/groebner/learn-apply.jl:39
 _groebner_learn at /home/demin/Groebner.jl/src/groebner/learn-apply.jl:13
 #groebner_learn#577 at /home/demin/Groebner.jl/src/interface.jl:106 [inlined]
 groebner_learn at /home/demin/Groebner.jl/src/interface.jl:105
-unknown function (ip: 0x7fd0af10f5a6)
+unknown function (ip: 0x7f743e55bbc6)
 _jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
 ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
-#discover_shape!#114 at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:156
-discover_shape! at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:138 [inlined]
-_paramgb at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:101
-#paramgb#111 at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:70
+#discover_shape!#118 at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:151
+discover_shape! at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:133 [inlined]
+_paramgb at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:96
+#paramgb#115 at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:70
 paramgb at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:46 [inlined]
 macro expansion at ./timing.jl:393 [inlined]
-#groebner_basis_coeffs#454 at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:356
-groebner_basis_coeffs at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:335 [inlined]
-#simplified_generating_set#473 at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:654
-simplified_generating_set at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:634
-unknown function (ip: 0x7fd0af1088d6)
+#groebner_basis_coeffs#476 at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:321
+groebner_basis_coeffs at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:300
+unknown function (ip: 0x7f743e555346)
 _jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
 ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
-#find_identifiable_functions#488 at /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:67
+#simplified_generating_set#479 at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:478
+simplified_generating_set at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:439 [inlined]
+macro expansion at ./timing.jl:393 [inlined]
+#initial_identifiable_functions#492 at /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:122
+initial_identifiable_functions at /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:81 [inlined]
+#find_identifiable_functions#505 at /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:58
 find_identifiable_functions at /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:46
-unknown function (ip: 0x7fd2e457b416)
+unknown function (ip: 0x7f767018a896)
 _jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
 ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
 process_system at /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:51
-unknown function (ip: 0x7fd0ad91e88f)
+unknown function (ip: 0x7f743996941f)
 _jl_invoke at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
 ijl_apply_generic at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/gf.c:2940
 jl_apply at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/julia.h:1879 [inlined]
@@ -87,13 +120,13 @@ jl_apply at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/ju
 true_main at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/jlapi.c:573
 jl_repl_entrypoint at /cache/build/default-amdci5-2/julialang/julia-release-1-dot-9/src/jlapi.c:717
 main at julia (unknown line)
-unknown function (ip: 0x7fd2fb59d1c9)
+unknown function (ip: 0x7f76875511c9)
 __libc_start_main at /lib/x86_64-linux-gnu/libc.so.6 (unknown line)
 unknown function (ip: 0x401098)
 unknown function (ip: (nil))
-Allocations: 223728256 (Pool: 223592753; Big: 135503); GC: 1243
+Allocations: 297151453 (Pool: 296956438; Big: 195015); GC: 1252
 ┌ Info: Simplifying identifiable functions
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:644
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:450
 ┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
 │ Ordering, input / target: degrevlex / InputOrdering
 │ Rational interpolator: VanDerHoevenLecerf
@@ -101,7 +134,7 @@ Allocations: 223728256 (Pool: 223592753; Big: 135503); GC: 1243
 │ Estimate degrees: true
 │ Assess correctness: false
 └ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
-┌ Info: Given 1064 functions in Rational Field(c0001, a10, FS11, F, y2, gamma1000, KS10, beta11, FS01, b00, alpha10, c0111, beta10, alpha11, S00, K, beta01, y0, alpha01, gamma1100, c0011, c0010, b10, gamma1101, S01, KS01, S10, a00, b01, FS10, y3, c1011, y1, S11, KS00, a01, y4, gamma1110, gamma0100)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, y30, y31, y32, y33, y34, y35, y36, y37, y38, y39, t]
+┌ Info: Given 1047 functions in Rational Field(c0001, a10, gamma1000, beta11, b00, alpha10, c0111, beta10, alpha11, beta01, alpha01, gamma1100, c0011, c0010, b10, gamma1101, a00, b01, c1011, a01, gamma1110, gamma0100, KS00, S01, KS01, FS11, KS10, FS01, S00, K, FS10, S10, S11, F)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, y30, y31, y32, y33, y34, t]
 └ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
 ┌ Info: Specializing at 3 points to guess the shape of the basis..
-└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:140
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:135

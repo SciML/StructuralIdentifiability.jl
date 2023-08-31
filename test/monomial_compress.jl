@@ -8,7 +8,7 @@
     ]
 
     for t in tests
-        a, b = monomial_compress(t, [v1, v2])
+        a, b = StructuralIdentifiability.monomial_compress(t, [v1, v2])
         s = 0
         for (x, y) in zip(a, b)
             s += parent_ring_change(x, parent(t)) * parent_ring_change(y, parent(t))

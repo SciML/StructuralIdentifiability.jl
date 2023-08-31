@@ -1,0 +1,353 @@
+┌ Info: Processing JAK-STAT 1
+└ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:40
+┌ Info: Averaging over 1 runs.
+│ Using keyword arguments:
+│ NamedTuple{(:strategy,), Tuple{Tuple{Symbol, Int64}}}
+│ (strategy = (:normalforms, 2),)
+│ ID: (:normalforms, 2)
+└ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:41
+┌ Info: Computing IO-equations
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:88
+┌ Info: Computed in 13.443897543 seconds
+│   :ioeq_time = ioeq_time
+│   ioeq_time = 13.443897543
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:92
+┌ Info: Computing Wronskians
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:95
+┌ Info: Computed in 8.004729599 seconds
+│   :wrnsk_time = wrnsk_time
+│   wrnsk_time = 8.004729599
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:97
+┌ Info: Dimensions of the Wronskians [33, 974, 2, 232, 4, 24, 2, 5]
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:101
+┌ Info: Ranks of the Wronskians computed in 0.344456751 seconds
+│   :rank_time = rank_time
+│   rank_times = 0.344456751
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:106
+⌜ # Computing specializations..  	 Time: 0:00:04[K✓ # Computing specializations..  	 Time: 0:00:04[K
+⌜ # Computing specializations..  	 Time: 0:00:00[K⌝ # Computing specializations..  	 Time: 0:00:00[K⌟ # Computing specializations..  	 Time: 0:00:00[K✓ # Computing specializations..  	 Time: 0:00:01[K
+┌ Info: Simplifying identifiable functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:450
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+│ Assess correctness: false
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:63
+┌ Info: Given 1303 functions in Rational Field(t3, t6, t21, t22, t5, t17, t16, t20, t19, t14, t10, t18, t4, t12, t11, t9, t2, t7, t13, t8, t15, t1)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, t]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/groebnerstate.jl:25
+┌ Info: Specializing at 3 points to guess the shape of the basis..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:135
+┌ Info: Specializing at random points to guess the total degrees in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:184
+┌ Info: Success! 66 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:268
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees = [[(0, 0), (0, 14)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (2, 0)], [(0, 0), (2, 0)]]
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:269
+┌ Info: Interpolating the exponents in parameters..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:279
+┌ Info: Interpolating for degrees:
+│ Numerator: 2, Denominator: 3
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:327
+┌ Info: Success! 14 points used.
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:405
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 1 for den.
+│     Maximal number of interpolated terms are: 1 for num. and 1 for den.
+│     
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:410
+┌ Info: Recovering the coefficients..
+└ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:418
+┌ Info: Groebner basis computed in 7.554478219 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:328
+┌ Info: Checking two-sided inclusion modulo a prime
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:333
+┌ Info: Inclusion checked in 1.796955344 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:343
+┌ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:347
+┌ Info: The pool of fractions:
+│ -t1,
+│ -t8,
+│ -t13,
+│ -t7,
+│ -t2,
+│ -t9,
+│ -t12,
+│ -t4,
+│ -t18,
+│ -t10,
+│ -t14,
+│ -t19,
+│ -t20,
+│ -t16,
+│ -t5,
+│ -t6,
+│ -t3,
+│ -t22*t17,
+│ -t21*t15,
+│ -t11//t15
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:226
+┌ Info: The pool of fractions:
+│ -t1,
+│ -t8,
+│ -t13,
+│ -t7,
+│ -t2,
+│ -t9,
+│ -t12,
+│ -t4,
+│ -t18,
+│ -t10,
+│ -t14,
+│ -t19,
+│ -t20,
+│ -t16,
+│ -t5,
+│ -t6,
+│ -t3,
+│ -t22*t17,
+│ -t21*t15,
+│ -t11//t15
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:226
+┌ Info: Computing normal forms (probabilistic)
+│ Parameters (22 in total): Nemo.fmpq_mpoly[t3, t6, t21, t22, t5, t17, t16, t20, t19, t14, t10, t18, t4, t12, t11, t9, t2, t7, t13, t8, t15, t1]
+│ Up to degree: 2
+│ Modulo: Galois field with characteristic 1073741827
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:135
+┌ Info: Specializing at the 1-th random point: Nemo.gfp_elem[615247293, 291245528, 425678564, 459173781, 547016673, 692211503, 536093378, 1011057904, 594159602, 823563815, 344723653, 115853962, 727732633, 708967473, 398662986, 117799848, 938920160, 887356127, 395125761, 692355603, 377775814, 385270512]
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:145
+┌ Info: Computing relations of 275 normal forms
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:178
+┌ Info: Obtained 263 local relations over FF
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:181
+┌ Info: Specializing at the 2-th random point: Nemo.gfp_elem[708228744, 551277853, 598952916, 709634354, 266165558, 832797852, 385012579, 843654213, 863158222, 836148725, 576803364, 664490207, 306013423, 1046133822, 621109823, 474535608, 569601573, 972246883, 432578833, 898752165, 316327660, 777927800]
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:145
+┌ Info: Computing relations of 275 normal forms
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:178
+┌ Info: Obtained 263 local relations over FF
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:181
+┌ Info: There are 173 relations in the intersection
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:189
+┌ Info: Specializing at the 3-th random point: Nemo.gfp_elem[849394070, 327754320, 96342846, 460122990, 339372806, 956557143, 838987917, 114113763, 607295670, 815499272, 571053573, 928281144, 425150117, 619896535, 954967921, 578976526, 450792920, 702197751, 52555615, 181406492, 178725428, 186197972]
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:145
+┌ Info: Computing relations of 275 normal forms
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:178
+┌ Info: Obtained 263 local relations over FF
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:181
+┌ Info: There are 173 relations in the intersection
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:189
+┌ Info: Reconstructing relations to rationals
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:195
+┌ Info: Final cleaning and simplification of generators
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:529
+┌ Info: The pool of fractions:
+│ t1,
+│ t1,
+│ t8,
+│ t8,
+│ t13,
+│ t13,
+│ t7,
+│ t7,
+│ t2,
+│ t2,
+│ t9,
+│ t9,
+│ t12,
+│ t12,
+│ t4,
+│ t4,
+│ t18,
+│ t18,
+│ t10,
+│ t10,
+│ t14,
+│ t14,
+│ t19,
+│ t19,
+│ t20,
+│ t20,
+│ t16,
+│ t16,
+│ t5,
+│ t5,
+│ t6,
+│ t6,
+│ t3,
+│ t3,
+│ t1^2,
+│ t8*t1,
+│ t8^2,
+│ t13*t1,
+│ t13*t8,
+│ t13^2,
+│ t7*t1,
+│ t7*t8,
+│ t7*t13,
+│ t7^2,
+│ t2*t1,
+│ t2*t8,
+│ t2*t13,
+│ t2*t7,
+│ t2^2,
+│ t9*t1,
+│ t9*t8,
+│ t9*t13,
+│ t9*t7,
+│ t9*t2,
+│ t9^2,
+│ t12*t1,
+│ t12*t8,
+│ t12*t13,
+│ t12*t7,
+│ t12*t2,
+│ t12*t9,
+│ t12^2,
+│ t4*t1,
+│ t4*t8,
+│ t4*t13,
+│ t4*t7,
+│ t4*t2,
+│ t4*t9,
+│ t4*t12,
+│ t4^2,
+│ t18*t1,
+│ t18*t8,
+│ t18*t13,
+│ t18*t7,
+│ t18*t2,
+│ t18*t9,
+│ t18*t12,
+│ t18*t4,
+│ t18^2,
+│ t10*t1,
+│ t10*t8,
+│ t10*t13,
+│ t10*t7,
+│ t10*t2,
+│ t10*t9,
+│ t10*t12,
+│ t10*t4,
+│ t10*t18,
+│ t10^2,
+│ t14*t1,
+│ t14*t8,
+│ t14*t13,
+│ t14*t7,
+│ t14*t2,
+│ t14*t9,
+│ t14*t12,
+│ t14*t4,
+│ t14*t18,
+│ t14*t10,
+│ t14^2,
+│ t19*t1,
+│ t19*t8,
+│ t19*t13,
+│ t19*t7,
+│ t19*t2,
+│ t19*t9,
+│ t19*t12,
+│ t19*t4,
+│ t19*t18,
+│ t19*t10,
+│ t19*t14,
+│ t19^2,
+│ t20*t1,
+│ t20*t8,
+│ t20*t13,
+│ t20*t7,
+│ t20*t2,
+│ t20*t9,
+│ t20*t12,
+│ t20*t4,
+│ t20*t18,
+│ t20*t10,
+│ t20*t14,
+│ t20*t19,
+│ t20^2,
+│ t16*t1,
+│ t16*t8,
+│ t16*t13,
+│ t16*t7,
+│ t16*t2,
+│ t16*t9,
+│ t16*t12,
+│ t16*t4,
+│ t16*t18,
+│ t16*t10,
+│ t16*t14,
+│ t16*t19,
+│ t16*t20,
+│ t16^2,
+│ t5*t1,
+│ t5*t8,
+│ t5*t13,
+│ t5*t7,
+│ t5*t2,
+│ t5*t9,
+│ t5*t12,
+│ t5*t4,
+│ t5*t18,
+│ t5*t10,
+│ t5*t14,
+│ t5*t19,
+│ t5*t20,
+│ t5*t16,
+│ t5^2,
+│ t22*t17,
+│ t22*t17,
+│ t21*t15,
+│ t21*t15,
+│ t21*t11,
+│ t6*t1,
+│ t6*t8,
+│ t6*t13,
+│ t6*t7,
+│ t6*t2,
+│ t6*t9,
+│ t6*t12,
+│ t6*t4,
+│ t6*t18,
+│ t6*t10,
+│ t6*t14,
+│ t6*t19,
+│ t6*t20,
+│ t6*t16,
+│ t6*t5,
+│ t6^2,
+│ t3*t1,
+│ t3*t8,
+│ t3*t13,
+│ t3*t7,
+│ t3*t2,
+│ t3*t9,
+│ t3*t12,
+│ t3*t4,
+│ t3*t18,
+│ t3*t10,
+│ t3*t14,
+│ t3*t19,
+│ t3*t20,
+│ t3*t16,
+│ t3*t5,
+│ t3*t6,
+│ t3^2,
+│ t11//t15
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:226
+┌ Info: Checking inclusion with probability 0.995
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:532
+┌ Info: Inclusion checked in 3.018382108 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:535
+┌ Info: Out of 1302 initial generators there are 20 indepdendent
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:540
+┌ Info: The ranking of the new set of generators is 216
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:543
+┌ Info: The search for identifiable functions concluded in 37.748594747 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:75
+┌ Info: Identifiable functions are
+│   funcs = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[t1, t8, t13, t7, t2, t9, t12, t4, t18, t10, t14, t19, t20, t16, t5, t6, t3, t22*t17, t21*t15, t21*t11]
+└ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:53

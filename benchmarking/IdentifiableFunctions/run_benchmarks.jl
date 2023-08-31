@@ -81,7 +81,7 @@ function run_benchmarks(args, kwargs)
     to_run_names = setdiff(dirnames, to_skip)
     to_run_indices = collect(1:length(to_run_names))
 
-    nworkers = 4
+    nworkers = 4 * 2
 
     @info """
     Running benchmarks.
@@ -110,16 +110,12 @@ function run_benchmarks(args, kwargs)
             id = keywords_to_id(kw)
             @info "Running $name / $id"
             logs = open((@__DIR__) * "/systems/$name/logs_$id", "w")
-            cmd =
-                Cmd(["julia", (@__DIR__) * "/run_single_benchmark.jl", "$name", "$kw"])
+            cmd = Cmd(["julia", (@__DIR__) * "/run_single_benchmark.jl", "$name", "$kw"])
             cmd = Cmd(cmd, ignorestatus = true, detach = false, env = copy(ENV))
             proc = run(pipeline(cmd, stdout = logs, stderr = logs), wait = false)
             push!(log_fd, logs)
             push!(keywords, kw)
-            push!(
-                procs,
-                (index = idx, name = name, proc = proc, start_time = time_ns()),
-            )
+            push!(procs, (index = idx, name = name, proc = proc, start_time = time_ns()))
             running += 1
         end
 
