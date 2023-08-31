@@ -142,7 +142,7 @@ function linear_relations_between_normal_forms_mod_p(
     while true
         npoints += 1
         point_ff = ParamPunPam.distinct_nonzero_points(ff, nparams)
-        @info "Specializing at the $npoints-th random point: $point_ff"
+        @info "Used $npoints random specialization points"
         gens_ff_spec = specialize_mod_p(mqs, point_ff)
         gb_ff_spec = Groebner.groebner(gens_ff_spec)
         ring_ff = parent(gb_ff_spec[1])

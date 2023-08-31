@@ -6,7 +6,7 @@ begin
 
     macro my_profview(ex)
         :((VSCodeServer.Profile).clear();
-        VSCodeServer.Profile.init(n = 10^8, delay = 0.00001);
+        VSCodeServer.Profile.init(n = 10^8, delay = 0.0001);
         VSCodeServer.Profile.start_timer();
         $ex;
         VSCodeServer.Profile.stop_timer();
@@ -858,6 +858,17 @@ begin
 end
 
 #! format: off
+
+funcs1 = StructuralIdentifiability.find_identifiable_functions(
+    fujita,
+    with_states = true,
+)
+
+@profview funcs2 = StructuralIdentifiability.find_identifiable_functions(
+    fujita,
+    with_states = true,
+    strategy=(:normalforms, 3)
+)
 
 llw = StructuralIdentifiability.@ODEmodel(
 	x2'(t) = -p3*x2(t) + p4*u(t),

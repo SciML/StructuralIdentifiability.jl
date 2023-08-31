@@ -223,7 +223,7 @@ function beautifuly_generators(
     # Remove redundant pass
     if discard_redundant
         sort!(fracs, lt = rational_function_cmp)
-        @info "The pool of fractions:\n$(join(map(repr, fracs), ",\n"))"
+        @debug "The pool of fractions:\n$(join(map(repr, fracs), ",\n"))"
         if reversed_order
             non_redundant = collect(1:length(fracs))
             for i in length(fracs):-1:1

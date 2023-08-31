@@ -21,8 +21,10 @@ function monomial_compress(io_equation, ode::ODE)
 end
 
 function monomial_compress(io_equation, params::Array{<:MPolyElem, 1})
+    params_xs = isempty(params) ? empty(params) : gens(parent(first(params)))
     other_vars = [
-        v for v in gens(parent(io_equation)) if !(var_to_str(v) in map(var_to_str, params))
+        v for v in gens(parent(io_equation)) if
+        !(var_to_str(v) in map(p -> var_to_str(p, xs = params_xs), params))
     ]
     coeffdict = extract_coefficients(io_equation, other_vars)
     expvect = collect(keys(coeffdict))
@@ -69,19 +71,20 @@ mutable struct ExpVectTrie
     end
 end
 
-function Base.push!(t::ExpVectTrie, vect::Array{Int, 1})
+function Base.push!(t::ExpVectTrie, vect::Vector{Int}; index = length(vect))
     if t.depth == 0
-        if length(vect) != 0
+        if index != 0
             throw(DomainError("Inserting too long vector"))
         end
-        return
+        return nothing
     end
 
-    f = last(vect)
+    f = vect[index]
     if !(f in keys(t.subtries))
         t.subtries[f] = ExpVectTrie(t.depth - 1)
     end
-    push!(t.subtries[f], vect[1:(end - 1)])
+    push!(t.subtries[f], vect, index = index - 1)
+    return nothing
 end
 
 """
@@ -94,15 +97,15 @@ Input:
 Output:
 - a pair `(d, v)` where `v` is a vector in the trie which is componentwise ≤ `vect` and the difference `d` is as small as possible
 """
-function get_max_below(t::ExpVectTrie, vect::Array{Int, 1})
+function get_max_below(t::ExpVectTrie, vect::Vector{Int}; index = length(vect))
     if t.depth == 0
         return (0, [])
     end
     min_diff, best_below = nothing, nothing
     for k in keys(t.subtries)
-        last_diff = last(vect) - k
+        last_diff = vect[index] - k
         if last_diff >= 0
-            cur_diff, cur_below = get_max_below(t.subtries[k], vect[1:(end - 1)])
+            cur_diff, cur_below = get_max_below(t.subtries[k], vect, index = index - 1)
             if !isnothing(cur_diff)
                 if isnothing(min_diff) || min_diff > cur_diff + last_diff
                     min_diff = cur_diff + last_diff
