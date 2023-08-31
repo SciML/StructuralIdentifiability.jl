@@ -208,7 +208,7 @@ function find_ioprojections(
         our_choice = sort(var_degs_next)[1]
         var_elim_deg, var_elim = our_choice[1], our_choice[3]
 
-        @debug "Elimination of $var_elim, $(length(x_equations)) left; $(Dates.now())"
+        @debug "Elimination of $var_elim, $(length(x_equations)) left"
         flush(stdout)
 
         # Possible variable change for Axy + Bx + p(y) (x = var_elim)
@@ -220,7 +220,7 @@ function find_ioprojections(
                     A, B = simplify_frac(A, B)
                     if isempty(filter!(v -> (v in keys(x_equations)), vars(A))) && (B != 0) # && (length(coeffs(A))==1)
                         # variable change x_i' --> x_i' - (B/A)', x_i --> x_i - B/A
-                        @debug "\t Applying variable change: $(x) --> $(x) - ( $B )/( $A ); $(Dates.now())"
+                        @debug "\t Applying variable change: $(x) --> $(x) - ( $B )/( $A )"
                         flush(stdout)
                         dB = diff_poly(B, derivation)
                         dA = diff_poly(A, derivation)

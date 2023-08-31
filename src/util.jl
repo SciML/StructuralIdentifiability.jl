@@ -23,6 +23,7 @@ end
 
 function eval_at_dict(poly::P, d::Dict{P, S}) where {P <: MPolyElem, S <: Real}
     R = parent(poly)
+    @assert R == parent(first(keys(d)))
     xs = gens(parent(first(keys(d))))
     xs_sym = [get(d, x, 0.0) for x in xs if string(x) in map(string, gens(R))]
     accum = zero(valtype(d))

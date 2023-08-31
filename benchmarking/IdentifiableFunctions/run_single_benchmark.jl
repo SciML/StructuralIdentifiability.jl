@@ -14,7 +14,7 @@ runtimes = Dict()
 data = Dict()
 results = Dict()
 
-NUM_RUNS = 1
+NUM_RUNS = 3
 NAME = ARGS[1]
 KWARGS = parse_keywords(ARGS[2])[1]
 ID = keywords_to_id(KWARGS)
