@@ -14,7 +14,10 @@ struct ODE{P}
     parameters::Array{P, 1}
     x_equations::Dict{P, <:Union{P, Generic.Frac{P}}}
     y_equations::Dict{P, <:Union{P, Generic.Frac{P}}}
+
     function ODE{P}(
+        x_vars::Array{P, 1},
+        y_vars::Array{P, 1},
         x_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
         y_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
         inputs::Array{P, 1},
@@ -25,20 +28,23 @@ struct ODE{P}
         if isempty(y_eqs)
             @info "Could not find output variables in the model."
         end
-        if !isempty(x_eqs)
-            num, _ = unpack_fraction(first(values(x_eqs)))
-        else
-            num, _ = unpack_fraction(first(values(y_eqs)))
-        end
-        poly_ring = parent(num)
-        x_vars = collect(keys(x_eqs))
-        y_vars = collect(keys(y_eqs))
+        poly_ring = parent(first(y_vars))
         u_vars = inputs
         parameters = filter(
             v -> (!(v in x_vars) && !(v in u_vars) && !(v in y_vars)),
             gens(poly_ring),
         )
         new{P}(poly_ring, x_vars, y_vars, u_vars, parameters, x_eqs, y_eqs)
+    end
+
+    function ODE{P}(
+        x_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
+        y_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
+        inputs::Array{P, 1},
+    ) where {P <: MPolyElem{<:FieldElem}}
+        x_vars = collect(keys(x_eqs))
+        y_vars = collect(keys(y_eqs))
+        return ODE{P}(x_vars, y_vars, x_eqs, y_eqs, inputs)
     end
 end
 
@@ -246,7 +252,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function _extract_aux!(funcs, x_vars, all_symb, eq, ders_ok = false)
+function _extract_aux!(funcs, all_symb, eq, ders_ok = false)
     aux_symb = Set([:(+), :(-), :(=), :(*), :(^), :t, :(/), :(//)])
     MacroTools.postwalk(
         x -> begin
@@ -258,7 +264,6 @@ function _extract_aux!(funcs, x_vars, all_symb, eq, ders_ok = false)
                         ),
                     )
                 end
-                push!(x_vars, f)
                 push!(all_symb, f)
             elseif @capture(x, f_(t))
                 push!(funcs, f)
@@ -271,21 +276,41 @@ function _extract_aux!(funcs, x_vars, all_symb, eq, ders_ok = false)
     )
 end
 
+"""
+  For an expression of the form f'(t) or f(t) returns (f, true) and (f, false), resp
+"""
+function _get_var(expr)
+    if @capture(expr, f_'(t))
+        return (f, true)
+    end
+    if @capture(expr, f_(t))
+        return (f, false)
+    end
+    error("cannot extract the single function name from $expr")
+end
+
 function macrohelper_extract_vars(equations::Array{Expr, 1})
-    funcs, x_vars, all_symb = Set(), Set(), Set()
+    funcs, all_symb = Set(), Set()
+    x_vars, y_vars = Vector(), Vector()
     aux_symb = Set([:(+), :(-), :(=), :(*), :(^), :t, :(/), :(//)])
     for eq in equations
         if eq.head != :(=)
-            _extract_aux!(funcs, x_vars, all_symb, eq)
+            _extract_aux!(funcs, all_symb, eq)
         else
             lhs, rhs = eq.args[1:2]
-            _extract_aux!(funcs, x_vars, all_symb, lhs, true)
-            _extract_aux!(funcs, x_vars, all_symb, rhs)
+            _extract_aux!(funcs, all_symb, lhs, true)
+            _extract_aux!(funcs, all_symb, rhs)
+            (v, is_state) = _get_var(lhs)
+            if is_state
+                push!(x_vars, v)
+            else
+                push!(y_vars, v)
+            end
         end
     end
-    io_vars = setdiff(funcs, x_vars)
+    u_vars = setdiff(funcs, vcat(x_vars, y_vars))
     all_symb = collect(all_symb)
-    return collect(x_vars), collect(io_vars), collect(all_symb)
+    return x_vars, y_vars, collect(u_vars), collect(all_symb)
 end
 
 function macrohelper_extract_vars(equations::Array{Symbol, 1})
@@ -318,7 +343,7 @@ ode = @ODEmodel(
 """
 macro ODEmodel(ex::Expr...)
     equations = [ex...]
-    x_vars, io_vars, all_symb = macrohelper_extract_vars(equations)
+    x_vars, y_vars, u_vars, all_symb = macrohelper_extract_vars(equations)
 
     # creating the polynomial ring
     vars_list = :([$(all_symb...)])
@@ -332,11 +357,18 @@ macro ODEmodel(ex::Expr...)
     )
     assignments = [:($(all_symb[i]) = $vars_aux[$i]) for i in 1:length(all_symb)]
 
+    # setting x_vars and y_vars in the right order
+    vx = gensym()
+    vy = gensym()
+    x_var_expr = :($vx = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}([$(x_vars...)]))
+    y_var_expr = :($vy = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}([$(y_vars...)]))
+    @info x_var_expr
+    @info y_var_expr
+
     # preparing equations
     equations = map(macrohelper_clean, equations)
     x_dict = gensym()
     y_dict = gensym()
-    y_vars = Set()
     x_dict_create_expr = :(
         $x_dict = Dict{
             StructuralIdentifiability.Nemo.fmpq_mpoly,
@@ -365,13 +397,12 @@ macro ODEmodel(ex::Expr...)
             throw("Problem with parsing at $eq")
         end
         lhs, rhs = eq.args[1:2]
-        loc_all_symb = macrohelper_extract_vars([rhs])[3]
+        loc_all_symb = macrohelper_extract_vars([rhs])[4]
         to_insert = undef
         if lhs in x_vars
             to_insert = x_dict
-        elseif lhs in io_vars
+        elseif lhs in y_vars
             to_insert = y_dict
-            push!(y_vars, lhs)
         else
             throw("Unknown left-hand side $lhs")
         end
@@ -394,7 +425,6 @@ macro ODEmodel(ex::Expr...)
         end
     end
 
-    u_vars = setdiff(io_vars, y_vars)
     params = setdiff(all_symb, union(x_vars, y_vars, u_vars))
     allnames = map(
         string,
@@ -419,6 +449,8 @@ macro ODEmodel(ex::Expr...)
 
     # creating the ode object
     ode_expr = :(StructuralIdentifiability.ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(
+        $vx,
+        $vy,
         $x_dict,
         $y_dict,
         Array{StructuralIdentifiability.Nemo.fmpq_mpoly}([$(u_vars...)]),
@@ -429,6 +461,8 @@ macro ODEmodel(ex::Expr...)
         logging_exprs...,
         exp_ring,
         assignments...,
+        x_var_expr,
+        y_var_expr,
         x_dict_create_expr,
         y_dict_create_expr,
         eqs_expr...,
@@ -447,14 +481,14 @@ function Base.show(io::IO, ode::ODE)
         base_ring(ode.poly_ring),
         [varstr[v] for v in gens(ode.poly_ring)],
     )
-    for (x, eq) in ode.x_equations
+    for x in ode.x_vars
         print(io, var_to_str(x) * "'(t) = ")
-        print(io, evaluate(eq, vars_print))
+        print(io, evaluate(ode.x_equations[x], vars_print))
         print(io, "\n")
     end
-    for (y, eq) in ode.y_equations
+    for y in ode.y_vars
         print(io, var_to_str(y) * "(t) = ")
-        print(io, evaluate(eq, vars_print))
+        print(io, evaluate(ode.y_equations[y], vars_print))
         print(io, "\n")
     end
 end
