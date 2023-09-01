@@ -733,6 +733,347 @@ benchmarks = [
             y3(t) = M(t)
         ),
     ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Cellular%20signalling/Phosphorylation.jl
+        :name => "Phosphorylation",
+        :ode => @ODEmodel(
+            x5'(t) = k5 * x6(t) + k4 * x6(t) - k6 * x5(t) * x3(t),
+            x6'(t) = -k5 * x6(t) - k4 * x6(t) + k6 * x5(t) * x3(t),
+            x4'(t) = -k3 * x4(t) - k2 * x4(t) + k1 * x1(t) * x2(t),
+            x2'(t) = k3 * x4(t) + k2 * x4(t) + k1 * x1(t) * x2(t),
+            x1'(t) = k4 * x6(t) + k2 * x4(t) - k1 * x1(t) * x2(t),
+            x3'(t) = k5 * x6(t) + k3 * x4(t) - k6 * x5(t) * x3(t),
+            y1(t) = x3(t),
+            y2(t) = x2(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SEIR2T.jl
+        :name => "SEIR2T",
+        :ode => @ODEmodel(
+            S'(t) = -b * S(t) * In(t) / N(t),
+            E'(t) = b * S(t) * In(t) / N(t) - nu * E(t),
+            In'(t) = nu * E(t) - a * In(t),
+            N'(t) = 0,
+            Cu'(t) = nu * E(t),
+            y1(t) = Cu(t),
+            y2(t) = N(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SEIRT.jl
+        :name => "SEIRT",
+        :ode => @ODEmodel(
+            S'(t) = -beta * I(t) * (S(t) / N(t)),
+            E'(t) = beta * I(t) * (S(t) / N(t)) - alpha * E(t),
+            I'(t) = alpha * E(t) - lambda * I(t),
+            R'(t) = lambda * I(t),
+            N'(t) = 0,
+            y1(t) = I(t),
+            y2(t) = N(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SEUIR.jl
+        :name => "SEUIR",
+        :ode => @ODEmodel(
+            S'(t) = -beta * (U(t) + I(t)) * (S(t) / N),
+            E'(t) = beta * (U(t) + I(t)) * (S(t) / N) - E(t) * z,
+            U'(t) = (z - w) * E(t) - U(t) * d,
+            I'(t) = w * E(t) - I(t) * d,
+            R'(t) = (U(t) + I(t)) * d,
+            y1(t) = I(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/cholera.jl
+        :name => "cholera",
+        :ode => @ODEmodel(
+            S'(t) = mu - bi * S(t) * I(t) - bw * S(t) * W(t) - mu * S(t) + a * R(t),
+            I'(t) = bw * S(t) * W(t) + bi * S(t) * I(t) - (gam + mu) * I(t),
+            W'(t) = xi * (I(t) - W(t)),
+            R'(t) = gam * I(t) - (mu + a) * R(t),
+            y1(t) = k * I(t),
+            y2(t) = S(t) + I(t) + R(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Gene%20expression/Bruno2016.jl
+        :name => "Bruno2016",
+        :ode => @ODEmodel(
+            beta'(t) = -kbeta * beta(t),
+            cry'(t) = -kcryOH * cry(t) - kcrybeta * cry(t),
+            zea'(t) = -kzea * zea(t),
+            beta10'(t) = kbeta * beta(t) + kcryOH * cry(t) - kbeta10 * beta10(t),
+            OHbeta10'(t) = kcrybeta * cry(t) + kzea * zea(t) - kOHbeta10 * OHbeta10(t),
+            betaio'(t) = kbeta * beta(t) + kcrybeta * cry(t) + kbeta10 * beta10(t),
+            OHbetaio'(t) = kcryOH * cry(t) + kzea * zea(t) + kOHbeta10 * OHbeta10(t),
+            y1(t) = beta(t),
+            y2(t) = beta10(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Gene%20expression/Transfection_4State.jl
+        :name => "Transfection_4State",
+        :ode => @ODEmodel(
+            mRNA'(t) = -d1 * mRNA(t) - d2 * mRNA(t) * enz(t),
+            GFP'(t) = kTL * mRNA(t) - b * GFP(t),
+            enz'(t) = d3 * mRNAenz(t) - d2 * mRNA(t) * enz(t),
+            mRNAenz'(t) = -d3 * mRNAenz(t) + d2 * mRNA(t) * enz(t),
+            y1(t) = GFP(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Gene%20expression/p53.jl
+        :name => "p53",
+        :ode => @ODEmodel(
+            x1'(t) =
+                (p1 * x4(t)) - (p3 * x1(t)) -
+                p4 * ((x1(t)^2 / (p5 + x1(t))) * (1 + (p6 * u1(t) / (p7 + u1(t))))),
+            x2'(t) =
+                p8 - (p9 * x2(t)) -
+                p10 * (
+                    (x1(t) * x2(t) / (p11 + x2(t))) * (1 + (p12 * u1(t) / (p13 + u1(t))))
+                ),
+            x3'(t) =
+                p14 - (p15 * x3(t)) -
+                p16 * x1(t) * x3(t) * (1 - p18 * u1(t)) / (p17 + x3(t)),
+            x4'(t) =
+                p20 - p21 * (1 - p24) * (1 - p25) / ((p22^4) + 1) - (p20 * x4(t)) +
+                (p21 * (x3(t)^4)) +
+                (1 + p23 * u1(t)) * (1 - p24 * x1(t)) * (1 - p25 * x2(t)) /
+                (p22^4 + x3(t)^4),
+            y1(t) = x1(t),
+            y2(t) = x2(t),
+            y3(t) = x3(t),
+            y4(t) = x4(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/General/Crauste_SI.jl
+        :name => "Crauste_SI",
+        :ode => @ODEmodel(
+            N'(t) = -N(t) * mu_N - N(t) * P(t) * delta_NE,
+            E'(t) =
+                N(t) * P(t) * delta_NE - E(t)^2 * mu_EE - E(t) * delta_EL +
+                E(t) * P(t) * rho_E,
+            S'(t) =
+                S(t) * delta_EL - S(t) * delta_LM - S(t)^2 * mu_LL - E(t) * S(t) * mu_LE,
+            M'(t) = S(t) * delta_LM - mu_M * M(t),
+            P'(t) =
+                P(t)^2 * rho_P - P(t) * mu_P - E(t) * P(t) * mu_PE - S(t) * P(t) * mu_PL,
+            y1(t) = N(t),
+            y2(t) = E(t) + S(t),
+            y3(t) = M(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/General/HighDimNonLin.jl
+        :name => "HighDimNonLin",
+        :ode => @ODEmodel(
+            x1'(t) = -vm * x1(t) / (km + x1(t)) - p1 * x1(t) + u(t),
+            x2'(t) = p1 * x1(t) - p2 * x2(t),
+            x3'(t) = p2 * x2(t) - p3 * x3(t),
+            x4'(t) = p3 * x3(t) - p4 * x4(t),
+            x5'(t) = p4 * x4(t) - p5 * x5(t),
+            x6'(t) = p5 * x5(t) - p6 * x6(t),
+            x7'(t) = p6 * x6(t) - p7 * x7(t),
+            x8'(t) = p7 * x7(t) - p8 * x8(t),
+            x9'(t) = p8 * x8(t) - p9 * x9(t),
+            x10'(t) = p9 * x9(t) - p10 * x10(t),
+            x11'(t) = p10 * x10(t) - p11 * x11(t),
+            x12'(t) = p11 * x11(t) - p12 * x12(t),
+            x13'(t) = p12 * x12(t) - p13 * x13(t),
+            x14'(t) = p13 * x13(t) - p14 * x14(t),
+            x15'(t) = p14 * x14(t) - p15 * x15(t),
+            x16'(t) = p15 * x15(t) - p16 * x16(t),
+            x17'(t) = p16 * x16(t) - p17 * x17(t),
+            x18'(t) = p17 * x17(t) - p18 * x18(t),
+            x19'(t) = p18 * x18(t) - p19 * x19(t),
+            x20'(t) = p19 * x19(t) - p20 * x20(t),
+            y1(t) = x1(t),
+            y2(t) = x2(t),
+            y3(t) = x3(t),
+            y4(t) = x4(t),
+            y5(t) = x5(t),
+            y6(t) = x6(t),
+            y7(t) = x7(t),
+            y8(t) = x8(t),
+            y9(t) = x9(t),
+            y10(t) = x10(t),
+            y11(t) = x11(t),
+            y12(t) = x12(t),
+            y13(t) = x13(t),
+            y14(t) = x14(t),
+            y15(t) = x15(t),
+            y16(t) = x16(t),
+            y17(t) = x17(t),
+            y18(t) = x18(t),
+            y19(t) = x19(t),
+            y20(t) = x20(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/General/KD1999.jl
+        :name => "KD1999",
+        :ode => @ODEmodel(
+            Ca'(t) = u1(t) * (Ca0 - Ca(t)) / V - k0 * Arr * Ca(t),
+            Cb'(t) = -u1(t) * Cb(t) / V + k0 * Arr(t) * Ca(t),
+            T'(t) =
+                u1(t) * (Ta - T(t)) / V -
+                (k0 * Arr(t) * Ca(t) * DH + UA * (Tj(t) - T(t)) / V) / (ro * cp),
+            Tj'(t) = u2(t) * (Th - Tj(t)) / Vh - UA / (roh * cph) * (Tj(t) - T(t)) / Vh,
+            Arr'(t) =
+                E * Arr(t) / (R * T(t)^2) * (
+                    u1(t) * (Ta - T(t)) / V -
+                    (k0 * Arr(t) * Ca(t) * DH + UA * (Tj(t) - T(t)) / V) / (ro * cp)
+                ),
+            y1(t) = Cb(t),
+            y2(t) = T(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Immunology/CGV1990.jl
+        :name => "CGV1990",
+        :ode => @ODEmodel(
+            q1'(t) = k4 * q3(t) - (k3 + k7) * q1(t) + u(t),
+            q3'(t) =
+                k3 * q1(t) - k4 * q3(t) - k5 * q3(t) * (R * V3 - q35(t)) + k6 * q35(t) - k5 * q3(t) * (5 * V36 / V3) * (S * V36 - q36(t)) +
+                k6 * q36(t),
+            q35'(t) = k5 * q3(t) * (R * V3 - q35(t)) - k6 * q35(t),
+            q36'(t) = k5 * q3(t) * (5 * V36 / V3) * (S * V36 - q36(t)) - k6 * q36(t),
+            q7'(t) = k7 * q1(t),
+            y1(t) = q7(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Immunology/LeukaemiaLeon2021.jl
+        :name => "LeukaemiaLeon2021",
+        :ode => @ODEmodel(
+            C'(t) = rhoc * (L(t) + B(t)) * C(t) + rhob * I(t) * C(t) - C(t) / taoc, #number of cells of CAR T cells
+            L'(t) = rhol * L(t) - alpha * L(t) * C(t), # number of cells of leukaemic cells
+            B'(t) = I(t) / taoi - alpha * B(t) * C(t) - B(t) / taob, # number of cells of mature healthy B cells
+            P'(t) =
+                rhop * (2 * ap * (1 / (1 + ks * (P(t) + I(t)))) - 1) * P(t) - P(t) / taop, # number of cells of CD19- haematopoietic stem cells (HSCs)
+            I'(t) =
+                rhoi * (2 * ai * (1 / (1 + ks * (P(t) + I(t)))) - 1) * I(t) - I(t) / taoi + P(t) / taop - alpha * beta * I(t) * C(t), # number of cells of CD19+ B cell progenitors
+            y1(t) = C(t),
+            y2(t) = L(t),
+            y3(t) = P(t) + B(t) + I(t) #células B totales 
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Metabolism/Ruminal%20lipolysis.jl
+        :name => "Ruminal lipolysis",
+        :ode => @ODEmodel(
+            x1'(t) = -x1(t) * x5(t) / (k2 + x1(t)),
+            x2'(t) = 2 * x1(t) * x5(t) / ((k2 + x1(t)) * 3) - k4 * x2(t),
+            x3'(t) = k4 * (x2(t)) / 2 - k4 * x3(t),
+            x4'(t) = x1(t) * x5(t) / (3 * (k2 + x1(t))) + k4 * (x2(t)) / 2 + k4 * x3(t),
+            x5'(t) = -k3 * x5(t),
+            y1(t) = x1(t),
+            y2(t) = x2(t) + x3(t),
+            y3(t) = x4(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Microbial/cLV1.jl
+        :name => "cLV1 (2o)",
+        :ode => @ODEmodel(
+            pi1'(t) =
+                pi1(t) * (
+                    (g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)) -
+                    pi1(t) * (
+                        g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
+                    ) +
+                    pi2(t) *
+                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t))
+                ),
+            pi2'(t) =
+                pi2(t) * (
+                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)) -
+                    pi1(t) * (
+                        g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
+                    ) +
+                    pi2(t) *
+                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t))
+                ),
+            pi3'(t) =
+                pi3(t) * (
+                    (g3 + A31 * pi1(t) + A32 * pi2(t) + A33 * pi3(t) + B31 * u1(t)) -
+                    pi1(t) * (
+                        g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
+                    ) +
+                    pi2(t) *
+                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t))
+                ),
+            y1(t) = pi1(t),
+            y2(t) = pi2(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Microbial/cLV1.jl
+        :name => "cLV1 (1o)",
+        :ode => @ODEmodel(
+            pi1'(t) =
+                pi1(t) * (
+                    (g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)) -
+                    pi1(t) * (
+                        g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
+                    ) +
+                    pi2(t) *
+                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t))
+                ),
+            pi2'(t) =
+                pi2(t) * (
+                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)) -
+                    pi1(t) * (
+                        g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
+                    ) +
+                    pi2(t) *
+                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t))
+                ),
+            pi3'(t) =
+                pi3(t) * (
+                    (g3 + A31 * pi1(t) + A32 * pi2(t) + A33 * pi3(t) + B31 * u1(t)) -
+                    pi1(t) * (
+                        g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
+                    ) +
+                    pi2(t) *
+                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t))
+                ),
+            y1(t) = pi1(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Microbial/generalizedLoktaVolterra.jl
+        :name => "generalizedLoktaVolterra (2o)",
+        :ode => @ODEmodel(
+            x1'(t) = r1 * x1(t) + beta11 * x1(t)^2 + beta12 * x1(t) * x2(t),
+            x2'(t) = r2 * x2(t) + beta21 * x1(t) * x2(t) + beta22 * x2(t)^2,
+            y1(t) = x1(t),
+            y2(t) = x2(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Microbial/generalizedLoktaVolterra.jl
+        :name => "generalizedLoktaVolterra (1o)",
+        :ode => @ODEmodel(
+            x1'(t) = r1 * x1(t) + beta11 * x1(t)^2 + beta12 * x1(t) * x2(t),
+            x2'(t) = r2 * x2(t) + beta21 * x1(t) * x2(t) + beta22 * x2(t)^2,
+            y1(t) = x1(t)
+        ),
+    ),
+    Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Pharmacokinetics/Pivastatin.jl
+        :name => "Pivastatin",
+        :ode => @ODEmodel(
+            x1'(t) = k3 * x3(t) - r3 * x1(t) - k1 * x1(t) * (T0 - x2(t)) + r1 * x2(t),
+            x2'(t) = k1 * x1(t) * (T0 - x2(t)) - (r1 + k2) * x2(t),
+            x3'(t) = r3 * x1(t) - (k3 + k4) * x3(t) + k2 * x2(t),
+            y1(t) = k * (x2(t) + x3(t))
+        ),
+    ),
 ]
 
 # the NFkB example

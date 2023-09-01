@@ -8,26 +8,26 @@
 └ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:41
 ┌ Info: Computing IO-equations
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:88
-┌ Info: Computed in 2.94658461 seconds
+┌ Info: Computed in 2.630400627 seconds
 │   :ioeq_time = ioeq_time
-│   ioeq_time = 2.94658461
+│   ioeq_time = 2.630400627
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:92
 ┌ Info: Computing Wronskians
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:95
-┌ Info: Computed in 0.645668383 seconds
+┌ Info: Computed in 0.360027679 seconds
 │   :wrnsk_time = wrnsk_time
-│   wrnsk_time = 0.645668383
+│   wrnsk_time = 0.360027679
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:97
 ┌ Info: Dimensions of the Wronskians [1, 47, 4, 5, 1, 1]
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:101
-┌ Info: Ranks of the Wronskians computed in 0.000176122 seconds
+┌ Info: Ranks of the Wronskians computed in 0.00014147 seconds
 │   :rank_time = rank_time
-│   rank_times = 0.000176122
+│   rank_times = 0.00014147
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:106
 ┌ Warning: One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still  would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:110
 ┌ Info: Simplifying identifiable functions
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:450
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:451
 ┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
 │ Ordering, input / target: degrevlex / InputOrdering
 │ Rational interpolator: VanDerHoevenLecerf
@@ -60,162 +60,36 @@
 └ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:410
 ┌ Info: Recovering the coefficients..
 └ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:418
-┌ Info: Groebner basis computed in 0.832630451 seconds
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:328
+┌ Info: Groebner basis computed in 0.930129701 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:329
 ┌ Info: Checking two-sided inclusion modulo a prime
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:333
-┌ Info: Inclusion checked in 0.007982336 seconds. Result: true
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:343
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:334
+┌ Info: Inclusion checked in 0.007001378 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:344
 ┌ Info: The coefficients of the Groebner basis are presented by 12 rational functions
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:347
-┌ Info: The pool of fractions:
-│ -beta_d,
-│ -gamma_d,
-│ -phi_e,
-│ -beta,
-│ -mu_i,
-│ -s,
-│ -mu_d,
-│ -s_d,
-│ -mu_0,
-│ -phi,
-│ -gamma
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:226
-┌ Info: The pool of fractions:
-│ -beta_d,
-│ -gamma_d,
-│ -phi_e,
-│ -beta,
-│ -mu_i,
-│ -s,
-│ -mu_d,
-│ -s_d,
-│ -mu_0,
-│ -phi,
-│ -gamma
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:226
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:348
 ┌ Info: Computing normal forms (probabilistic)
 │ Parameters (11 in total): Nemo.fmpq_mpoly[gamma, phi, mu_0, s_d, mu_d, s, mu_i, beta, phi_e, gamma_d, beta_d]
 │ Up to degree: 2
 │ Modulo: Galois field with characteristic 1073741827
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:135
-┌ Info: Specializing at the 1-th random point: Nemo.gfp_elem[420475628, 532590583, 848712937, 635682598, 1027911855, 671505310, 205380463, 399610, 276118726, 789651711, 550440523]
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:145
-┌ Info: Computing relations of 77 normal forms
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:178
-┌ Info: Obtained 77 local relations over FF
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:181
-┌ Info: Specializing at the 2-th random point: Nemo.gfp_elem[327510927, 715638678, 905765270, 958062305, 129226983, 267627206, 756689774, 417741641, 215301964, 310617874, 732834844]
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:145
-┌ Info: Computing relations of 77 normal forms
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:178
-┌ Info: Obtained 77 local relations over FF
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:181
-┌ Info: There are 77 relations in the intersection
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:189
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:214
+┌ Info: Used specialization points: 1
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:235
+┌ Info: Computing relations of 0 normal forms
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:238
 ┌ Info: Reconstructing relations to rationals
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:195
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:259
 ┌ Info: Final cleaning and simplification of generators
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:529
-┌ Info: The pool of fractions:
-│ beta_d,
-│ beta_d,
-│ gamma_d,
-│ gamma_d,
-│ phi_e,
-│ phi_e,
-│ beta,
-│ beta,
-│ mu_i,
-│ mu_i,
-│ s,
-│ s,
-│ mu_d,
-│ mu_d,
-│ s_d,
-│ s_d,
-│ mu_0,
-│ mu_0,
-│ phi,
-│ phi,
-│ gamma,
-│ gamma,
-│ beta_d^2,
-│ gamma_d*beta_d,
-│ gamma_d^2,
-│ phi_e*beta_d,
-│ phi_e*gamma_d,
-│ phi_e^2,
-│ beta*beta_d,
-│ beta*gamma_d,
-│ beta*phi_e,
-│ beta^2,
-│ mu_i*beta_d,
-│ mu_i*gamma_d,
-│ mu_i*phi_e,
-│ mu_i*beta,
-│ mu_i^2,
-│ s*beta_d,
-│ s*gamma_d,
-│ s*phi_e,
-│ s*beta,
-│ s*mu_i,
-│ s^2,
-│ mu_d*beta_d,
-│ mu_d*gamma_d,
-│ mu_d*phi_e,
-│ mu_d*beta,
-│ mu_d*mu_i,
-│ mu_d*s,
-│ mu_d^2,
-│ s_d*beta_d,
-│ s_d*gamma_d,
-│ s_d*phi_e,
-│ s_d*beta,
-│ s_d*mu_i,
-│ s_d*s,
-│ s_d*mu_d,
-│ s_d^2,
-│ mu_0*beta_d,
-│ mu_0*gamma_d,
-│ mu_0*phi_e,
-│ mu_0*beta,
-│ mu_0*mu_i,
-│ mu_0*s,
-│ mu_0*mu_d,
-│ mu_0*s_d,
-│ mu_0^2,
-│ phi*beta_d,
-│ phi*gamma_d,
-│ phi*phi_e,
-│ phi*beta,
-│ phi*mu_i,
-│ phi*s,
-│ phi*mu_d,
-│ phi*s_d,
-│ phi*mu_0,
-│ phi^2,
-│ gamma*beta_d,
-│ gamma*gamma_d,
-│ gamma*phi_e,
-│ gamma*beta,
-│ gamma*mu_i,
-│ gamma*s,
-│ gamma*mu_d,
-│ gamma*s_d,
-│ gamma*mu_0,
-│ gamma*phi,
-│ gamma^2
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:226
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:530
 ┌ Info: Checking inclusion with probability 0.995
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:532
-┌ Info: Inclusion checked in 0.024593934 seconds. Result: true
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:535
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:533
+┌ Info: Inclusion checked in 0.009861155 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:536
 ┌ Info: Out of 53 initial generators there are 11 indepdendent
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:540
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:541
 ┌ Info: The ranking of the new set of generators is 66
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:543
-┌ Info: The search for identifiable functions concluded in 6.26285254 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:544
+┌ Info: The search for identifiable functions concluded in 4.350222798 seconds
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:75
 ┌ Info: Identifiable functions are
 │   funcs = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[beta_d, gamma_d, phi_e, beta, mu_i, s, mu_d, s_d, mu_0, phi, gamma]
