@@ -36,7 +36,7 @@ function parse_keywords(keywords)
     @assert !isempty(sets_of_keywords)
     kws_named_tuples = []
     for kwset in sets_of_keywords
-        @info "" kwset
+        @debug "" kwset
         nt = eval(Meta.parse(kwset))
         push!(kws_named_tuples, nt)
     end

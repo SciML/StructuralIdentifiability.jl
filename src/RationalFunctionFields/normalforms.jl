@@ -24,7 +24,7 @@ function linear_relations_between_normal_forms(
     @info "Computing normal forms of monomials in $(length(xs)) variables up to degree $up_to_degree"
     normal_forms = Vector{elem_type(R)}(undef, 0)
     monoms = Vector{elem_type(R_param)}(undef, 0)
-    @info "GB is" gb_of_mqs
+    @debug "GB is" gb_of_mqs
     @info """
     The parent rings are:
     normal form: $(R)
@@ -111,6 +111,85 @@ end
 
 # ------------------------------------------------------------------------------
 
+# Maintans a row echelon form of a set of vectors over the integrals.
+# Works well when the ambient dimension is small.
+mutable struct TinyRowEchelonForm{T}
+    rows::Vector{Vector{T}}
+    pivot_cols::Vector{Int}
+
+    function TinyRowEchelonForm{T}() where {T}
+        new(Vector{Vector{T}}(), Vector{Int}())
+    end
+end
+
+function Base.push!(tref::TinyRowEchelonForm{T}, vect::Vector{T}) where {T}
+    @assert count(!iszero, vect) == 1
+    @assert !in(tref, vect)
+    pivot = findfirst(!iszero, vect)
+    push!(tref.rows, vect)
+    push!(tref.pivot_cols, pivot)
+    return vect
+end
+
+function Base.in(tref::TinyRowEchelonForm{T}, vect::Vector{T}) where {T}
+    nnz_inds = findall(!iszero, vect)
+    for i in nnz_inds
+        rref_idx = findfirst(pivot_col -> pivot_col == i, tref.pivot_cols)
+        isnothing(rref_idx) && return false
+        lead_vect = vect[i]
+        lead_rref = tref.rows[rref_idx][i]
+        flag, divisor = divides(lead_vect, lead_rref)
+        !flag && return false
+    end
+    return true
+end
+
+# ------------------------------------------------------------------------------
+
+function normal_forms_up_to_degree_ff(
+    mqs::IdealMQS,
+    finite_field,
+    up_to_degree::Integer;
+    stop_vectors = TinyRowEchelonForm{Int}(),
+)
+    ring_param = ParamPunPam.parent_params(mqs)
+    point_ff = ParamPunPam.distinct_nonzero_points(finite_field, nvars(ring_param))
+    point_ff_ext = vcat(point_ff, one(finite_field))
+    gens_ff_spec = specialize_mod_p(mqs, point_ff)
+    gb_ff_spec = Groebner.groebner(gens_ff_spec)
+    ring_ff = parent(gb_ff_spec[1])
+    xs_ff = gens(ring_ff)
+    normal_forms_ff = Vector{elem_type(ring_ff)}(undef, 0)
+    monoms_ff = Vector{elem_type(ring_ff)}(undef, 0)
+    @assert mqs.sat_var_index == length(xs_ff)
+    xs_ff = xs_ff[1:(end - 1)]
+    pivot_vectors = map(f -> exponent_vector(f, 1), xs_ff)
+    @debug """
+    variables in finite field: $(xs_ff)
+    gb parent: $(ring_ff)
+    specialized gb: $(gb_ff_spec)"""
+    for deg in 1:up_to_degree
+        for combination in Combinatorics.with_replacement_combinations(pivot_vectors, deg)
+            exp_vect = sum(combination)
+            if in(stop_vectors, exp_vect)
+                @debug "Skipping exponent vector $exp_vect"
+                continue
+            end
+            monom_ff = ring_ff([one(finite_field)], [exp_vect])
+            monom_ff_spec = evaluate(monom_ff, point_ff_ext)
+            monom_mqs_ff_spec = monom_ff - monom_ff_spec
+            divisors_ff, nf_ff = divrem(monom_mqs_ff_spec, gb_ff_spec)
+            @debug """
+            The normal form of $monom_mqs_ff_spec is:
+            normalform = $nf_ff
+            divisors = $divisors_ff"""
+            push!(monoms_ff, monom_ff)
+            push!(normal_forms_ff, nf_ff)
+        end
+    end
+    return normal_forms_ff, monoms_ff
+end
+
 """
     linear_relations_between_normal_forms_mod_p(fracs, up_to_degree)
 
@@ -128,54 +207,38 @@ function linear_relations_between_normal_forms_mod_p(
     mqs = IdealMQS(fractions_to_dennums(fracs))
     ring = parent(mqs)
     ring_param = ParamPunPam.parent_params(mqs)
+    xs_param = gens(ring_param)
     nparams = nvars(ring_param)
     ff = Nemo.GF(2^30 + 3)
     ParamPunPam.reduce_mod_p!(mqs, ff)
-    xs_param = gens(ring_param)
     @info """
     Computing normal forms (probabilistic)
     Parameters ($nparams in total): $xs_param
     Up to degree: $up_to_degree
     Modulo: $ff"""
+    # We first compute relations between the normal forms of linear monomials.
+    # Then, we use this knowledge to drop out some monomials of higher degrees.
+    tref = TinyRowEchelonForm{Int}()
+    normal_forms_ff_1, monoms_ff_1 = normal_forms_up_to_degree_ff(mqs, ff, 1)
+    relations_ff_1 = empty(monoms_ff_1)
+    for i in 1:length(normal_forms_ff_1)
+        !iszero(normal_forms_ff_1[i]) && continue
+        !(length(monoms_ff_1[i]) == 1) && continue
+        @debug "Registering existing monomial $(monoms_ff_1[i])"
+        push!(relations_ff_1, monoms_ff_1[i])
+        push!(tref, exponent_vector(monoms_ff_1[i], 1))
+    end
     complete_intersection_relations_ff = Vector{Nemo.gfp_mpoly}(undef, 0)
     npoints = 0
     while true
         npoints += 1
-        point_ff = ParamPunPam.distinct_nonzero_points(ff, nparams)
-        @info "Used $npoints random specialization points"
-        gens_ff_spec = specialize_mod_p(mqs, point_ff)
-        gb_ff_spec = Groebner.groebner(gens_ff_spec)
-        ring_ff = parent(gb_ff_spec[1])
-        xs_ff = gens(parent(gb_ff_spec[1]))
-        normal_forms_ff = Vector{elem_type(ring_ff)}(undef, 0)
-        monoms_ff = Vector{elem_type(ring_ff)}(undef, 0)
-        @assert mqs.sat_var_index == length(xs_ff)
-        xs_ff = xs_ff[1:(end - 1)]
-        preimage_vars_ff = map(
-            x -> map_coefficients(c -> ff(numerator(c)) // ff(denominator(c)), x),
-            vcat(xs_param, one(xs_param[1])),
-        )
-        @debug """
-        variables finite field: $(xs_ff)
-        preimage vars finite field: $(preimage_vars_ff)
-        gb parent: $(ring_ff)
-        specialized gb: $(gb_ff_spec)"""
-        for deg in 1:up_to_degree
-            for combination in Combinatorics.with_replacement_combinations(xs_ff, deg)
-                monom_ff = prod(combination)
-                monom_ff_spec = evaluate(monom_ff, vcat(point_ff, one(ff)))
-                monom_mqs_ff_spec = monom_ff - monom_ff_spec
-                divisors_ff, nf_ff = divrem(monom_mqs_ff_spec, gb_ff_spec)
-                preimage = evaluate(monom_ff, preimage_vars_ff)
-                @debug """
-                The normal form of $monom_mqs_ff_spec (preimage: $preimage) is:
-                normalform = $nf_ff
-                divisors = $divisors_ff"""
-                push!(monoms_ff, monom_ff)
-                push!(normal_forms_ff, nf_ff)
-            end
-        end
+        @info "Used specialization points: $npoints"
+        normal_forms_ff, monoms_ff =
+            normal_forms_up_to_degree_ff(mqs, ff, up_to_degree, stop_vectors = tref)
         @info "Computing relations of $(length(normal_forms_ff)) normal forms"
+        if isempty(normal_forms_ff)
+            break
+        end
         relations_ff, normal_forms_ff, monoms_ff =
             relations_over_ff(normal_forms_ff, monoms_ff)
         @info "Obtained $(length(relations_ff)) local relations over FF"
@@ -192,6 +255,7 @@ function linear_relations_between_normal_forms_mod_p(
             break
         end
     end
+    union!(complete_intersection_relations_ff, relations_ff_1)
     @info "Reconstructing relations to rationals"
     relations_qq = Vector{Generic.Frac{elem_type(ring_param)}}(
         undef,
@@ -235,12 +299,10 @@ function relations_over_ff(polys, preimages)
     preimages = preimages[permutation]
     lead_monoms = lead_monoms[permutation]
     n = length(polys)
-    ff_multipliers = map(_ -> zero(ff), 1:n)
     @inbounds for i in 1:n
         fi = polys[i]
         @debug "Reducing $i-th polynomial over FF" fi
-        ff_multipliers = map(_ -> zero(ff), 1:n)
-        ff_multipliers[i] = one(ff)
+        ff_multipliers = [(i, one(ff))]
         for j in (i - 1):-1:1
             iszero(fi) && break
             fj = polys[j]
@@ -253,18 +315,16 @@ function relations_over_ff(polys, preimages)
             cij = div(ci, cj)
             @debug "reducing $fi with $(-cij) x $fj"
             fi = fi - cij * fj
-            ff_multipliers[j] = -cij
+            push!(ff_multipliers, (j, -cij))
         end
-        if iszero(fi)
-            @debug "Polynomial at index $i reduced to zero"
-            preimage = zero(preimage_ring)
-            for k in 1:i
-                if !iszero(ff_multipliers[k])
-                    preimage += ff_multipliers[k] * preimages[k]
-                end
-            end
-            push!(ff_relations, preimage)
+        !iszero(fi) && continue
+        @debug "Polynomial at index $i reduced to zero"
+        preimage = zero(preimage_ring)
+        for k in 1:length(ff_multipliers)
+            idx, coef = ff_multipliers[k]
+            preimage += coef * preimages[idx]
         end
+        push!(ff_relations, preimage)
     end
     return ff_relations, polys, preimages
 end

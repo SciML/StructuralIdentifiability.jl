@@ -864,8 +864,14 @@ funcs1 = StructuralIdentifiability.find_identifiable_functions(
     with_states = true,
 )
 
-@profview funcs2 = StructuralIdentifiability.find_identifiable_functions(
+@my_profview funcs2 = StructuralIdentifiability.find_identifiable_functions(
     fujita,
+    with_states = true,
+    strategy=(:normalforms, 3)
+)
+
+StructuralIdentifiability.find_identifiable_functions(
+    mapk_6_out,
     with_states = true,
     strategy=(:normalforms, 3)
 )
@@ -901,7 +907,7 @@ println(gens(parent(x2)))
 
 
 funcs1 = StructuralIdentifiability.find_identifiable_functions(
-    Bilirubin2_io,
+    pharm,
     with_states = true,
 )
 

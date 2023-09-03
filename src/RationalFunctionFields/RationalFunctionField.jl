@@ -216,6 +216,7 @@ function beautifuly_generators(
     fracs = dennums_to_fractions(rff.dennums)
     # Filter pass
     fracs = filter(!is_rational_func_const, fracs)
+    fracs = unique(fracs)
     if isempty(fracs)
         @debug "The set of generators is empty"
         return fracs

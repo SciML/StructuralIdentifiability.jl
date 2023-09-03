@@ -2,7 +2,7 @@
 eq_up_to_the_order(a, b) = issubset(a, b) && issubset(b, a)
 
 @testset "Linear relations over the rationals" begin
-    for strategy in (:deterministic, :monte_carlo)
+    for strategy in (:monte_carlo,)
         R, (a, b, c) = QQ["a", "b", "c"]
 
         f = [a + 9]
@@ -12,7 +12,7 @@ eq_up_to_the_order(a, b) = issubset(a, b) && issubset(b, a)
             2,
             strategy = strategy,
         )
-        @test eq_up_to_the_order(relations, [a, a^2])
+        @test eq_up_to_the_order(relations, [a])
 
         f = [a * b // R(1), (b * c + a * b) // (a * b)]
         rff = StructuralIdentifiability.RationalFunctionField(f)
@@ -39,7 +39,6 @@ eq_up_to_the_order(a, b) = issubset(a, b) && issubset(b, a)
         )
         @test eq_up_to_the_order(relations, [a + b, a * b, a^2 + b^2])
 
-        strategy == :deterministic && continue
         f = [9a^7 + 10b^6, b^10 - 5b^2]
         rff = StructuralIdentifiability.RationalFunctionField(f)
         relations = StructuralIdentifiability.monomial_generators_up_to_degree(

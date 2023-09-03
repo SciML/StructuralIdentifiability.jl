@@ -8,25 +8,25 @@
 └ @ Main /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:41
 ┌ Info: Computing IO-equations
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:88
-┌ Info: Computed in 3.133935157 seconds
+┌ Info: Computed in 2.563128669 seconds
 │   :ioeq_time = ioeq_time
-│   ioeq_time = 3.133935157
+│   ioeq_time = 2.563128669
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:92
 ┌ Info: Computing Wronskians
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:95
-┌ Info: Computed in 0.794241335 seconds
+┌ Info: Computed in 0.376492181 seconds
 │   :wrnsk_time = wrnsk_time
-│   wrnsk_time = 0.794241335
+│   wrnsk_time = 0.376492181
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:97
 ┌ Info: Dimensions of the Wronskians [18, 9, 145]
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:101
-┌ Info: Ranks of the Wronskians computed in 0.200170778 seconds
+┌ Info: Ranks of the Wronskians computed in 0.001531759 seconds
 │   :rank_time = rank_time
-│   rank_times = 0.200170778
+│   rank_times = 0.001531759
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:106
-⌜ # Computing specializations..  	 Time: 0:00:04[K✓ # Computing specializations..  	 Time: 0:00:04[K
+⌜ # Computing specializations..  	 Time: 0:00:03[K✓ # Computing specializations..  	 Time: 0:00:03[K
 ┌ Info: Simplifying identifiable functions
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:450
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:451
 ┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
 │ Ordering, input / target: degrevlex / InputOrdering
 │ Rational interpolator: VanDerHoevenLecerf
@@ -59,215 +59,54 @@
 └ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:410
 ┌ Info: Recovering the coefficients..
 └ @ ParamPunPam /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:418
-┌ Info: Groebner basis computed in 6.39589923 seconds
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:328
+┌ Info: Groebner basis computed in 5.173006064 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:329
 ┌ Info: Checking two-sided inclusion modulo a prime
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:333
-┌ Info: Inclusion checked in 1.470706239 seconds. Result: true
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:343
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:334
+┌ Info: Inclusion checked in 1.134409323 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:344
 ┌ Info: The coefficients of the Groebner basis are presented by 14 rational functions
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:347
-┌ Info: The pool of fractions:
-│ -reaction_8_k1,
-│ -reaction_2_k2,
-│ -reaction_5_k2,
-│ -reaction_3_k1,
-│ -reaction_6_k1,
-│ -reaction_7_k1,
-│ -reaction_4_k1,
-│ -reaction_1_k1 + reaction_9_k1 + reaction_1_k2,
-│ -reaction_5_k1//reaction_2_k1,
-│ -a1//reaction_2_k1,
-│ -a3//reaction_2_k1,
-│ -a2//reaction_2_k1
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:226
-┌ Info: The pool of fractions:
-│ -reaction_8_k1,
-│ -reaction_2_k2,
-│ -reaction_5_k2,
-│ -reaction_3_k1,
-│ -reaction_6_k1,
-│ -reaction_7_k1,
-│ -reaction_4_k1,
-│ -reaction_1_k1 + reaction_9_k1 + reaction_1_k2,
-│ -reaction_5_k1//reaction_2_k1,
-│ -a1//reaction_2_k1,
-│ -a3//reaction_2_k1,
-│ -a2//reaction_2_k1
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:226
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:348
 ┌ Info: Computing normal forms (probabilistic)
 │ Parameters (16 in total): Nemo.fmpq_mpoly[a2, a3, reaction_1_k1, reaction_4_k1, reaction_9_k1, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, reaction_3_k1, reaction_5_k1, reaction_2_k1, EGFR_turnover, reaction_5_k2, reaction_2_k2, reaction_8_k1]
 │ Up to degree: 3
 │ Modulo: Galois field with characteristic 1073741827
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:135
-┌ Info: Specializing at the 1-th random point: Nemo.gfp_elem[771755530, 293571898, 686650249, 855070507, 244430419, 988631276, 210788666, 740155407, 650100705, 261146176, 712507284, 522020868, 103876459, 127154149, 481966897, 429024064]
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:145
-┌ Info: Computing relations of 968 normal forms
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:178
-┌ Info: Obtained 934 local relations over FF
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:181
-┌ Info: Specializing at the 2-th random point: Nemo.gfp_elem[6624727, 769201088, 552109202, 163797734, 871518669, 200293864, 143004626, 150356252, 515755290, 806209868, 875755900, 917148075, 314315387, 492142310, 630321345, 407298670]
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:145
-┌ Info: Computing relations of 968 normal forms
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:178
-┌ Info: Obtained 934 local relations over FF
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:181
-┌ Info: There are 119 relations in the intersection
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:189
-┌ Info: Specializing at the 3-th random point: Nemo.gfp_elem[400291727, 137908349, 678636407, 969349039, 667584955, 458357305, 773028036, 126118172, 211331802, 368670961, 723705980, 663167752, 407212007, 324713144, 1050184985, 342133573]
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:145
-┌ Info: Computing relations of 968 normal forms
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:178
-┌ Info: Obtained 934 local relations over FF
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:181
-┌ Info: There are 119 relations in the intersection
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:189
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:214
+┌ Info: Used specialization points: 1
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:235
+┌ Info: Computing relations of 849 normal forms
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:238
+┌ Info: Obtained 815 local relations over FF
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:244
+┌ Info: Used specialization points: 2
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:235
+┌ Info: Computing relations of 849 normal forms
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:238
+┌ Info: Obtained 815 local relations over FF
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:244
+┌ Info: There are 0 relations in the intersection
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:252
+┌ Info: Used specialization points: 3
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:235
+┌ Info: Computing relations of 849 normal forms
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:238
+┌ Info: Obtained 815 local relations over FF
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:244
+┌ Info: There are 0 relations in the intersection
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:252
 ┌ Info: Reconstructing relations to rationals
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:195
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/normalforms.jl:259
 ┌ Info: Final cleaning and simplification of generators
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:529
-┌ Info: The pool of fractions:
-│ reaction_8_k1,
-│ reaction_8_k1,
-│ reaction_2_k2,
-│ reaction_2_k2,
-│ reaction_5_k2,
-│ reaction_5_k2,
-│ reaction_3_k1,
-│ reaction_3_k1,
-│ reaction_6_k1,
-│ reaction_6_k1,
-│ reaction_7_k1,
-│ reaction_7_k1,
-│ reaction_4_k1,
-│ reaction_4_k1,
-│ reaction_8_k1^2,
-│ reaction_2_k2*reaction_8_k1,
-│ reaction_2_k2^2,
-│ reaction_5_k2*reaction_8_k1,
-│ reaction_5_k2*reaction_2_k2,
-│ reaction_5_k2^2,
-│ reaction_3_k1*reaction_8_k1,
-│ reaction_3_k1*reaction_2_k2,
-│ reaction_3_k1*reaction_5_k2,
-│ reaction_3_k1^2,
-│ reaction_6_k1*reaction_8_k1,
-│ reaction_6_k1*reaction_2_k2,
-│ reaction_6_k1*reaction_5_k2,
-│ reaction_6_k1*reaction_3_k1,
-│ reaction_6_k1^2,
-│ reaction_7_k1*reaction_8_k1,
-│ reaction_7_k1*reaction_2_k2,
-│ reaction_7_k1*reaction_5_k2,
-│ reaction_7_k1*reaction_3_k1,
-│ reaction_7_k1*reaction_6_k1,
-│ reaction_7_k1^2,
-│ reaction_4_k1*reaction_8_k1,
-│ reaction_4_k1*reaction_2_k2,
-│ reaction_4_k1*reaction_5_k2,
-│ reaction_4_k1*reaction_3_k1,
-│ reaction_4_k1*reaction_6_k1,
-│ reaction_4_k1*reaction_7_k1,
-│ reaction_4_k1^2,
-│ reaction_8_k1^3,
-│ reaction_2_k2*reaction_8_k1^2,
-│ reaction_2_k2^2*reaction_8_k1,
-│ reaction_2_k2^3,
-│ reaction_5_k2*reaction_8_k1^2,
-│ reaction_5_k2*reaction_2_k2*reaction_8_k1,
-│ reaction_5_k2*reaction_2_k2^2,
-│ reaction_5_k2^2*reaction_8_k1,
-│ reaction_5_k2^2*reaction_2_k2,
-│ reaction_5_k2^3,
-│ reaction_3_k1*reaction_8_k1^2,
-│ reaction_3_k1*reaction_2_k2*reaction_8_k1,
-│ reaction_3_k1*reaction_2_k2^2,
-│ reaction_3_k1*reaction_5_k2*reaction_8_k1,
-│ reaction_3_k1*reaction_5_k2*reaction_2_k2,
-│ reaction_3_k1*reaction_5_k2^2,
-│ reaction_3_k1^2*reaction_8_k1,
-│ reaction_3_k1^2*reaction_2_k2,
-│ reaction_3_k1^2*reaction_5_k2,
-│ reaction_3_k1^3,
-│ reaction_6_k1*reaction_8_k1^2,
-│ reaction_6_k1*reaction_2_k2*reaction_8_k1,
-│ reaction_6_k1*reaction_2_k2^2,
-│ reaction_6_k1*reaction_5_k2*reaction_8_k1,
-│ reaction_6_k1*reaction_5_k2*reaction_2_k2,
-│ reaction_6_k1*reaction_5_k2^2,
-│ reaction_6_k1*reaction_3_k1*reaction_8_k1,
-│ reaction_6_k1*reaction_3_k1*reaction_2_k2,
-│ reaction_6_k1*reaction_3_k1*reaction_5_k2,
-│ reaction_6_k1*reaction_3_k1^2,
-│ reaction_6_k1^2*reaction_8_k1,
-│ reaction_6_k1^2*reaction_2_k2,
-│ reaction_6_k1^2*reaction_5_k2,
-│ reaction_6_k1^2*reaction_3_k1,
-│ reaction_6_k1^3,
-│ reaction_7_k1*reaction_8_k1^2,
-│ reaction_7_k1*reaction_2_k2*reaction_8_k1,
-│ reaction_7_k1*reaction_2_k2^2,
-│ reaction_7_k1*reaction_5_k2*reaction_8_k1,
-│ reaction_7_k1*reaction_5_k2*reaction_2_k2,
-│ reaction_7_k1*reaction_5_k2^2,
-│ reaction_7_k1*reaction_3_k1*reaction_8_k1,
-│ reaction_7_k1*reaction_3_k1*reaction_2_k2,
-│ reaction_7_k1*reaction_3_k1*reaction_5_k2,
-│ reaction_7_k1*reaction_3_k1^2,
-│ reaction_7_k1*reaction_6_k1*reaction_8_k1,
-│ reaction_7_k1*reaction_6_k1*reaction_2_k2,
-│ reaction_7_k1*reaction_6_k1*reaction_5_k2,
-│ reaction_7_k1*reaction_6_k1*reaction_3_k1,
-│ reaction_7_k1*reaction_6_k1^2,
-│ reaction_7_k1^2*reaction_8_k1,
-│ reaction_7_k1^2*reaction_2_k2,
-│ reaction_7_k1^2*reaction_5_k2,
-│ reaction_7_k1^2*reaction_3_k1,
-│ reaction_7_k1^2*reaction_6_k1,
-│ reaction_7_k1^3,
-│ reaction_4_k1*reaction_8_k1^2,
-│ reaction_4_k1*reaction_2_k2*reaction_8_k1,
-│ reaction_4_k1*reaction_2_k2^2,
-│ reaction_4_k1*reaction_5_k2*reaction_8_k1,
-│ reaction_4_k1*reaction_5_k2*reaction_2_k2,
-│ reaction_4_k1*reaction_5_k2^2,
-│ reaction_4_k1*reaction_3_k1*reaction_8_k1,
-│ reaction_4_k1*reaction_3_k1*reaction_2_k2,
-│ reaction_4_k1*reaction_3_k1*reaction_5_k2,
-│ reaction_4_k1*reaction_3_k1^2,
-│ reaction_4_k1*reaction_6_k1*reaction_8_k1,
-│ reaction_4_k1*reaction_6_k1*reaction_2_k2,
-│ reaction_4_k1*reaction_6_k1*reaction_5_k2,
-│ reaction_4_k1*reaction_6_k1*reaction_3_k1,
-│ reaction_4_k1*reaction_6_k1^2,
-│ reaction_4_k1*reaction_7_k1*reaction_8_k1,
-│ reaction_4_k1*reaction_7_k1*reaction_2_k2,
-│ reaction_4_k1*reaction_7_k1*reaction_5_k2,
-│ reaction_4_k1*reaction_7_k1*reaction_3_k1,
-│ reaction_4_k1*reaction_7_k1*reaction_6_k1,
-│ reaction_4_k1*reaction_7_k1^2,
-│ reaction_4_k1^2*reaction_8_k1,
-│ reaction_4_k1^2*reaction_2_k2,
-│ reaction_4_k1^2*reaction_5_k2,
-│ reaction_4_k1^2*reaction_3_k1,
-│ reaction_4_k1^2*reaction_6_k1,
-│ reaction_4_k1^2*reaction_7_k1,
-│ reaction_4_k1^3,
-│ reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
-│ reaction_5_k1//reaction_2_k1,
-│ a1//reaction_2_k1,
-│ a3//reaction_2_k1,
-│ a2//reaction_2_k1
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:226
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:530
 ┌ Info: Checking inclusion with probability 0.995
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:532
-┌ Info: Inclusion checked in 2.25616375 seconds. Result: true
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:535
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:533
+┌ Info: Inclusion checked in 1.768730619 seconds. Result: true
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:536
 ┌ Info: Out of 217 initial generators there are 12 indepdendent
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:540
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:541
 ┌ Info: The ranking of the new set of generators is 368
-└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:543
-┌ Info: The search for identifiable functions concluded in 17.475568099 seconds
+└ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:544
+┌ Info: The search for identifiable functions concluded in 11.87675254 seconds
 └ @ StructuralIdentifiability /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:75
 ┌ Info: Identifiable functions are
 │   funcs = AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[reaction_8_k1, reaction_2_k2, reaction_5_k2, reaction_3_k1, reaction_6_k1, reaction_7_k1, reaction_4_k1, reaction_1_k1 - reaction_9_k1 - reaction_1_k2, reaction_5_k1//reaction_2_k1, a1//reaction_2_k1, a3//reaction_2_k1, a2//reaction_2_k1]

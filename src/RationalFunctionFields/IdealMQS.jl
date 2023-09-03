@@ -220,9 +220,10 @@ function ParamPunPam.reduce_mod_p!(
         return nothing
     end
     nums_qq, dens_qq, sat_qq = mqs.nums_qq, mqs.dens_qq, mqs.sat_qq
-    nums_gf = map(poly -> map_coefficients(c -> ff(c), poly), nums_qq)
-    dens_gf = map(poly -> map_coefficients(c -> ff(c), poly), dens_qq)
     sat_gf = map_coefficients(c -> ff(c), sat_qq)
+    ring_ff = parent(sat_gf)
+    nums_gf = map(poly -> map_coefficients(c -> ff(c), poly, parent = ring_ff), nums_qq)
+    dens_gf = map(poly -> map_coefficients(c -> ff(c), poly, parent = ring_ff), dens_qq)
     mqs.cached_nums_gf[ff] = nums_gf
     mqs.cached_dens_gf[ff] = dens_gf
     mqs.cached_sat_gf[ff] = sat_gf

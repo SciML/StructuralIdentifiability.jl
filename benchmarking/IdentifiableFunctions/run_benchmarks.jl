@@ -1,19 +1,23 @@
-# TODO: read benchmarks.jl, create and populate output directory from scratch
-
 using ArgParse
 using CpuId, Logging, Pkg, Printf
 using Base.Threads
 using Distributed
 using Dates
+using ProgressMeter
 
 using StructuralIdentifiability
 using StructuralIdentifiability: _runtime_logger, ODE
 using StructuralIdentifiability.ParamPunPam
 
-logger = Logging.SimpleLogger(stdout, Logging.Info)
-global_logger(logger)
-
+global_logger(Logging.SimpleLogger(stdout, Logging.Warn))
 include("benchmarks.jl")
+global_logger(Logging.SimpleLogger(stdout, Logging.Info))
+
+const _progressbar_color = :light_green
+const _progressbar_value_color = :light_green
+progressbar_enabled() =
+    Logging.Info <= Logging.min_enabled_level(current_logger()) < Logging.Warn
+
 include("utils.jl")
 
 function parse_commandline()
@@ -23,7 +27,7 @@ function parse_commandline()
         "--timeout"
             help = "Timeout, s."
             arg_type = Int
-            default = 2500
+            default = 300
         "--skip"
             help = "Systems to skip."
             arg_type = Vector{String}
@@ -47,7 +51,7 @@ end
 function populate_benchmarks(args, kwargs)
     regen = args["regen"]
     !regen && return true
-    @info "Re-generating the benchmarks folder"
+    @debug "Re-generating the benchmarks folder"
     try
         if isdir((@__DIR__) * "/systems/")
             rm((@__DIR__) * "/systems/", recursive = true, force = true)
@@ -57,10 +61,19 @@ function populate_benchmarks(args, kwargs)
         showerror(stdout, err)
         println(stdout)
     end
+    prog = Progress(
+        length(benchmarks),
+        "Generating benchmarks",
+        # spinner = true,
+        dt = 0.1,
+        enabled = progressbar_enabled(),
+        color = _progressbar_color,
+    )
     for bmark in benchmarks
+        next!(prog) # , spinner = "⌜⌝⌟⌞")
         name = bmark[:name]
         system = bmark[:ode]
-        @info "Generating $name"
+        @debug "Generating $name"
         mkpath((@__DIR__) * "/systems/$name/")
         fd = open((@__DIR__) * "/systems/$name/$name.jl", "w")
         println(fd, "# $name")
@@ -71,6 +84,7 @@ function populate_benchmarks(args, kwargs)
         println(fd, "system = @ODEmodel(\n$ode\n)")
         close(fd)
     end
+    finish!(prog)
     true
 end
 
@@ -81,15 +95,15 @@ function run_benchmarks(args, kwargs)
     to_run_names = setdiff(dirnames, to_skip)
     to_run_indices = collect(1:length(to_run_names))
 
-    nworkers = 4 * 2
+    nworkers = 16
 
     @info """
     Running benchmarks.
-    Number of benchmarks: $(length(to_run_indices))
+    Number of benchmark systems: $(length(to_run_indices))
     Workers: $(nworkers)
     Timeout: $timeout seconds
     Keywords for `find_identifiable_functions`:
-        $kwargs"""
+    \t$(join(map(string, kwargs), "\n\t"))"""
     @info """
     Benchmark systems:
     $to_run_names"""
@@ -101,25 +115,57 @@ function run_benchmarks(args, kwargs)
     log_fd = []
     keywords = []
     exited = []
+    errored = []
     running = 0
+
+    generate_showvalues(procs) =
+        () -> [(
+            :Active,
+            join(
+                map(
+                    proc -> string(proc.name) * " / " * string(proc.id),
+                    filter(proc -> process_running(proc.proc), procs),
+                ),
+                ", ",
+            ),
+        )]
+
+    prog = Progress(
+        length(queue),
+        "Running benchmarks",
+        # spinner = true,
+        dt = 0.3,
+        enabled = progressbar_enabled(),
+        color = _progressbar_color,
+    )
 
     while true
         if !isempty(queue) && running < nworkers
+            next!(
+                prog,
+                showvalues = generate_showvalues(procs),
+                step = 0,
+                valuecolor = _progressbar_value_color,
+                # spinner = "⌜⌝⌟⌞",
+            )
             (kw, idx) = pop!(queue)
             name = to_run_names[idx]
             id = keywords_to_id(kw)
-            @info "Running $name / $id"
+            @debug "Running $name / $id"
             logs = open((@__DIR__) * "/systems/$name/logs_$id", "w")
             cmd = Cmd(["julia", (@__DIR__) * "/run_single_benchmark.jl", "$name", "$kw"])
             cmd = Cmd(cmd, ignorestatus = true, detach = false, env = copy(ENV))
             proc = run(pipeline(cmd, stdout = logs, stderr = logs), wait = false)
             push!(log_fd, logs)
             push!(keywords, kw)
-            push!(procs, (index = idx, name = name, proc = proc, start_time = time_ns()))
+            push!(
+                procs,
+                (index = idx, name = name, proc = proc, start_time = time_ns(), id = id),
+            )
             running += 1
         end
 
-        sleep(1.0)
+        sleep(0.2)
         i = 1
         for i in 1:length(procs)
             i in exited && continue
@@ -127,10 +173,18 @@ function run_benchmarks(args, kwargs)
             if process_exited(proc.proc)
                 running -= 1
                 push!(exited, i)
+                if proc.proc.exitcode != 0
+                    push!(errored, i)
+                end
                 close(log_fd[i])
                 kw = keywords[i]
                 start_time = proc.start_time
-                @info "Yielded $(proc.name) / $(kw) after $(seconds_passed(start_time)) seconds"
+                next!(
+                    prog,
+                    showvalues = generate_showvalues(procs),
+                    valuecolor = _progressbar_value_color,
+                )
+                @debug "Yielded $(proc.name) / $(kw) after $(seconds_passed(start_time)) seconds"
             end
             if process_running(proc.proc)
                 start_time = proc.start_time
@@ -140,14 +194,27 @@ function run_benchmarks(args, kwargs)
                     kw = keywords[i]
                     running -= 1
                     push!(exited, i)
-                    @warn "Timed-out $(proc.name) / $(kw) after $(seconds_passed(start_time)) seconds"
+                    next!(
+                        prog,
+                        showvalues = generate_showvalues(procs),
+                        valuecolor = _progressbar_value_color,
+                    )
+                    @debug "Timed-out $(proc.name) / $(kw) after $(seconds_passed(start_time)) seconds"
                 end
             end
         end
         if length(exited) == length(to_run_names) * length(kwargs)
-            @info "Exited $exited"
-            @info "All benchmarks finished"
+            @debug "Exited $exited"
+            @debug "All benchmarks finished"
             break
+        end
+    end
+    finish!(prog)
+
+    if !isempty(errored)
+        printstyled("(!) Maybe errored:\n", color = :red)
+        for i in errored
+            println("\t$(procs[i].name) / $(procs[i].id)")
         end
     end
 
@@ -158,34 +225,37 @@ function collect_timings(args, kwargs, names; content = :compare)
     resulting_md = ""
 
     resulting_md *= """
-    ## Simplification scores
+    ## Benchmark results
 
-    *Smaller is better.*
-
-    $(now())
-
+    Timestamp: $(now())
     Timeout: $(args["timeout"]) s
+
+    **Timings in seconds.**
+
     """
 
+    cannot_collect = []
     names = sort(names)
     runtimes = Dict()
     for name in names
-        println("==== Reading $name")
+        @debug "==== Reading $name"
         runtimes[name] = Dict()
         for kw in kwargs
             timings = nothing
             id = keywords_to_id(kw)
             runtimes[name][id] = Dict()
             try
-                println("==== Opening /systems/$name/timings_$id")
+                @debug "==== Opening /systems/$name/timings_$id"
                 timings = open((@__DIR__) * "/systems/$name/timings_$id", "r")
             catch e
-                @warn "Cannot collect timings for $name / $id"
+                @debug "Cannot collect timings for $name / $id"
+                push!(cannot_collect, (name, id))
                 continue
             end
             lines = readlines(timings)
             if isempty(lines)
-                @warn "Cannot collect timings for $name / $id"
+                @debug "Cannot collect timings for $name / $id"
+                push!(cannot_collect, (name, id))
                 continue
             end
             @assert lines[1] == name
@@ -194,6 +264,13 @@ function collect_timings(args, kwargs, names; content = :compare)
                 runtimes[name][id][Symbol(k)] = parse(Float64, v)
             end
             close(timings)
+        end
+    end
+
+    if !isempty(cannot_collect)
+        printstyled("(!) Cannot collect timings for:\n", color = :red)
+        for (name, id) in cannot_collect
+            println("\t$name / $id")
         end
     end
 
@@ -275,17 +352,22 @@ function collect_timings(args, kwargs, names; content = :compare)
 end
 
 function main()
+    timestamp = time_ns()
     args = parse_commandline()
     kwargs = parse_keywords(args["keywords"])
-    @info "Command-line args:"
+    @debug "Command-line args:"
     for (arg, val) in args
-        @info "$arg  =>  $val"
+        @debug "$arg  =>  $val"
     end
-    @info "Keywords for `find_identifiable_functions`"
-    @info kwargs
+    @debug "Keywords for `find_identifiable_functions`"
+    @debug kwargs
     flag = populate_benchmarks(args, kwargs)
     systems = run_benchmarks(args, kwargs)
     collect_timings(args, kwargs, systems, content = :compare)
+    printstyled(
+        "Benchmarking finished in $(round((time_ns() - timestamp) / 1e9, digits=2)) s\n",
+        color = :light_green,
+    )
 end
 
 main()
