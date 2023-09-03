@@ -119,7 +119,6 @@
         ode = case[:ode]
         result = assess_local_identifiability(ode, case[:funcs], 0.99, :SE, trbasis)
         @test result == case[:correct]
-        println(trbasis)
         for (i, p) in enumerate(trbasis)
             res_for_p = assess_local_identifiability(ode, [p])
             @test !first(values(res_for_p))

@@ -28,7 +28,7 @@ struct ODE{P}
         if isempty(y_eqs)
             @info "Could not find output variables in the model."
         end
-        poly_ring = parent(first(y_vars))
+        poly_ring = parent(first(vcat(y_vars, x_vars)))
         u_vars = inputs
         parameters = filter(
             v -> (!(v in x_vars) && !(v in u_vars) && !(v in y_vars)),
@@ -59,10 +59,15 @@ function add_outputs(ode::ODE{P}, extra_y::Dict{String, <:RingElem}) where {P <:
         vcat(collect(map(var_to_str, gens(ode.poly_ring))), collect(keys(extra_y)))
     new_ring, new_vars = Nemo.PolynomialRing(base_ring(ode.poly_ring), new_var_names)
 
+    new_x = Array{P, 1}([parent_ring_change(x, new_ring) for x in ode.x_vars])
     new_x_eqs = Dict{P, Union{P, Generic.Frac{P}}}(
         parent_ring_change(x, new_ring) => parent_ring_change(f, new_ring) for
         (x, f) in ode.x_equations
     )
+    new_y = Array{P, 1}([parent_ring_change(y, new_ring) for y in ode.y_vars])
+    for y in keys(extra_y)
+        push!(new_y, str_to_var(y, new_ring))
+    end
     new_y_eqs = Dict{P, Union{P, Generic.Frac{P}}}(
         parent_ring_change(y, new_ring) => parent_ring_change(g, new_ring) for
         (y, g) in ode.y_equations
@@ -72,7 +77,7 @@ function add_outputs(ode::ODE{P}, extra_y::Dict{String, <:RingElem}) where {P <:
     )
     merge!(new_y_eqs, extra_y_eqs)
     new_us = map(v -> switch_ring(v, new_ring), ode.u_vars)
-    return ODE{P}(new_x_eqs, new_y_eqs, new_us)
+    return ODE{P}(new_x, new_y, new_x_eqs, new_y_eqs, new_us)
 end
 
 #------------------------------------------------------------------------------
@@ -239,6 +244,8 @@ function reduce_ode_mod_p(ode::ODE{<:MPolyElem{Nemo.fmpq}}, p::Int)
         Nemo.PolynomialRing(Nemo.GF(p), map(var_to_str, gens(ode.poly_ring)))
     new_type = typeof(new_vars[1])
     new_inputs = map(u -> switch_ring(u, new_ring), ode.u_vars)
+    new_x = map(x -> switch_ring(x, new_ring), ode.x_vars)
+    new_y = map(y -> switch_ring(y, new_ring), ode.y_vars)
     new_x_eqs = Dict{new_type, Union{new_type, Generic.Frac{new_type}}}()
     new_y_eqs = Dict{new_type, Union{new_type, Generic.Frac{new_type}}}()
     for (old, new) in Dict(ode.x_equations => new_x_eqs, ode.y_equations => new_y_eqs)
@@ -247,7 +254,7 @@ function reduce_ode_mod_p(ode::ODE{<:MPolyElem{Nemo.fmpq}}, p::Int)
             new[new_v] = _reduce_mod_p(f, p)
         end
     end
-    return ODE{new_type}(new_x_eqs, new_y_eqs, new_inputs)
+    return ODE{new_type}(new_x, new_y, new_x_eqs, new_y_eqs, new_inputs)
 end
 
 #------------------------------------------------------------------------------
