@@ -71,6 +71,7 @@ function find_identifiable_functions(
     else
         id_funcs_fracs = dennums_to_fractions(id_funcs)
     end
+    id_funcs_fracs = [parent_ring_change(f, parent(ode)) for f in id_funcs_fracs]
     _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1e9
     @info "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds"
     return id_funcs_fracs

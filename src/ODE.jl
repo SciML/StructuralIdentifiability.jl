@@ -362,8 +362,6 @@ macro ODEmodel(ex::Expr...)
     vy = gensym()
     x_var_expr = :($vx = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}([$(x_vars...)]))
     y_var_expr = :($vy = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}([$(y_vars...)]))
-    @info x_var_expr
-    @info y_var_expr
 
     # preparing equations
     equations = map(macrohelper_clean, equations)
@@ -552,6 +550,8 @@ function __preprocess_ode(
     measured_quantities::Array{<:Tuple{String, <:SymbolicUtils.BasicSymbolic}},
 )
     @info "Preproccessing `ModelingToolkit.AbstractTimeDependentSystem` object"
+    polytype = StructuralIdentifiability.Nemo.fmpq_mpoly
+    fractype = StructuralIdentifiability.Nemo.Generic.Frac{polytype}
     diff_eqs =
         filter(eq -> !(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
     # performing full structural simplification
@@ -582,33 +582,27 @@ function __preprocess_ode(
     generators = vcat(string.(input_symbols), [e[1] for e in measured_quantities])
     generators = map(g -> replace(g, "(t)" => ""), generators)
     R, gens_ = Nemo.PolynomialRing(Nemo.QQ, generators)
-    y_vars = [str_to_var(e[1], R) for e in measured_quantities]
+    y_vars = Vector{polytype}([str_to_var(e[1], R) for e in measured_quantities])
     symb2gens = Dict(input_symbols .=> gens_[1:length(input_symbols)])
+
+    x_vars = Vector{polytype}()
+
     state_eqn_dict = Dict{
-        StructuralIdentifiability.Nemo.fmpq_mpoly,
-        Union{
-            StructuralIdentifiability.Nemo.fmpq_mpoly,
-            StructuralIdentifiability.Nemo.Generic.Frac{
-                StructuralIdentifiability.Nemo.fmpq_mpoly,
-            },
-        },
+        polytype,
+        Union{polytype, fractype}
     }()
     out_eqn_dict = Dict{
-        StructuralIdentifiability.Nemo.fmpq_mpoly,
-        Union{
-            StructuralIdentifiability.Nemo.fmpq_mpoly,
-            StructuralIdentifiability.Nemo.Generic.Frac{
-                StructuralIdentifiability.Nemo.fmpq_mpoly,
-            },
-        },
+        polytype,
+        Union{polytype, fractype}
     }()
 
     for i in 1:length(diff_eqs)
+        x = substitute(state_vars[i], symb2gens)
+        push!(x_vars, x)
         if !(typeof(diff_eqs[i].rhs) <: Number)
-            state_eqn_dict[substitute(state_vars[i], symb2gens)] =
-                eval_at_nemo(diff_eqs[i].rhs, symb2gens)
+            state_eqn_dict[x] = eval_at_nemo(diff_eqs[i].rhs, symb2gens)
         else
-            state_eqn_dict[substitute(state_vars[i], symb2gens)] = R(diff_eqs[i].rhs)
+            state_eqn_dict[x] = R(diff_eqs[i].rhs)
         end
     end
     for i in 1:length(measured_quantities)
@@ -617,10 +611,12 @@ function __preprocess_ode(
 
     inputs_ = [substitute(each, symb2gens) for each in inputs]
     if isequal(length(inputs_), 0)
-        inputs_ = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}()
+        inputs_ = Vector{polytype}()
     end
     return (
-        StructuralIdentifiability.ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(
+        StructuralIdentifiability.ODE{polytype}(
+            x_vars,
+            y_vars,
             state_eqn_dict,
             out_eqn_dict,
             inputs_,
