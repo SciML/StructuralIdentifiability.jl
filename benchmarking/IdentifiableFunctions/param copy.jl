@@ -400,6 +400,8 @@ ode = StructuralIdentifiability.@ODEmodel(
     y(t) = x1 + x2
 )
 
+new_ode, new_vars = StructuralIdentifiability.reparametrize_global(ode)
+
 id_funcs = StructuralIdentifiability.find_identifiable_functions(
     ode,
     with_states = true,
@@ -525,7 +527,7 @@ new_ode =
     T2'(t) = -T2(t)*T1(t) + T2(t)*T5 + T6(t)
     T1'(t) = T2(t)*T1(t)*T4 - T1(t)*T3
     y(t) = T2(t)
- 
+
 new_vars =
 Dict{Nemo.fmpq_mpoly, AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}} with 6 entries:
     T2 => x1
