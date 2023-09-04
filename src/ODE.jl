@@ -594,14 +594,8 @@ function __preprocess_ode(
 
     x_vars = Vector{polytype}()
 
-    state_eqn_dict = Dict{
-        polytype,
-        Union{polytype, fractype}
-    }()
-    out_eqn_dict = Dict{
-        polytype,
-        Union{polytype, fractype}
-    }()
+    state_eqn_dict = Dict{polytype, Union{polytype, fractype}}()
+    out_eqn_dict = Dict{polytype, Union{polytype, fractype}}()
 
     for i in 1:length(diff_eqs)
         x = substitute(state_vars[i], symb2gens)

@@ -1,4 +1,7 @@
-# Reparametrize!
+# This is a proof of concept implementation of global model reparametrization.
+
+# using StructuralIdentifiability
+using AbstractAlgebra, Nemo, Groebner
 
 to_fractions(polys::Vector{T}) where {T} = polys .// one(first(polys))
 to_fractions(dennums::Vector{Vector{T}}) where {T} =
@@ -165,6 +168,40 @@ function check_constructive_field_membership(
     remainders, tag_to_gen
 end
 
+R, (a, b) = Nemo.QQ["a", "b"]
+
+T1, T2, T3 = a^2 + b^2, a^3 + b^3, a^4 + b^4
+T1^6 - 4 * T1^3 * T2^2 - 3 * T1^2 * T3^2 + 12 * T1 * T2^2 * T3 - 4 * T2^4 - 2 * T3^3
+
+fracs_generators = [a^2 + b^2]
+to_be_reduced = [a^2 + b^2]
+rem_tags, tag_to_gen = check_constructive_field_membership(fracs_generators, to_be_reduced)
+@info "" rem_tags tag_to_gen
+
+#####################
+# Sanity test!
+
+R, (a, b) = Nemo.QQ["a", "b"]
+
+fracs_generators = [a^2, (a + b) // (b)]
+to_be_reduced = [a^4, (a + b - 5a^2 * b) // (b), (a + b) // (b * a^20)]
+
+rem_tags, tag_to_gen = check_constructive_field_membership(fracs_generators, to_be_reduced)
+@info "" rem_tags tag_to_gen
+#=
+┌ Info: 
+│   rem_tags =
+│    3-element Vector{AbstractAlgebra.Generic.Frac{fmpq_mpoly}}:
+│     T1^2
+│     -5*T1 + T2
+│     T2//T1^10
+│   tag_to_gen =
+│    Dict{fmpq_mpoly, AbstractAlgebra.Generic.Frac{fmpq_mpoly}} with 2 entries:
+│      T1 => a^2
+└      T2 => (a + b)//b
+=#
+#####################
+
 """
     vector_field_along(derivation, directions)
 
@@ -243,6 +280,169 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     new_vars_vector_field, new_inputs, new_outputs, new_vars
 end
 
+##########################
+
+covid = StructuralIdentifiability.@ODEmodel(
+    S'(t) = -b * S(t) * (I(t) + J(t) + q * A(t)) * Ninv(t),
+    E'(t) = b * S(t) * (I(t) + J(t) + q * A(t)) * Ninv(t) - k * E(t),
+    A'(t) = k * (1 - r) * E(t) - g1 * A(t),
+    I'(t) = k * r * E(t) - (alpha + g1) * I(t),
+    J'(t) = alpha * I(t) - g2 * J(t),
+    C'(t) = alpha * I(t),
+    Ninv'(t) = 0,
+    y(t) = C(t),
+    y2(t) = Ninv(t)
+)
+
+id_funcs = StructuralIdentifiability.find_identifiable_functions(
+    covid,
+    with_states = true,
+    strategy = (:hybrid,),
+)
+
+new_states = [J, C, I, r * E, r * S, q * A, A // (r * E - E)]
+new_params = [Ninv, g1, k, g2, alpha, b]
+
+new_vector_field, new_inputs, new_outputs, new_vars =
+    reparametrize_with_respect_to(covid, new_states, new_params)
+@info "" new_vector_field new_inputs new_outputs new_vars
+
+##########################
+
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = a * x1 - b * x1 * x2 + u(t),
+    x2'(t) = -c * x2 + d * x1 * x2,
+    y(t) = x1
+)
+
+StructuralIdentifiability.find_identifiable_functions(
+    ode,
+    with_states = true,
+    strategy = (:hybrid,),
+)
+
+new_vector_field, new_inputs, new_outputs, new_vars =
+    reparametrize_with_respect_to(ode, [x1, b * x2], [a, c, d])
+@info "" new_vector_field new_inputs new_outputs new_vars
+
+#####################
+# Sanity test!
+# 1.
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = x1 + x2 + a + b,
+    x2'(t) = x1 + x2,
+    y(t) = x1 + x2
+)
+
+new_vector_field, new_outputs, new_vars =
+    reparametrize_with_respect_to(ode, [x1 + x2], [a + b])
+@info "" new_vector_field new_outputs new_vars
+#=
+┌ Info: 
+│   new_vector_field =
+│    Dict{Any, Any} with 1 entry:
+│      T1 => 2*T1 + T2
+│   new_outputs =
+│    Dict{fmpq_mpoly, AbstractAlgebra.Generic.Frac{fmpq_mpoly}} with 1 entry:
+│      y => T1
+│   new_vars =
+│    Dict{fmpq_mpoly, AbstractAlgebra.Generic.Frac{fmpq_mpoly}} with 2 entries:
+│      T2 => a + b
+└      T1 => x2 + x1
+=#
+
+# 2.
+#! format: off
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = a * x1, 
+    x2'(t) = b * x2, 
+    y(t) = x1*x2
+)
+
+id_funcs = StructuralIdentifiability.find_identifiable_functions(
+    ode,
+    with_states = true,
+    strategy = (:hybrid,),
+)
+@info "" id_funcs
+#=
+┌ Info: 
+│   id_funcs =
+│    2-element Vector{AbstractAlgebra.Generic.Frac{fmpq_mpoly}}:
+│     x2*x1
+└     a + b
+=#
+
+new_states = [x1 * x2]
+new_params = [a + b]
+
+new_vector_field, new_outputs, new_vars = reparametrize_with_respect_to(ode, new_states, new_params)
+@info "" new_vector_field new_outputs new_vars
+#=
+┌ Info: 
+│   new_vector_field =
+│    Dict{Any, Any} with 1 entry:
+│      T1 => T1*T2
+│   new_outputs =
+│    Dict{fmpq_mpoly, AbstractAlgebra.Generic.Frac{fmpq_mpoly}} with 1 entry:
+│      y => T1
+│   new_vars =
+│    Dict{fmpq_mpoly, AbstractAlgebra.Generic.Frac{fmpq_mpoly}} with 2 entries:
+│      T2 => a + b
+└      T1 => x2*x1
+=#
+
+# 3.
+#! format: off
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = a * x1, 
+    x2'(t) = b * x2, 
+    y(t) = x1 + x2
+)
+
+id_funcs = StructuralIdentifiability.find_identifiable_functions(
+    ode,
+    with_states = true,
+    strategy = (:hybrid,),
+)
+@info "" id_funcs
+#=
+┌ Info: 
+│   id_funcs =
+│    5-element Vector{AbstractAlgebra.Generic.Frac{fmpq_mpoly}}:
+│     x2*x1
+│     a*b
+│     x2 + x1
+│     a + b
+└     a*x2 - a*x1 - b*x2 + b*x1
+=#
+
+new_states = [x1 * x2, x1 + x2, a*x2 - a*x1 - b*x2 + b*x1]
+new_params = [a + b, a*b]
+
+new_vector_field, new_iutputs, new_vars = reparametrize_with_respect_to(ode, new_states, new_params)
+@info "" new_vector_field new_outputs new_vars
+#=
+┌ Info: 
+│   new_vector_field =
+│    Dict{Any, Any} with 3 entries:
+│      T1 => 1//2*T1*T4 - 1//2*T3
+│      T2 => T2*T4
+│      T3 => -1//2*T1*T4^2 + 2*T1*T5 + 1//2*T3*T4
+│   new_outputs =
+│    Dict{fmpq_mpoly, AbstractAlgebra.Generic.Frac{fmpq_mpoly}} with 1 entry:
+│      y => T1
+│   new_vars =
+│    Dict{fmpq_mpoly, AbstractAlgebra.Generic.Frac{fmpq_mpoly}} with 5 entries:
+│      T1 => x2 + x1
+│      T2 => x2*x1
+│      T3 => a*x2 - a*x1 - b*x2 + b*x1
+│      T4 => a + b
+└      T5 => a*b
+=#
+#! format: on
+#####################
+
 function reparametrize_global(ode::StructuralIdentifiability.ODE{P}) where {P}
     id_funcs = StructuralIdentifiability.find_identifiable_functions(
         ode,
@@ -305,3 +505,43 @@ function reparametrize_global(ode::StructuralIdentifiability.ODE{P}) where {P}
     @assert base_ring(parent(first(values(new_vars)))) == parent(ode)
     return new_ode, new_vars
 end
+
+#####################
+
+using StructuralIdentifiability
+
+# Lotka-Volterra,
+# parameter b and state x2 are not identifiabile
+ode = @ODEmodel(
+    x1'(t) = a * x1 - b * x1 * x2 + u(t),
+    x2'(t) = -c * x2 + d * x1 * x2,
+    y(t) = x1
+)
+
+new_ode, new_vars = reparametrize_global(ode)
+@info "" new_ode new_vars
+#=
+new_ode =
+    T2'(t) = -T2(t)*T1(t) + T2(t)*T5 + T6(t)
+    T1'(t) = T2(t)*T1(t)*T4 - T1(t)*T3
+    y(t) = T2(t)
+ 
+new_vars =
+Dict{Nemo.fmpq_mpoly, AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}} with 6 entries:
+    T2 => x1
+    T3 => c
+    T1 => b*x2
+    T5 => a
+    T6 => u
+    T4 => d
+=#
+
+assess_identifiability(new_ode)
+#=
+Dict{Any, Symbol} with 5 entries:
+  T2 => :globally
+  T3 => :globally
+  T1 => :globally
+  T5 => :globally
+  T4 => :globally
+=#

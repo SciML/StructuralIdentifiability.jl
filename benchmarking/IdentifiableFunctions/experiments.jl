@@ -860,8 +860,8 @@ end
 #! format: off
 
 funcs1 = StructuralIdentifiability.find_identifiable_functions(
-    fujita,
-    with_states = true,
+    hiv,
+    with_states = false,
 )
 
 @my_profview funcs2 = StructuralIdentifiability.find_identifiable_functions(
