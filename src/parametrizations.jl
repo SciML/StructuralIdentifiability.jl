@@ -274,6 +274,7 @@ function reparametrize_global(ode::StructuralIdentifiability.ODE{P}) where {P}
     # new_vars_trimmed = union(new_vars_trimmed, map(vars, collect(keys(new_inputs)))...)
     new_vars_trimmed = union(new_vars_trimmed, map(vars, collect(keys(new_outputs)))...)
     new_vars_trimmed = union(new_vars_trimmed, map(vars, collect(values(new_outputs)))...)
+    new_vars_trimmed = union(new_vars_trimmed, map(vars, collect(keys(new_vars)))...)
     new_ring_trimmed, new_vars_trimmed = PolynomialRing(
         base_ring(new_ring),
         map(string, new_vars_trimmed),
