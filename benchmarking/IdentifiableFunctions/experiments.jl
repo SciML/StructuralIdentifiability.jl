@@ -860,8 +860,36 @@ end
 #! format: off
 
 funcs1 = StructuralIdentifiability.find_identifiable_functions(
-    hiv,
-    with_states = false,
+    Bilirubin2_io,
+    with_states = true,
+    strategy=(:gb,)
+)
+
+new_rff = StructuralIdentifiability.RationalFunctionField(funcs1)
+cfs = StructuralIdentifiability.beautifuly_generators(new_rff)
+gb_rff = StructuralIdentifiability.RationalFunctionField(cfs)
+
+K = GF(2^31 - 1)
+mqs = gb_rff.mqs
+vars = gens(parent(mqs))
+ParamPunPam.reduce_mod_p!(mqs, K)
+point = [rand(K) for _ in 1:length(vars) - 1]
+ideal_spec = StructuralIdentifiability.specialize_mod_p(mqs, point)
+
+ord = Groebner.Lex()
+
+hom_ideal_spec = StructuralIdentifiability.homogenize(ideal_spec)
+
+Groebner.groebner(hom_ideal_spec, ordering=ord)
+
+# n = length(vars_shuffled)
+# n1, n2 = div(n, 2), n - div(n, 2)
+# ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
+
+funcs1 = StructuralIdentifiability.find_identifiable_functions(
+    qy,
+    with_states = true,
+    strategy=(:hybrid,)
 )
 
 @my_profview funcs2 = StructuralIdentifiability.find_identifiable_functions(

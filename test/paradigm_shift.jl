@@ -181,16 +181,6 @@ cases = [
         ),
     ),
     (
-        # LLW1987_io
-        # TODO: May fail for some reason
-        ode = StructuralIdentifiability.@ODEmodel(
-            x1'(t) = -p1 * x1(t) + p2 * u(t),
-            x2'(t) = -p3 * x2(t) + p4 * u(t),
-            x3'(t) = -(p1 + p3) * x3(t) + (p4 * x1(t) + p2 * x2(t)) * u(t),
-            y1(t) = x3(t)
-        ),
-    ),
-    (
         # Pivastatin
         # Reparametrizes into a 4-dimensional nonlinear model with no algebraic
         # relations -- how is this even legal?? 
@@ -209,6 +199,15 @@ cases = [
             enz'(t) = d3 * mRNAenz(t) - d2 * mRNA(t) * enz(t),
             mRNAenz'(t) = -d3 * mRNAenz(t) + d2 * mRNA(t) * enz(t),
             y1(t) = GFP(t)
+        ),
+    ),
+    (
+        # LLW1987_io
+        ode = StructuralIdentifiability.@ODEmodel(
+            x1'(t) = -p1 * x1(t) + p2 * u(t),
+            x2'(t) = -p3 * x2(t) + p4 * u(t),
+            x3'(t) = -(p1 + p3) * x3(t) + (p4 * x1(t) + p2 * x2(t)) * u(t),
+            y1(t) = x3(t)
         ),
     ),
 ]
@@ -246,4 +245,4 @@ ode = StructuralIdentifiability.@ODEmodel(
     y1(t) = x3(t)
 )
 
-StructuralIdentifiability.reparametrize_global(ode)
+new_ode, new_vars, implicit_relations = StructuralIdentifiability.reparametrize_global(ode)
