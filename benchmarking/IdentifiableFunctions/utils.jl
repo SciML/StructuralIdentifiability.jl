@@ -1,5 +1,7 @@
 # shared utilities for benchmarking
 
+categories = [:implicit_relations, :dim_before, :dim_after]
+
 ID_TIME_CATEGORIES = [
     :id_total,
     #:id_io_time,
@@ -29,6 +31,9 @@ HUMAN_READABLE_CATEGORIES = Dict(
     :id_normalforms_time => "normal forms",
     :id_gbfan_time => "GB fan",
     :id_ranking => "Score",
+    :implicit_relations => "Algebraic relations",
+    :dim_before => "Dim. before",
+    :dim_after => "Dim. after",
 )
 
 function parse_keywords(keywords)
@@ -44,6 +49,9 @@ function parse_keywords(keywords)
 end
 
 function keywords_to_id(keywords)
+    if isempty(keywords)
+        return :reparam
+    end
     id = get(keywords, :strategy, :default)
     if haskey(keywords, :with_states)
         if keywords.with_states

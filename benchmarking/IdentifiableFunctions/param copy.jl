@@ -400,7 +400,42 @@ ode = StructuralIdentifiability.@ODEmodel(
     y(t) = x1 + x2
 )
 
+id_funcs = StructuralIdentifiability.find_identifiable_functions(
+    ode,
+    with_states = true,
+    strategy = (:hybrid,),
+)
+
+T1 = -a*x2 + a*x1 + b*x2 - b*x1
+T2 = x2 + x1
+T3 = x2*x1
+T4 = a*b
+T5 = a + b
+
+T1^2 + 4*T2^2*T4 - T2^2*T5^2 - 16*T3*T4 + 4*T3*T5^2
+
+new_vector_field, new_inputs, new_outputs, new_vars = StructuralIdentifiability.reparametrize_with_respect_to(
+    ode, [x2 + x1, -a*x2 + a*x1 + b*x2 - b*x1], [a*b, a + b]
+)
+
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = a * x1 - b * x1 * x2 + u(t),
+    x2'(t) = -c * x2 + d * x1 * x2,
+    y(t) = x1
+)
+id_funcs = StructuralIdentifiability.find_identifiable_functions(
+    ode,
+    with_states = true,
+    strategy = (:hybrid,),
+)
+
 new_ode, new_vars = StructuralIdentifiability.reparametrize_global(ode)
+
+T3 = x2*x1
+T4= a*b
+T2= x2 + x1
+T5= a + b
+T1= -a*x2 + a*x1 + b*x2 - b*x1
 
 id_funcs = StructuralIdentifiability.find_identifiable_functions(
     ode,
@@ -514,9 +549,11 @@ using StructuralIdentifiability
 
 # Lotka-Volterra,
 # parameter b and state x2 are not identifiabile
-ode = @ODEmodel(
+ode = StructuralIdentifiability.@ODEmodel(
     x1'(t) = a * x1 - b * x1 * x2 + u(t),
     x2'(t) = -c * x2 + d * x1 * x2,
+    x3'(t) = x3,
+    x4'(t) = x1,
     y(t) = x1
 )
 

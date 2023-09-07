@@ -74,7 +74,6 @@ include("pb_representation.jl")
 include("submodels.jl")
 include("discrete.jl")
 
-# TODO: print equations in ODEmodel in the order they were given in the macro
 # TODO: handle finding identifiabile functions in case there are no parameters
 
 """
