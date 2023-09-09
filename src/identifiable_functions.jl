@@ -52,6 +52,7 @@ function find_identifiable_functions(
     adjoin_identifiable = false,
     strategy = (:gb,),
 ) where {T <: MPolyElem{fmpq}}
+    Random.seed!(seed)
     @assert first(strategy) in (:gb, :gbfan, :normalforms, :hybrid)
     runtime_start = time_ns()
     half_p = 0.5 + p / 2
@@ -121,6 +122,7 @@ function find_identifiable_functions(
     seed = 42,
     strategy = (:gb,),
 )
+    Random.seed!(seed)
     if isempty(measured_quantities)
         measured_quantities = get_measured_quantities(ode)
     end

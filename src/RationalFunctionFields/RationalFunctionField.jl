@@ -303,12 +303,13 @@ function groebner_basis_coeffs(
     seed = 42,
     ordering = Groebner.InputOrdering(),
     up_to_degree = (typemax(Int), typemax(Int)),
+    use_homogenization = false,
 )
     mqs = rff.mqs
     gb, fracs, new_rff = nothing, nothing, nothing
     # Check if the basis is in cache
     if haskey(mqs.cached_groebner_bases, (ordering, up_to_degree))
-        @warn "Cache hit with ($ordering, $up_to_degree)!"
+        @debug "Cache hit with ($ordering, $up_to_degree)!"
         gb = mqs.cached_groebner_bases[ordering, up_to_degree]
         basis_coeffs = map(collect ∘ coefficients, gb)
         fracs = collect(mapreduce(Set, union!, basis_coeffs))
@@ -324,6 +325,7 @@ function groebner_basis_coeffs(
             up_to_degree = current_degrees,
             seed = seed,
             ordering = ordering,
+            # use_homogenization = true,
         )
         _runtime_logger[:id_groebner_time] += runtime
         @info "Groebner basis computed in $runtime seconds"
@@ -366,7 +368,7 @@ function generating_sets_fan(
     rff::RationalFunctionField{T},
     nbases::Integer;
     seed = 42,
-    up_to_degree = (3, 3),
+    up_to_degree = (4, 4),
 ) where {T}
     @info "Computing $nbases Groebner bases for each of the $nbases block orderings"
     time_start = time_ns()
@@ -386,7 +388,8 @@ function generating_sets_fan(
     for _ in 1:nbases
         vars_shuffled = shuffle(vars)
         n = length(vars_shuffled)
-        n1, n2 = div(n, 2), n - div(n, 2)
+        # n1, n2 = div(n, 2), n - div(n, 2)
+        n1, n2 = n - 1, 1
         ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
         @info "Computing GB for ordering" ord
         new_rff = groebner_basis_coeffs(
@@ -394,6 +397,7 @@ function generating_sets_fan(
             seed = seed,
             ordering = ord,
             up_to_degree = up_to_degree,
+            use_homogenization = true,
         )
         cfs = beautifuly_generators(new_rff, discard_redundant = false)
         ordering_to_generators[ord] = cfs
@@ -504,7 +508,13 @@ function simplified_generating_set(
     end
     # Something in the middle
     if first(strategy) === :hybrid
-        @assert length(strategy) == 1
+        @assert 1 <= length(strategy) <= 2
+        if length(strategy) == 1
+            nbases = 10
+        else
+            nbases = strategy[2]
+        end
+
         # Compute some normal forms
         up_to_degree = 3
         generators = monomial_generators_up_to_degree(
@@ -515,13 +525,7 @@ function simplified_generating_set(
         )
         append!(new_fracs, generators)
 
-        # # Now, generators from normal forms may contain simpler functions, so we
-        # # update the function field to account for that
-        # new_rff =
-        #     RationalFunctionField(beautifuly_generators(RationalFunctionField(new_fracs)))
-
         # Compute some GBs
-        nbases = 10
         fan = generating_sets_fan(new_rff, nbases; seed = seed)
         for (ord, generators) in fan
             append!(new_fracs, generators)

@@ -1,8 +1,11 @@
 # shared utilities for benchmarking
+using Printf
 
-categories = [:implicit_relations, :dim_before, :dim_after]
+const BENCHMARK_RESULTS = "results"
 
-ID_TIME_CATEGORIES = [
+const categories = [:implicit_relations, :dim_before, :dim_after]
+
+const ID_TIME_CATEGORIES = [
     :id_total,
     #:id_io_time,
     #:id_global_time,
@@ -14,10 +17,11 @@ ID_TIME_CATEGORIES = [
     #:id_gbfan_time,
     #:id_ranking,
 ]
-ID_DATA_CATEGORIES = []
-ALL_CATEGORIES = union(ID_TIME_CATEGORIES, ID_DATA_CATEGORIES)
+const ID_DATA_CATEGORIES = []
+const ALL_CATEGORIES = union(ID_TIME_CATEGORIES, ID_DATA_CATEGORIES)
+const ALL_POSSIBLE_CATEGORIES = union(ALL_CATEGORIES, Symbol[])
 
-HUMAN_READABLE_CATEGORIES = Dict(
+const HUMAN_READABLE_CATEGORIES = Dict(
     :id_io_time => "io",
     :id_primality_evaluate => "io/primality-evaluate",
     :id_uncertain_factorization => "io/uncertain-factor",
@@ -26,7 +30,7 @@ HUMAN_READABLE_CATEGORIES = Dict(
     :id_inclusion_check => "inclusion",
     :id_inclusion_check_mod_p => "inclusion Zp",
     :id_groebner_time => "ParamPunPam.jl",
-    :id_total => "total",
+    :id_total => "Runtime",
     :id_beautifulization => "beautifulization",
     :id_normalforms_time => "normal forms",
     :id_gbfan_time => "GB fan",
@@ -36,7 +40,22 @@ HUMAN_READABLE_CATEGORIES = Dict(
     :dim_after => "Dim. after",
 )
 
+const CATEGORY_FORMAT = Dict()
+for cat in ALL_POSSIBLE_CATEGORIES
+    CATEGORY_FORMAT[cat] = (val) -> if val isa Real
+        @sprintf("%.2f", val)
+    else
+        string(val)
+    end
+end
+
 function parse_keywords(keywords)
+    if isempty(keywords)
+        return [[]]
+    end
+    if isempty(eval(Meta.parse(keywords)))
+        return [[]]
+    end
     sets_of_keywords = map(strip, split(keywords, ";"))
     @assert !isempty(sets_of_keywords)
     kws_named_tuples = []
@@ -48,9 +67,9 @@ function parse_keywords(keywords)
     kws_named_tuples
 end
 
-function keywords_to_id(keywords)
+function keywords_to_global_id(keywords)
     if isempty(keywords)
-        return :reparam
+        return Symbol()
     end
     id = get(keywords, :strategy, :default)
     if haskey(keywords, :with_states)
@@ -64,4 +83,24 @@ function keywords_to_id(keywords)
         end
     end
     id
+end
+
+function timings_filename(kwid)
+    generic_filename("timings", kwid)
+end
+
+function result_filename(kwid)
+    generic_filename("result", kwid)
+end
+
+function data_filename(kwid)
+    generic_filename("data", kwid)
+end
+
+function generic_filename(name, kwid)
+    if kwid === Symbol("")
+        "$name"
+    else
+        "$name_$kwid"
+    end
 end

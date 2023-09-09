@@ -850,6 +850,13 @@ begin
         y(t) = In(t) * Ninv
     )
 
+    pivastatin = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = k3 * x3(t) - r3 * x1(t) - k1 * x1(t) * (T0 - x2(t)) + r1 * x2(t),
+        x2'(t) = k1 * x1(t) * (T0 - x2(t)) - (r1 + k2) * x2(t),
+        x3'(t) = r3 * x1(t) - (k3 + k4) * x3(t) + k2 * x2(t),
+        y1(t) = k * (x2(t) + x3(t))
+    )
+
     using Nemo, Logging
     using JuliaInterpreter
     Groebner = StructuralIdentifiability.Groebner
@@ -857,13 +864,34 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-#! format: off
-
-funcs1 = StructuralIdentifiability.find_identifiable_functions(
+funcs = StructuralIdentifiability.find_identifiable_functions(
     Bilirubin2_io,
     with_states = true,
-    strategy=(:gb,)
+    strategy = (:hybrid, 15),
 )
+
+funcs3 = StructuralIdentifiability.find_identifiable_functions(
+    Bilirubin2_io,
+    with_states = true,
+    strategy = (:normalforms, 3),
+)
+
+funcs4 = StructuralIdentifiability.find_identifiable_functions(
+    Bilirubin2_io,
+    with_states = true,
+    strategy = (:normalforms, 5),
+)
+
+F = funcs
+F = vcat(funcs[1:6], funcs[8:end])
+for i in 1:length(F)
+    F_without_i =
+        StructuralIdentifiability.RationalFunctionField(F[filter(j -> j != i, 1:length(F))])
+    res = StructuralIdentifiability.field_contains(F_without_i, [F[i]], 0.99)
+    @info "" i res
+end
+
+#! format: off
 
 new_rff = StructuralIdentifiability.RationalFunctionField(funcs1)
 cfs = StructuralIdentifiability.beautifuly_generators(new_rff)

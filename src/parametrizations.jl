@@ -170,9 +170,9 @@ function check_constructive_field_membership(
     tagged_mqs = Vector{elem_type(poly_ring_tag)}(undef, length(fracs_gen) + 1)
     Q = one(poly_ring_tag)
     for i in 1:length(fracs_gen)
-        num, den = StructuralIdentifiability.unpack_fraction(fracs_gen[i])
-        num_tag = StructuralIdentifiability.parent_ring_change(num, poly_ring_tag)
-        den_tag = StructuralIdentifiability.parent_ring_change(den, poly_ring_tag)
+        num, den = unpack_fraction(fracs_gen[i])
+        num_tag = parent_ring_change(num, poly_ring_tag)
+        den_tag = parent_ring_change(den, poly_ring_tag)
         Q = lcm(Q, den_tag)
         tagged_poly_mqs = num_tag - tag_vars[i] * den_tag
         tagged_mqs[i] = tagged_poly_mqs
@@ -260,7 +260,7 @@ function vector_field_along(derivation::Dict{T, U}, directions::AbstractVector) 
     new_vector_field =
         Dict{AbstractAlgebra.Generic.Frac{T}, AbstractAlgebra.Generic.Frac{T}}()
     for func in directions
-        df = StructuralIdentifiability.diff_frac(func, derivation)
+        df = diff_frac(func, derivation)
         new_vector_field[func] = df
     end
     return new_vector_field
@@ -323,8 +323,8 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     new_dynamics_states = new_dynamics_all[1:length(new_states)]
     new_dynamics_outputs = new_dynamics_all[(length(new_states) + 1):end]
     new_outputs = Dict(
-        StructuralIdentifiability.parent_ring_change(output, ring_of_tags) => dynamic
-        for (output, dynamic) in zip(ode.y_vars, new_dynamics_outputs)
+        parent_ring_change(output, ring_of_tags) => dynamic for
+        (output, dynamic) in zip(ode.y_vars, new_dynamics_outputs)
     )
     # Old inputs map one to one to new inputs.
     new_inputs = empty(tags)
@@ -354,16 +354,21 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
 end
 
 """
-    reparametrize_global(ode)
+    reparametrize_global(ode, options...)
 
-Casts an incantation and return a rabbit.
+Casts an incantation and returns a rabbit.
+
+## Options
+
+The function accepts the following optional arguments.
+
+- `seed`: A float in the range from 0 to 1, random seed (default is `seed = 42`). 
+- `p`: The probability of correctness (default is `p = 0.99`).
 """
-function reparametrize_global(ode::StructuralIdentifiability.ODE{P}) where {P}
-    id_funcs = StructuralIdentifiability.find_identifiable_functions(
-        ode,
-        with_states = true,
-        strategy = (:hybrid,),
-    )
+function reparametrize_global(ode::ODE{P}; p = 0.99, seed = 42) where {P}
+    Random.seed!(seed)
+    id_funcs =
+        find_identifiable_functions(ode, with_states = true, strategy = (:hybrid,), p = p)
     ode_ring = parent(ode)
     @assert base_ring(parent(first(id_funcs))) == ode_ring
     @info "Constructing a new parametrization"
