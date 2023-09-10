@@ -153,7 +153,7 @@ function run_benchmarks(args, kwargs)
     @assert nworkers > 0
 
     dirnames = first(walkdir((@__DIR__) * "/$BENCHMARK_RESULTS/"))[2]
-    to_run_names = setdiff(dirnames, to_skip)[1:3]
+    to_run_names = setdiff(dirnames, to_skip)[1:1]
     to_run_indices = collect(1:length(to_run_names))
 
     @info """
@@ -202,32 +202,25 @@ function run_benchmarks(args, kwargs)
     )
     while true
         if !isempty(queue) && length(running) < nworkers
-            next!(
-                prog,
-                showvalues = generate_showvalues(processes),
-                step = 0,
-                valuecolor = _progressbar_value_color,
-                # spinner = "⌜⌝⌟⌞",
-            )
             task = pop!(queue)
             function_kwargs = task.function_kwargs
             problem_id = task.problem_id
             problem_name = to_run_names[problem_id]
             global_id = keywords_to_global_id(function_kwargs)
-            @debug "Running $problem_name / $global_id"
-            logfn = global_id === Symbol("") ? "logs" : "logs_$global_id"
-            errfn = global_id === Symbol("") ? "errors" : "errors_$global_id"
+            @debug "Running $problem_name / $global_id. Kwargs:\n$function_kwargs"
+            logfn = generic_filename("logs", global_id)
             logs = open((@__DIR__) * "/$BENCHMARK_RESULTS/$problem_name/$logfn", "w")
-            errs = open((@__DIR__) * "/$BENCHMARK_RESULTS/$problem_name/$errfn", "w")
+            # escaping ':' for Windows
+            function_kwargs_esc = replace(string(function_kwargs), ":" => "\\:")
             cmd = Cmd([
                 "julia",
                 (@__DIR__) * "/run_single_benchmark.jl",
                 "$function_name",
                 "$problem_name",
-                "$function_kwargs",
+                "$function_kwargs_esc",
             ])
             cmd = Cmd(cmd, ignorestatus = true, detach = false, env = copy(ENV))
-            proc = run(pipeline(cmd, stdout = logs, stderr = errs), wait = false)
+            proc = run(pipeline(cmd, stdout = logs, stderr = logs), wait = false)
             push!(
                 processes,
                 (
@@ -239,10 +232,17 @@ function run_benchmarks(args, kwargs)
                     start_time = time_ns(),
                     global_run_id = global_id,
                     logfile = logs,
-                    errfile = errs,
+                    # errfile = errs,
                 ),
             )
             push!(running, processes[end])
+            next!(
+                prog,
+                showvalues = generate_showvalues(processes),
+                step = 0,
+                valuecolor = _progressbar_value_color,
+                # spinner = "⌜⌝⌟⌞",
+            )
         end
 
         sleep(0.2)
@@ -255,7 +255,7 @@ function run_benchmarks(args, kwargs)
                     push!(errored, proc)
                 end
                 close(proc.logfile)
-                close(proc.errfile)
+                # close(proc.errfile)
                 kw = proc.function_kwargs
                 start_time = proc.start_time
                 next!(
@@ -271,7 +271,7 @@ function run_benchmarks(args, kwargs)
                     push!(to_be_removed, i)
                     kill(proc.julia_process)
                     close(proc.logfile)
-                    close(proc.errfile)
+                    # close(proc.errfile)
                     kw = proc.function_kwargs
                     next!(
                         prog,
@@ -283,7 +283,7 @@ function run_benchmarks(args, kwargs)
             end
         end
         deleteat!(running, to_be_removed)
-        if isempty(queue)
+        if isempty(queue) && isempty(running)
             @debug "All benchmarks finished"
             break
         end
@@ -390,11 +390,9 @@ function collect_timings(args, kwargs, names; content = :compare)
 
     $(now())
 
-    Function: `$(args["function"])`
-
-    Workers: $(args["workers"])
-
-    Timeout: $(args["timeout"]) s
+    - Benchmarked function: `$(args["function"])`
+    - Workers: $(args["workers"])
+    - Timeout: $(args["timeout"]) s
 
     **All timings in seconds.**
 
@@ -402,7 +400,7 @@ function collect_timings(args, kwargs, names; content = :compare)
 
     makecolname(kw, target) =
         kw === Symbol("") ? HUMAN_READABLE_CATEGORIES[target] :
-        Symbol(Symbol(kw), Symbol("/"), HUMAN_READABLE_CATEGORIES[target])
+        Symbol(Symbol(kw), Symbol(" / "), HUMAN_READABLE_CATEGORIES[target])
     columns = [makecolname(kwid, target) for kwid in kwids for target in targets]
     resulting_md *= "|Model|" * join(map(string, columns), "|") * "|\n"
     resulting_md *= "|-----|" * join(["---" for _ in columns], "|") * "|\n"

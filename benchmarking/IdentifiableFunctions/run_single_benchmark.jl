@@ -18,24 +18,21 @@ const PROBLEM_NAME = ARGS[2]
 const KWARGS = parse_keywords(ARGS[3])[1]
 const GLOBAL_ID = keywords_to_global_id(KWARGS)
 
+@info "" FUNCTION_NAME
+@info "" PROBLEM_NAME
+@info "" KWARGS
+@info "" GLOBAL_ID
+flush(stdout)
+flush(stderr)
+
 # Load the system
 path = (@__DIR__) * "/$BENCHMARK_RESULTS/$PROBLEM_NAME/$PROBLEM_NAME.jl"
 include(path)
 
 # Compile
-# ode = @ODEmodel(
-#     x1'(t) = (-b * c * x1(t) - b * x1(t) * x4(t) + 1) // (c + x4(t)),
-#     x2'(t) = alpha * x1(t) - beta * x2(t),
-#     x3'(t) = gama * x2(t) - delta * x3(t),
-#     x4'(t) = (gama * sigma * x2(t) * x4(t) - delta * sigma * x3(t) * x4(t)) // x3(t),
-#     y(t) = x1(t)
-# )
-# find_identifiable_functions(ode; KWARGS...)
-
-macro invoke_function(func, args, kwargs)
-    func_sym = Symbol(func)
-    esc(:($func_sym($args, $(kwargs)...)))
-end
+const FUNC_SYM = Symbol(FUNCTION_NAME)
+ode = @ODEmodel(x1'(t) = a * x1(t) + x2, x2'(t) = b * x2(t) + c * d, y(t) = x1(t))
+eval(:($FUNC_SYM($system; ($KWARGS...))))
 
 function process_system()
     @info "Processing $PROBLEM_NAME"
@@ -46,10 +43,9 @@ function process_system()
     $KWARGS
     ID: $GLOBAL_ID"""
 
-    func_sym = Symbol(FUNCTION_NAME)
     data[PROBLEM_NAME] = Dict{Any, Any}(c => 0.0 for c in ALL_CATEGORIES)
     for _ in 1:NUM_RUNS
-        timing = @timed result = eval(:($func_sym($system, $(KWARGS...))))
+        timing = @timed result = eval(:($FUNC_SYM($system; ($KWARGS...))))
         data[PROBLEM_NAME][:return_value] = result
         @info "Result is" result
         for cat in ID_TIME_CATEGORIES
@@ -95,18 +91,26 @@ function dump_results()
         end
     end
     filename = data_filename(GLOBAL_ID)
+    open((@__DIR__) * "/$BENCHMARK_RESULTS/$PROBLEM_NAME/$filename", "w") do io
+        write(io, "$PROBLEM_NAME\n")
+    end
     for cat in ID_DATA_CATEGORIES
+        if !haskey(data[PROBLEM_NAME], cat)
+            continue
+        end
         if cat === :something_important
             # make a separate file for it
             filename_cat = generic_filename(cat, GLOBAL_ID)
-            open((@__DIR__) * "/$BENCHMARK_RESULTS/$NAME/$filename_cat", "w") do io
+            open((@__DIR__) * "/$BENCHMARK_RESULTS/$PROBLEM_NAME/$filename_cat", "w") do io
                 # print something
             end
             continue
         end
         # otherwise, print in the data file
-        open((@__DIR__) * "/$BENCHMARK_RESULTS/$NAME/$filename", "w+") do io
-            write(io, string(model_data[cat]))
+        open((@__DIR__) * "/$BENCHMARK_RESULTS/$PROBLEM_NAME/$filename", "a+") do io
+            write(io, "$cat, ")
+            write(io, string(data[PROBLEM_NAME][cat]))
+            write(io, "\n")
         end
     end
 end

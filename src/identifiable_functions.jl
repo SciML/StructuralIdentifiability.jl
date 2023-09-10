@@ -74,6 +74,7 @@ function find_identifiable_functions(
     end
     id_funcs_fracs = [parent_ring_change(f, parent(ode)) for f in id_funcs_fracs]
     _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1e9
+    _runtime_logger[:are_id_funcs_polynomial] = all(isone ∘ denominator, id_funcs_fracs)
     @info "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds"
     return id_funcs_fracs
 end

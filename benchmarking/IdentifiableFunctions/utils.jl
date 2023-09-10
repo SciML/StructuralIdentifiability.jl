@@ -17,7 +17,7 @@ const ID_TIME_CATEGORIES = [
     #:id_gbfan_time,
     #:id_ranking,
 ]
-const ID_DATA_CATEGORIES = []
+const ID_DATA_CATEGORIES = [:are_id_funcs_polynomial]
 const ALL_CATEGORIES = union(ID_TIME_CATEGORIES, ID_DATA_CATEGORIES)
 const ALL_POSSIBLE_CATEGORIES = union(ALL_CATEGORIES, Symbol[])
 
@@ -38,6 +38,7 @@ const HUMAN_READABLE_CATEGORIES = Dict(
     :implicit_relations => "Algebraic relations",
     :dim_before => "Dim. before",
     :dim_after => "Dim. after",
+    :are_id_funcs_polynomial => "Polynomial?",
 )
 
 const CATEGORY_FORMAT = Dict()
@@ -48,8 +49,11 @@ for cat in ALL_POSSIBLE_CATEGORIES
         string(val)
     end
 end
+CATEGORY_FORMAT[:are_id_funcs_polynomial] = (val) -> string(val) == "true" ? "yes" : "no"
 
 function parse_keywords(keywords)
+    keywords = replace(keywords, "\\:" => ":")
+    keywords = replace(keywords, "\"" => "")
     if isempty(keywords)
         return [[]]
     end
@@ -71,15 +75,23 @@ function keywords_to_global_id(keywords)
     if isempty(keywords)
         return Symbol()
     end
-    id = get(keywords, :strategy, :default)
+    id = get(keywords, :strategy, Symbol(""))
     if haskey(keywords, :with_states)
         if keywords.with_states
-            id = Symbol(id, :_with_states)
+            id = if id !== Symbol("")
+                Symbol(id, :_with_states)
+            else
+                Symbol(id, :with_states)
+            end
         end
     end
     if haskey(keywords, :adjoin_identifiable)
         if keywords.adjoin_identifiable
-            id = Symbol(id, :_adjoin_identifiable)
+            id = if id !== Symbol("")
+                Symbol(id, :_adjoin_identifiable)
+            else
+                Symbol(id, :adjoin_identifiable)
+            end
         end
     end
     id
@@ -98,9 +110,11 @@ function data_filename(kwid)
 end
 
 function generic_filename(name, kwid)
-    if kwid === Symbol("")
+    str = if kwid === Symbol("")
         "$name"
     else
-        "$name_$kwid"
+        "$(name)_$kwid"
     end
+    str = replace(str, ":" => "")
+    str
 end
