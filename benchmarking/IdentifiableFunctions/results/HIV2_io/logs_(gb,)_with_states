@@ -1,0 +1,364 @@
+┌ Info: 
+└   FUNCTION_NAME = "find_identifiable_functions"
+┌ Info: 
+└   PROBLEM_NAME = "HIV2_io"
+┌ Info: 
+└   KWARGS = (strategy = (:gb,), with_states = true)
+┌ Info: 
+└   GLOBAL_ID = Symbol("(:gb,)_with_states")
+[ Info: Summary of the model:
+[ Info: State variables: x1, x2, x3, x4
+[ Info: Parameters: b, c, q1, w1, k2, d, s, k1, w2, q2
+[ Info: Inputs: 
+[ Info: Outputs: y1, y2
+[ Info: Summary of the model:
+[ Info: State variables: x1, x2
+[ Info: Parameters: a, b, d, c
+[ Info: Inputs: 
+[ Info: Outputs: y
+[ Info: Computing IO-equations
+┌ Info: Computed in 13.592776965 seconds
+│   :ioeq_time = :ioeq_time
+└   ioeq_time = 13.592776965
+[ Info: Computing Wronskians
+┌ Info: Computed in 11.265906128 seconds
+│   :wrnsk_time = :wrnsk_time
+└   wrnsk_time = 11.265906128
+[ Info: Dimensions of the Wronskians [4, 7]
+┌ Info: Ranks of the Wronskians computed in 0.031056944 seconds
+│   :rank_time = :rank_time
+└   rank_times = 0.031056944
+⌜ # Computing specializations..  	 Time: 0:00:06[K✓ # Computing specializations..  	 Time: 0:00:06[K
+⌜ # Computing specializations.. 	 Time: 0:00:00[K
+  Points:  2[K[K[A✓ # Computing specializations.. 	 Time: 0:00:01[K
+⌜ # Computing specializations.. 	 Time: 0:00:00[K
+  Points:  294[K[K[A✓ # Computing specializations.. 	 Time: 0:00:00[K
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 10 functions in Rational Field(b, c, q1, w1, k2, d, s, k1, w2, q2, x1, x2, x3, x4)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    9-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (0, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (0, 0), (0, 0), (0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (0, 0), (0, 0), (2, 1)]
+│     [(0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (1, 0), (1, 0), (1, 0), (2, 0)]
+└     [(0, 0), (1, 0), (2, 0), (3, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 1
+[ Info: Success! 96 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 1 for den.
+│     Maximal number of interpolated terms are: 5 for num. and 1 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 10.737662644 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 2.712155727 seconds. Result: true
+┌ Info: Computing parametric Groebner basis up to degrees (4, 4)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 10 functions in Rational Field(b, c, q1, w1, k2, d, s, k1, w2, q2, x1, x2, x3, x4)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    9-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (0, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (0, 0), (0, 0), (0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (0, 0), (0, 0), (2, 1)]
+│     [(0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (1, 0), (1, 0), (1, 0), (2, 0)]
+└     [(0, 0), (1, 0), (2, 0), (3, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 1
+[ Info: Success! 96 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 3 for num. and 1 for den.
+│     Maximal number of interpolated terms are: 5 for num. and 1 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.097164394 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.001737025 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 11 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 8 fractions 8 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 2.938577872 seconds. Result: true
+[ Info: Out of 9 initial generators there are 8 indepdendent
+[ Info: The ranking of the new set of generators is 120
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 15 functions in Rational Field(b, c, q1, w1, k2, d, s, k1, w2, q2, x1, x2, x3, x4)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 66 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    34-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (10, 9), (10, 9), (10, 9), (11, 9), (11, 9), (11, 9)]
+│     [(0, 0), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14)]
+└     [(0, 0), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 128 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 5 for num. and 1 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.429227121 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.050642252 seconds. Result: true
+┌ Info: Computing parametric Groebner basis up to degrees (4, 4)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 15 functions in Rational Field(b, c, q1, w1, k2, d, s, k1, w2, q2, x1, x2, x3, x4)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 66 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    34-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (10, 9), (10, 9), (10, 9), (11, 9), (11, 9), (11, 9)]
+│     [(0, 0), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14)]
+└     [(0, 0), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 5, Denominator: 5
+[ Info: Success! 384 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 4 for num. and 4 for den.
+│     Maximal number of interpolated terms are: 11 for num. and 8 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.834502391 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.007730196 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 28 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 12 fractions 12 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 0.301879975 seconds. Result: true
+[ Info: Out of 14 initial generators there are 12 indepdendent
+[ Info: The ranking of the new set of generators is 940
+[ Info: The search for identifiable functions concluded in 53.771524794 seconds
+[ Info: Processing HIV2_io
+┌ Info: Averaging over 1 runs.
+│ Using keyword arguments:
+│ NamedTuple{(:strategy, :with_states), Tuple{Tuple{Symbol}, Bool}}
+│ (strategy = (:gb,), with_states = true)
+└ ID: (:gb,)_with_states
+[ Info: Computing IO-equations
+┌ Info: Computed in 0.039196969 seconds
+│   :ioeq_time = :ioeq_time
+└   ioeq_time = 0.039196969
+[ Info: Computing Wronskians
+┌ Info: Computed in 0.00522925 seconds
+│   :wrnsk_time = :wrnsk_time
+└   wrnsk_time = 0.00522925
+[ Info: Dimensions of the Wronskians [4, 7]
+┌ Info: Ranks of the Wronskians computed in 1.6407e-5 seconds
+│   :rank_time = :rank_time
+└   rank_times = 1.6407e-5
+⌜ # Computing specializations.. 	 Time: 0:00:00[K
+  Points:  253[K[K[A✓ # Computing specializations.. 	 Time: 0:00:00[K
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 10 functions in Rational Field(b, c, q1, w1, k2, d, s, k1, w2, q2, x1, x2, x3, x4)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    9-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (0, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (0, 0), (0, 0), (0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (0, 0), (0, 0), (2, 1)]
+│     [(0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (1, 0), (1, 0), (1, 0), (2, 0)]
+└     [(0, 0), (1, 0), (2, 0), (3, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 1
+[ Info: Success! 96 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 1 for den.
+│     Maximal number of interpolated terms are: 5 for num. and 1 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.051087671 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.055782803 seconds. Result: true
+┌ Info: Computing parametric Groebner basis up to degrees (4, 4)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 10 functions in Rational Field(b, c, q1, w1, k2, d, s, k1, w2, q2, x1, x2, x3, x4)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    9-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (0, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (0, 0), (0, 0), (0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (0, 0), (0, 0), (2, 1)]
+│     [(0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (1, 0), (1, 0), (1, 0), (2, 0)]
+└     [(0, 0), (1, 0), (2, 0), (3, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 1
+[ Info: Success! 96 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 3 for num. and 1 for den.
+│     Maximal number of interpolated terms are: 5 for num. and 1 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.056445883 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.00150276 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 11 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 8 fractions 8 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 0.002470001 seconds. Result: true
+[ Info: Out of 9 initial generators there are 8 indepdendent
+[ Info: The ranking of the new set of generators is 120
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 15 functions in Rational Field(b, c, q1, w1, k2, d, s, k1, w2, q2, x1, x2, x3, x4)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 66 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    34-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (10, 9), (10, 9), (10, 9), (11, 9), (11, 9), (11, 9)]
+│     [(0, 0), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14)]
+└     [(0, 0), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 128 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 5 for num. and 1 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.427069169 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.003882914 seconds. Result: true
+┌ Info: Computing parametric Groebner basis up to degrees (4, 4)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 15 functions in Rational Field(b, c, q1, w1, k2, d, s, k1, w2, q2, x1, x2, x3, x4)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 66 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    34-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (10, 9), (10, 9), (10, 9), (11, 9), (11, 9), (11, 9)]
+│     [(0, 0), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14)]
+└     [(0, 0), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14), (14, 14)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 5, Denominator: 5
+[ Info: Success! 384 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 4 for num. and 4 for den.
+│     Maximal number of interpolated terms are: 11 for num. and 8 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.814523442 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.00772114 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 28 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 12 fractions 12 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 0.299113489 seconds. Result: true
+[ Info: Out of 14 initial generators there are 12 indepdendent
+[ Info: The ranking of the new set of generators is 940
+[ Info: The search for identifiable functions concluded in 1.948614301 seconds
+┌ Info: Result is
+│   result =
+│    12-element Vector{AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}}:
+│     x4
+│     x1
+│     s
+│     d
+│     ⋮
+│     (c*x4 - k2*x3)//x4
+│     (q1*k1*x4 - k2*x3*q2 - w2*q2*x4)//(q2*x4)
+└     (c*x3*x4 - k2*x3^2 - x3*w2*x4 + k1*x2*x4)//(q2*x4)

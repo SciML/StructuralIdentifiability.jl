@@ -1,0 +1,1890 @@
+┌ Info: 
+└   FUNCTION_NAME = "find_identifiable_functions"
+┌ Info: 
+└   PROBLEM_NAME = "SEAIJRC Covid model"
+┌ Info: 
+└   KWARGS = (strategy = (:hybrid, 3), with_states = true)
+┌ Info: 
+└   GLOBAL_ID = Symbol("(:hybrid, 3)_with_states")
+[ Info: Summary of the model:
+[ Info: State variables: S, E, A, I, J, C, Ninv
+[ Info: Parameters: b, alpha, g2, k, g1, q, r
+[ Info: Inputs: 
+[ Info: Outputs: y, y2
+[ Info: Summary of the model:
+[ Info: State variables: x1, x2
+[ Info: Parameters: a, b, d, c
+[ Info: Inputs: 
+[ Info: Outputs: y
+[ Info: Computing IO-equations
+┌ Info: Computed in 35.998359354 seconds
+│   :ioeq_time = :ioeq_time
+└   ioeq_time = 35.998359354
+[ Info: Computing Wronskians
+┌ Info: Computed in 20.52308187 seconds
+│   :wrnsk_time = :wrnsk_time
+└   wrnsk_time = 20.52308187
+[ Info: Dimensions of the Wronskians [1282, 1]
+┌ Info: Ranks of the Wronskians computed in 0.745330349 seconds
+│   :rank_time = :rank_time
+└   rank_times = 0.745330349
+⌜ # Computing specializations..  	 Time: 0:00:12[K✓ # Computing specializations..  	 Time: 0:00:13[K
+⌜ # Computing specializations..  	 Time: 0:00:00[K⌝ # Computing specializations..  	 Time: 0:00:01[K⌟ # Computing specializations..  	 Time: 0:00:01[K⌞ # Computing specializations..  	 Time: 0:00:02[K⌜ # Computing specializations..  	 Time: 0:00:02[K⌝ # Computing specializations..  	 Time: 0:00:03[K⌟ # Computing specializations..  	 Time: 0:00:04[K⌞ # Computing specializations..  	 Time: 0:00:04[K⌜ # Computing specializations..  	 Time: 0:00:04[K⌝ # Computing specializations..  	 Time: 0:00:05[K⌟ # Computing specializations..  	 Time: 0:00:05[K⌞ # Computing specializations..  	 Time: 0:00:06[K⌜ # Computing specializations..  	 Time: 0:00:07[K⌝ # Computing specializations..  	 Time: 0:00:07[K⌟ # Computing specializations..  	 Time: 0:00:08[K⌞ # Computing specializations..  	 Time: 0:00:08[K⌜ # Computing specializations..  	 Time: 0:00:09[K✓ # Computing specializations..  	 Time: 0:00:09[K
+⌜ # Computing specializations.. 	 Time: 0:00:01[K
+  Points:  2[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:01[K
+  Points:  4[K[K[A⌟ # Computing specializations.. 	 Time: 0:00:02[K
+  Points:  6[K[K[A⌞ # Computing specializations.. 	 Time: 0:00:02[K
+  Points:  8[K[K[A⌜ # Computing specializations.. 	 Time: 0:00:03[K
+  Points:  10[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:03[K
+  Points:  12[K[K[A⌟ # Computing specializations.. 	 Time: 0:00:04[K
+  Points:  14[K[K[A⌞ # Computing specializations.. 	 Time: 0:00:04[K
+  Points:  16[K[K[A⌜ # Computing specializations.. 	 Time: 0:00:06[K
+  Points:  17[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:07[K
+  Points:  19[K[K[A⌟ # Computing specializations.. 	 Time: 0:00:07[K
+  Points:  21[K[K[A⌞ # Computing specializations.. 	 Time: 0:00:08[K
+  Points:  23[K[K[A⌜ # Computing specializations.. 	 Time: 0:00:09[K
+  Points:  25[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:09[K
+  Points:  27[K[K[A⌟ # Computing specializations.. 	 Time: 0:00:10[K
+  Points:  29[K[K[A⌞ # Computing specializations.. 	 Time: 0:00:10[K
+  Points:  31[K[K[A✓ # Computing specializations.. 	 Time: 0:00:10[K
+⌜ # Computing specializations..  	 Time: 0:00:05[K✓ # Computing specializations..  	 Time: 0:00:05[K
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 1465 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    8-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (0, 0), (2, 1)]
+│     [(0, 0), (4, 2), (1, 5), (2, 1), (4, 2), (2, 5), (4, 6)]
+└     [(0, 0), (0, 0), (1, 2), (0, 0), (2, 7), (1, 5)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 38.12201211 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 9.672042434 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 10 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 6 fractions 6 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 34.591595442 seconds. Result: true
+[ Info: Out of 1464 initial generators there are 6 indepdendent
+[ Info: The ranking of the new set of generators is 1750
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 15 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 18 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (0, 0)]
+│     [(0, 0), (0, 0), (2, 1)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 1
+[ Info: Success! 20 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 1 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.201793913 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.047610668 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 17 rational functions
+┌ Info: Computing normal forms (probabilistic)
+│ Parameters (14 in total): Nemo.fmpq_mpoly[b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv]
+│ Up to degree: 3
+└ Modulo: Galois field with characteristic 1073741827
+[ Info: Used specialization points: 1
+[ Info: Computing relations of 460 normal forms
+[ Info: Obtained 439 local relations over FF
+[ Info: Used specialization points: 2
+[ Info: Computing relations of 460 normal forms
+[ Info: Obtained 439 local relations over FF
+[ Info: There are 30 relations in the intersection
+[ Info: Used specialization points: 3
+[ Info: Computing relations of 460 normal forms
+[ Info: Obtained 439 local relations over FF
+[ Info: There are 30 relations in the intersection
+[ Info: Reconstructing relations to rationals
+[ Info: Computing 15 Groebner bases for block orderings. Simplification code is 3
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[t, y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y14], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 18 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (2, 1), (2, 1)]
+│     [(0, 0), (2, 0)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 2
+[ Info: Success! 24 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 6.080277905 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.003073607 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y14, t, y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y13], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 18 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (2, 1), (2, 0)]
+│     ⋮
+│     [(0, 0), (2, 1), (2, 1)]
+│     [(0, 0), (2, 0)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 2
+[ Info: Success! 24 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.050070998 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.003181488 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y13, y14, t, y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y12], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 18 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (2, 1), (2, 0)]
+│     [(0, 0), (2, 1), (2, 0)]
+│     ⋮
+│     [(0, 0), (2, 1), (2, 1)]
+│     [(0, 0), (2, 0)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 2
+[ Info: Success! 24 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.095892586 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002917355 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y12, y13, y14, t, y1, y2, y3, y4, y5, y6, y7, y8, y9, y10], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y11], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 18 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (2, 1), (2, 0)]
+│     [(0, 0), (2, 1), (2, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (2, 1), (2, 1)]
+│     [(0, 0), (2, 0)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 2
+[ Info: Success! 24 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.047126814 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002960131 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y11, y12, y13, y14, t, y1, y2, y3, y4, y5, y6, y7, y8, y9], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y10], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 18 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (2, 1), (2, 0)]
+│     [(0, 0), (2, 1), (2, 0)]
+│     [(0, 0), (2, 1), (2, 1)]
+│     [(0, 0), (2, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 2
+[ Info: Success! 24 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.089423821 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.003109253 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y10, y11, y12, y13, y14, t, y1, y2, y3, y4, y5, y6, y7, y8], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y9], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 1)]
+│     [(0, 0), (2, 0)]
+│     [(0, 0), (2, 0), (3, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(1, 2), (0, 0), (2, 1)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 2
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.058171433 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.048436044 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y9, y10, y11, y12, y13, y14, t, y1, y2, y3, y4, y5, y6, y7], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y8], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (2, 0)]
+│     [(0, 0), (2, 0), (3, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(1, 2), (0, 0), (2, 1)]
+│     [(1, 1), (0, 0)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 2
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.059702628 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002924262 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y8, y9, y10, y11, y12, y13, y14, t, y1, y2, y3, y4, y5, y6], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y7], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (0, 0), (2, 1)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(3, 2), (0, 0), (2, 0), (2, 0)]
+│     [(3, 2), (0, 0), (2, 0), (2, 0)]
+└     [(1, 2), (0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.10398212 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002840923 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y7, y8, y9, y10, y11, y12, y13, y14, t, y1, y2, y3, y4, y5], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y6], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(3, 2), (0, 0), (2, 0), (2, 0)]
+│     [(0, 0), (0, 0), (2, 1)]
+└     [(0, 0), (1, 2), (0, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.062518543 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.041352863 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y6, y7, y8, y9, y10, y11, y12, y13, y14, t, y1, y2, y3, y4], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y5], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 2), (0, 0), (0, 0)]
+│     [(0, 0), (2, 1), (2, 1), (4, 2)]
+└     [(0, 0), (2, 1), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.065154732 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002809823 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t, y1, y2, y3], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y4], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 2), (0, 0), (0, 0)]
+│     [(0, 0), (2, 1), (2, 1), (4, 2)]
+└     [(0, 0), (2, 1), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.101277085 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002937364 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t, y1, y2], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y3], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 2), (0, 0), (0, 0)]
+│     [(0, 0), (2, 1), (2, 1), (4, 2)]
+└     [(0, 0), (2, 1), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.105783071 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002971343 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t, y1], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y2], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 2), (0, 0), (0, 0)]
+│     [(0, 0), (2, 1), (2, 1), (4, 2)]
+└     [(0, 0), (2, 1), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.064549732 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002881387 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y1], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 2), (0, 0), (0, 0)]
+│     [(0, 0), (2, 1), (2, 1), (4, 2)]
+└     [(0, 0), (2, 1), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.098020235 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002863724 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[t], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (2, 1), (2, 1), (4, 2)]
+└     [(0, 0), (2, 1), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.10837609 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.003033211 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y13, y3, y9, y1, y12, y11, t, y6, y5, y14, y7, y4, y10], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y2, y8], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(1, 2), (0, 0), (2, 1)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (2, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 2
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.056909349 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002874858 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y6, y7, t, y2, y14, y11, y13, y12, y10, y8, y1, y4, y5], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y9, y3], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (2, 0)]
+│     [(0, 0), (2, 3), (2, 1), (2, 1)]
+└     [(0, 0), (0, 2), (0, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 3
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.094339729 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002759821 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y1, y11, y4, y6, y3, y12, y7, y10, y14, y8, y13, y5, y9], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y2, t], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 1)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (2, 0), (4, 0)]
+└     [(0, 0), (2, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.103850762 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002819954 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y14, y7, t, y1, y3, y2, y10, y13, y11, y4, y12, y8, y9], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y6, y5], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (2, 0), (3, 0)]
+│     [(0, 0), (1, 1)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (0, 0), (2, 1)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (2, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 2
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.060345322 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002725678 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y9, y12, y6, y2, y7, y3, y1, y5, y11, y4, y14, y13, t], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y8, y10], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (2, 1), (2, 0)]
+│     [(1, 2), (0, 0), (0, 0), (2, 1)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (2, 1), (2, 0)]
+└     [(0, 0), (1, 2), (0, 0), (0, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.095692438 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002977058 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y4, y14, y5, t, y3, y8, y10, y2, y6, y13, y11, y9, y7], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y1, y12], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (2, 0)]
+│     [(0, 0), (0, 0), (2, 1)]
+└     [(0, 0), (2, 0), (3, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 2
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.102294281 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002886022 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y2, y14, y4, t, y5, y10, y7, y13, y11, y6, y9, y3, y12], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y8, y1], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(1, 1), (0, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 2
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.05725604 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002774782 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y3, y2, y14, t, y7, y12, y5, y9, y6, y8, y13, y1, y11], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y10, y4], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 18 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 2
+[ Info: Success! 24 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.078414149 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002903952 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y13, y12, y8, y6, y2, y4, t, y10, y1, y9, y5, y7, y14], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y11, y3], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (2, 0)]
+│     [(0, 0), (0, 2), (0, 0)]
+└     [(0, 2), (0, 0), (2, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 3
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.05717477 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.039891443 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y5, y7, y11, y12, y14, y1, y4, y9, y6, y13, y3, t, y2], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y10, y8], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(1, 2), (0, 0), (2, 1)]
+│     [(0, 0), (1, 0)]
+│     [(0, 2), (0, 0), (2, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (2, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (0, 2), (0, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 3
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.058080088 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002783372 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y3, t, y7, y12, y5, y6, y11, y10, y2, y14, y9, y13, y1], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y4, y8], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(1, 1), (0, 0)]
+│     ⋮
+│     [(1, 2), (0, 2), (0, 0), (0, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 2
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.095300971 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002802818 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y4, y13, t, y12, y2, y6, y7, y10, y1, y9, y3, y14, y5], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y8, y11], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 2
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.054462737 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002603965 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y3, y7, y2, t, y10, y12, y11, y8, y13, y14, y4, y5, y9], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y1, y6], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (2, 0), (3, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (0, 0), (2, 1)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (2, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 2
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.096919648 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002528201 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y7, y4, y11, y5, y8, y12, y1, y10, y9, y3, t, y6, y2], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y14, y13], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(1, 2), (0, 0), (0, 0), (2, 1)]
+│     [(0, 0), (0, 0), (2, 1)]
+└     [(0, 0), (1, 2), (0, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.107605665 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002643756 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y4, y5, y1, t, y10, y8, y12, y7, y6, y9, y14, y11, y2], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y3, y13], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (2, 0), (3, 0)]
+│     [(0, 0), (2, 0)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 2
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.058338843 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.00280482 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y7, y10, y1, y13, y8, y3, y2], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y4, y11, y5, y14, y6, t, y9, y12], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (2, 3), (2, 1), (2, 1)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(1, 2), (0, 0), (2, 1)]
+│     [(0, 0), (2, 0)]
+└     [(0, 0), (0, 2), (0, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 3
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.093266648 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002614943 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y5, y2, y9, y7, t, y6, y10], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y1, y8, y3, y4, y11, y12, y14, y13], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 2
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.106550732 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002919411 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y9, y12, y13, y10, y7, y1, y4], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y14, y2, y11, y8, y5, t, y3, y6], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(3, 2), (0, 0), (2, 0), (2, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(3, 2), (0, 0), (2, 0), (2, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.06360195 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002614068 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y3, y4, y11, t, y8, y14, y9], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y5, y13, y6, y10, y7, y1, y12, y2], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 18 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (1, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 2
+[ Info: Success! 24 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.080268491 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.003059993 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y3, y13, y9, y12, y2, y14, y4], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y10, y1, y8, t, y11, y6, y5, y7], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(3, 2), (0, 0), (2, 0), (2, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(3, 2), (0, 0), (2, 0), (2, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (1, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.060927249 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.048223276 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y13, y5, y11, y6, y4, y7, y14], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[t, y10, y12, y2, y9, y3, y8, y1], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(1, 1), (0, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (1, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 3
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.060169431 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002668411 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y11, y1, y3, y6, y7, y4, y2], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y9, y8, y5, y13, t, y12, y10, y14], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (1, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.10286889 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002826298 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y4, y2, y7, y14, y10, y1, y12], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y8, y5, y13, t, y11, y9, y3, y6], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(1, 2), (0, 2), (0, 0), (0, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (2, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (1, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 2
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.054105182 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.055033503 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y9, y4, y5, y1, y14, y6, y12], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[t, y8, y7, y10, y11, y2, y3, y13], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (2, 1), (2, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.066490722 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.003021496 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y5, y2, y13, y12, y14, y11, y3], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y10, y4, y1, t, y7, y9, y8, y6], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(1, 1), (0, 0)]
+│     [(1, 2), (0, 2), (0, 0), (0, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (1, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 2
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.105832713 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002699955 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y11, y12, y10, y6, y13, y5, y14], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y7, y4, y9, y8, t, y2, y3, y1], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(1, 1), (0, 0)]
+│     ⋮
+│     [(1, 2), (0, 0), (2, 1)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (1, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.061974784 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.054988819 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y11, y12, y14, y5, t, y13, y8], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y10, y6, y1, y2, y7, y3, y9, y4], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (1, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 2
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.058498758 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.00274063 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y14, y13, y1, y10, y12, y4, y7], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y11, y2, y5, y6, y3, y8, t, y9], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 1)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (2, 3), (2, 1), (2, 1)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (1, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 3
+[ Info: Success! 28 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.103045856 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002600248 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y10, y1, y2, y8, y6, y13, y5], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y9, y12, y11, t, y4, y3, y7, y14], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+└     [(1, 2), (0, 0), (2, 1)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.062453946 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.044139075 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y9, y8, y7, y10, t, y6, y13], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y4, y11, y14, y12, y2, y3, y1, y5], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 14 functions in Rational Field(b, alpha, g2, k, g1, q, r, S, E, A, I, J, C, Ninv)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    15-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(1, 2), (0, 0), (0, 0), (2, 1)]
+│     [(0, 0), (0, 0), (2, 1)]
+└     [(0, 0), (1, 2), (0, 0)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.065493807 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002637969 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 18 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 827 fractions 49 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 0.023970587 seconds. Result: true
+[ Info: Out of 14 initial generators there are 13 indepdendent
+[ Info: The ranking of the new set of generators is 1829
+[ Info: The search for identifiable functions concluded in 174.845254154 seconds
+[ Info: Processing SEAIJRC Covid model
+┌ Info: Averaging over 1 runs.
+│ Using keyword arguments:
+│ NamedTuple{(:strategy, :with_states), Tuple{Tuple{Symbol, Int64}, Bool}}
+│ (strategy = (:hybrid, 3), with_states = true)
+└ ID: (:hybrid, 3)_with_states
+[ Info: Computing IO-equations
+┌ Info: Computed in 20.897233724 seconds
+│   :ioeq_time = :ioeq_time
+└   ioeq_time = 20.897233724
+[ Info: Computing Wronskians
+┌ Info: Computed in 9.613371815 seconds
+│   :wrnsk_time = :wrnsk_time
+└   wrnsk_time = 9.613371815
+[ Info: Dimensions of the Wronskians [1282, 1]
+┌ Info: Ranks of the Wronskians computed in 0.663282636 seconds
+│   :rank_time = :rank_time
+└   rank_times = 0.663282636
+⌜ # Computing specializations..  	 Time: 0:00:02[K✓ # Computing specializations..  	 Time: 0:00:02[K
+⌜ # Computing specializations..  	 Time: 0:00:00[K⌝ # Computing specializations..  	 Time: 0:00:01[K⌟ # Computing specializations..  	 Time: 0:00:01[K⌞ # Computing specializations..  	 Time: 0:00:02[K⌜ # Computing specializations..  	 Time: 0:00:02[K⌝ # Computing specializations..  	 Time: 0:00:03[K⌟ # Computing specializations..  	 Time: 0:00:03[K⌞ # Computing specializations..  	 Time: 0:00:04[K⌜ # Computing specializations..  	 Time: 0:00:04[K⌝ # Computing specializations..  	 Time: 0:00:04[K⌟ # Computing specializations..  	 Time: 0:00:05[K⌞ # Computing specializations..  	 Time: 0:00:05[K⌜ # Computing specializations..  	 Time: 0:00:05[K⌝ # Computing specializations..  	 Time: 0:00:06[K⌟ # Computing specializations..  	 Time: 0:00:06[K⌞ # Computing specializations..  	 Time: 0:00:06[K✓ # Computing specializations..  	 Time: 0:00:07[K
+⌜ # Computing specializations.. 	 Time: 0:00:00[K
+  Points:  2[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:01[K
+  Points:  4[K[K[A⌟ # Computing specializations.. 	 Time: 0:00:01[K
+  Points:  6[K[K[A⌞ # Computing specializations.. 	 Time: 0:00:02[K
+  Points:  8[K[K[A⌜ # Computing specializations.. 	 Time: 0:00:02[K
+  Points:  10[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:03[K
+  Points:  12[K[K[A⌟ # Computing specializations.. 	 Time: 0:00:03[K
+  Points:  14[K[K[A⌞ # Computing specializations.. 	 Time: 0:00:04[K
+  Points:  16[K[K[A⌜ # Computing specializations.. 	 Time: 0:00:04[K
+  Points:  17[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:05[K
+  Points:  19[K[K[A⌟ # Computing specializations.. 	 Time: 0:00:05[K
+  Points:  21[K[K[A⌞ # Computing specializations.. 	 Time: 0:00:06[K
+  Points:  23[K[K[A⌜ # Computing specializations.. 	 Time: 0:00:07[K
+  Points:  25[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:07[K
+  Points:  27[K[K[A⌟ # Computing specializations.. 	 Time: 0:00:08[K
+  Points:  29[K[K[A⌞ # Computing specializations.. 	 Time: 0:00:08[K
+  Points:  31[K[K[A✓ # Computing specializations.. 	 Time: 0:00:08[K
+
+[16392] signal (15): Terminated
+in expression starting at none:1
+n_preinvert_limb_prenorm at /workspace/srcdir/flint2/ulong_extras/preinvert_limb.c:132
+_fmpz_mpoly_divides_monagan_pearce at /workspace/srcdir/flint2/fmpz_mpoly/divides_monagan_pearce.c:383
+fmpz_mpoly_divides_monagan_pearce at /workspace/srcdir/flint2/fmpz_mpoly/divides_monagan_pearce.c:769
+fmpz_mpoly_divides at /workspace/srcdir/flint2/fmpz_mpoly/divides.c:41
+fmpq_mpoly_divides at /workspace/srcdir/flint2/fmpq_mpoly/divides.c:31
+divides at /home/demin/.julia/packages/Nemo/g02iz/src/flint/fmpq_mpoly.jl:643
+#divexact#732 at /home/demin/.julia/packages/Nemo/g02iz/src/flint/fmpq_mpoly.jl:695 [inlined]
+divexact at /home/demin/.julia/packages/Nemo/g02iz/src/flint/fmpq_mpoly.jl:693 [inlined]
+lcm at /home/demin/.julia/packages/AbstractAlgebra/FcxWh/src/generic/MPoly.jl:3547
+_mapreduce at ./reduce.jl:438
+_mapreduce_dim at ./reducedim.jl:365 [inlined]
+#mapreduce#800 at ./reducedim.jl:357 [inlined]
+mapreduce at ./reducedim.jl:357 [inlined]
+_#410 at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/IdealMQS.jl:78
+IdealMQS at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/IdealMQS.jl:55 [inlined]
+RationalFunctionField at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:34 [inlined]
+RationalFunctionField at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:30 [inlined]
+check_field_membership_mod_p at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:70
+#beautifuly_generators#484 at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:248
+beautifuly_generators at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:211
+unknown function (ip: 0x7fcc58537332)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+#simplified_generating_set#488 at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:527
+simplified_generating_set at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:487
+unknown function (ip: 0x7fcc5855e556)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+#find_identifiable_functions#514 at /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:66
+find_identifiable_functions at /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:46
+unknown function (ip: 0x7fccd418d846)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+jl_apply at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/julia.h:1880 [inlined]
+do_call at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:126
+eval_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:226
+eval_stmt_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:177 [inlined]
+eval_body at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:624
+jl_interpret_toplevel_thunk at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:762
+jl_toplevel_eval_flex at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:912
+ijl_toplevel_eval_in at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:971
+eval at ./boot.jl:370 [inlined]
+eval at ./client.jl:480 [inlined]
+macro expansion at ./timing.jl:501 [inlined]
+process_system at /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:48
+unknown function (ip: 0x7fcc585bcd8f)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+jl_apply at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/julia.h:1880 [inlined]
+do_call at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:126
+eval_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:226
+eval_stmt_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:177 [inlined]
+eval_body at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:624
+jl_interpret_toplevel_thunk at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:762
+jl_toplevel_eval_flex at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:912
+jl_toplevel_eval_flex at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:856
+ijl_toplevel_eval_in at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:971
+eval at ./boot.jl:370 [inlined]
+include_string at ./loading.jl:1903
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+_include at ./loading.jl:1963
+include at ./Base.jl:457
+jfptr_include_35036.clone_1 at /home/demin/downloads/julia-1.9.3/lib/julia/sys.so (unknown line)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+exec_options at ./client.jl:307
+_start at ./client.jl:522
+jfptr__start_40034.clone_1 at /home/demin/downloads/julia-1.9.3/lib/julia/sys.so (unknown line)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+jl_apply at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/julia.h:1880 [inlined]
+true_main at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jlapi.c:573
+jl_repl_entrypoint at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jlapi.c:717
+main at julia (unknown line)
+unknown function (ip: 0x7fcd07781d8f)
+__libc_start_main at /lib/x86_64-linux-gnu/libc.so.6 (unknown line)
+unknown function (ip: 0x4010b8)
+unknown function (ip: (nil))
+Allocations: 426177354 (Pool: 426034461; Big: 142893); GC: 1059

@@ -304,6 +304,7 @@ function groebner_basis_coeffs(
     ordering = Groebner.InputOrdering(),
     up_to_degree = (typemax(Int), typemax(Int)),
     use_homogenization = false,
+    rational_interpolator = :VanDerHoevenLecerf,
 )
     mqs = rff.mqs
     gb, fracs, new_rff = nothing, nothing, nothing
@@ -325,7 +326,7 @@ function groebner_basis_coeffs(
             up_to_degree = current_degrees,
             seed = seed,
             ordering = ordering,
-            # use_homogenization = true,
+            rational_interpolator = rational_interpolator,
         )
         _runtime_logger[:id_groebner_time] += runtime
         @info "Groebner basis computed in $runtime seconds"
@@ -366,13 +367,14 @@ Returns a set of Groebner bases for multiple different rankings of variables.
 """
 function generating_sets_fan(
     rff::RationalFunctionField{T},
-    nbases::Integer;
+    code::Integer;
     seed = 42,
-    up_to_degree = (4, 4),
+    up_to_degree = (3, 3),
 ) where {T}
-    @info "Computing $nbases Groebner bases for each of the $nbases block orderings"
     time_start = time_ns()
     vars = gens(parent(rff.mqs))
+    nbases = length(vars)
+    @info "Computing $nbases Groebner bases for block orderings. Simplification code is $code"
     ordering_to_generators = Dict()
     # The first basis in some ordering
     ord = InputOrdering()
@@ -382,25 +384,67 @@ function generating_sets_fan(
     if isempty(cfs)
         return ordering_to_generators
     end
+    if length(vars) == 1
+        return ordering_to_generators
+    end
     # NOTE: maybe hide the computation of multiple bases inside
     # RationalFunctionField
     gb_rff = RationalFunctionField(cfs)
-    for _ in 1:nbases
-        vars_shuffled = shuffle(vars)
-        n = length(vars_shuffled)
-        # n1, n2 = div(n, 2), n - div(n, 2)
-        n1, n2 = n - 1, 1
-        ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
-        @info "Computing GB for ordering" ord
-        new_rff = groebner_basis_coeffs(
-            gb_rff,
-            seed = seed,
-            ordering = ord,
-            up_to_degree = up_to_degree,
-            use_homogenization = true,
-        )
-        cfs = beautifuly_generators(new_rff, discard_redundant = false)
-        ordering_to_generators[ord] = cfs
+    if code >= 1
+        for i in 1:nbases
+            vars_shuffled = circshift(vars, i)
+            n = length(vars_shuffled)
+            # n1, n2 = div(n, 2), n - div(n, 2)
+            n1, n2 = n - 1, 1
+            ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
+            @info "Computing GB for ordering" ord
+            new_rff = groebner_basis_coeffs(
+                gb_rff,
+                seed = seed,
+                ordering = ord,
+                up_to_degree = up_to_degree,
+                use_homogenization = true,
+            )
+            cfs = beautifuly_generators(new_rff, discard_redundant = false)
+            ordering_to_generators[ord] = cfs
+        end
+    end
+    if code >= 2
+        for _ in 1:nbases
+            vars_shuffled = shuffle(vars)
+            n = length(vars_shuffled)
+            n1, n2 = max(n - 2, 1), min(2, length(vars) - 1)
+            ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
+            @info "Computing GB for ordering" ord
+            new_rff = groebner_basis_coeffs(
+                gb_rff,
+                seed = seed,
+                ordering = ord,
+                up_to_degree = up_to_degree,
+                use_homogenization = true,
+            )
+            cfs = beautifuly_generators(new_rff, discard_redundant = false)
+            ordering_to_generators[ord] = cfs
+        end
+    end
+    if code >= 3
+        for _ in 1:nbases
+            vars_shuffled = shuffle(vars)
+            n = length(vars_shuffled)
+            n1 = div(n, 2)
+            n2 = n - n1
+            ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
+            @info "Computing GB for ordering" ord
+            new_rff = groebner_basis_coeffs(
+                gb_rff,
+                seed = seed,
+                ordering = ord,
+                up_to_degree = up_to_degree,
+                use_homogenization = true,
+            )
+            cfs = beautifuly_generators(new_rff, discard_redundant = false)
+            ordering_to_generators[ord] = cfs
+        end
     end
     _runtime_logger[:id_gbfan_time] = (time_ns() - time_start) / 1e9
     return ordering_to_generators
@@ -410,28 +454,14 @@ function monomial_generators_up_to_degree(
     rff::RationalFunctionField{T},
     up_to_degree;
     seed = 42,
-    strategy = :deterministic,
+    strategy = :monte_carlo,
 ) where {T}
-    @assert strategy in (:deterministic, :monte_carlo)
-    if strategy === :deterministic
-        groebner_basis_coeffs(
-            rff,
-            seed = seed,
-            up_to_degree = (up_to_degree + 1, up_to_degree + 1),
-        )
-        relations, _, _ = linear_relations_between_normal_forms(
-            beautifuly_generators(rff),
-            rff.mqs,
-            up_to_degree,
-            seed = seed,
-        )
-    else
-        relations = linear_relations_between_normal_forms_mod_p(
-            beautifuly_generators(rff),
-            up_to_degree,
-            seed = seed,
-        )
-    end
+    @assert strategy in (:monte_carlo,)
+    relations = linear_relations_between_normal_forms_mod_p(
+        beautifuly_generators(rff),
+        up_to_degree,
+        seed = seed,
+    )
     return relations
 end
 
@@ -531,8 +561,12 @@ function simplified_generating_set(
             append!(new_fracs, generators)
         end
     end
-    @info "Final cleaning and simplification of generators"
-    runtime = @elapsed new_fracs = beautifuly_generators(RationalFunctionField(new_fracs))
+    new_fracs_unique = unique(new_fracs)
+    @info """
+    Final cleaning and simplification of generators. 
+    Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique."""
+    runtime =
+        @elapsed new_fracs = beautifuly_generators(RationalFunctionField(new_fracs_unique))
     _runtime_logger[:id_beautifulization] += runtime
     @info "Checking inclusion with probability $p"
     runtime = @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), p)

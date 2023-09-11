@@ -1,116 +1,4 @@
 
-"""
-    linear_relations_between_normal_forms(fracs, up_to_degree)
-
-Returns linear relations between the given `fracs` (potentially, not all).
-Relations may include monomials up to the `up_to_degree`.
-"""
-function linear_relations_between_normal_forms(
-    fracs::Vector{Generic.Frac{T}},
-    mqs,
-    up_to_degree::Integer;
-    seed = 42,
-) where {T}
-    @assert up_to_degree > 0
-    time_start = time_ns()
-    gb_of_mqs = first(values(mqs.cached_groebner_bases))
-    R = parent(gb_of_mqs[1])
-    R_param = base_ring(base_ring(R))
-    xs = gens(R)
-    xs_param = gens(R_param)
-    # TODO: A dirty hack!
-    @assert mqs.sat_var_index == length(xs)
-    xs = xs[1:(end - 1)]
-    @info "Computing normal forms of monomials in $(length(xs)) variables up to degree $up_to_degree"
-    normal_forms = Vector{elem_type(R)}(undef, 0)
-    monoms = Vector{elem_type(R_param)}(undef, 0)
-    @debug "GB is" gb_of_mqs
-    @info """
-    The parent rings are:
-    normal form: $(R)
-    parameteres: $(R_param)
-    groebner basis: $(parent(gb_of_mqs[1]))"""
-    @assert R == parent(gb_of_mqs[1])
-    @assert R_param == base_ring(base_ring(parent(gb_of_mqs[1])))
-    for deg in 1:up_to_degree
-        for combination in Combinatorics.with_replacement_combinations(xs, deg)
-            monom = prod(combination)
-            monom_param = evaluate(monom, vcat(xs_param, one(R_param)))
-            monom_mqs = monom - monom_param
-            b, nf = divrem(monom_mqs, gb_of_mqs)
-            @debug """
-            The normal form of $monom_mqs is:
-            normalform = $nf
-            divisors = $b"""
-            push!(monoms, numerator(monom_param))
-            push!(normal_forms, nf)
-        end
-    end
-    @info "Reducing the normal forms of $(length(monoms)) monomials over QQ"
-    relations, normal_forms, monoms = relations_over_qq(normal_forms, monoms)
-    _runtime_logger[:id_normalforms_time] = (time_ns() - time_start) / 1e9
-    @info "Relations from normal forms" relations
-    relations, monoms, normal_forms
-end
-
-function relations_over_qq(polys, preimages)
-    @assert !isempty(polys)
-    fracfield = base_ring(first(polys))
-    qq_relations = Vector{elem_type(fracfield)}()
-    # Filter out and stash zero polynomials
-    permutation = collect(1:length(polys))
-    zero_inds = filter(i -> iszero(polys[i]), permutation)
-    for ind in zero_inds
-        push!(qq_relations, fracfield(preimages[ind]))
-    end
-    @debug "Zeroed monomials are" preimages[zero_inds]
-    permutation = setdiff(permutation, zero_inds)
-    # Sort, the first monom is the smallest
-    sort!(permutation, by = i -> leading_monomial(polys[i]))
-    polys = polys[permutation]
-    preimages = preimages[permutation]
-    lead_monoms = map(leading_monomial, polys)
-    n = length(polys)
-    # Polynomials live in QQ(params)[vars].
-    # The first several elements are de facto elements of QQ(params).
-    # NOTE: `coeff(f, i)` of a polynomial f in QQ(a)[x] is excruciatingly slow
-    @inbounds for i in 1:n
-        fi = polys[i]
-        @debug "Reducing $i-th polynomial over QQ" fi
-        qq_multipliers = map(_ -> zero(Nemo.QQ), 1:n)
-        qq_multipliers[i] = one(Nemo.QQ)
-        for j in (i - 1):-1:1
-            iszero(fi) && break
-            fj = polys[j]
-            iszero(fj) && continue
-            leadj = lead_monoms[j]
-            ci = coeff(fi, leadj)
-            # If fi contains the lead of fj
-            iszero(ci) && continue
-            cj = leading_coefficient(fj)
-            cij = div(ci, cj)
-            # If the result of division belongs to QQ.
-            !is_rational_func_const(cij) && continue
-            @debug "reducing $fi with $cij x $fj"
-            fi = fi - cij * fj
-            qq_multipliers[j] = -coeff(numerator(cij), 1)
-        end
-        if iszero(fi)
-            @debug "Polynomial at index $i reduced to zero"
-            preimage = zero(fracfield)
-            for k in 1:i
-                if !iszero(qq_multipliers[k])
-                    preimage += qq_multipliers[k] * preimages[k]
-                end
-            end
-            push!(qq_relations, preimage)
-        end
-    end
-    return qq_relations, polys, preimages
-end
-
-# ------------------------------------------------------------------------------
-
 # Maintans a row echelon form of a set of vectors over the integrals.
 # Works well when the ambient dimension is small.
 mutable struct TinyRowEchelonForm{T}
@@ -164,7 +52,7 @@ function normal_forms_up_to_degree_ff(
     @assert mqs.sat_var_index == length(xs_ff)
     xs_ff = xs_ff[1:(end - 1)]
     pivot_vectors = map(f -> exponent_vector(f, 1), xs_ff)
-    @debug """
+    @info """
     variables in finite field: $(xs_ff)
     gb parent: $(ring_ff)
     specialized gb: $(gb_ff_spec)"""
@@ -172,14 +60,14 @@ function normal_forms_up_to_degree_ff(
         for combination in Combinatorics.with_replacement_combinations(pivot_vectors, deg)
             exp_vect = sum(combination)
             if in(stop_vectors, exp_vect)
-                @debug "Skipping exponent vector $exp_vect"
+                @info "Skipping exponent vector $exp_vect"
                 continue
             end
             monom_ff = ring_ff([one(finite_field)], [exp_vect])
             monom_ff_spec = evaluate(monom_ff, point_ff_ext)
             monom_mqs_ff_spec = monom_ff - monom_ff_spec
             divisors_ff, nf_ff = divrem(monom_mqs_ff_spec, gb_ff_spec)
-            @debug """
+            @info """
             The normal form of $monom_mqs_ff_spec is:
             normalform = $nf_ff
             divisors = $divisors_ff"""
@@ -224,7 +112,7 @@ function linear_relations_between_normal_forms_mod_p(
     for i in 1:length(normal_forms_ff_1)
         !iszero(normal_forms_ff_1[i]) && continue
         !(length(monoms_ff_1[i]) == 1) && continue
-        @debug "Registering existing monomial $(monoms_ff_1[i])"
+        @info "Registering existing monomial $(monoms_ff_1[i])"
         push!(relations_ff_1, monoms_ff_1[i])
         push!(tref, exponent_vector(monoms_ff_1[i], 1))
     end
@@ -242,6 +130,11 @@ function linear_relations_between_normal_forms_mod_p(
         relations_ff, normal_forms_ff, monoms_ff =
             relations_over_ff(normal_forms_ff, monoms_ff)
         @info "Obtained $(length(relations_ff)) local relations over FF"
+        @warn "!!!"
+        println("Relations:", relations_ff)
+        println(filter(rel -> degree(rel, gens(parent(rel))[end - 1]) > 0, relations_ff))
+        println(normal_forms_ff)
+        println(monoms_ff)
         if npoints == 1
             complete_intersection_relations_ff = relations_ff
             continue
@@ -275,6 +168,7 @@ function linear_relations_between_normal_forms_mod_p(
         relation_qq_param = evaluate(relation_qq, vcat(xs_param, one(ring)))
         relations_qq[i] = relation_qq_param // one(relation_qq_param)
     end
+    println(relations_qq)
     relations_qq
 end
 
@@ -290,7 +184,7 @@ function relations_over_ff(polys, preimages)
     for ind in zero_inds
         push!(ff_relations, preimages[ind])
     end
-    @debug "Zeroed monomials are" preimages[zero_inds]
+    @info "Zeroed monomials are" preimages[zero_inds]
     permutation = setdiff(permutation, zero_inds)
     # Sort, the first monom is the smallest
     lead_monoms = map(f -> iszero(f) ? one(f) : leading_monomial(f), polys)
@@ -301,7 +195,7 @@ function relations_over_ff(polys, preimages)
     n = length(polys)
     @inbounds for i in 1:n
         fi = polys[i]
-        @debug "Reducing $i-th polynomial over FF" fi
+        @info "Reducing $i-th polynomial over FF" fi
         ff_multipliers = [(i, one(ff))]
         for j in (i - 1):-1:1
             iszero(fi) && break
@@ -313,18 +207,41 @@ function relations_over_ff(polys, preimages)
             iszero(ci) && continue
             cj = leading_coefficient(fj)
             cij = div(ci, cj)
-            @debug "reducing $fi with $(-cij) x $fj"
+            @info "reducing $fi with $(-cij) x $fj"
             fi = fi - cij * fj
             push!(ff_multipliers, (j, -cij))
         end
-        !iszero(fi) && continue
-        @debug "Polynomial at index $i reduced to zero"
+        @info "after reduction" fi ff_multipliers
+        # !iszero(fi) && continue
+        # @info "Polynomial at index $i reduced to zero"
         preimage = zero(preimage_ring)
         for k in 1:length(ff_multipliers)
             idx, coef = ff_multipliers[k]
             preimage += coef * preimages[idx]
         end
-        push!(ff_relations, preimage)
+        polys[i] = fi
+        preimages[i] = preimage
+        lead_monoms[i] = iszero(fi) ? one(fi) : leading_monomial(fi)
+        if iszero(fi)
+            push!(ff_relations, preimage)
+            continue
+        end
+        @assert !iszero(fi)
+        leadi = leading_monomial(fi)
+        ci = leading_coefficient(fi)
+        for j in (i - 1):-1:1
+            fj = polys[j]
+            iszero(fj) && continue
+            cj = coeff(fj, leadi)
+            # If fj contains the lead of fi
+            iszero(cj) && continue
+            cji = div(cj, ci)
+            @info "Backward reducing $fj with $(-cji) x $fi"
+            fj = fj - cji * fi
+            preimages[j] += -cji * preimages[i]
+            polys[j] = fj
+        end
     end
+    ff_relations = map(f -> divexact(f, leading_coefficient(f)), ff_relations)
     return ff_relations, polys, preimages
 end

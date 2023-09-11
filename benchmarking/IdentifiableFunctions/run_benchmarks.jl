@@ -88,6 +88,13 @@ function parse_commandline()
             help = "Skip specified benchmark models."
             arg_type = Vector{String}
             default = ["NFkB"]
+        "--models"
+            help = """
+            Run specified benchmark models. 
+            A comma-separated list of names.
+            Leave empty for using all models."""
+            arg_type = String
+            default = ""
         "--augment"
             help = "Augment the benchmark dataset with similar models."
             arg_type = Bool
@@ -153,7 +160,13 @@ function run_benchmarks(args, kwargs)
     @assert nworkers > 0
 
     dirnames = first(walkdir((@__DIR__) * "/$BENCHMARK_RESULTS/"))[2]
-    to_run_names = setdiff(dirnames, to_skip)[1:1]
+    models_from_args = map(strip, split(args["models"], ","))
+    to_run_names = if isempty(models_from_args)
+        dirnames
+    else
+        models_from_args
+    end
+    to_run_names = setdiff(to_run_names, to_skip)
     to_run_indices = collect(1:length(to_run_names))
 
     @info """

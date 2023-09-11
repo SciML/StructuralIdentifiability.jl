@@ -1,4 +1,3 @@
-
 eq_up_to_the_order(a, b) = issubset(a, b) && issubset(b, a)
 
 @testset "Linear relations over the rationals" begin

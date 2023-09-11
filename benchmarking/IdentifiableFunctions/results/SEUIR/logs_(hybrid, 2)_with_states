@@ -1,0 +1,365 @@
+┌ Info: 
+└   FUNCTION_NAME = "find_identifiable_functions"
+┌ Info: 
+└   PROBLEM_NAME = "SEUIR"
+┌ Info: 
+└   KWARGS = (strategy = (:hybrid, 2), with_states = true)
+┌ Info: 
+└   GLOBAL_ID = Symbol("(:hybrid, 2)_with_states")
+[ Info: Summary of the model:
+[ Info: State variables: S, E, U, I, R
+[ Info: Parameters: w, N, d, z, beta
+[ Info: Inputs: 
+[ Info: Outputs: y1
+[ Info: Summary of the model:
+[ Info: State variables: x1, x2
+[ Info: Parameters: a, b, d, c
+[ Info: Inputs: 
+[ Info: Outputs: y
+[ Info: Computing IO-equations
+┌ Info: Computed in 12.297794623 seconds
+│   :ioeq_time = :ioeq_time
+└   ioeq_time = 12.297794623
+[ Info: Computing Wronskians
+┌ Info: Computed in 13.654415939 seconds
+│   :wrnsk_time = :wrnsk_time
+└   wrnsk_time = 13.654415939
+[ Info: Dimensions of the Wronskians [80]
+┌ Info: Ranks of the Wronskians computed in 0.051700732 seconds
+│   :rank_time = :rank_time
+└   rank_times = 0.051700732
+⌜ # Computing specializations..  	 Time: 0:00:09[K✓ # Computing specializations..  	 Time: 0:00:10[K
+⌜ # Computing specializations.. 	 Time: 0:00:00[K
+  Points:  2[K[K[A✓ # Computing specializations.. 	 Time: 0:00:02[K
+⌜ # Computing specializations..  	 Time: 0:00:06[K✓ # Computing specializations..  	 Time: 0:00:06[K
+
+[16759] signal (15): Terminated
+in expression starting at none:1
+jl_datatype_isinlinealloc at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/datatype.c:343
+union_isinlinable at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/datatype.c:369 [inlined]
+union_isinlinable at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/datatype.c:358 [inlined]
+ijl_islayout_inline at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/datatype.c:392
+_new_array at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/array.c:186 [inlined]
+ijl_alloc_array_1d at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/array.c:436
+Array at ./boot.jl:477 [inlined]
+Array at ./boot.jl:486 [inlined]
+Array at ./boot.jl:494 [inlined]
+similar at ./abstractarray.jl:884 [inlined]
+similar at ./abstractarray.jl:883 [inlined]
+similar at ./broadcast.jl:212 [inlined]
+similar at ./broadcast.jl:211 [inlined]
+copy at ./broadcast.jl:898 [inlined]
+materialize at ./broadcast.jl:873 [inlined]
+#213 at ./none:0
+iterate at ./generator.jl:47 [inlined]
+collect_to! at ./array.jl:840 [inlined]
+collect_to_with_first! at ./array.jl:818 [inlined]
+collect at ./array.jl:792
+_convert_to_output at /home/demin/Groebner.jl/src/input-output/AbstractAlgebra.jl:380
+_convert_to_output at /home/demin/Groebner.jl/src/input-output/AbstractAlgebra.jl:338 [inlined]
+convert_to_output at /home/demin/Groebner.jl/src/input-output/input-output.jl:250
+unknown function (ip: 0x7f124436e996)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+_groebner_apply! at /home/demin/Groebner.jl/src/groebner/learn-apply.jl:60
+unknown function (ip: 0x7f124436f47e)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+#groebner_apply!#578 at /home/demin/Groebner.jl/src/interface.jl:134
+groebner_apply! at /home/demin/Groebner.jl/src/interface.jl:133
+unknown function (ip: 0x7f124436ec1e)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+interpolate_param_exponents! at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:354
+_paramgb at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:105
+#paramgb#115 at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:70
+paramgb at /home/demin/ParamPunPam.jl/src/groebner/paramgb.jl:46 [inlined]
+macro expansion at ./timing.jl:393 [inlined]
+#groebner_basis_coeffs#485 at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:323
+groebner_basis_coeffs at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:301
+unknown function (ip: 0x7f1244348516)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+#generating_sets_fan#486 at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:400
+generating_sets_fan at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:367
+unknown function (ip: 0x7f1244340d20)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+#simplified_generating_set#488 at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:572
+simplified_generating_set at /home/demin/StructuralIdentifiability.jl/src/RationalFunctionFields/RationalFunctionField.jl:487
+unknown function (ip: 0x7f124431bcc6)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+#find_identifiable_functions#514 at /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:66
+find_identifiable_functions at /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:46
+unknown function (ip: 0x7f12dd535e76)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+jl_apply at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/julia.h:1880 [inlined]
+do_call at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:126
+eval_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:226
+eval_stmt_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:177 [inlined]
+eval_body at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:624
+jl_interpret_toplevel_thunk at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:762
+jl_toplevel_eval_flex at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:912
+ijl_toplevel_eval_in at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:971
+eval at ./boot.jl:370 [inlined]
+eval at ./client.jl:480
+unknown function (ip: 0x7f12dd4c6bb2)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+jl_apply at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/julia.h:1880 [inlined]
+do_call at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:126
+eval_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:226
+eval_stmt_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:177 [inlined]
+eval_body at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:624
+jl_interpret_toplevel_thunk at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:762
+jl_toplevel_eval_flex at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:912
+jl_toplevel_eval_flex at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:856
+ijl_toplevel_eval_in at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:971
+eval at ./boot.jl:370 [inlined]
+include_string at ./loading.jl:1903
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+_include at ./loading.jl:1963
+include at ./Base.jl:457
+jfptr_include_35036.clone_1 at /home/demin/downloads/julia-1.9.3/lib/julia/sys.so (unknown line)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+exec_options at ./client.jl:307
+_start at ./client.jl:522
+jfptr__start_40034.clone_1 at /home/demin/downloads/julia-1.9.3/lib/julia/sys.so (unknown line)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+jl_apply at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/julia.h:1880 [inlined]
+true_main at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jlapi.c:573
+jl_repl_entrypoint at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jlapi.c:717
+main at julia (unknown line)
+unknown function (ip: 0x7f12f49e6d8f)
+__libc_start_main at /lib/x86_64-linux-gnu/libc.so.6 (unknown line)
+unknown function (ip: 0x4010b8)
+unknown function (ip: (nil))
+Allocations: 103366985 (Pool: 103307199; Big: 59786); GC: 148
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 129 functions in Rational Field(w, N, d, z, beta, S, E, U, I, R)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    4-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (2, 1)]
+└     [(0, 0), (1, 3)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 3
+[ Info: Success! 14 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 1 for den.
+│     Maximal number of interpolated terms are: 1 for num. and 1 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 16.783567285 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 4.335055828 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 4 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 3 fractions 3 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 5.286191782 seconds. Result: true
+[ Info: Out of 128 initial generators there are 3 indepdendent
+[ Info: The ranking of the new set of generators is 34
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 9 functions in Rational Field(w, N, d, z, beta, S, E, U, I, R)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 34 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    13-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 1), (2, 1)]
+│     [(0, 0), (1, 1), (2, 1)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (1, 2)]
+│     [(0, 0), (0, 0)]
+└     [(0, 0), (1, 2), (2, 2)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 3, Denominator: 3
+[ Info: Success! 32 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.09144971 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.052639862 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 16 rational functions
+┌ Info: Computing normal forms (probabilistic)
+│ Parameters (10 in total): Nemo.fmpq_mpoly[w, N, d, z, beta, S, E, U, I, R]
+│ Up to degree: 3
+└ Modulo: Galois field with characteristic 1073741827
+[ Info: Used specialization points: 1
+[ Info: Computing relations of 266 normal forms
+[ Info: Obtained 227 local relations over FF
+[ Info: Used specialization points: 2
+[ Info: Computing relations of 266 normal forms
+[ Info: Obtained 227 local relations over FF
+[ Info: There are 12 relations in the intersection
+[ Info: Used specialization points: 3
+[ Info: Computing relations of 266 normal forms
+[ Info: Obtained 227 local relations over FF
+[ Info: There are 12 relations in the intersection
+[ Info: Reconstructing relations to rationals
+[ Info: Computing 11 Groebner bases for block orderings. Simplification code is 2
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[t, y1, y2, y3, y4, y5, y6, y7, y8, y9], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y10], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 8 functions in Rational Field(w, N, d, z, beta, S, E, U, I, R)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 18 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    10-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 1), (2, 1)]
+│     [(0, 0), (1, 1), (2, 1)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (0, 2)]
+│     [(0, 0), (2, 1)]
+└     [(0, 0), (1, 2)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 2
+[ Info: Success! 24 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 6.209998891 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002803425 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 14 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y10, t, y1, y2, y3, y4, y5, y6, y7, y8], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y9], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 8 functions in Rational Field(w, N, d, z, beta, S, E, U, I, R)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 18 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    10-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 1), (2, 1)]
+│     [(0, 0), (1, 1), (2, 1)]
+│     [(0, 0), (1, 0)]
+│     ⋮
+│     [(0, 0), (0, 2)]
+│     [(0, 0), (2, 1)]
+└     [(0, 0), (1, 2)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 2
+[ Info: Success! 24 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.038876532 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002536293 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 14 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y9, y10, t, y1, y2, y3, y4, y5, y6, y7], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y8], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 8 functions in Rational Field(w, N, d, z, beta, S, E, U, I, R)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 18 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    8-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 1), (2, 1)]
+│     [(0, 0), (1, 1), (2, 1)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(1, 2), (0, 0), (2, 2)]
+│     [(0, 0), (1, 0), (2, 0)]
+│     [(0, 0), (1, 0)]
+└     [(0, 0), (0, 2)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 2
+[ Info: Success! 24 points used.
+┌ Info: Basis exponents summary:
+│     Maximal interpolated degrees are: 2 for num. and 2 for den.
+│     Maximal number of interpolated terms are: 2 for num. and 2 for den.
+└     
+[ Info: Recovering the coefficients..
+[ Info: Groebner basis computed in 0.086695681 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002366756 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 13 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y8, y9, y10, t, y1, y2, y3, y4, y5, y6], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}(AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}[y7], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.fmpq_mpoly}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+[ Info: Given 8 functions in Rational Field(w, N, d, z, beta, S, E, U, I, R)[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, t]
+[ Info: Specializing at 3 points to guess the shape of the basis..
+[ Info: Specializing at random points to guess the total degrees in parameters..
+[ Info: Success! 18 points used.
+┌ Info: The total degrees in the coefficients
+│   state.param_degrees =
+│    8-element Vector{Vector{Tuple{Int64, Int64}}}:
+│     [(0, 0), (1, 1)]
+│     [(0, 0), (1, 0)]
+│     [(0, 0), (1, 0)]
+│     [(1, 2), (0, 0)]
+│     [(0, 0), (2, 0)]
+│     [(0, 0), (1, 0)]
+│     [(1, 1), (0, 0), (1, 0)]
+└     [(0, 0), (0, 2)]
+[ Info: Interpolating the exponents in parameters..
+┌ Info: Interpolating for degrees:
+└ Numerator: 2, Denominator: 2

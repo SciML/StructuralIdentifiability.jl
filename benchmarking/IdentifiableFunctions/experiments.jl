@@ -857,6 +857,15 @@ begin
         y1(t) = k * (x2(t) + x3(t))
     )
 
+    seuir = StructuralIdentifiability.@ODEmodel(
+        S'(t) = -beta * (U(t) + I(t)) * (S(t) / N),
+        E'(t) = beta * (U(t) + I(t)) * (S(t) / N) - E(t) * z,
+        U'(t) = (z - w) * E(t) - U(t) * d,
+        I'(t) = w * E(t) - I(t) * d,
+        R'(t) = (U(t) + I(t)) * d,
+        y1(t) = I(t)
+    )
+
     using Nemo, Logging
     using JuliaInterpreter
     Groebner = StructuralIdentifiability.Groebner
@@ -864,10 +873,32 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
+id_funcs, bring = StructuralIdentifiability.initial_identifiable_functions(
+    qy,
+    p = 0.99,
+    with_states = true,
+);
+
+@profview begin
+    rff = StructuralIdentifiability.RationalFunctionField(id_funcs)
+    StructuralIdentifiability.groebner_basis_coeffs(
+        rff,
+        rational_interpolator = :CuytLee,
+        up_to_degree = (4, 4),
+    )
+end;
+
 funcs = StructuralIdentifiability.find_identifiable_functions(
+    sliqr,
+    with_states = true,
+    strategy = (:hybrid, 10),
+    seed = 42,
+)
+
+@my_profview funcs = StructuralIdentifiability.find_identifiable_functions(
     Bilirubin2_io,
     with_states = true,
-    strategy = (:hybrid, 15),
+    strategy = (:hybrid, 12),
 )
 
 funcs3 = StructuralIdentifiability.find_identifiable_functions(
