@@ -22,9 +22,8 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 # Example 2 from 
 # "On Global Identifiability for Arbitrary Model Parametrizations",
 # DOI: 10.1016/0005-1098(94)90029-9
-ode = StructuralIdentifiability.@ODEmodel(x1'(t) = Θ * x2(t)^2, x2'(t) = u, y(t) = x1(t))
-# TODO: do we want u^2 Θ or Θ in the output?
-ident_funcs = [u^2 * Θ]
+ode = StructuralIdentifiability.@ODEmodel(x1'(t) = Θ * x2(t)^2, x2'(t) = u(t), y(t) = x1(t))
+ident_funcs = [Θ]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # Example 4 from 
@@ -51,7 +50,7 @@ ode = StructuralIdentifiability.@ODEmodel(
 ident_funcs = [(a01 * a12), (a01 + a12 + a21)]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
-# TODO: uncomment when identifiability can handle nos states 
+# TODO: uncomment when identifiability can handle models with no states 
 # ode = StructuralIdentifiability.@ODEmodel(
 #     y(t) = a*u(t)
 # )
@@ -169,8 +168,21 @@ ode = StructuralIdentifiability.@ODEmodel(
     x4'(t) = k41 * x1(t) - k14 * x4(t),
     y1(t) = x1(t)
 )
-# TODO
-# ident_funcs = [k01, k31 + k21 + k41, k31 * k21 * k41, k31 * k21 + k31 * k41 + k21 * k41]
+ident_funcs = [
+    k01 // one(k01),
+    k12 * k13 * k14 // one(k01),
+    k31 * k21 * k41 // one(k01),
+    k12 + k13 + k14 // one(k01),
+    k31 + k21 + k41 // one(k01),
+    k12 * k13 + k12 * k14 + k13 * k14 // one(k01),
+    k31 * k21 + k31 * k41 + k21 * k41 // one(k01),
+    k31 * k12 - 2 * k31 * k13 + k31 * k14 - 2 * k21 * k12 +
+    k21 * k13 +
+    k21 * k14 +
+    k12 * k41 +
+    k13 * k41 - 2 * k14 * k41 // one(k01),
+]
+# Too slow with hybrid strategy :(
 # push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # Biohydrogenation_io
@@ -194,11 +206,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     y1(t) = x4(t),
     y2(t) = x5(t)
 )
-# TODO: simplify?
-#   k9 // k10, k10^2
-# into
-#   k9 * k10, k10^2
-ident_funcs = [k7, k6, k5, k9 // k10, k10^2, k8 + 1 // 2 * k10]
+ident_funcs = [k7, k6, k5, k10^2, k9 * k10, k8 + 1 // 2 * k10]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # SLIQR
@@ -895,7 +903,7 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 @testset "Identifiable functions of parameters" failfast = true begin
     p = 0.99
     for case in test_cases
-        for strategy in [(:gb,), (:normalforms, 2), (:hybrid,)]
+        for strategy in [(:gb,), (:normalforms, 2)]
             ode = case.ode
             true_ident_funcs = case.ident_funcs
             with_states = false

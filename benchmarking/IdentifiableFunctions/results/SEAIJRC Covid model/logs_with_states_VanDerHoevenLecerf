@@ -1,189 +1,0 @@
-┌ Info: 
-└   FUNCTION_NAME = "find_identifiable_functions"
-┌ Info: 
-└   PROBLEM_NAME = "SEAIJRC Covid model"
-┌ Info: 
-└   KWARGS = (with_states = true, rational_interpolator = :VanDerHoevenLecerf)
-┌ Info: 
-└   GLOBAL_ID = :with_states_VanDerHoevenLecerf
-┌ Warning: The call to compilecache failed to create a usable precompiled cache file for StructuralIdentifiability [220ca800-aa68-49bb-acd8-6037fa93a544]
-│   exception = Required dependency ParamPunPam [3e851597-e36f-45a9-af0a-b7781937992f] failed to load from a cache file.
-└ @ Base loading.jl:1818
-[ Info: Summary of the model:
-[ Info: State variables: S, E, A, I, J, C, Ninv
-[ Info: Parameters: b, alpha, g2, k, g1, q, r
-[ Info: Inputs: 
-[ Info: Outputs: y, y2
-[ Info: Summary of the model:
-[ Info: State variables: x1, x2
-[ Info: Parameters: a, b, d, c
-[ Info: Inputs: 
-[ Info: Outputs: y
-[ Info: Computing IO-equations
-┌ Info: Computed in 41.177197249 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 41.177197249
-[ Info: Computing Wronskians
-┌ Info: Computed in 22.433759821 seconds
-│   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 22.433759821
-[ Info: Dimensions of the Wronskians [1282, 1]
-┌ Info: Ranks of the Wronskians computed in 0.74611467 seconds
-│   :rank_time = :rank_time
-└   rank_times = 0.74611467
-⌜ # Computing specializations..  	 Time: 0:00:13[K✓ # Computing specializations..  	 Time: 0:00:14[K
-⌜ # Computing specializations..  	 Time: 0:00:00[K⌝ # Computing specializations..  	 Time: 0:00:00[K⌟ # Computing specializations..  	 Time: 0:00:01[K⌞ # Computing specializations..  	 Time: 0:00:02[K⌜ # Computing specializations..  	 Time: 0:00:02[K⌝ # Computing specializations..  	 Time: 0:00:02[K⌟ # Computing specializations..  	 Time: 0:00:03[K⌞ # Computing specializations..  	 Time: 0:00:03[K⌜ # Computing specializations..  	 Time: 0:00:03[K⌝ # Computing specializations..  	 Time: 0:00:04[K⌟ # Computing specializations..  	 Time: 0:00:04[K⌞ # Computing specializations..  	 Time: 0:00:05[K⌜ # Computing specializations..  	 Time: 0:00:05[K⌝ # Computing specializations..  	 Time: 0:00:06[K⌟ # Computing specializations..  	 Time: 0:00:07[K⌞ # Computing specializations..  	 Time: 0:00:07[K⌜ # Computing specializations..  	 Time: 0:00:08[K⌝ # Computing specializations..  	 Time: 0:00:08[K⌟ # Computing specializations..  	 Time: 0:00:09[K⌞ # Computing specializations..  	 Time: 0:00:09[K⌜ # Computing specializations..  	 Time: 0:00:10[K⌝ # Computing specializations..  	 Time: 0:00:10[K✓ # Computing specializations..  	 Time: 0:00:10[K
-⌜ # Computing specializations.. 	 Time: 0:00:00[K
-  Points:  2[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:00[K
-  Points:  3[K[K[A⌟ # Computing specializations.. 	 Time: 0:00:01[K
-  Points:  5[K[K[A⌞ # Computing specializations.. 	 Time: 0:00:01[K
-  Points:  6[K[K[A⌜ # Computing specializations.. 	 Time: 0:00:02[K
-  Points:  8[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:02[K
-  Points:  10[K[K[A⌟ # Computing specializations.. 	 Time: 0:00:03[K
-  Points:  12[K[K[A⌞ # Computing specializations.. 	 Time: 0:00:04[K
-  Points:  14[K[K[A⌜ # Computing specializations.. 	 Time: 0:00:04[K
-  Points:  15[K[K[A⌝ # Computing specializations.. 	 Time: 0:00:05[K
-  Points:  17[K[K[A⌟ # Computing specializations.. 	 Time: 0:00:05[K
-  Points:  19[K[K[A⌞ # Computing specializations.. 	 Time: 0:00:06[K
-  Points:  21[K[K[A⌜ # Computing specializations.. 	 Time: 0:00:06[K
-  Points:  23[K[K[A✓ # Computing specializations.. 	 Time: 0:00:07[K
-[ Info: Simplifying identifiable functions
-┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
-│ Ordering, input / target: degrevlex / InputOrdering
-│ Rational interpolator: VanDerHoevenLecerf
-│ Polynomial interpolator: PrimesBenOrTiwari
-│ Estimate degrees: true
-└ Assess correctness: false
-┌ Info: Basis interpolated exponents summary:
-│ Maximal interpolated degrees are: 2 for num. and 2 for den.
-│ Maximal number of interpolated terms are: 2 for num. and 2 for den.
-└ Points used: 24.
-[ Info: Groebner basis computed in 35.321959856 seconds
-[ Info: Checking two-sided inclusion modulo a prime
-[ Info: Inclusion checked in 10.326379742 seconds. Result: true
-[ Info: The coefficients of the Groebner basis are presented by 10 rational functions
-┌ Info: Final cleaning and simplification of generators. 
-└ Out of 6 fractions 6 are syntactically unique.
-[ Info: Checking inclusion with probability 0.995
-[ Info: Inclusion checked in 38.634526605 seconds. Result: true
-[ Info: Out of 1464 initial generators there are 6 indepdendent
-[ Info: The ranking of the new set of generators is 1750
-[ Info: Simplifying identifiable functions
-┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
-│ Ordering, input / target: degrevlex / InputOrdering
-│ Rational interpolator: VanDerHoevenLecerf
-│ Polynomial interpolator: PrimesBenOrTiwari
-│ Estimate degrees: true
-└ Assess correctness: false
-┌ Info: Basis interpolated exponents summary:
-│ Maximal interpolated degrees are: 2 for num. and 1 for den.
-│ Maximal number of interpolated terms are: 2 for num. and 2 for den.
-└ Points used: 20.
-[ Info: Groebner basis computed in 0.169410986 seconds
-[ Info: Checking two-sided inclusion modulo a prime
-[ Info: Inclusion checked in 0.043987283 seconds. Result: true
-[ Info: The coefficients of the Groebner basis are presented by 17 rational functions
-┌ Info: Final cleaning and simplification of generators. 
-└ Out of 13 fractions 13 are syntactically unique.
-[ Info: Checking inclusion with probability 0.995
-[ Info: Inclusion checked in 0.063999127 seconds. Result: true
-[ Info: Out of 14 initial generators there are 13 indepdendent
-[ Info: The ranking of the new set of generators is 565
-[ Info: The search for identifiable functions concluded in 170.357581084 seconds
-[ Info: Processing SEAIJRC Covid model
-┌ Info: Averaging over 1 runs.
-│ Using keyword arguments:
-│ NamedTuple{(:with_states, :rational_interpolator), Tuple{Bool, Symbol}}
-│ (with_states = true, rational_interpolator = :VanDerHoevenLecerf)
-└ ID: with_states_VanDerHoevenLecerf
-[ Info: Computing IO-equations
-
-[38234] signal (15): Terminated
-in expression starting at none:1
-n_mod2_preinv at /workspace/srcdir/flint2/ulong_extras/mod2_preinv.c:33
-fpField at /home/demin/.julia/packages/Nemo/Tj33G/src/flint/gfp_elem.jl:438 [inlined]
-coeff at /home/demin/.julia/packages/Nemo/Tj33G/src/flint/nmod_abs_series.jl:82 [inlined]
-valuation at /home/demin/.julia/packages/Nemo/Tj33G/src/flint/nmod_abs_series.jl:119
-mul! at /home/demin/.julia/packages/Nemo/Tj33G/src/flint/nmod_abs_series.jl:535
-mul_red! at /home/demin/.julia/packages/AbstractAlgebra/zuBl1/src/NCRings.jl:216 [inlined]
-addmul_delayed_reduction! at /home/demin/.julia/packages/AbstractAlgebra/zuBl1/src/NCRings.jl:221
-* at /home/demin/.julia/packages/AbstractAlgebra/zuBl1/src/Matrix.jl:750
-_matrix_homlinear_de_newton_iteration at /home/demin/StructuralIdentifiability.jl/src/power_series_utils.jl:132
-ps_matrix_homlinear_de at /home/demin/StructuralIdentifiability.jl/src/power_series_utils.jl:167
-ps_matrix_linear_de at /home/demin/StructuralIdentifiability.jl/src/power_series_utils.jl:209
-ps_matrix_linear_de at /home/demin/StructuralIdentifiability.jl/src/power_series_utils.jl:206
-unknown function (ip: 0x7f253662f33b)
-_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
-ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
-ps_ode_solution at /home/demin/StructuralIdentifiability.jl/src/power_series_utils.jl:277
-unknown function (ip: 0x7f253661ada5)
-_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
-ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
-power_series_solution at /home/demin/StructuralIdentifiability.jl/src/ODE.jl:176
-unknown function (ip: 0x7f253661bf49)
-_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
-ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
-power_series_solution at /home/demin/StructuralIdentifiability.jl/src/ODE.jl:202
-unknown function (ip: 0x7f253660bbb9)
-_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
-ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
-wronskian at /home/demin/StructuralIdentifiability.jl/src/wronskian.jl:218
-macro expansion at ./timing.jl:393 [inlined]
-#initial_identifiable_functions#498 at /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:97
-initial_identifiable_functions at /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:81 [inlined]
-#find_identifiable_functions#511 at /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:62
-find_identifiable_functions at /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:46
-unknown function (ip: 0x7f25cc3a2cf6)
-_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
-ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
-jl_apply at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/julia.h:1880 [inlined]
-do_call at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:126
-eval_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:226
-eval_stmt_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:177 [inlined]
-eval_body at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:624
-jl_interpret_toplevel_thunk at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:762
-jl_toplevel_eval_flex at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:912
-ijl_toplevel_eval_in at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:971
-eval at ./boot.jl:370 [inlined]
-eval at ./client.jl:480 [inlined]
-macro expansion at ./timing.jl:501 [inlined]
-process_system at /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:48
-unknown function (ip: 0x7f25365398ef)
-_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
-ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
-jl_apply at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/julia.h:1880 [inlined]
-do_call at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:126
-eval_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:226
-eval_stmt_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:177 [inlined]
-eval_body at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:624
-jl_interpret_toplevel_thunk at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:762
-jl_toplevel_eval_flex at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:912
-jl_toplevel_eval_flex at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:856
-ijl_toplevel_eval_in at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:971
-eval at ./boot.jl:370 [inlined]
-include_string at ./loading.jl:1903
-_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
-ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
-_include at ./loading.jl:1963
-include at ./Base.jl:457
-jfptr_include_35036.clone_1 at /home/demin/downloads/julia-1.9.3/lib/julia/sys.so (unknown line)
-_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
-ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
-exec_options at ./client.jl:307
-_start at ./client.jl:522
-jfptr__start_40034.clone_1 at /home/demin/downloads/julia-1.9.3/lib/julia/sys.so (unknown line)
-_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
-ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
-jl_apply at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/julia.h:1880 [inlined]
-true_main at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jlapi.c:573
-jl_repl_entrypoint at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jlapi.c:717
-main at julia (unknown line)
-unknown function (ip: 0x7f25e3879d8f)
-__libc_start_main at /lib/x86_64-linux-gnu/libc.so.6 (unknown line)
-unknown function (ip: 0x4010b8)
-unknown function (ip: (nil))
-Allocations: 259210606 (Pool: 259113071; Big: 97535); GC: 611
-┌ Info: Computed in 22.886319475 seconds
-│   :ioeq_time = :ioeq_time
-└   ioeq_time = 22.886319475
-[ Info: Computing Wronskians

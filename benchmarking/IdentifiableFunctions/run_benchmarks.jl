@@ -103,6 +103,12 @@ function parse_commandline()
             help = "Re-generate the folder with benchmarks from scratch."
             arg_type = Bool
             default = false
+        "--tableonly"
+            help = """
+            Do not run benchmarks. 
+            Just construct the table from the existing directory."""
+            arg_type = Bool
+            default = false
     end
     #! format: on
 
@@ -466,15 +472,26 @@ function main()
     kwargs = parse_keywords(args["keywords"])
     @debug "Keywords for `$(args["function"])`"
     @debug kwargs
-    flag = populate_benchmarks(args, kwargs)
-    problems = run_benchmarks(args, kwargs)
-    printstyled(
-        """
-        Benchmarking had finished in $(round((time_ns() - timestamp) / 1e9, digits=2)) seconds.
-        Results are written to /$BENCHMARK_RESULTS
-        """,
-        color = :light_green,
-    )
+    if args["tableonly"]
+        dirnames = first(walkdir((@__DIR__) * "/$BENCHMARK_RESULTS/"))[2]
+        models_from_args = filter(s -> !isempty(s), map(strip, split(args["models"], ",")))
+        problems = if isempty(models_from_args)
+            dirnames
+        else
+            models_from_args
+        end
+        problems = setdiff(problems, args["skip"])
+    else
+        flag = populate_benchmarks(args, kwargs)
+        problems = run_benchmarks(args, kwargs)
+        printstyled(
+            """
+            Benchmarking had finished in $(round((time_ns() - timestamp) / 1e9, digits=2)) seconds.
+            Results are written to /$BENCHMARK_RESULTS
+            """,
+            color = :light_green,
+        )
+    end
     collect_timings(args, kwargs, problems)
     printstyled(
         """

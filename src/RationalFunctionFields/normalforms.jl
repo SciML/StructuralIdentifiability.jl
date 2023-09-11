@@ -52,7 +52,7 @@ function normal_forms_up_to_degree_ff(
     @assert mqs.sat_var_index == length(xs_ff)
     xs_ff = xs_ff[1:(end - 1)]
     pivot_vectors = map(f -> exponent_vector(f, 1), xs_ff)
-    @info """
+    @debug """
     variables in finite field: $(xs_ff)
     gb parent: $(ring_ff)
     specialized gb: $(gb_ff_spec)"""
@@ -60,14 +60,14 @@ function normal_forms_up_to_degree_ff(
         for combination in Combinatorics.with_replacement_combinations(pivot_vectors, deg)
             exp_vect = sum(combination)
             if in(stop_vectors, exp_vect)
-                @info "Skipping exponent vector $exp_vect"
+                @debug "Skipping exponent vector $exp_vect"
                 continue
             end
             monom_ff = ring_ff([one(finite_field)], [exp_vect])
             monom_ff_spec = evaluate(monom_ff, point_ff_ext)
             monom_mqs_ff_spec = monom_ff - monom_ff_spec
             divisors_ff, nf_ff = divrem(monom_mqs_ff_spec, gb_ff_spec)
-            @info """
+            @debug """
             The normal form of $monom_mqs_ff_spec is:
             normalform = $nf_ff
             divisors = $divisors_ff"""
@@ -112,7 +112,7 @@ function linear_relations_between_normal_forms_mod_p(
     for i in 1:length(normal_forms_ff_1)
         !iszero(normal_forms_ff_1[i]) && continue
         !(length(monoms_ff_1[i]) == 1) && continue
-        @info "Registering existing monomial $(monoms_ff_1[i])"
+        @debug "Registering existing monomial $(monoms_ff_1[i])"
         push!(relations_ff_1, monoms_ff_1[i])
         push!(tref, exponent_vector(monoms_ff_1[i], 1))
     end
@@ -120,21 +120,19 @@ function linear_relations_between_normal_forms_mod_p(
     npoints = 0
     while true
         npoints += 1
-        @info "Used specialization points: $npoints"
+        @debug "Used specialization points: $npoints"
         normal_forms_ff, monoms_ff =
             normal_forms_up_to_degree_ff(mqs, ff, up_to_degree, stop_vectors = tref)
-        @info "Computing relations of $(length(normal_forms_ff)) normal forms"
+        @debug "Computing relations of $(length(normal_forms_ff)) normal forms"
         if isempty(normal_forms_ff)
             break
         end
         relations_ff, normal_forms_ff, monoms_ff =
             relations_over_ff(normal_forms_ff, monoms_ff)
-        @info "Obtained $(length(relations_ff)) local relations over FF"
-        @warn "!!!"
-        println("Relations:", relations_ff)
-        println(filter(rel -> degree(rel, gens(parent(rel))[end - 1]) > 0, relations_ff))
-        println(normal_forms_ff)
-        println(monoms_ff)
+        @debug "Obtained $(length(relations_ff)) local relations over FF"
+        # println("Relations:", relations_ff)
+        # println(normal_forms_ff)
+        # println(monoms_ff)
         if npoints == 1
             complete_intersection_relations_ff = relations_ff
             continue
@@ -142,14 +140,14 @@ function linear_relations_between_normal_forms_mod_p(
         n_relations_ff = length(complete_intersection_relations_ff)
         complete_intersection_relations_ff =
             intersect(complete_intersection_relations_ff, relations_ff)
-        @info "There are $(length(complete_intersection_relations_ff)) relations in the intersection"
+        @debug "There are $(length(complete_intersection_relations_ff)) relations in the intersection"
         m_relations_ff = length(complete_intersection_relations_ff)
         if n_relations_ff == m_relations_ff
             break
         end
     end
     union!(complete_intersection_relations_ff, relations_ff_1)
-    @info "Reconstructing relations to rationals"
+    @debug "Reconstructing relations to rationals"
     relations_qq = Vector{Generic.Frac{elem_type(ring_param)}}(
         undef,
         length(complete_intersection_relations_ff),
@@ -184,7 +182,7 @@ function relations_over_ff(polys, preimages)
     for ind in zero_inds
         push!(ff_relations, preimages[ind])
     end
-    @info "Zeroed monomials are" preimages[zero_inds]
+    @debug "Zeroed monomials are" preimages[zero_inds]
     permutation = setdiff(permutation, zero_inds)
     # Sort, the first monom is the smallest
     lead_monoms = map(f -> iszero(f) ? one(f) : leading_monomial(f), polys)
@@ -195,7 +193,7 @@ function relations_over_ff(polys, preimages)
     n = length(polys)
     @inbounds for i in 1:n
         fi = polys[i]
-        @info "Reducing $i-th polynomial over FF" fi
+        @debug "Reducing $i-th polynomial over FF" fi
         ff_multipliers = [(i, one(ff))]
         for j in (i - 1):-1:1
             iszero(fi) && break
@@ -207,11 +205,11 @@ function relations_over_ff(polys, preimages)
             iszero(ci) && continue
             cj = leading_coefficient(fj)
             cij = div(ci, cj)
-            @info "reducing $fi with $(-cij) x $fj"
+            @debug "reducing $fi with $(-cij) x $fj"
             fi = fi - cij * fj
             push!(ff_multipliers, (j, -cij))
         end
-        @info "after reduction" fi ff_multipliers
+        @debug "after reduction" fi ff_multipliers
         # !iszero(fi) && continue
         # @info "Polynomial at index $i reduced to zero"
         preimage = zero(preimage_ring)
@@ -236,7 +234,7 @@ function relations_over_ff(polys, preimages)
             # If fj contains the lead of fi
             iszero(cj) && continue
             cji = div(cj, ci)
-            @info "Backward reducing $fj with $(-cji) x $fi"
+            @debug "Backward reducing $fj with $(-cji) x $fi"
             fj = fj - cji * fi
             preimages[j] += -cji * preimages[i]
             polys[j] = fj

@@ -873,14 +873,14 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-id_funcs, bring = StructuralIdentifiability.initial_identifiable_functions(
+id_funcs, bring = StructuralIdentifiability.find_identifiable_functions(
     qy,
-    p = 0.99,
     with_states = true,
-);
+    rational_interpolator = :CuytLee,
+)
 
-StructuralIdentifiability._runtime_logger[:id_npoints_degree]
-StructuralIdentifiability._runtime_logger[:id_npoints_interpolation]
+StructuralIdentifiability._runtime_logger[:id_npoints_degree]  # 56, 156
+StructuralIdentifiability._runtime_logger[:id_npoints_interpolation]  # 1656, 1656
 
 funcs = StructuralIdentifiability.find_identifiable_functions(
     sliqr,
