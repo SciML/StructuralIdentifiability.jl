@@ -48,8 +48,13 @@ export find_submodels
 export reparametrize_global
 
 # would be great to merge with the Julia logger
-const _runtime_logger =
-    Dict(:id_calls_to_gb => 0, :id_groebner_time => 0.0, :id_inclusion_check_mod_p => 0)
+const _runtime_logger = Dict(
+    :id_calls_to_gb => 0,
+    :id_groebner_time => 0.0,
+    :id_inclusion_check_mod_p => 0,
+    :id_npoints_degree => 0,
+    :id_npoints_interpolation => 0,
+)
 
 include("util.jl")
 include("power_series_utils.jl")

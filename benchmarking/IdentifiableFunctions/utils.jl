@@ -3,21 +3,20 @@ using Printf
 
 const BENCHMARK_RESULTS = "results"
 
-const categories = [:implicit_relations, :dim_before, :dim_after]
-
 const ID_TIME_CATEGORIES = [
     :id_total,
-    #:id_io_time,
-    #:id_global_time,
-    #:id_inclusion_check,
-    #:id_inclusion_check_mod_p,
-    #:id_groebner_time,
-    #:id_beautifulization,
-    #:id_normalforms_time,
-    #:id_gbfan_time,
-    #:id_ranking,
+    :id_io_time,
+    :id_global_time,
+    :id_inclusion_check,
+    :id_inclusion_check_mod_p,
+    :id_groebner_time,
+    :id_beautifulization,
+    :id_normalforms_time,
+    :id_gbfan_time,
+    :id_ranking,
 ]
-const ID_DATA_CATEGORIES = [:are_id_funcs_polynomial]
+const ID_DATA_CATEGORIES =
+    [:id_npoints_degree, :id_npoints_interpolation, :are_id_funcs_polynomial]
 const ALL_CATEGORIES = union(ID_TIME_CATEGORIES, ID_DATA_CATEGORIES)
 const ALL_POSSIBLE_CATEGORIES = union(ALL_CATEGORIES, Symbol[])
 
@@ -39,6 +38,8 @@ const HUMAN_READABLE_CATEGORIES = Dict(
     :dim_before => "Dim. before",
     :dim_after => "Dim. after",
     :are_id_funcs_polynomial => "Polynomial?",
+    :id_npoints_degree => "# Points, degree",
+    :id_npoints_interpolation => "# Points, interpolation",
 )
 
 const CATEGORY_FORMAT = Dict()
@@ -84,6 +85,10 @@ function keywords_to_global_id(keywords)
                 Symbol(id, :with_states)
             end
         end
+    end
+    if haskey(keywords, :rational_interpolator)
+        interpolator = keywords.rational_interpolator
+        id = Symbol(id, :_, interpolator)
     end
     if haskey(keywords, :adjoin_identifiable)
         if keywords.adjoin_identifiable

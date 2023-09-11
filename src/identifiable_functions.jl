@@ -51,13 +51,20 @@ function find_identifiable_functions(
     with_states = false,
     adjoin_identifiable = false,
     strategy = (:gb,),
+    rational_interpolator = :VanDerHoevenLecerf,
 ) where {T <: MPolyElem{fmpq}}
     Random.seed!(seed)
     @assert first(strategy) in (:gb, :gbfan, :normalforms, :hybrid)
+    _runtime_logger[:id_npoints_degree] = 0
+    _runtime_logger[:id_npoints_interpolation] = 0
     runtime_start = time_ns()
     half_p = 0.5 + p / 2
-    id_funcs, bring =
-        initial_identifiable_functions(ode, p = half_p, with_states = with_states)
+    id_funcs, bring = initial_identifiable_functions(
+        ode,
+        p = half_p,
+        with_states = with_states,
+        rational_interpolator = rational_interpolator,
+    )
     if simplify
         if isempty(id_funcs)
             bring = parent(ode)
@@ -68,6 +75,7 @@ function find_identifiable_functions(
             p = half_p,
             seed = seed,
             strategy = strategy,
+            rational_interpolator = rational_interpolator,
         )
     else
         id_funcs_fracs = dennums_to_fractions(id_funcs)

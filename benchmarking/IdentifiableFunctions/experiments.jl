@@ -879,14 +879,8 @@ id_funcs, bring = StructuralIdentifiability.initial_identifiable_functions(
     with_states = true,
 );
 
-@profview begin
-    rff = StructuralIdentifiability.RationalFunctionField(id_funcs)
-    StructuralIdentifiability.groebner_basis_coeffs(
-        rff,
-        rational_interpolator = :CuytLee,
-        up_to_degree = (4, 4),
-    )
-end;
+StructuralIdentifiability._runtime_logger[:id_npoints_degree]
+StructuralIdentifiability._runtime_logger[:id_npoints_interpolation]
 
 funcs = StructuralIdentifiability.find_identifiable_functions(
     sliqr,

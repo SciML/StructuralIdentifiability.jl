@@ -1,0 +1,125 @@
+┌ Info: 
+└   FUNCTION_NAME = "find_identifiable_functions"
+┌ Info: 
+└   PROBLEM_NAME = "PK2"
+┌ Info: 
+└   KWARGS = (with_states = true, rational_interpolator = :CuytLee)
+┌ Info: 
+└   GLOBAL_ID = :with_states_CuytLee
+[ Info: Summary of the model:
+[ Info: State variables: x0, x1, x2, x3
+[ Info: Parameters: a2, ka, n, b2, kc, b1, a1
+[ Info: Inputs: 
+[ Info: Outputs: y1
+[ Info: Summary of the model:
+[ Info: State variables: x1, x2
+[ Info: Parameters: a, b, d, c
+[ Info: Inputs: 
+[ Info: Outputs: y
+[ Info: Computing IO-equations
+
+[36576] signal (15): Terminated
+in expression starting at none:1
+_ZN4llvm9AAResults13getModRefInfoEPKNS_11InstructionERKNS_8OptionalINS_14MemoryLocationEEERNS_11AAQueryInfoE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm23MemoryDependenceResults30getSimplePointerDependencyFromERKNS_14MemoryLocationEbNS_14ilist_iteratorINS_12ilist_detail12node_optionsINS_11InstructionELb0ELb0EvEELb0ELb0EEEPNS_10BasicBlockEPS7_PjRNS_14BatchAAResultsE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm23MemoryDependenceResults24getPointerDependencyFromERKNS_14MemoryLocationEbNS_14ilist_iteratorINS_12ilist_detail12node_optionsINS_11InstructionELb0ELb0EvEELb0ELb0EEEPNS_10BasicBlockEPS7_PjRNS_14BatchAAResultsE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm23MemoryDependenceResults24getPointerDependencyFromERKNS_14MemoryLocationEbNS_14ilist_iteratorINS_12ilist_detail12node_optionsINS_11InstructionELb0ELb0EvEELb0ELb0EEEPNS_10BasicBlockEPS7_Pj at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm23MemoryDependenceResults13getDependencyEPNS_11InstructionE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm7GVNPass11processLoadEPNS_8LoadInstE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm7GVNPass18processInstructionEPNS_11InstructionE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm7GVNPass12processBlockEPNS_10BasicBlockE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm7GVNPass7runImplERNS_8FunctionERNS_15AssumptionCacheERNS_13DominatorTreeERKNS_17TargetLibraryInfoERNS_9AAResultsEPNS_23MemoryDependenceResultsEPNS_8LoopInfoEPNS_25OptimizationRemarkEmitterEPNS_9MemorySSAE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm3gvn13GVNLegacyPass13runOnFunctionERNS_8FunctionE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm13FPPassManager13runOnFunctionERNS_8FunctionE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm13FPPassManager11runOnModuleERNS_6ModuleE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm6legacy15PassManagerImpl3runERNS_6ModuleE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+operator() at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jitlayers.cpp:1152
+withModuleDo<(anonymous namespace)::OptimizerT::operator()(llvm::orc::ThreadSafeModule, llvm::orc::MaterializationResponsibility&)::<lambda(llvm::Module&)> > at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/usr/include/llvm/ExecutionEngine/Orc/ThreadSafeModule.h:136 [inlined]
+operator() at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jitlayers.cpp:1117 [inlined]
+CallImpl<(anonymous namespace)::OptimizerT> at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/usr/include/llvm/ADT/FunctionExtras.h:222
+_ZN4llvm3orc16IRTransformLayer4emitESt10unique_ptrINS0_29MaterializationResponsibilityESt14default_deleteIS3_EENS0_16ThreadSafeModuleE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+emit at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jitlayers.cpp:631
+_ZN4llvm3orc31BasicIRLayerMaterializationUnit11materializeESt10unique_ptrINS0_29MaterializationResponsibilityESt14default_deleteIS3_EE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm3orc19MaterializationTask3runEv at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm6detail18UniqueFunctionBaseIvJSt10unique_ptrINS_3orc4TaskESt14default_deleteIS4_EEEE8CallImplIPFvS7_EEEvPvRS7_ at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm3orc16ExecutionSession22dispatchOutstandingMUsEv at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm3orc16ExecutionSession17OL_completeLookupESt10unique_ptrINS0_21InProgressLookupStateESt14default_deleteIS3_EESt10shared_ptrINS0_23AsynchronousSymbolQueryEESt8functionIFvRKNS_8DenseMapIPNS0_8JITDylibENS_8DenseSetINS0_15SymbolStringPtrENS_12DenseMapInfoISF_vEEEENSG_ISD_vEENS_6detail12DenseMapPairISD_SI_EEEEEE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm3orc25InProgressFullLookupState8completeESt10unique_ptrINS0_21InProgressLookupStateESt14default_deleteIS3_EE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm3orc16ExecutionSession19OL_applyQueryPhase1ESt10unique_ptrINS0_21InProgressLookupStateESt14default_deleteIS3_EENS_5ErrorE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm3orc16ExecutionSession6lookupENS0_10LookupKindERKSt6vectorISt4pairIPNS0_8JITDylibENS0_19JITDylibLookupFlagsEESaIS8_EENS0_15SymbolLookupSetENS0_11SymbolStateENS_15unique_functionIFvNS_8ExpectedINS_8DenseMapINS0_15SymbolStringPtrENS_18JITEvaluatedSymbolENS_12DenseMapInfoISI_vEENS_6detail12DenseMapPairISI_SJ_EEEEEEEEESt8functionIFvRKNSH_IS6_NS_8DenseSetISI_SL_EENSK_IS6_vEENSN_IS6_SV_EEEEEE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm3orc16ExecutionSession6lookupERKSt6vectorISt4pairIPNS0_8JITDylibENS0_19JITDylibLookupFlagsEESaIS7_EERKNS0_15SymbolLookupSetENS0_10LookupKindENS0_11SymbolStateESt8functionIFvRKNS_8DenseMapIS5_NS_8DenseSetINS0_15SymbolStringPtrENS_12DenseMapInfoISK_vEEEENSL_IS5_vEENS_6detail12DenseMapPairIS5_SN_EEEEEE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm3orc16ExecutionSession6lookupERKSt6vectorISt4pairIPNS0_8JITDylibENS0_19JITDylibLookupFlagsEESaIS7_EENS0_15SymbolStringPtrENS0_11SymbolStateE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm3orc16ExecutionSession6lookupENS_8ArrayRefIPNS0_8JITDylibEEENS0_15SymbolStringPtrENS0_11SymbolStateE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+_ZN4llvm3orc16ExecutionSession6lookupENS_8ArrayRefIPNS0_8JITDylibEEENS_9StringRefENS0_11SymbolStateE at /home/demin/downloads/julia-1.9.3/bin/../lib/julia/libLLVM-14jl.so (unknown line)
+addModule at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jitlayers.cpp:1420
+jl_add_to_ee at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jitlayers.cpp:1815
+_jl_compile_codeinst at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jitlayers.cpp:241
+jl_generate_fptr_impl at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jitlayers.cpp:460
+jl_compile_method_internal at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2348 [inlined]
+jl_compile_method_internal at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2237
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2750 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+power_series_solution at /home/demin/StructuralIdentifiability.jl/src/ODE.jl:202
+iterate at /home/demin/StructuralIdentifiability.jl/src/elimination.jl:223
+iterate at /home/demin/StructuralIdentifiability.jl/src/elimination.jl:204 [inlined]
+choose at /home/demin/StructuralIdentifiability.jl/src/elimination.jl:282
+unknown function (ip: 0x7f34433ab6a6)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+eliminate_var at /home/demin/StructuralIdentifiability.jl/src/elimination.jl:413
+find_ioprojections at /home/demin/StructuralIdentifiability.jl/src/io_equation.jl:187
+#find_ioequations#391 at /home/demin/StructuralIdentifiability.jl/src/io_equation.jl:374
+find_ioequations at /home/demin/StructuralIdentifiability.jl/src/io_equation.jl:358 [inlined]
+macro expansion at ./timing.jl:393 [inlined]
+#initial_identifiable_functions#498 at /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:90
+initial_identifiable_functions at /home/demin/StructuralIdentifiability.jl/src/global_identifiability.jl:81 [inlined]
+#find_identifiable_functions#511 at /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:62
+find_identifiable_functions at /home/demin/StructuralIdentifiability.jl/src/identifiable_functions.jl:46
+unknown function (ip: 0x7f344339b316)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+jl_apply at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/julia.h:1880 [inlined]
+do_call at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:126
+eval_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:226
+eval_stmt_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:177 [inlined]
+eval_body at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:624
+jl_interpret_toplevel_thunk at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:762
+jl_toplevel_eval_flex at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:912
+ijl_toplevel_eval_in at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:971
+eval at ./boot.jl:370 [inlined]
+eval at ./client.jl:480
+unknown function (ip: 0x7f344332e842)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+jl_apply at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/julia.h:1880 [inlined]
+do_call at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:126
+eval_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:226
+eval_stmt_value at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:177 [inlined]
+eval_body at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:624
+jl_interpret_toplevel_thunk at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/interpreter.c:762
+jl_toplevel_eval_flex at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:912
+jl_toplevel_eval_flex at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:856
+ijl_toplevel_eval_in at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/toplevel.c:971
+eval at ./boot.jl:370 [inlined]
+include_string at ./loading.jl:1903
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+_include at ./loading.jl:1963
+include at ./Base.jl:457
+jfptr_include_35036.clone_1 at /home/demin/downloads/julia-1.9.3/lib/julia/sys.so (unknown line)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+exec_options at ./client.jl:307
+_start at ./client.jl:522
+jfptr__start_40034.clone_1 at /home/demin/downloads/julia-1.9.3/lib/julia/sys.so (unknown line)
+_jl_invoke at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2758 [inlined]
+ijl_apply_generic at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/gf.c:2940
+jl_apply at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/julia.h:1880 [inlined]
+true_main at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jlapi.c:573
+jl_repl_entrypoint at /cache/build/default-amdci5-5/julialang/julia-release-1-dot-9/src/jlapi.c:717
+main at julia (unknown line)
+unknown function (ip: 0x7f345e8f1d8f)
+__libc_start_main at /lib/x86_64-linux-gnu/libc.so.6 (unknown line)
+unknown function (ip: 0x4010b8)
+unknown function (ip: (nil))
+Allocations: 57881085 (Pool: 57850320; Big: 30765); GC: 79

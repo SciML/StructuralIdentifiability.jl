@@ -328,6 +328,10 @@ function groebner_basis_coeffs(
             ordering = ordering,
             rational_interpolator = rational_interpolator,
         )
+        _runtime_logger[:id_npoints_degree] +=
+            ParamPunPam._runtime_data[:npoints_degree_estimation]
+        _runtime_logger[:id_npoints_interpolation] +=
+            ParamPunPam._runtime_data[:npoints_interpolation]
         _runtime_logger[:id_groebner_time] += runtime
         @info "Groebner basis computed in $runtime seconds"
         basis_coeffs = map(collect ∘ coefficients, gb)
@@ -477,11 +481,8 @@ function simplified_generating_set(
     seed = 42,
     strategy = (:gb,),
     check_variables = false, # almost always slows down and thus turned off
+    rational_interpolator = :VanDerHoevenLecerf,
 )
-    # TODO: use seed!
-    # TODO: there are a lot of redundant functions coming from normal forms and
-    # the coefficients of GBs. Maybe filter them preemtively, before creating a
-    # RFF
     @info "Simplifying identifiable functions"
     _runtime_logger[:id_groebner_time] = 0.0
     _runtime_logger[:id_calls_to_gb] = 0
@@ -510,7 +511,11 @@ function simplified_generating_set(
     end
 
     # Compute the first GB in some ordering
-    new_rff = groebner_basis_coeffs(rff, seed = seed)
+    new_rff = groebner_basis_coeffs(
+        rff,
+        seed = seed,
+        rational_interpolator = rational_interpolator,
+    )
     new_fracs = beautifuly_generators(new_rff)
     if isempty(new_fracs)
         return new_fracs

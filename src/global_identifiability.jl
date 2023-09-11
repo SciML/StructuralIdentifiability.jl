@@ -84,6 +84,7 @@ function initial_identifiable_functions(
     known::Array{T, 1} = Array{T, 1}(),
     with_states::Bool = false,
     var_change_policy = :default,
+    rational_interpolator = :VanDerHoevenLecerf,
 ) where {T}
     @info "Computing IO-equations"
     ioeq_time =
@@ -125,6 +126,7 @@ function initial_identifiable_functions(
                 p = p,
                 seed = 42,
                 strategy = (:gb,),
+                rational_interpolator = rational_interpolator,
             )
         id_funcs[:no_states] = fractions_to_dennums(no_states_simplified)
     end

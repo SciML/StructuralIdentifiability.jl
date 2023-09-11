@@ -160,7 +160,7 @@ function run_benchmarks(args, kwargs)
     @assert nworkers > 0
 
     dirnames = first(walkdir((@__DIR__) * "/$BENCHMARK_RESULTS/"))[2]
-    models_from_args = map(strip, split(args["models"], ","))
+    models_from_args = filter(s -> !isempty(s), map(strip, split(args["models"], ",")))
     to_run_names = if isempty(models_from_args)
         dirnames
     else
