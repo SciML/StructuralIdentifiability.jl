@@ -825,6 +825,24 @@ ode = StructuralIdentifiability.@ODEmodel(x'(t) = a * x(t) + b * u(t), y(t) = c 
 ident_funcs = [b * c, a, x // b]
 push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
 
+# llw1987 model
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = -p1 * x1(t) + p2 * u(t),
+    x2'(t) = -p3 * x2(t) + p4 * u(t),
+    x3'(t) = -(p1 + p3) * x3(t) + (p4 * x1(t) + p2 * x2(t)) * u(t),
+    y1(t) = x3(t)
+)
+ident_funcs = [
+    x3,
+    x2 * x1 // one(x1),
+    p3 * p1 // one(x1),
+    p2 * p4 // one(x1),
+    (p3 + p1) // one(x1),
+    (p2 * x2 + p4 * x1) // one(x1),
+    (p3 - p1) // (p2 * x2 - p4 * x1),
+]
+push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
+
 # Regression test: Previously failed for with_states=true because of the bug in
 # `linear_relations_between_normal_forms`
 # Fujita
@@ -882,6 +900,21 @@ ident_funcs = [
     reaction_9_k1 * reaction_2_k1 * EGF_EGFR,
     reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
 ]
+push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
+
+# Bruno2016 model 
+ode = StructuralIdentifiability.@ODEmodel(
+    beta'(t) = -kbeta * beta(t),
+    cry'(t) = -cry(t) * kcrybeta - cry(t) * kcryOH,
+    zea'(t) = -zea(t) * kzea,
+    beta10'(t) = cry(t) * kcryOH - beta10(t) * kbeta10 + kbeta * beta(t),
+    OHbeta10'(t) = cry(t) * kcrybeta + zea(t) * kzea - OHbeta10(t) * kOHbeta10,
+    betaio'(t) = cry(t) * kcrybeta + beta10(t) * kbeta10 + kbeta * beta(t),
+    OHbetaio'(t) = cry(t) * kcryOH + zea(t) * kzea + OHbeta10(t) * kOHbeta10,
+    y1(t) = beta(t),
+    y2(t) = beta10(t)
+)
+ident_funcs = [beta10, beta, kbeta, kbeta10, cry * kcryOH, kcrybeta + kcryOH]
 push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
 
 # STAT-5 model from 

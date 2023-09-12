@@ -1,6 +1,6 @@
 ## Benchmark results
 
-2023-09-11T16:22:23.532
+2023-09-12T19:39:13.151
 
 - Benchmarked function: `find_identifiable_functions`
 - Workers: 8
@@ -8,17 +8,11 @@
 
 **All timings in seconds.**
 
-|Model|VanDerHoevenLecerf / Runtime|VanDerHoevenLecerf / # Points, degree|VanDerHoevenLecerf / # Points, interpolation|CuytLee / Runtime|CuytLee / # Points, degree|CuytLee / # Points, interpolation|
+|Model|with_states_VanDerHoevenLecerf / Runtime|with_states_VanDerHoevenLecerf / # Points, degree|with_states_VanDerHoevenLecerf / # Points, interpolation|with_states_CuytLee / Runtime|with_states_CuytLee / # Points, degree|with_states_CuytLee / # Points, interpolation|
 |-----|---|---|---|---|---|---|
-|Bilirubin2_io|3.62|56|1656|4.47|56|1656|
-|Biohydrogenation_io|0.38|72|624|0.50|72|624|
-|CD8 T cell differentiation|0.30|20|20|0.37|20|20|
-|Crauste_SI|0.36|20|20|0.25|20|20|
-|HIV2_io|1.01|50|592|1.22|50|592|
-|QY|30.66|156|7672|23.47|156|3836|
-|SLIQR|1.39|76|1072|1.10|76|536|
-|St|27.77|56|1472|28.98|56|1472|
-|Treatment_io|0.48|72|264|0.55|72|264|
+|MAPK model (5 outputs)|30.88|18|12|30.89|18|12|
+|MAPK model (6 outputs)|5.53|18|12|5.52|18|12|
+|Modified LV for testing|0.07|20|32|0.09|20|32|
 
 *Benchmarking environment:*
 

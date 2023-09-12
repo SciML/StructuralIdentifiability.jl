@@ -324,7 +324,6 @@ function groebner_basis_coeffs(
         runtime = @elapsed gb = ParamPunPam.paramgb(
             mqs,
             up_to_degree = current_degrees,
-            seed = seed,
             ordering = ordering,
             rational_interpolator = rational_interpolator,
         )

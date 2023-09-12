@@ -149,6 +149,17 @@ AbstractAlgebra.base_ring(ideal::IdealMQS) = base_ring(ideal.nums_qq[1])
 AbstractAlgebra.parent(ideal::IdealMQS) = ideal.parent_ring_param
 ParamPunPam.parent_params(ideal::IdealMQS) = base_ring(ideal.parent_ring_param)
 
+@noinline function __throw_unlucky_evaluation(msg)
+    throw(AssertionError("""
+    Encountered very unlucky evaluation point.
+    This should not happen normally.
+    (The probability of that happening is of order 1 / 10^18).
+    Please consider submitting a Github issue.
+
+    $msg
+    """))
+end
+
 # Used only for debugging!
 function ideal_generators_raw(mqs::IdealMQS)
     return field_to_ideal(mqs.funcs_den_nums)
@@ -252,8 +263,9 @@ function ParamPunPam.specialize_mod_p(
     nums_gf_spec = map(num -> evaluate(num, point_sat), nums_gf)
     dens_gf_spec = map(den -> evaluate(den, point_sat), dens_gf)
     polys = Vector{typeof(sat_gf)}(undef, length(nums_gf_spec) + 1)
-    for i in 1:length(dens_gf_spec)
+    @inbounds for i in 1:length(dens_gf_spec)
         den, den_spec = dens_gf[i], dens_gf_spec[i]
+        iszero(den_spec) && __throw_unlucky_evaluation("Ideal: $mqs\nPoint: $point")
         span = dens_indices[i]
         for j in span[1]:span[2]
             num, num_spec = nums_gf[j], nums_gf_spec[j]
@@ -281,8 +293,9 @@ function specialize(mqs::IdealMQS, point::Vector{Nemo.fmpq}; saturated = true)
     nums_qq_spec = map(num -> evaluate(num, point_sat), nums_qq)
     dens_qq_spec = map(den -> evaluate(den, point_sat), dens_qq)
     polys = Vector{typeof(sat_qq)}(undef, length(nums_qq_spec) + 1)
-    for i in 1:length(dens_qq_spec)
+    @inbounds for i in 1:length(dens_qq_spec)
         den, den_spec = dens_qq[i], dens_qq_spec[i]
+        iszero(den_spec) && __throw_unlucky_evaluation("Ideal: $mqs\nPoint: $point")
         span = dens_indices[i]
         for j in span[1]:span[2]
             num, num_spec = nums_qq[j], nums_qq_spec[j]

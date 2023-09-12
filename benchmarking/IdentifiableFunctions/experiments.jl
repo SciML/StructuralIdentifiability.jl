@@ -866,17 +866,65 @@ begin
         y1(t) = I(t)
     )
 
+    llw1987 = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = -p1 * x1(t) + p2 * u(t),
+        x2'(t) = -p3 * x2(t) + p4 * u(t),
+        x3'(t) = -(p1 + p3) * x3(t) + (p4 * x1(t) + p2 * x2(t)) * u(t),
+        y1(t) = x3(t)
+    )
+
+    bruno2016 = StructuralIdentifiability.@ODEmodel(
+        beta'(t) = -kbeta * beta(t),
+        cry'(t) = -cry(t) * kcrybeta - cry(t) * kcryOH,
+        zea'(t) = -zea(t) * kzea,
+        beta10'(t) = cry(t) * kcryOH - beta10(t) * kbeta10 + kbeta * beta(t),
+        OHbeta10'(t) = cry(t) * kcrybeta + zea(t) * kzea - OHbeta10(t) * kOHbeta10,
+        betaio'(t) = cry(t) * kcrybeta + beta10(t) * kbeta10 + kbeta * beta(t),
+        OHbetaio'(t) = cry(t) * kcryOH + zea(t) * kzea + OHbeta10(t) * kOHbeta10,
+        y1(t) = beta(t),
+        y2(t) = beta10(t)
+    )
+
+    jak_stat = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = -t1 * x1(t) * 2 * u(t) - t5 * x1(t) + t6 * x2(t),
+        x2'(t) = t5 * x1(t) - t6 * x2(t),
+        x3'(t) = t1 * 2 * u(t) * x1(t) - t2 * x3(t) * (-x6(t) + 3),
+        x4'(t) = t2 * x3(t) * (-x6(t) + 3) - t3 * x4(t),
+        x5'(t) = t3 * x4(t) - t4 * x5(t),
+        x6'(t) =
+            -t7 * x3(t) * x6(t) / (1 + t13 * x1(t)) -
+            t7 * x4(t) * x6(t) / (1 + t13 * x10(t)) + t8 * (-x6(t) + 3) * 92,
+        x7'(t) = -t9 * x7(t) * (-x6(t) + 3) + t10 * (-x7(t) + 165) * 92,
+        x8'(t) = t11 * (-x7(t) + 165),
+        x9'(t) = -t12 * 2 * u(t) * x9(t),
+        x10'(t) = x8(t) * t14 / (t15 + x8(t)) - t16 * x10(t),
+        y1(t) = x1(t) + x3(t) + x4(t),
+        y2(t) = t18 * (x3(t) + x4(t) + x5(t) + (1 / 3 - x9(t))),
+        y3(t) = t19 * (x4(t) + x5(t)),
+        y4(t) = t20 * (-x6(t) + 3),
+        y5(t) = t21 * x8(t),
+        y6(t) = t22 * x8(t) * t17 / t11,
+        y7(t) = x10(t),
+        y8(t) = -x7(t) + 165
+    )
+
     using Nemo, Logging
     using JuliaInterpreter
     Groebner = StructuralIdentifiability.Groebner
-    ParamPunPam = StructuralIdentifiability.ParamPunPam
+    # ParamPunPam = StructuralIdentifiability.ParamPunPam
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-id_funcs, bring = StructuralIdentifiability.find_identifiable_functions(
-    qy,
+id_funcs1 = StructuralIdentifiability.find_identifiable_functions(
+    jak_stat,
     with_states = true,
     rational_interpolator = :CuytLee,
+)
+
+id_funcs2 = StructuralIdentifiability.find_identifiable_functions(
+    jak_stat,
+    with_states = true,
+    rational_interpolator = :VanDerHoevenLecerf,
 )
 
 StructuralIdentifiability._runtime_logger[:id_npoints_degree]  # 56, 156
