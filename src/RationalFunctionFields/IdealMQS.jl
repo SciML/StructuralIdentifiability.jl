@@ -151,9 +151,9 @@ ParamPunPam.parent_params(ideal::IdealMQS) = base_ring(ideal.parent_ring_param)
 
 @noinline function __throw_unlucky_evaluation(msg)
     throw(AssertionError("""
-    Encountered very unlucky evaluation point.
+    Encountered a very unlucky evaluation point.
     This should not happen normally.
-    (The probability of that happening is of order 1 / 10^18).
+    (The probability of that happening is roughly 1 to 10^18).
     Please consider submitting a Github issue.
 
     $msg
