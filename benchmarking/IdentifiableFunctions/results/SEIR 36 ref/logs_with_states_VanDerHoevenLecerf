@@ -1,0 +1,150 @@
+┌ Info: 
+└   FUNCTION_NAME = "find_identifiable_functions"
+┌ Info: 
+└   PROBLEM_NAME = "SEIR 36 ref"
+┌ Info: 
+└   KWARGS = (with_states = true, rational_interpolator = :VanDerHoevenLecerf)
+┌ Info: 
+└   GLOBAL_ID = :with_states_VanDerHoevenLecerf
+[ Info: Summary of the model:
+[ Info: State variables: N, nu, q, S, E, I, De, Di, R, F
+[ Info: Parameters: gamma, phi, mu_0, s_d, mu_d, s, mu_i, beta, phi_e, gamma_d, beta_d
+[ Info: Inputs: 
+[ Info: Outputs: y1, y2, y5, y3, y4, y6
+[ Info: Summary of the model:
+[ Info: State variables: x1, x2
+[ Info: Parameters: a, b, d, c
+[ Info: Inputs: 
+[ Info: Outputs: y
+[ Info: Computing IO-equations
+┌ Info: Computed in 15.254513812 seconds
+│   :ioeq_time = :ioeq_time
+└   ioeq_time = 15.254513812
+[ Info: Computing Wronskians
+┌ Info: Computed in 11.447642748 seconds
+│   :wrnsk_time = :wrnsk_time
+└   wrnsk_time = 11.447642748
+[ Info: Dimensions of the Wronskians [47, 1, 4, 5, 1, 1]
+┌ Info: Ranks of the Wronskians computed in 0.030296996 seconds
+│   :rank_time = :rank_time
+└   rank_times = 0.030296996
+┌ Warning: One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still  would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)
+└ @ StructuralIdentifiability ~/StructuralIdentifiability.jl/src/global_identifiability.jl:111
+⌜ # Computing specializations..  	 Time: 0:00:07[K✓ # Computing specializations..  	 Time: 0:00:07[K
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 1 for num. and 0 for den.
+│ Maximal number of interpolated terms are: 1 for num. and 1 for den.
+└ Points used: 6.
+[ Info: Groebner basis computed in 9.018762656 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 2.881779897 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 12 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 11 fractions 11 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 3.292350919 seconds. Result: true
+[ Info: Out of 53 initial generators there are 11 indepdendent
+[ Info: The ranking of the new set of generators is 66
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 1 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 1 for num. and 1 for den.
+└ Points used: 10.
+[ Info: Groebner basis computed in 0.016370342 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.036024698 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 21 fractions 21 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 0.004365732 seconds. Result: true
+[ Info: Out of 23 initial generators there are 20 indepdendent
+[ Info: The ranking of the new set of generators is 210
+[ Info: The search for identifiable functions concluded in 54.223846106 seconds
+[ Info: Processing SEIR 36 ref
+┌ Info: Averaging over 1 runs.
+│ Using keyword arguments:
+│ NamedTuple{(:with_states, :rational_interpolator), Tuple{Bool, Symbol}}
+│ (with_states = true, rational_interpolator = :VanDerHoevenLecerf)
+└ ID: with_states_VanDerHoevenLecerf
+[ Info: Computing IO-equations
+┌ Info: Computed in 0.297766092 seconds
+│   :ioeq_time = :ioeq_time
+└   ioeq_time = 0.297766092
+[ Info: Computing Wronskians
+┌ Info: Computed in 0.188736795 seconds
+│   :wrnsk_time = :wrnsk_time
+└   wrnsk_time = 0.188736795
+[ Info: Dimensions of the Wronskians [47, 1, 4, 5, 1, 1]
+┌ Info: Ranks of the Wronskians computed in 0.002082701 seconds
+│   :rank_time = :rank_time
+└   rank_times = 0.002082701
+┌ Warning: One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still  would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)
+└ @ StructuralIdentifiability ~/StructuralIdentifiability.jl/src/global_identifiability.jl:111
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 1 for num. and 0 for den.
+│ Maximal number of interpolated terms are: 1 for num. and 1 for den.
+└ Points used: 6.
+[ Info: Groebner basis computed in 0.014586803 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.005293115 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 12 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 11 fractions 11 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 0.012650562 seconds. Result: true
+[ Info: Out of 53 initial generators there are 11 indepdendent
+[ Info: The ranking of the new set of generators is 66
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 1 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 1 for num. and 1 for den.
+└ Points used: 10.
+[ Info: Groebner basis computed in 0.015704847 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.003045742 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 21 fractions 21 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 0.004280652 seconds. Result: true
+[ Info: Out of 23 initial generators there are 20 indepdendent
+[ Info: The ranking of the new set of generators is 210
+[ Info: The search for identifiable functions concluded in 0.701143528 seconds
+┌ Info: Result is
+│   result =
+│    20-element Vector{AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}}:
+│     F
+│     Di
+│     De
+│     I
+│     ⋮
+│     mu_0
+│     phi
+└     gamma

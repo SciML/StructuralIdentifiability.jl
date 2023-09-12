@@ -120,15 +120,30 @@ function initial_identifiable_functions(
 
     if with_states
         @debug "Generators of identifiable functions involve states, the parameter-only part is getting simplified"
+        # NOTE: switching to a ring without states for a moment
+        param_ring, _ = PolynomialRing(
+            base_ring(bring),
+            map(string, ode.parameters),
+            ordering = Nemo.ordering(bring),
+        )
+        id_funcs_no_states_param = map(
+            polys -> map(poly -> parent_ring_change(poly, param_ring), polys),
+            id_funcs[:no_states],
+        )
         _runtime_logger[:check_time] =
             @elapsed no_states_simplified = simplified_generating_set(
-                RationalFunctionField(id_funcs[:no_states]),
+                RationalFunctionField(id_funcs_no_states_param),
                 p = p,
                 seed = 42,
                 strategy = (:gb,),
                 rational_interpolator = rational_interpolator,
             )
-        id_funcs[:no_states] = fractions_to_dennums(no_states_simplified)
+        dennums_simplified = fractions_to_dennums(no_states_simplified)
+        # switch back the ring
+        id_funcs[:no_states] = map(
+            polys -> map(poly -> parent_ring_change(poly, bring), polys),
+            dennums_simplified,
+        )
     end
 
     if !with_states

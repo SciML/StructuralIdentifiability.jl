@@ -347,8 +347,8 @@ function groebner_basis_coeffs(
         inclusion = check_field_membership_mod_p!(new_rff, rff)
         runtime = (time_ns() - time_start) / 1e9
         _runtime_logger[:id_inclusion_check_mod_p] += runtime
-        @info "Inclusion checked in $(runtime) seconds. Result: $two_sided_inclusion"
         two_sided_inclusion = two_sided_inclusion && all(inclusion)
+        @info "Inclusion checked in $(runtime) seconds. Result: $two_sided_inclusion"
         current_degrees = current_degrees .* 2
     end
     @info "The coefficients of the Groebner basis are presented by $(length(fracs)) rational functions"

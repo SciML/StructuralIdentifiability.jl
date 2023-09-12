@@ -915,16 +915,16 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
+id_funcs2 = StructuralIdentifiability.find_identifiable_functions(
+    jak_stat,
+    with_states = false,
+    rational_interpolator = :VanDerHoevenLecerf,
+)
+
 id_funcs1 = StructuralIdentifiability.find_identifiable_functions(
     jak_stat,
     with_states = true,
     rational_interpolator = :CuytLee,
-)
-
-id_funcs2 = StructuralIdentifiability.find_identifiable_functions(
-    jak_stat,
-    with_states = true,
-    rational_interpolator = :VanDerHoevenLecerf,
 )
 
 StructuralIdentifiability._runtime_logger[:id_npoints_degree]  # 56, 156
