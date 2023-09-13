@@ -8,7 +8,9 @@
 
 **All timings in seconds.**
 
-|Model|(:hybrid, 1)_with_states / Runtime|(:hybrid, 1)_with_states / Polynomial?|(:hybrid, 3)_with_states / Runtime|(:hybrid, 3)_with_states / Polynomial?|
+For all models, `with_states = true`.
+
+|Model|(:hybrid, 1) / Runtime|(:hybrid, 1) / Polynomial?|(:hybrid, 3) / Runtime|(:hybrid, 3) / Polynomial?|
 |-----|---|---|---|---|
 |Akt pathway|5.58|yes|20.68|yes|
 |Bilirubin2_io|9.00|yes|34.90|yes|
