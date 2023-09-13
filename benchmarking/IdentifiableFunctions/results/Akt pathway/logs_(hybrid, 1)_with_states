@@ -1,0 +1,1018 @@
+┌ Info: 
+└   FUNCTION_NAME = "find_identifiable_functions"
+┌ Info: 
+└   PROBLEM_NAME = "Akt pathway"
+┌ Info: 
+└   KWARGS = (with_states = true, strategy = (:hybrid, 1))
+┌ Info: 
+└   GLOBAL_ID = Symbol("(:hybrid, 1)_with_states")
+[ Info: Summary of the model:
+[ Info: State variables: EGFR, pEGFR, pEGFR_Akt, Akt, pAkt, S6, pAkt_S6, pS6, EGF_EGFR
+[ Info: Parameters: a2, a3, reaction_1_k1, reaction_4_k1, reaction_9_k1, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, reaction_3_k1, reaction_5_k1, reaction_2_k1, EGFR_turnover, reaction_2_k2, reaction_5_k2, reaction_8_k1
+[ Info: Inputs: pro_EGFR
+[ Info: Outputs: y1, y2, y3
+[ Info: Summary of the model:
+[ Info: State variables: x1, x2
+[ Info: Parameters: a, b, d, c
+[ Info: Inputs: 
+[ Info: Outputs: y
+[ Info: Computing IO-equations
+┌ Info: Computed in 12.564140109 seconds
+│   :ioeq_time = :ioeq_time
+└   ioeq_time = 12.564140109
+[ Info: Computing Wronskians
+┌ Info: Computed in 7.660098761 seconds
+│   :wrnsk_time = :wrnsk_time
+└   wrnsk_time = 7.660098761
+[ Info: Dimensions of the Wronskians [18, 9, 145]
+┌ Info: Ranks of the Wronskians computed in 0.023845126 seconds
+│   :rank_time = :rank_time
+└   rank_times = 0.023845126
+⌜ # Computing specializations..  	 Time: 0:00:07[K✓ # Computing specializations..  	 Time: 0:00:07[K
+⌜ # Computing specializations..  	 Time: 0:00:03[K✓ # Computing specializations..  	 Time: 0:00:03[K
+⌜ # Computing specializations..  	 Time: 0:00:05[K✓ # Computing specializations..  	 Time: 0:00:05[K
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 1 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 32.
+[ Info: Groebner basis computed in 9.157625952 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 2.804582526 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 14 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 12 fractions 12 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 3.087116948 seconds. Result: true
+[ Info: Out of 217 initial generators there are 12 indepdendent
+[ Info: The ranking of the new set of generators is 368
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 3.393094365 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.918079367 seconds. Result: false
+┌ Info: Computing parametric Groebner basis up to degrees (4, 4)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 3 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.073621901 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.003840776 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing normal forms (probabilistic)
+│ Parameters (25 in total): Nemo.QQMPolyRingElem[a2, a3, reaction_1_k1, reaction_4_k1, reaction_9_k1, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, reaction_3_k1, reaction_5_k1, reaction_2_k1, EGFR_turnover, reaction_2_k2, reaction_5_k2, reaction_8_k1, EGFR, pEGFR, pEGFR_Akt, Akt, pAkt, S6, pAkt_S6, pS6, EGF_EGFR]
+│ Up to degree: 3
+└ Modulo: Finite field of characteristic 1073741827
+AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}[a2*pEGFR, a2*pEGFR_Akt, a2*Akt, a2*pAkt, a2*S6, a2*pAkt_S6, a2*pS6, a3*pEGFR, a3*pEGFR_Akt, a3*Akt, a3*pAkt, a3*S6, a3*pAkt_S6, a3*pS6, a1*pEGFR, a1*pEGFR_Akt, a1*Akt, a1*pAkt, a1*S6, a1*pAkt_S6, a1*pS6, reaction_5_k1*pEGFR, reaction_5_k1*pEGFR_Akt, reaction_5_k1*Akt, reaction_5_k1*pAkt, reaction_5_k1*S6, reaction_5_k1*pAkt_S6, reaction_5_k1*pS6, reaction_2_k1*pEGFR, reaction_2_k1*pEGFR_Akt, reaction_2_k1*Akt, reaction_2_k1*pAkt, reaction_2_k1*S6, reaction_2_k1*pAkt_S6, reaction_2_k1*pS6, a2*reaction_4_k1*pEGFR, a2*reaction_4_k1*pEGFR_Akt, a2*reaction_4_k1*Akt, a2*reaction_4_k1*pAkt, a2*reaction_4_k1*S6, a2*reaction_4_k1*pAkt_S6, a2*reaction_4_k1*pS6, a2*reaction_9_k1*EGF_EGFR, a2*reaction_7_k1*pEGFR, a2*reaction_7_k1*pEGFR_Akt, a2*reaction_7_k1*Akt, a2*reaction_7_k1*pAkt, a2*reaction_7_k1*S6, a2*reaction_7_k1*pAkt_S6, a2*reaction_7_k1*pS6, a2*reaction_6_k1*pEGFR, a2*reaction_6_k1*pEGFR_Akt, a2*reaction_6_k1*Akt, a2*reaction_6_k1*pAkt, a2*reaction_6_k1*S6, a2*reaction_6_k1*pAkt_S6, a2*reaction_6_k1*pS6, a2*reaction_3_k1*pEGFR, a2*reaction_3_k1*pEGFR_Akt, a2*reaction_3_k1*Akt, a2*reaction_3_k1*pAkt, a2*reaction_3_k1*S6, a2*reaction_3_k1*pAkt_S6, a2*reaction_3_k1*pS6, a2*reaction_2_k2*pEGFR, a2*reaction_2_k2*pEGFR_Akt, a2*reaction_2_k2*Akt, a2*reaction_2_k2*pAkt, a2*reaction_2_k2*S6, a2*reaction_2_k2*pAkt_S6, a2*reaction_2_k2*pS6, a2*reaction_5_k2*pEGFR, a2*reaction_5_k2*pEGFR_Akt, a2*reaction_5_k2*Akt, a2*reaction_5_k2*pAkt, a2*reaction_5_k2*S6, a2*reaction_5_k2*pAkt_S6, a2*reaction_5_k2*pS6, a2*reaction_8_k1*pEGFR, a2*reaction_8_k1*pEGFR_Akt, a2*reaction_8_k1*Akt, a2*reaction_8_k1*pAkt, a2*reaction_8_k1*S6, a2*reaction_8_k1*pAkt_S6, a2*reaction_8_k1*pS6, a3*reaction_4_k1*pEGFR, a3*reaction_4_k1*pEGFR_Akt, a3*reaction_4_k1*Akt, a3*reaction_4_k1*pAkt, a3*reaction_4_k1*S6, a3*reaction_4_k1*pAkt_S6, a3*reaction_4_k1*pS6, a3*reaction_9_k1*EGF_EGFR, a3*reaction_7_k1*pEGFR, a3*reaction_7_k1*pEGFR_Akt, a3*reaction_7_k1*Akt, a3*reaction_7_k1*pAkt, a3*reaction_7_k1*S6, a3*reaction_7_k1*pAkt_S6, a3*reaction_7_k1*pS6, a3*reaction_6_k1*pEGFR, a3*reaction_6_k1*pEGFR_Akt, a3*reaction_6_k1*Akt, a3*reaction_6_k1*pAkt, a3*reaction_6_k1*S6, a3*reaction_6_k1*pAkt_S6, a3*reaction_6_k1*pS6, a3*reaction_3_k1*pEGFR, a3*reaction_3_k1*pEGFR_Akt, a3*reaction_3_k1*Akt, a3*reaction_3_k1*pAkt, a3*reaction_3_k1*S6, a3*reaction_3_k1*pAkt_S6, a3*reaction_3_k1*pS6, a3*reaction_2_k2*pEGFR, a3*reaction_2_k2*pEGFR_Akt, a3*reaction_2_k2*Akt, a3*reaction_2_k2*pAkt, a3*reaction_2_k2*S6, a3*reaction_2_k2*pAkt_S6, a3*reaction_2_k2*pS6, a3*reaction_5_k2*pEGFR, a3*reaction_5_k2*pEGFR_Akt, a3*reaction_5_k2*Akt, a3*reaction_5_k2*pAkt, a3*reaction_5_k2*S6, a3*reaction_5_k2*pAkt_S6, a3*reaction_5_k2*pS6, a3*reaction_8_k1*pEGFR, a3*reaction_8_k1*pEGFR_Akt, a3*reaction_8_k1*Akt, a3*reaction_8_k1*pAkt, a3*reaction_8_k1*S6, a3*reaction_8_k1*pAkt_S6, a3*reaction_8_k1*pS6, reaction_4_k1*a1*pEGFR, reaction_4_k1*a1*pEGFR_Akt, reaction_4_k1*a1*Akt, reaction_4_k1*a1*pAkt, reaction_4_k1*a1*S6, reaction_4_k1*a1*pAkt_S6, reaction_4_k1*a1*pS6, reaction_4_k1*reaction_5_k1*pEGFR, reaction_4_k1*reaction_5_k1*pEGFR_Akt, reaction_4_k1*reaction_5_k1*Akt, reaction_4_k1*reaction_5_k1*pAkt, reaction_4_k1*reaction_5_k1*S6, reaction_4_k1*reaction_5_k1*pAkt_S6, reaction_4_k1*reaction_5_k1*pS6, reaction_4_k1*reaction_2_k1*pEGFR, reaction_4_k1*reaction_2_k1*pEGFR_Akt, reaction_4_k1*reaction_2_k1*Akt, reaction_4_k1*reaction_2_k1*pAkt, reaction_4_k1*reaction_2_k1*S6, reaction_4_k1*reaction_2_k1*pAkt_S6, reaction_4_k1*reaction_2_k1*pS6, reaction_9_k1*a1*EGF_EGFR, reaction_9_k1*reaction_5_k1*EGF_EGFR, reaction_9_k1*reaction_2_k1*EGF_EGFR, reaction_7_k1*a1*pEGFR, reaction_7_k1*a1*pEGFR_Akt, reaction_7_k1*a1*Akt, reaction_7_k1*a1*pAkt, reaction_7_k1*a1*S6, reaction_7_k1*a1*pAkt_S6, reaction_7_k1*a1*pS6, reaction_7_k1*reaction_5_k1*pEGFR, reaction_7_k1*reaction_5_k1*pEGFR_Akt, reaction_7_k1*reaction_5_k1*Akt, reaction_7_k1*reaction_5_k1*pAkt, reaction_7_k1*reaction_5_k1*S6, reaction_7_k1*reaction_5_k1*pAkt_S6, reaction_7_k1*reaction_5_k1*pS6, reaction_7_k1*reaction_2_k1*pEGFR, reaction_7_k1*reaction_2_k1*pEGFR_Akt, reaction_7_k1*reaction_2_k1*Akt, reaction_7_k1*reaction_2_k1*pAkt, reaction_7_k1*reaction_2_k1*S6, reaction_7_k1*reaction_2_k1*pAkt_S6, reaction_7_k1*reaction_2_k1*pS6, reaction_6_k1*a1*pEGFR, reaction_6_k1*a1*pEGFR_Akt, reaction_6_k1*a1*Akt, reaction_6_k1*a1*pAkt, reaction_6_k1*a1*S6, reaction_6_k1*a1*pAkt_S6, reaction_6_k1*a1*pS6, reaction_6_k1*reaction_5_k1*pEGFR, reaction_6_k1*reaction_5_k1*pEGFR_Akt, reaction_6_k1*reaction_5_k1*Akt, reaction_6_k1*reaction_5_k1*pAkt, reaction_6_k1*reaction_5_k1*S6, reaction_6_k1*reaction_5_k1*pAkt_S6, reaction_6_k1*reaction_5_k1*pS6, reaction_6_k1*reaction_2_k1*pEGFR, reaction_6_k1*reaction_2_k1*pEGFR_Akt, reaction_6_k1*reaction_2_k1*Akt, reaction_6_k1*reaction_2_k1*pAkt, reaction_6_k1*reaction_2_k1*S6, reaction_6_k1*reaction_2_k1*pAkt_S6, reaction_6_k1*reaction_2_k1*pS6, a1*reaction_3_k1*pEGFR, a1*reaction_3_k1*pEGFR_Akt, a1*reaction_3_k1*Akt, a1*reaction_3_k1*pAkt, a1*reaction_3_k1*S6, a1*reaction_3_k1*pAkt_S6, a1*reaction_3_k1*pS6, a1*reaction_2_k2*pEGFR, a1*reaction_2_k2*pEGFR_Akt, a1*reaction_2_k2*Akt, a1*reaction_2_k2*pAkt, a1*reaction_2_k2*S6, a1*reaction_2_k2*pAkt_S6, a1*reaction_2_k2*pS6, a1*reaction_5_k2*pEGFR, a1*reaction_5_k2*pEGFR_Akt, a1*reaction_5_k2*Akt, a1*reaction_5_k2*pAkt, a1*reaction_5_k2*S6, a1*reaction_5_k2*pAkt_S6, a1*reaction_5_k2*pS6, a1*reaction_8_k1*pEGFR, a1*reaction_8_k1*pEGFR_Akt, a1*reaction_8_k1*Akt, a1*reaction_8_k1*pAkt, a1*reaction_8_k1*S6, a1*reaction_8_k1*pAkt_S6, a1*reaction_8_k1*pS6, reaction_3_k1*reaction_5_k1*pEGFR, reaction_3_k1*reaction_5_k1*pEGFR_Akt, reaction_3_k1*reaction_5_k1*Akt, reaction_3_k1*reaction_5_k1*pAkt, reaction_3_k1*reaction_5_k1*S6, reaction_3_k1*reaction_5_k1*pAkt_S6, reaction_3_k1*reaction_5_k1*pS6, reaction_3_k1*reaction_2_k1*pEGFR, reaction_3_k1*reaction_2_k1*pEGFR_Akt, reaction_3_k1*reaction_2_k1*Akt, reaction_3_k1*reaction_2_k1*pAkt, reaction_3_k1*reaction_2_k1*S6, reaction_3_k1*reaction_2_k1*pAkt_S6, reaction_3_k1*reaction_2_k1*pS6, reaction_5_k1*reaction_2_k2*pEGFR, reaction_5_k1*reaction_2_k2*pEGFR_Akt, reaction_5_k1*reaction_2_k2*Akt, reaction_5_k1*reaction_2_k2*pAkt, reaction_5_k1*reaction_2_k2*S6, reaction_5_k1*reaction_2_k2*pAkt_S6, reaction_5_k1*reaction_2_k2*pS6, reaction_5_k1*reaction_5_k2*pEGFR, reaction_5_k1*reaction_5_k2*pEGFR_Akt, reaction_5_k1*reaction_5_k2*Akt, reaction_5_k1*reaction_5_k2*pAkt, reaction_5_k1*reaction_5_k2*S6, reaction_5_k1*reaction_5_k2*pAkt_S6, reaction_5_k1*reaction_5_k2*pS6, reaction_5_k1*reaction_8_k1*pEGFR, reaction_5_k1*reaction_8_k1*pEGFR_Akt, reaction_5_k1*reaction_8_k1*Akt, reaction_5_k1*reaction_8_k1*pAkt, reaction_5_k1*reaction_8_k1*S6, reaction_5_k1*reaction_8_k1*pAkt_S6, reaction_5_k1*reaction_8_k1*pS6, reaction_2_k1*reaction_2_k2*pEGFR, reaction_2_k1*reaction_2_k2*pEGFR_Akt, reaction_2_k1*reaction_2_k2*Akt, reaction_2_k1*reaction_2_k2*pAkt, reaction_2_k1*reaction_2_k2*S6, reaction_2_k1*reaction_2_k2*pAkt_S6, reaction_2_k1*reaction_2_k2*pS6, reaction_2_k1*reaction_5_k2*pEGFR, reaction_2_k1*reaction_5_k2*pEGFR_Akt, reaction_2_k1*reaction_5_k2*Akt, reaction_2_k1*reaction_5_k2*pAkt, reaction_2_k1*reaction_5_k2*S6, reaction_2_k1*reaction_5_k2*pAkt_S6, reaction_2_k1*reaction_5_k2*pS6, reaction_2_k1*reaction_8_k1*pEGFR, reaction_2_k1*reaction_8_k1*pEGFR_Akt, reaction_2_k1*reaction_8_k1*Akt, reaction_2_k1*reaction_8_k1*pAkt, reaction_2_k1*reaction_8_k1*S6, reaction_2_k1*reaction_8_k1*pAkt_S6, reaction_2_k1*reaction_8_k1*pS6, reaction_1_k1 - reaction_9_k1 - reaction_1_k2, reaction_4_k1, reaction_7_k1, reaction_6_k1, reaction_3_k1, reaction_2_k2, reaction_5_k2, reaction_8_k1]
+[ Info: Computing 26 Groebner bases for block orderings. Simplification code is 1
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[t, y1, y2, y3, y4, y5, y6, y7, y8, y9  …  y15, y16, y17, y18, y19, y20, y21, y22, y23, y24], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y25], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 5.832138981 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002745944 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y25, t, y1, y2, y3, y4, y5, y6, y7, y8  …  y14, y15, y16, y17, y18, y19, y20, y21, y22, y23], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y24], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.142628956 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002607396 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y24, y25, t, y1, y2, y3, y4, y5, y6, y7  …  y13, y14, y15, y16, y17, y18, y19, y20, y21, y22], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y23], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.124126877 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.014953861 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y23, y24, y25, t, y1, y2, y3, y4, y5, y6  …  y12, y13, y14, y15, y16, y17, y18, y19, y20, y21], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y22], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.115138581 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002638434 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y22, y23, y24, y25, t, y1, y2, y3, y4, y5  …  y11, y12, y13, y14, y15, y16, y17, y18, y19, y20], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y21], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.120519855 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002693246 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y21, y22, y23, y24, y25, t, y1, y2, y3, y4  …  y10, y11, y12, y13, y14, y15, y16, y17, y18, y19], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y20], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.11963178 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002549563 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y20, y21, y22, y23, y24, y25, t, y1, y2, y3  …  y9, y10, y11, y12, y13, y14, y15, y16, y17, y18], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y19], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.117806436 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.014373207 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y19, y20, y21, y22, y23, y24, y25, t, y1, y2  …  y8, y9, y10, y11, y12, y13, y14, y15, y16, y17], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y18], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.102694084 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.014776203 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y18, y19, y20, y21, y22, y23, y24, y25, t, y1  …  y7, y8, y9, y10, y11, y12, y13, y14, y15, y16], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y17], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.096094381 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002651243 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y17, y18, y19, y20, y21, y22, y23, y24, y25, t  …  y6, y7, y8, y9, y10, y11, y12, y13, y14, y15], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y16], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.109147195 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002751336 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y16, y17, y18, y19, y20, y21, y22, y23, y24, y25  …  y5, y6, y7, y8, y9, y10, y11, y12, y13, y14], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y15], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.113171274 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002610263 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y15, y16, y17, y18, y19, y20, y21, y22, y23, y24  …  y4, y5, y6, y7, y8, y9, y10, y11, y12, y13], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y14], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.095705749 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.013997128 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y14, y15, y16, y17, y18, y19, y20, y21, y22, y23  …  y3, y4, y5, y6, y7, y8, y9, y10, y11, y12], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y13], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.088379398 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002418092 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y13, y14, y15, y16, y17, y18, y19, y20, y21, y22  …  y2, y3, y4, y5, y6, y7, y8, y9, y10, y11], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y12], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.1020913 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002547899 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y12, y13, y14, y15, y16, y17, y18, y19, y20, y21  …  y1, y2, y3, y4, y5, y6, y7, y8, y9, y10], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y11], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.111411248 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002606605 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y11, y12, y13, y14, y15, y16, y17, y18, y19, y20  …  t, y1, y2, y3, y4, y5, y6, y7, y8, y9], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y10], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.093252971 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.014175679 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y10, y11, y12, y13, y14, y15, y16, y17, y18, y19  …  y25, t, y1, y2, y3, y4, y5, y6, y7, y8], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y9], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.089949177 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002624697 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y9, y10, y11, y12, y13, y14, y15, y16, y17, y18  …  y24, y25, t, y1, y2, y3, y4, y5, y6, y7], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y8], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.106851034 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002721346 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y8, y9, y10, y11, y12, y13, y14, y15, y16, y17  …  y23, y24, y25, t, y1, y2, y3, y4, y5, y6], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y7], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.111275674 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002792073 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y7, y8, y9, y10, y11, y12, y13, y14, y15, y16  …  y22, y23, y24, y25, t, y1, y2, y3, y4, y5], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y6], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.091493312 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.014649512 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y6, y7, y8, y9, y10, y11, y12, y13, y14, y15  …  y21, y22, y23, y24, y25, t, y1, y2, y3, y4], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y5], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.10418244 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002617522 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y5, y6, y7, y8, y9, y10, y11, y12, y13, y14  …  y20, y21, y22, y23, y24, y25, t, y1, y2, y3], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y4], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.123632769 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002596001 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y4, y5, y6, y7, y8, y9, y10, y11, y12, y13  …  y19, y20, y21, y22, y23, y24, y25, t, y1, y2], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y3], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.11873274 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002646124 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y3, y4, y5, y6, y7, y8, y9, y10, y11, y12  …  y18, y19, y20, y21, y22, y23, y24, y25, t, y1], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y2], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.121167364 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002776342 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y2, y3, y4, y5, y6, y7, y8, y9, y10, y11  …  y17, y18, y19, y20, y21, y22, y23, y24, y25, t], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y1], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.121910521 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002788094 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10  …  y16, y17, y18, y19, y20, y21, y22, y23, y24, y25], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[t], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.11981091 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002660088 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 854 fractions 362 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 1.441781338 seconds. Result: true
+[ Info: Out of 23 initial generators there are 20 indepdendent
+[ Info: The ranking of the new set of generators is 306
+[ Info: The search for identifiable functions concluded in 69.191621019 seconds
+[ Info: Processing Akt pathway
+┌ Info: Averaging over 1 runs.
+│ Using keyword arguments:
+│ NamedTuple{(:with_states, :strategy), Tuple{Bool, Tuple{Symbol, Int64}}}
+│ (with_states = true, strategy = (:hybrid, 1))
+└ ID: (:hybrid, 1)_with_states
+[ Info: Computing IO-equations
+┌ Info: Computed in 0.222698218 seconds
+│   :ioeq_time = :ioeq_time
+└   ioeq_time = 0.222698218
+[ Info: Computing Wronskians
+┌ Info: Computed in 0.356520581 seconds
+│   :wrnsk_time = :wrnsk_time
+└   wrnsk_time = 0.356520581
+[ Info: Dimensions of the Wronskians [18, 9, 145]
+┌ Info: Ranks of the Wronskians computed in 0.003034309 seconds
+│   :rank_time = :rank_time
+└   rank_times = 0.003034309
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 1 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 32.
+[ Info: Groebner basis computed in 0.101565029 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.010538176 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 14 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 12 fractions 12 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 0.025742915 seconds. Result: true
+[ Info: Out of 217 initial generators there are 12 indepdendent
+[ Info: The ranking of the new set of generators is 368
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.039848031 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.003405816 seconds. Result: false
+┌ Info: Computing parametric Groebner basis up to degrees (4, 4)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 3 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.074922119 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.003456659 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing normal forms (probabilistic)
+│ Parameters (25 in total): Nemo.QQMPolyRingElem[a2, a3, reaction_1_k1, reaction_4_k1, reaction_9_k1, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, reaction_3_k1, reaction_5_k1, reaction_2_k1, EGFR_turnover, reaction_2_k2, reaction_5_k2, reaction_8_k1, EGFR, pEGFR, pEGFR_Akt, Akt, pAkt, S6, pAkt_S6, pS6, EGF_EGFR]
+│ Up to degree: 3
+└ Modulo: Finite field of characteristic 1073741827
+AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}[a2*pEGFR, a2*pEGFR_Akt, a2*Akt, a2*pAkt, a2*S6, a2*pAkt_S6, a2*pS6, a3*pEGFR, a3*pEGFR_Akt, a3*Akt, a3*pAkt, a3*S6, a3*pAkt_S6, a3*pS6, a1*pEGFR, a1*pEGFR_Akt, a1*Akt, a1*pAkt, a1*S6, a1*pAkt_S6, a1*pS6, reaction_5_k1*pEGFR, reaction_5_k1*pEGFR_Akt, reaction_5_k1*Akt, reaction_5_k1*pAkt, reaction_5_k1*S6, reaction_5_k1*pAkt_S6, reaction_5_k1*pS6, reaction_2_k1*pEGFR, reaction_2_k1*pEGFR_Akt, reaction_2_k1*Akt, reaction_2_k1*pAkt, reaction_2_k1*S6, reaction_2_k1*pAkt_S6, reaction_2_k1*pS6, a2*reaction_4_k1*pEGFR, a2*reaction_4_k1*pEGFR_Akt, a2*reaction_4_k1*Akt, a2*reaction_4_k1*pAkt, a2*reaction_4_k1*S6, a2*reaction_4_k1*pAkt_S6, a2*reaction_4_k1*pS6, a2*reaction_9_k1*EGF_EGFR, a2*reaction_7_k1*pEGFR, a2*reaction_7_k1*pEGFR_Akt, a2*reaction_7_k1*Akt, a2*reaction_7_k1*pAkt, a2*reaction_7_k1*S6, a2*reaction_7_k1*pAkt_S6, a2*reaction_7_k1*pS6, a2*reaction_6_k1*pEGFR, a2*reaction_6_k1*pEGFR_Akt, a2*reaction_6_k1*Akt, a2*reaction_6_k1*pAkt, a2*reaction_6_k1*S6, a2*reaction_6_k1*pAkt_S6, a2*reaction_6_k1*pS6, a2*reaction_3_k1*pEGFR, a2*reaction_3_k1*pEGFR_Akt, a2*reaction_3_k1*Akt, a2*reaction_3_k1*pAkt, a2*reaction_3_k1*S6, a2*reaction_3_k1*pAkt_S6, a2*reaction_3_k1*pS6, a2*reaction_2_k2*pEGFR, a2*reaction_2_k2*pEGFR_Akt, a2*reaction_2_k2*Akt, a2*reaction_2_k2*pAkt, a2*reaction_2_k2*S6, a2*reaction_2_k2*pAkt_S6, a2*reaction_2_k2*pS6, a2*reaction_5_k2*pEGFR, a2*reaction_5_k2*pEGFR_Akt, a2*reaction_5_k2*Akt, a2*reaction_5_k2*pAkt, a2*reaction_5_k2*S6, a2*reaction_5_k2*pAkt_S6, a2*reaction_5_k2*pS6, a2*reaction_8_k1*pEGFR, a2*reaction_8_k1*pEGFR_Akt, a2*reaction_8_k1*Akt, a2*reaction_8_k1*pAkt, a2*reaction_8_k1*S6, a2*reaction_8_k1*pAkt_S6, a2*reaction_8_k1*pS6, a3*reaction_4_k1*pEGFR, a3*reaction_4_k1*pEGFR_Akt, a3*reaction_4_k1*Akt, a3*reaction_4_k1*pAkt, a3*reaction_4_k1*S6, a3*reaction_4_k1*pAkt_S6, a3*reaction_4_k1*pS6, a3*reaction_9_k1*EGF_EGFR, a3*reaction_7_k1*pEGFR, a3*reaction_7_k1*pEGFR_Akt, a3*reaction_7_k1*Akt, a3*reaction_7_k1*pAkt, a3*reaction_7_k1*S6, a3*reaction_7_k1*pAkt_S6, a3*reaction_7_k1*pS6, a3*reaction_6_k1*pEGFR, a3*reaction_6_k1*pEGFR_Akt, a3*reaction_6_k1*Akt, a3*reaction_6_k1*pAkt, a3*reaction_6_k1*S6, a3*reaction_6_k1*pAkt_S6, a3*reaction_6_k1*pS6, a3*reaction_3_k1*pEGFR, a3*reaction_3_k1*pEGFR_Akt, a3*reaction_3_k1*Akt, a3*reaction_3_k1*pAkt, a3*reaction_3_k1*S6, a3*reaction_3_k1*pAkt_S6, a3*reaction_3_k1*pS6, a3*reaction_2_k2*pEGFR, a3*reaction_2_k2*pEGFR_Akt, a3*reaction_2_k2*Akt, a3*reaction_2_k2*pAkt, a3*reaction_2_k2*S6, a3*reaction_2_k2*pAkt_S6, a3*reaction_2_k2*pS6, a3*reaction_5_k2*pEGFR, a3*reaction_5_k2*pEGFR_Akt, a3*reaction_5_k2*Akt, a3*reaction_5_k2*pAkt, a3*reaction_5_k2*S6, a3*reaction_5_k2*pAkt_S6, a3*reaction_5_k2*pS6, a3*reaction_8_k1*pEGFR, a3*reaction_8_k1*pEGFR_Akt, a3*reaction_8_k1*Akt, a3*reaction_8_k1*pAkt, a3*reaction_8_k1*S6, a3*reaction_8_k1*pAkt_S6, a3*reaction_8_k1*pS6, reaction_4_k1*a1*pEGFR, reaction_4_k1*a1*pEGFR_Akt, reaction_4_k1*a1*Akt, reaction_4_k1*a1*pAkt, reaction_4_k1*a1*S6, reaction_4_k1*a1*pAkt_S6, reaction_4_k1*a1*pS6, reaction_4_k1*reaction_5_k1*pEGFR, reaction_4_k1*reaction_5_k1*pEGFR_Akt, reaction_4_k1*reaction_5_k1*Akt, reaction_4_k1*reaction_5_k1*pAkt, reaction_4_k1*reaction_5_k1*S6, reaction_4_k1*reaction_5_k1*pAkt_S6, reaction_4_k1*reaction_5_k1*pS6, reaction_4_k1*reaction_2_k1*pEGFR, reaction_4_k1*reaction_2_k1*pEGFR_Akt, reaction_4_k1*reaction_2_k1*Akt, reaction_4_k1*reaction_2_k1*pAkt, reaction_4_k1*reaction_2_k1*S6, reaction_4_k1*reaction_2_k1*pAkt_S6, reaction_4_k1*reaction_2_k1*pS6, reaction_9_k1*a1*EGF_EGFR, reaction_9_k1*reaction_5_k1*EGF_EGFR, reaction_9_k1*reaction_2_k1*EGF_EGFR, reaction_7_k1*a1*pEGFR, reaction_7_k1*a1*pEGFR_Akt, reaction_7_k1*a1*Akt, reaction_7_k1*a1*pAkt, reaction_7_k1*a1*S6, reaction_7_k1*a1*pAkt_S6, reaction_7_k1*a1*pS6, reaction_7_k1*reaction_5_k1*pEGFR, reaction_7_k1*reaction_5_k1*pEGFR_Akt, reaction_7_k1*reaction_5_k1*Akt, reaction_7_k1*reaction_5_k1*pAkt, reaction_7_k1*reaction_5_k1*S6, reaction_7_k1*reaction_5_k1*pAkt_S6, reaction_7_k1*reaction_5_k1*pS6, reaction_7_k1*reaction_2_k1*pEGFR, reaction_7_k1*reaction_2_k1*pEGFR_Akt, reaction_7_k1*reaction_2_k1*Akt, reaction_7_k1*reaction_2_k1*pAkt, reaction_7_k1*reaction_2_k1*S6, reaction_7_k1*reaction_2_k1*pAkt_S6, reaction_7_k1*reaction_2_k1*pS6, reaction_6_k1*a1*pEGFR, reaction_6_k1*a1*pEGFR_Akt, reaction_6_k1*a1*Akt, reaction_6_k1*a1*pAkt, reaction_6_k1*a1*S6, reaction_6_k1*a1*pAkt_S6, reaction_6_k1*a1*pS6, reaction_6_k1*reaction_5_k1*pEGFR, reaction_6_k1*reaction_5_k1*pEGFR_Akt, reaction_6_k1*reaction_5_k1*Akt, reaction_6_k1*reaction_5_k1*pAkt, reaction_6_k1*reaction_5_k1*S6, reaction_6_k1*reaction_5_k1*pAkt_S6, reaction_6_k1*reaction_5_k1*pS6, reaction_6_k1*reaction_2_k1*pEGFR, reaction_6_k1*reaction_2_k1*pEGFR_Akt, reaction_6_k1*reaction_2_k1*Akt, reaction_6_k1*reaction_2_k1*pAkt, reaction_6_k1*reaction_2_k1*S6, reaction_6_k1*reaction_2_k1*pAkt_S6, reaction_6_k1*reaction_2_k1*pS6, a1*reaction_3_k1*pEGFR, a1*reaction_3_k1*pEGFR_Akt, a1*reaction_3_k1*Akt, a1*reaction_3_k1*pAkt, a1*reaction_3_k1*S6, a1*reaction_3_k1*pAkt_S6, a1*reaction_3_k1*pS6, a1*reaction_2_k2*pEGFR, a1*reaction_2_k2*pEGFR_Akt, a1*reaction_2_k2*Akt, a1*reaction_2_k2*pAkt, a1*reaction_2_k2*S6, a1*reaction_2_k2*pAkt_S6, a1*reaction_2_k2*pS6, a1*reaction_5_k2*pEGFR, a1*reaction_5_k2*pEGFR_Akt, a1*reaction_5_k2*Akt, a1*reaction_5_k2*pAkt, a1*reaction_5_k2*S6, a1*reaction_5_k2*pAkt_S6, a1*reaction_5_k2*pS6, a1*reaction_8_k1*pEGFR, a1*reaction_8_k1*pEGFR_Akt, a1*reaction_8_k1*Akt, a1*reaction_8_k1*pAkt, a1*reaction_8_k1*S6, a1*reaction_8_k1*pAkt_S6, a1*reaction_8_k1*pS6, reaction_3_k1*reaction_5_k1*pEGFR, reaction_3_k1*reaction_5_k1*pEGFR_Akt, reaction_3_k1*reaction_5_k1*Akt, reaction_3_k1*reaction_5_k1*pAkt, reaction_3_k1*reaction_5_k1*S6, reaction_3_k1*reaction_5_k1*pAkt_S6, reaction_3_k1*reaction_5_k1*pS6, reaction_3_k1*reaction_2_k1*pEGFR, reaction_3_k1*reaction_2_k1*pEGFR_Akt, reaction_3_k1*reaction_2_k1*Akt, reaction_3_k1*reaction_2_k1*pAkt, reaction_3_k1*reaction_2_k1*S6, reaction_3_k1*reaction_2_k1*pAkt_S6, reaction_3_k1*reaction_2_k1*pS6, reaction_5_k1*reaction_2_k2*pEGFR, reaction_5_k1*reaction_2_k2*pEGFR_Akt, reaction_5_k1*reaction_2_k2*Akt, reaction_5_k1*reaction_2_k2*pAkt, reaction_5_k1*reaction_2_k2*S6, reaction_5_k1*reaction_2_k2*pAkt_S6, reaction_5_k1*reaction_2_k2*pS6, reaction_5_k1*reaction_5_k2*pEGFR, reaction_5_k1*reaction_5_k2*pEGFR_Akt, reaction_5_k1*reaction_5_k2*Akt, reaction_5_k1*reaction_5_k2*pAkt, reaction_5_k1*reaction_5_k2*S6, reaction_5_k1*reaction_5_k2*pAkt_S6, reaction_5_k1*reaction_5_k2*pS6, reaction_5_k1*reaction_8_k1*pEGFR, reaction_5_k1*reaction_8_k1*pEGFR_Akt, reaction_5_k1*reaction_8_k1*Akt, reaction_5_k1*reaction_8_k1*pAkt, reaction_5_k1*reaction_8_k1*S6, reaction_5_k1*reaction_8_k1*pAkt_S6, reaction_5_k1*reaction_8_k1*pS6, reaction_2_k1*reaction_2_k2*pEGFR, reaction_2_k1*reaction_2_k2*pEGFR_Akt, reaction_2_k1*reaction_2_k2*Akt, reaction_2_k1*reaction_2_k2*pAkt, reaction_2_k1*reaction_2_k2*S6, reaction_2_k1*reaction_2_k2*pAkt_S6, reaction_2_k1*reaction_2_k2*pS6, reaction_2_k1*reaction_5_k2*pEGFR, reaction_2_k1*reaction_5_k2*pEGFR_Akt, reaction_2_k1*reaction_5_k2*Akt, reaction_2_k1*reaction_5_k2*pAkt, reaction_2_k1*reaction_5_k2*S6, reaction_2_k1*reaction_5_k2*pAkt_S6, reaction_2_k1*reaction_5_k2*pS6, reaction_2_k1*reaction_8_k1*pEGFR, reaction_2_k1*reaction_8_k1*pEGFR_Akt, reaction_2_k1*reaction_8_k1*Akt, reaction_2_k1*reaction_8_k1*pAkt, reaction_2_k1*reaction_8_k1*S6, reaction_2_k1*reaction_8_k1*pAkt_S6, reaction_2_k1*reaction_8_k1*pS6, reaction_1_k1 - reaction_9_k1 - reaction_1_k2, reaction_4_k1, reaction_7_k1, reaction_6_k1, reaction_3_k1, reaction_2_k2, reaction_5_k2, reaction_8_k1]
+[ Info: Computing 26 Groebner bases for block orderings. Simplification code is 1
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[t, y1, y2, y3, y4, y5, y6, y7, y8, y9  …  y15, y16, y17, y18, y19, y20, y21, y22, y23, y24], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y25], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.118384059 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002640927 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y25, t, y1, y2, y3, y4, y5, y6, y7, y8  …  y14, y15, y16, y17, y18, y19, y20, y21, y22, y23], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y24], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.122158107 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.00258561 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y24, y25, t, y1, y2, y3, y4, y5, y6, y7  …  y13, y14, y15, y16, y17, y18, y19, y20, y21, y22], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y23], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.122644232 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002756669 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y23, y24, y25, t, y1, y2, y3, y4, y5, y6  …  y12, y13, y14, y15, y16, y17, y18, y19, y20, y21], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y22], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.122044604 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.015483572 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y22, y23, y24, y25, t, y1, y2, y3, y4, y5  …  y11, y12, y13, y14, y15, y16, y17, y18, y19, y20], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y21], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.11423716 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002650365 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y21, y22, y23, y24, y25, t, y1, y2, y3, y4  …  y10, y11, y12, y13, y14, y15, y16, y17, y18, y19], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y20], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.11638805 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002933846 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y20, y21, y22, y23, y24, y25, t, y1, y2, y3  …  y9, y10, y11, y12, y13, y14, y15, y16, y17, y18], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y19], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.117213926 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.00256861 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y19, y20, y21, y22, y23, y24, y25, t, y1, y2  …  y8, y9, y10, y11, y12, y13, y14, y15, y16, y17], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y18], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.115070535 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002638794 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 23 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y18, y19, y20, y21, y22, y23, y24, y25, t, y1  …  y7, y8, y9, y10, y11, y12, y13, y14, y15, y16], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y17], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.107541639 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002613398 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y17, y18, y19, y20, y21, y22, y23, y24, y25, t  …  y6, y7, y8, y9, y10, y11, y12, y13, y14, y15], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y16], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.1129336 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002743479 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y16, y17, y18, y19, y20, y21, y22, y23, y24, y25  …  y5, y6, y7, y8, y9, y10, y11, y12, y13, y14], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y15], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.101878718 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.015057904 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y15, y16, y17, y18, y19, y20, y21, y22, y23, y24  …  y4, y5, y6, y7, y8, y9, y10, y11, y12, y13], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y14], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.092216014 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002595377 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y14, y15, y16, y17, y18, y19, y20, y21, y22, y23  …  y3, y4, y5, y6, y7, y8, y9, y10, y11, y12], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y13], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.104880362 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002548779 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y13, y14, y15, y16, y17, y18, y19, y20, y21, y22  …  y2, y3, y4, y5, y6, y7, y8, y9, y10, y11], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y12], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.108862652 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002762016 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y12, y13, y14, y15, y16, y17, y18, y19, y20, y21  …  y1, y2, y3, y4, y5, y6, y7, y8, y9, y10], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y11], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.097183085 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.014439748 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y11, y12, y13, y14, y15, y16, y17, y18, y19, y20  …  t, y1, y2, y3, y4, y5, y6, y7, y8, y9], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y10], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.090460344 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002673933 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y10, y11, y12, y13, y14, y15, y16, y17, y18, y19  …  y25, t, y1, y2, y3, y4, y5, y6, y7, y8], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y9], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.105432941 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002758212 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y9, y10, y11, y12, y13, y14, y15, y16, y17, y18  …  y24, y25, t, y1, y2, y3, y4, y5, y6, y7], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y8], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.109886514 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002708449 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y8, y9, y10, y11, y12, y13, y14, y15, y16, y17  …  y23, y24, y25, t, y1, y2, y3, y4, y5, y6], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y7], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.094447937 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.014947195 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y7, y8, y9, y10, y11, y12, y13, y14, y15, y16  …  y22, y23, y24, y25, t, y1, y2, y3, y4, y5], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y6], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.092009917 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002784358 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y6, y7, y8, y9, y10, y11, y12, y13, y14, y15  …  y21, y22, y23, y24, y25, t, y1, y2, y3, y4], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y5], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.122571831 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002779446 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y5, y6, y7, y8, y9, y10, y11, y12, y13, y14  …  y20, y21, y22, y23, y24, y25, t, y1, y2, y3], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y4], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.131325397 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002822583 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y4, y5, y6, y7, y8, y9, y10, y11, y12, y13  …  y19, y20, y21, y22, y23, y24, y25, t, y1, y2], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y3], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.128032808 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002741911 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y3, y4, y5, y6, y7, y8, y9, y10, y11, y12  …  y18, y19, y20, y21, y22, y23, y24, y25, t, y1], true), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y2], true))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.124217631 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002765521 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y2, y3, y4, y5, y6, y7, y8, y9, y10, y11  …  y17, y18, y19, y20, y21, y22, y23, y24, y25, t], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y1], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.124112812 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.002740063 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 22 rational functions
+┌ Info: Computing GB for ordering
+└   ord = ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}(DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[y1, y2, y3, y4, y5, y6, y7, y8, y9, y10  …  y16, y17, y18, y19, y20, y21, y22, y23, y24, y25], false), DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}(AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}[t], false))
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / ProductOrdering{DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}, DegRevLex{AbstractAlgebra.Generic.MPoly{Nemo.QQMPolyRingElem}}}
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 1 for den.
+│ Maximal number of interpolated terms are: 3 for num. and 1 for den.
+└ Points used: 40.
+[ Info: Groebner basis computed in 0.103679664 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.015152384 seconds. Result: false
+[ Info: The coefficients of the Groebner basis are presented by 21 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 854 fractions 362 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 0.008104112 seconds. Result: true
+[ Info: Out of 23 initial generators there are 20 indepdendent
+[ Info: The ranking of the new set of generators is 306
+[ Info: The search for identifiable functions concluded in 5.580450759 seconds
+┌ Info: Result is
+│   result =
+│    20-element Vector{AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}}:
+│     reaction_8_k1
+│     reaction_5_k2
+│     reaction_2_k2
+│     reaction_3_k1
+│     ⋮
+│     a2*pS6
+│     reaction_9_k1*reaction_2_k1*EGF_EGFR
+└     reaction_1_k1 - reaction_9_k1 - reaction_1_k2

@@ -936,7 +936,7 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 @testset "Identifiable functions of parameters" failfast = true begin
     p = 0.99
     for case in test_cases
-        for strategy in [(:gb,), (:normalforms, 3)]# (:hybrid, 1)]
+        for strategy in [(:gb,), (:normalforms, 3), (:hybrid, 1)]
             ode = case.ode
             true_ident_funcs = case.ident_funcs
             with_states = false

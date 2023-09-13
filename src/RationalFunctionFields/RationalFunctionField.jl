@@ -522,8 +522,8 @@ function simplified_generating_set(
     # If a set of GBs is needed
     if first(strategy) === :gbfan
         @assert length(strategy) == 2
-        _, nbases = strategy
-        fan = generating_sets_fan(new_rff, nbases; seed = seed)
+        _, code = strategy
+        fan = generating_sets_fan(new_rff, code; seed = seed)
         for (ord, generators) in fan
             append!(new_fracs, generators)
         end
@@ -544,9 +544,9 @@ function simplified_generating_set(
     if first(strategy) === :hybrid
         @assert 1 <= length(strategy) <= 2
         if length(strategy) == 1
-            nbases = 10
+            code = 10
         else
-            nbases = strategy[2]
+            code = strategy[2]
         end
 
         # Compute some normal forms
@@ -560,7 +560,7 @@ function simplified_generating_set(
         append!(new_fracs, generators)
 
         # Compute some GBs
-        fan = generating_sets_fan(new_rff, nbases; seed = seed)
+        fan = generating_sets_fan(new_rff, code; seed = seed)
         for (ord, generators) in fan
             append!(new_fracs, generators)
         end

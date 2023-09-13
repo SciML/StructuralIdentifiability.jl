@@ -908,6 +908,14 @@ begin
         y8(t) = -x7(t) + 165
     )
 
+    st = StructuralIdentifiability.@ODEmodel(
+        S'(t) = r * S(t) - (e + a * W(t)) * S(t) - d * W(t) * S(t) + g * R(t),
+        R'(t) = rR * R(t) + (e + a * W(t)) * S(t) - dr * W(t) * R(t) - g * R(t),
+        W'(t) = Dd * (T - W(t)),
+        y1(t) = S(t) + R(t),
+        y2(t) = T
+    )
+
     using Nemo, Logging
     using JuliaInterpreter
     Groebner = StructuralIdentifiability.Groebner
@@ -916,15 +924,15 @@ begin
 end
 
 id_funcs2 = StructuralIdentifiability.find_identifiable_functions(
-    jak_stat,
-    with_states = false,
-    rational_interpolator = :VanDerHoevenLecerf,
+    sliqr,
+    with_states = true,
+    strategy = (:gb,),
 )
 
-id_funcs1 = StructuralIdentifiability.find_identifiable_functions(
-    jak_stat,
+@my_profview id_funcs1 = StructuralIdentifiability.find_identifiable_functions(
+    sliqr,
     with_states = true,
-    rational_interpolator = :CuytLee,
+    strategy = (:hybrid, 3),
 )
 
 StructuralIdentifiability._runtime_logger[:id_npoints_degree]  # 56, 156

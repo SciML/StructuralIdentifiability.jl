@@ -87,7 +87,14 @@ function parse_commandline()
         "--skip"
             help = "Skip specified benchmark models."
             arg_type = Vector{String}
-            default = ["NFkB"]
+            default = ["NFkB", 
+                "JAK-STAT 1", 
+                "LeukaemiaLeon2021", 
+                "MAPK model (5 outputs bis)", 
+                "QWWC", 
+                "TumorHu2019", 
+                "TumorPillis2007", 
+                "cLV1 (1o)"]
         "--models"
             help = """
             Run specified benchmark models. 
