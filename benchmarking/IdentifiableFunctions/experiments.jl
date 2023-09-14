@@ -6,7 +6,7 @@ begin
 
     macro my_profview(ex)
         :((VSCodeServer.Profile).clear();
-        VSCodeServer.Profile.init(n = 10^8, delay = 0.0001);
+        VSCodeServer.Profile.init(n = 10^8, delay = 0.001);
         VSCodeServer.Profile.start_timer();
         $ex;
         VSCodeServer.Profile.stop_timer();
@@ -916,6 +916,59 @@ begin
         y2(t) = T
     )
 
+    highDimNonlin = StructuralIdentifiability.@ODEmodel(
+        x1'(t) =
+            (-p1 * km * x1(t) - p1 * x1(t)^2 + km * u(t) - x1(t) * vm + x1(t) * u(t)) //
+            (km + x1(t)),
+        x2'(t) = -p2 * x2(t) + p1 * x1(t),
+        x3'(t) = p2 * x2(t) - x3(t) * p3,
+        x4'(t) = x3(t) * p3 - x4(t) * p4,
+        x5'(t) = -p5 * x5(t) + x4(t) * p4,
+        x6'(t) = -p6 * x6(t) + p5 * x5(t),
+        x7'(t) = -p7 * x7(t) + p6 * x6(t),
+        x8'(t) = p7 * x7(t) - p8 * x8(t),
+        x9'(t) = -x9(t) * p9 + p8 * x8(t),
+        x10'(t) = x9(t) * p9 - x10(t) * p10,
+        x11'(t) = x10(t) * p10 - x11(t) * p11,
+        x12'(t) = x11(t) * p11 - p12 * x12(t),
+        x13'(t) = -x13(t) * p13 + p12 * x12(t),
+        x14'(t) = x13(t) * p13 - p14 * x14(t),
+        x15'(t) = -p15 * x15(t) + p14 * x14(t),
+        x16'(t) = p15 * x15(t) - x16(t) * p16,
+        x17'(t) = -p17 * x17(t) + x16(t) * p16,
+        x18'(t) = -p18 * x18(t) + p17 * x17(t),
+        x19'(t) = -x19(t) * p19 + p18 * x18(t),
+        x20'(t) = -p20 * x20(t) + x19(t) * p19,
+        y1(t) = x1(t),
+        y2(t) = x2(t),
+        y3(t) = x3(t),
+        y4(t) = x4(t),
+        y5(t) = x5(t),
+        y6(t) = x6(t),
+        y7(t) = x7(t),
+        y8(t) = x8(t),
+        y9(t) = x9(t),
+        y10(t) = x10(t),
+        y11(t) = x11(t),
+        y12(t) = x12(t),
+        y13(t) = x13(t),
+        y14(t) = x14(t),
+        y15(t) = x15(t),
+        y16(t) = x16(t),
+        y17(t) = x17(t),
+        y18(t) = x18(t),
+        y19(t) = x19(t),
+        y20(t) = x20(t)
+    )
+
+    goodwin = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = -b * x1(t) + 1 / (c + x4(t)),
+        x2'(t) = alpha * x1(t) - beta * x2(t),
+        x3'(t) = gama * x2(t) - delta * x3(t),
+        x4'(t) = sigma * x4(t) * (gama * x2(t) - delta * x3(t)) / x3(t),
+        y(t) = x1(t)
+    )
+
     using Nemo, Logging
     using JuliaInterpreter
     Groebner = StructuralIdentifiability.Groebner
@@ -923,10 +976,10 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-@my_profview id_funcs2 = StructuralIdentifiability.find_identifiable_functions(
+@time id_funcs2 = StructuralIdentifiability.find_identifiable_functions(
     sliqr,
     with_states = true,
-    strategy = (:normalforms, 3),
+    strategy = (:normalforms, 2),
 )
 
 @my_profview id_funcs1 = StructuralIdentifiability.find_identifiable_functions(

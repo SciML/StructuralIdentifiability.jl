@@ -31,6 +31,7 @@ eq_up_to_the_order(a, b) = issubset(a, b) && issubset(b, a)
     @test eq_up_to_the_order(relations, [a^7 + (10 // 9) * b^6, b^10 - 5b^2])
 
     # Regression tests
+    ###
     # LV model.
     R, (x1, p2, p4, y1, x2, x3, u, p1, p3) =
         QQ["x1", "p2", "p4", "y1", "x2", "x3", "u", "p1", "p3"]
@@ -51,13 +52,15 @@ eq_up_to_the_order(a, b) = issubset(a, b) && issubset(b, a)
     )
     @test (x1 * p4 + p2 * x2) // one(R) in relations
 
+    ###
     R, (a, b, c) = QQ["a", "b", "c"]
     f = [a, a * b + b * c]
     rff = StructuralIdentifiability.RationalFunctionField(f)
     relations = StructuralIdentifiability.monomial_generators_up_to_degree(rff, 2)
     @test eq_up_to_the_order(relations, [a, a * b + b * c])
 
-    # some generators from SLIQR model
+    ###
+    # Some arbitrary generators for the SLIQR model
     R, (b, e, In, S, Ninv, s, Q, g, u, a, y, L) =
         PolynomialRing(QQ, [:b, :e, :In, :S, :Ninv, :s, :Q, :g, :u, :a, :y, :L])
     f = [
@@ -88,11 +91,3 @@ fracs = StructuralIdentifiability.beautifuly_generators(
 )
 
 relations = StructuralIdentifiability.linear_relations_between_normal_forms(fracs, 2)
-
-# Relations:    [y1*y3 + 290109825*y3,  y1*y2 + 290109825*y2,   y2*y3 + 783632002*y2        ]
-# Normal forms: [y3 + 716318111,        0,                      y2 + 963771138,             0, 0, y3^2 + 315616002, y2^2 + 684624452]
-# Monoms:       [y3,                    y1*y3 + 290109825*y3,   y2, y1*y2 + 290109825*y2,   y2*y3 + 783632002*y2, y3^2, y2^2]
-
-# Relations:    [y1*y3 + 417642207*y3,  y1*y2 + 417642207*y2,   y2*y3 + 656099620*y2    ]
-# Normal forms: [y3 + 87893015,         0,                      y2 + 619382642,             0, 0, y3^2 + 591191574, y2^2 + 73394090]
-# Monoms:       [y3,                    y1*y3 + 417642207*y3,   y2,                         y1*y2 + 417642207*y2, y2*y3 + 656099620*y2, y3^2, y2^2]
