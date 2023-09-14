@@ -923,14 +923,14 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-id_funcs2 = StructuralIdentifiability.find_identifiable_functions(
+@my_profview id_funcs2 = StructuralIdentifiability.find_identifiable_functions(
     sliqr,
     with_states = true,
-    strategy = (:gb,),
+    strategy = (:normalforms, 3),
 )
 
 @my_profview id_funcs1 = StructuralIdentifiability.find_identifiable_functions(
-    sliqr,
+    Bilirubin2_io,
     with_states = true,
     strategy = (:hybrid, 3),
 )

@@ -41,6 +41,13 @@ funcs1 = StructuralIdentifiability.find_identifiable_functions(
     strategy = (:normalforms, 2),
     seed = 42,
 )
+
+StructuralIdentifiability.field_contains(
+    StructuralIdentifiability.RationalFunctionField(funcs1),
+    [(s * Q - Q * a) // one(s)],
+    0.99,
+)
+
 funcs2 = StructuralIdentifiability.find_identifiable_functions(
     SLIQR,
     with_states = true,

@@ -460,7 +460,7 @@ function monomial_generators_up_to_degree(
     strategy = :monte_carlo,
 ) where {T}
     @assert strategy in (:monte_carlo,)
-    relations = linear_relations_between_normal_forms_mod_p(
+    relations = linear_relations_between_normal_forms(
         beautifuly_generators(rff),
         up_to_degree,
         seed = seed,
