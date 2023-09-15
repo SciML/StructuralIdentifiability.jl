@@ -18,42 +18,6 @@ funcs = StructuralIdentifiability.find_identifiable_functions(
 )
 
 # 2.
-# Polynomial with (:normalforms, 3)
-SLIQR = StructuralIdentifiability.@ODEmodel(
-    S'(t) = -b * In(t) * S(t) * Ninv - u(t) * S(t) * Ninv,
-    L'(t) = b * In(t) * S(t) * Ninv - a * L(t),
-    In'(t) = a * L(t) - g * In(t) + s * Q(t),
-    Q'(t) = (1 - e) * g * In(t) - s * Q(t),
-    y(t) = In(t) * Ninv
-)
-funcs = StructuralIdentifiability.find_identifiable_functions(
-    SLIQR,
-    with_states = true,
-    strategy = (:normalforms, 3),
-    seed = 42,
-)
-
-# 3.
-# CGV1990
-# Polynomial with (:normalforms, 3)
-CGV1990 = StructuralIdentifiability.@ODEmodel(
-    q1'(t) = k4 * q3(t) - (k3 + k7) * q1(t) + u(t),
-    q3'(t) =
-        k3 * q1(t) - k4 * q3(t) - k5 * q3(t) * (R * V3 - q35(t)) + k6 * q35(t) -
-        k5 * q3(t) * (5 * V36 / V3) * (S * V36 - q36(t)) + k6 * q36(t),
-    q35'(t) = k5 * q3(t) * (R * V3 - q35(t)) - k6 * q35(t),
-    q36'(t) = k5 * q3(t) * (5 * V36 / V3) * (S * V36 - q36(t)) - k6 * q36(t),
-    q7'(t) = k7 * q1(t),
-    y1(t) = q7(t)
-)
-funcs = StructuralIdentifiability.find_identifiable_functions(
-    CGV1990,
-    with_states = true,
-    strategy = (:normalforms, 3),
-    seed = 42,
-)
-
-# 4.
 # Goodwin oscillator
 # ?
 Goodwin = StructuralIdentifiability.@ODEmodel(
@@ -70,7 +34,7 @@ funcs = StructuralIdentifiability.find_identifiable_functions(
     seed = 42,
 )
 
-# 5.
+# 3.
 # KD1999
 # Non-polynomial
 KD1999 = StructuralIdentifiability.@ODEmodel(
@@ -95,7 +59,7 @@ funcs = StructuralIdentifiability.find_identifiable_functions(
     seed = 42,
 )
 
-# 6.
+# 4.
 # LLW1987_io
 # Non-polynomial
 LLW1987_io = StructuralIdentifiability.@ODEmodel(
