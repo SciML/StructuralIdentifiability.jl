@@ -933,10 +933,10 @@ ident_funcs = [k3, k1 // k7, k5 // k2, k6 // k2, k7 * EpoR_A]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # TODO: verify that Maple returns the same
-@testset "Identifiable functions of parameters" failfast = true begin
+@testset "Identifiable functions of parameters" begin
     p = 0.99
     for case in test_cases
-        for strategy in [(:gb,), (:normalforms, 3), (:hybrid, 1)]
+        for strategy in [(:gb,), (:normalforms, 2), (:hybrid, 1)]
             ode = case.ode
             true_ident_funcs = case.ident_funcs
             with_states = false

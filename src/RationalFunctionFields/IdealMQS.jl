@@ -107,7 +107,6 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         dens_qq = empty(funcs_den_nums[1])
         dens_indices = Vector{Tuple{Int, Int}}()
         for i in 1:length(funcs_den_nums)
-            # TODO: we can remove duplicates in numerators. Check if this helps
             plist = funcs_den_nums[i]
             den = plist[pivots_indices[i]]
             den = parent_ring_change(den, R_sat, matching = :byindex)
@@ -160,63 +159,40 @@ ParamPunPam.parent_params(ideal::IdealMQS) = base_ring(ideal.parent_ring_param)
     """))
 end
 
-# Used only for debugging!
-function ideal_generators_raw(mqs::IdealMQS)
-    return field_to_ideal(mqs.funcs_den_nums)
-end
-
-# Used only for debugging!
-function saturate(I, Q; varname = "t", append_front = true)
-    @info "Saturating the ideal, saturating variable is $varname"
-    R = parent(first(I))
-    K, ord = base_ring(R), ordering(R)
-    existing_varnames = map(String, symbols(R))
-    @assert !(varname in existing_varnames)
-    varnames =
-        append_front ? pushfirst!(existing_varnames, varname) :
-        push!(existing_varnames, varname)
-    Rt, vt = Nemo.PolynomialRing(K, varnames, ordering = ord)
-    if append_front
-        xs, t = vt[2:end], first(vt)
-    else
-        xs, t = vt[1:(end - 1)], last(vt)
+function fractionfree_generators_raw(mqs::IdealMQS)
+    ring_params = ParamPunPam.parent_params(mqs)
+    K = base_ring(ring_params)
+    varnames = map(string, Nemo.symbols(ring_params))
+    # The hope is that new variables' names would not intersect with the old ones
+    @assert mqs.sat_var_index == length(varnames) + 1
+    old_varnames = map(i -> "y$i", 1:length(varnames))
+    new_varnames = map(i -> "라$i", 1:(length(varnames) + 1))
+    if !isempty(intersect(old_varnames, new_varnames))
+        @warn "Intersection in two sets of variables!" varnames new_varnames
     end
-    It = map(f -> parent_ring_change(f, Rt), I)
-    Qt = parent_ring_change(Q, Rt)
-    sat = 1 - Qt * t
-    push!(It, sat)
-    It, t
-end
-
-# Used only for debugging!
-function field_to_ideal(
-    funcs_den_nums::Vector{Vector{T}};
-    top_level_var = "y",
-    top_level_ord = :degrevlex,
-) where {T}
-    @assert !isempty(funcs_den_nums)
-    R = parent(first(first(funcs_den_nums)))
-    @info "Producing the ideal generators in $R"
-    K, n = base_ring(R), nvars(R)
-    Q = reduce(lcm, map(first, funcs_den_nums))
-    @debug "Rational functions common denominator" Q
-    ystrs = ["$top_level_var$i" for i in 1:n]
-    Ry, ys = Nemo.PolynomialRing(R, ystrs, ordering = top_level_ord)
-    Qy = parent_ring_change(Q, Ry, matching = :byindex)
-    I = empty(ys)
-    for component in funcs_den_nums
-        pivot = component[1]
-        for i in 2:length(component)
-            f = component[i]
-            fy = parent_ring_change(f, Ry, matching = :byindex)
-            qy = parent_ring_change(pivot, Ry, matching = :byindex)
-            F = fy * Q - f * qy
-            push!(I, F)
+    # NOTE: new variables go first!
+    big_ring, big_vars =
+        PolynomialRing(K, vcat(new_varnames, old_varnames), ordering = :lex)
+    @info "" mqs.sat_var_index varnames ring_params parent(mqs.sat_qq)
+    nums_qq, dens_qq, sat_qq = mqs.nums_qq, mqs.dens_qq, mqs.sat_qq
+    nums_y = map(num -> parent_ring_change(num, big_ring, matching = :byindex), nums_qq)
+    dens_y = map(den -> parent_ring_change(den, big_ring, matching = :byindex), dens_qq)
+    sat_y = parent_ring_change(sat_qq, big_ring, matching = :byindex)
+    nums_x = map(num -> parent_ring_change(num, big_ring, matching = :byname), nums_qq)
+    dens_x = map(den -> parent_ring_change(den, big_ring, matching = :byname), dens_qq)
+    polys = Vector{elem_type(big_ring)}(undef, length(nums_qq) + 1)
+    @inbounds for i in 1:length(dens_qq)
+        den_y, den_x = dens_y[i], dens_x[i]
+        span = mqs.dens_indices[i]
+        for j in span[1]:span[2]
+            num_y, num_x = nums_y[j], nums_x[j]
+            polys[j] = num_y * den_x - den_y * num_x
         end
     end
-    I, t = saturate(I, Qy)
-    I_rat = map(f -> map_coefficients(c -> c // one(R), f), I)
-    return I_rat
+    polys[end] = sat_y
+    main_var_indices = 1:(length(varnames) + 1)
+    param_var_indices = (main_var_indices + 1):length(big_vars)
+    return polys, main_var_indices, param_var_indices
 end
 
 # TODO: check that the reduction is lucky.

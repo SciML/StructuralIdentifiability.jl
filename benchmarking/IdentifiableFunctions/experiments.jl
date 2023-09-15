@@ -6,7 +6,7 @@ begin
 
     macro my_profview(ex)
         :((VSCodeServer.Profile).clear();
-        VSCodeServer.Profile.init(n = 10^8, delay = 0.001);
+        VSCodeServer.Profile.init(n = 10^8, delay = 0.0001);
         VSCodeServer.Profile.start_timer();
         $ex;
         VSCodeServer.Profile.stop_timer();
@@ -976,11 +976,15 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-@time id_funcs2 = StructuralIdentifiability.find_identifiable_functions(
-    sliqr,
+@time StructuralIdentifiability.find_identifiable_functions(
+    seuir,
     with_states = true,
     strategy = (:normalforms, 2),
 )
+
+StructuralIdentifiability._runtime_logger[:id_total]
+
+StructuralIdentifiability._runtime_logger[:id_beautifulization]
 
 @my_profview id_funcs1 = StructuralIdentifiability.find_identifiable_functions(
     Bilirubin2_io,

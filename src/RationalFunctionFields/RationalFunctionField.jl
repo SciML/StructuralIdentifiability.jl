@@ -213,6 +213,7 @@ function beautifuly_generators(
     discard_redundant = true,
     reversed_order = false,
 )
+    time_start = time_ns()
     fracs = dennums_to_fractions(rff.dennums)
     # Filter pass
     fracs = filter(!is_rational_func_const, fracs)
@@ -258,6 +259,7 @@ function beautifuly_generators(
     end
     sort!(fracs, lt = rational_function_cmp)
     spring_cleaning_pass!(fracs)
+    _runtime_logger[:id_beautifulization] += (time_ns() - time_start) / 1e9
     return fracs
 end
 
@@ -303,7 +305,6 @@ function groebner_basis_coeffs(
     seed = 42,
     ordering = Groebner.InputOrdering(),
     up_to_degree = (typemax(Int), typemax(Int)),
-    use_homogenization = false,
     rational_interpolator = :VanDerHoevenLecerf,
 )
     mqs = rff.mqs
@@ -406,7 +407,6 @@ function generating_sets_fan(
                 seed = seed,
                 ordering = ord,
                 up_to_degree = up_to_degree,
-                use_homogenization = true,
             )
             cfs = beautifuly_generators(new_rff, discard_redundant = false)
             ordering_to_generators[ord] = cfs
@@ -424,7 +424,6 @@ function generating_sets_fan(
                 seed = seed,
                 ordering = ord,
                 up_to_degree = up_to_degree,
-                use_homogenization = true,
             )
             cfs = beautifuly_generators(new_rff, discard_redundant = false)
             ordering_to_generators[ord] = cfs
@@ -443,7 +442,6 @@ function generating_sets_fan(
                 seed = seed,
                 ordering = ord,
                 up_to_degree = up_to_degree,
-                use_homogenization = true,
             )
             cfs = beautifuly_generators(new_rff, discard_redundant = false)
             ordering_to_generators[ord] = cfs
@@ -487,12 +485,12 @@ function simplified_generating_set(
     _runtime_logger[:id_calls_to_gb] = 0
     _runtime_logger[:id_inclusion_check_mod_p] = 0.0
     _runtime_logger[:id_inclusion_check] = 0.0
-    _runtime_logger[:id_beautifulization] = 0.0
     _runtime_logger[:id_gbfan_time] = 0.0
     _runtime_logger[:id_normalforms_time] = 0.0
     _runtime_logger[:id_ranking] = 0
 
-    # Checking identifiability of particular variables and adding them to the field
+    # Checking identifiability of particular variables and adding them to the
+    # field
     if check_variables
         vars = gens(poly_ring(rff))
         containment = field_contains(rff, vars, (1.0 + p) / 2)
@@ -550,7 +548,7 @@ function simplified_generating_set(
         end
 
         # Compute some normal forms
-        up_to_degree = 3
+        up_to_degree = 2
         generators = monomial_generators_up_to_degree(
             new_rff,
             up_to_degree;
@@ -571,7 +569,6 @@ function simplified_generating_set(
     Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique."""
     runtime =
         @elapsed new_fracs = beautifuly_generators(RationalFunctionField(new_fracs_unique))
-    _runtime_logger[:id_beautifulization] += runtime
     @info "Checking inclusion with probability $p"
     runtime = @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), p)
     _runtime_logger[:id_inclusion_check] = runtime

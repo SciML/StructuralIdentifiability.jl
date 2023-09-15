@@ -1,4 +1,4 @@
-@testset "Constructive field membership" failfast = true begin
+@testset "Constructive field membership" begin
     R, (x,) = PolynomialRing(Nemo.QQ, ["x"])
 
     generators = [x^2, x^3]

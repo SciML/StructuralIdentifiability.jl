@@ -57,6 +57,7 @@ function find_identifiable_functions(
     @assert first(strategy) in (:gb, :gbfan, :normalforms, :hybrid)
     _runtime_logger[:id_npoints_degree] = 0
     _runtime_logger[:id_npoints_interpolation] = 0
+    _runtime_logger[:id_beautifulization] = 0.0
     runtime_start = time_ns()
     half_p = 0.5 + p / 2
     id_funcs, bring = initial_identifiable_functions(

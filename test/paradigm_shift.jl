@@ -212,7 +212,7 @@ cases = [
     ),
 ]
 
-@testset "Global reparametrizations" failfast = true begin
+@testset "Global reparametrizations" begin
     # Test that variables are mapped properly
     ode = cases[1].ode
     (new_ode, new_vars, implicit_relations) =

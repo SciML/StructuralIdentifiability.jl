@@ -1,65 +1,63 @@
 ## Benchmark results
 
-2023-09-13T19:02:49.963
+2023-09-15T02:10:37.348
 
 - Benchmarked function: `find_identifiable_functions`
-- Workers: 8
+- Workers: 7
 - Timeout: 600 s
 
 **All timings in seconds.**
 
-|Model|(:hybrid, 1)_with_states / Runtime|(:hybrid, 1)_with_states / Polynomial?|(:hybrid, 3)_with_states / Runtime|(:hybrid, 3)_with_states / Polynomial?|
-|-----|---|---|---|---|
-|Akt pathway|5.58|yes|20.68|yes|
-|Bilirubin2_io|9.00|yes|34.90|yes|
-|Biohydrogenation_io|0.99|yes|3.29|yes|
-|Bruno2016|0.61|yes|2.02|yes|
-|CD8 T cell differentiation|1.18|yes|4.63|yes|
-|CGV1990|5.05|no|10.20|no|
-|Chemical reaction network|0.90|yes|1.82|yes|
-|Crauste_SI|1.92|yes|4.55|yes|
-|Fujita|9.32|yes|21.76|yes|
-|Goodwin oscillator|1.67|no|3.83|no|
-|HIV|1.78|yes|4.13|yes|
-|HIV2_io|14.63|no|42.44|no|
-|HighDimNonLin|28.85|yes|46.58|yes|
-|KD1999|2.21|no|4.74|no|
-|LLW1987_io|0.88|no|2.29|no|
-|MAPK model (5 outputs)|58.75|yes|66.04|yes|
-|MAPK model (6 outputs)|13.01|yes|21.02|yes|
-|Modified LV for testing|0.33|yes|0.66|yes|
-|PK1|2.62|yes|7.38|yes|
-|PK2|168.70|yes|168.62|yes|
-|Pharm|163.55|yes|165.66|yes|
-|Phosphorylation|0.98|yes|1.97|yes|
-|Pivastatin|8.36|yes|9.70|yes|
-|QY|73.06|no|131.69|no|
-|Ruminal lipolysis|0.47|yes|1.18|yes|
-|SEAIJRC Covid model|90.46|no|95.61|no|
-|SEIR 34|1.57|yes|4.15|yes|
-|SEIR 36 ref|2.69|yes|4.83|yes|
-|SEIR2T|0.48|yes|1.01|yes|
-|SEIRT|1.03|yes|1.61|yes|
-|SEIR_1_io|1.41|no|2.98|no|
-|SEUIR|1.13|no|2.50|no|
-|SIR 19|0.70|yes|1.73|yes|
-|SIR 21|0.69|yes|2.02|yes|
-|SIR 24|0.73|yes|1.60|yes|
-|SIR 6|0.49|yes|1.29|yes|
-|SIRS forced|10.98|yes|12.80|yes|
-|SIWR original|14.71|yes|18.55|yes|
-|SIWR with extra output|1.15|yes|2.26|yes|
-|SLIQR|2.89|no|8.08|no|
-|St|128.09|no| 600.0* | no |
-|Transfection_4State|0.66|yes|1.46|yes|
-|Treatment_io|2.17|yes|4.76|yes|
-|cLV1 (2o)|2.09|yes|4.11|yes|
-|cholera|1.14|yes|1.91|yes|
-|generalizedLoktaVolterra (1o)|0.48|yes|0.94|yes|
-|generalizedLoktaVolterra (2o)|0.44|yes|0.93|yes|
-|p53|3.88|yes|9.25|yes|
-
-\* approx.
+|Model|(:normalforms, 2)_with_states / Runtime|(:normalforms, 2)_with_states / beautifulization|
+|-----|---|---|
+|Akt pathway|2.44|0.28|
+|Bilirubin2_io|4.08|0.76|
+|Biohydrogenation_io|0.44|0.11|
+|Bruno2016|0.19|0.07|
+|CD8 T cell differentiation|0.72|0.27|
+|CGV1990|2.25|0.31|
+|Chemical reaction network|0.36|0.13|
+|Crauste_SI|0.47|0.18|
+|Fujita|2.50|0.30|
+|Goodwin oscillator|0.29|0.09|
+|HIV|0.78|0.19|
+|HIV2_io|2.00|0.27|
+|HighDimNonLin|20.55|0.68|
+|KD1999|0.97|0.14|
+|LLW1987_io|0.25|0.08|
+|MAPK model (5 outputs)|48.45|0.37|
+|MAPK model (6 outputs)|7.99|0.42|
+|Modified LV for testing|0.07|0.01|
+|PK1|0.74|0.18|
+|PK2|130.96|0.07|
+|Pharm|152.26|0.09|
+|Phosphorylation|0.45|0.11|
+|Pivastatin|8.44|0.04|
+|QY|49.21|0.23|
+|Ruminal lipolysis|0.21|0.07|
+|SEAIJRC Covid model|85.13|0.11|
+|SEIR 34|0.39|0.09|
+|SEIR 36 ref|0.78|0.14|
+|SEIR2T|0.23|0.09|
+|SEIRT|0.36|0.08|
+|SEIR_1_io|0.56|0.10|
+|SEUIR| - | - |
+|SIR 19| - | - |
+|SIR 21|0.30|0.19|
+|SIR 24|0.36|0.07|
+|SIR 6|0.20|0.08|
+|SIRS forced|10.62|0.40|
+|SIWR original|13.72|0.07|
+|SIWR with extra output|0.67|0.10|
+|SLIQR|1.42|0.15|
+|St|37.54|1.38|
+|Transfection_4State|0.23|0.07|
+|Treatment_io|0.44|0.14|
+|cLV1 (2o)|0.80|0.20|
+|cholera|0.66|0.09|
+|generalizedLoktaVolterra (1o)|0.18|0.05|
+|generalizedLoktaVolterra (2o)|0.09|0.07|
+|p53|1.21|0.34|
 
 *Benchmarking environment:*
 

@@ -79,15 +79,3 @@ eq_up_to_the_order(a, b) = issubset(a, b) && issubset(b, a)
     relations = StructuralIdentifiability.monomial_generators_up_to_degree(rff, 2)
     @test s * Q - Q * a in relations
 end
-
-using Test, Logging, Nemo
-Base.global_logger(ConsoleLogger(Logging.Info))
-
-R, (a, b, c) = QQ["a", "b", "c"]
-
-f = [a, a * b + b * c]
-fracs = StructuralIdentifiability.beautifuly_generators(
-    StructuralIdentifiability.RationalFunctionField(f),
-)
-
-relations = StructuralIdentifiability.linear_relations_between_normal_forms(fracs, 2)

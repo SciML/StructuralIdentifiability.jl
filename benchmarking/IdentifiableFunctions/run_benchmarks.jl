@@ -99,7 +99,7 @@ function parse_commandline()
             help = """
             Run specified benchmark models. 
             A comma-separated list of names.
-            Leave empty for using all models."""
+            Leave empty for selecting all models."""
             arg_type = String
             default = ""
         "--augment"
