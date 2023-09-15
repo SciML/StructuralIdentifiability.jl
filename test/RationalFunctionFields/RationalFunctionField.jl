@@ -14,7 +14,7 @@
     s1, s2 = a + b + c, a^2 + b^2 + c^2
     f1 = [s1, s2]
     rff1 = StructuralIdentifiability.RationalFunctionField(f1)
-    @test !any(StructuralIdentifiability.field_contains(rff1, [a, b + c, a*b + b*c], p))
+    @test !any(StructuralIdentifiability.field_contains(rff1, [a, b + c, a * b + b * c], p))
     @test all(StructuralIdentifiability.field_contains(rff1, [a * b + b * c + a * c], p))
     @test all(StructuralIdentifiability.field_contains(rff1, [(s1)^8 - (s2)^9 + 89], p))
 

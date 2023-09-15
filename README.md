@@ -11,7 +11,6 @@
 
 ## About
 
-
 `StructuralIdentifiability.jl` is a Julia package for assessing structural parameter identifiability of parametric ODE models, both local and global.
 For an introduction to structural identifiability, we refer to [[2]](#review).
 

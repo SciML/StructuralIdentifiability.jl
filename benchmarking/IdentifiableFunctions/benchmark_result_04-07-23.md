@@ -10,10 +10,11 @@ All timings are in seconds.
 
 For each model we report the runtime breakdown within StructuralIdentifiability.jl and the internal runtimes for Groebner bases in ParamPunPam.jl.
 
-### StructuralIdentifiability.jl 
+### StructuralIdentifiability.jl
 
-|Model|IO|global id.|extract funcs.|gen. ideal|inclusion|**ParamPunPam.jl**|total|
-|-----|---|---|---|---|---|---|---|
+| Model | IO | global id. | extract funcs. | gen. ideal | inclusion | **ParamPunPam.jl** | total |
+|:----- |:-- |:---------- |:-------------- |:---------- |:--------- |:------------------ |:----- |
+
 SIWR with extra output|3.67|0.16|0.06|1.67|0.63|**372.89**|382.65|
 |SIRS forced|4.36|0.85|0.16|4.21|1.92|**93.77**|107.31|
 |Goodwin oscillator|0.02|0.11|0.0|0.78|0.06|**1.76**|2.77|
@@ -40,12 +41,13 @@ SIWR with extra output|3.67|0.16|0.06|1.67|0.63|**372.89**|382.65|
 |HIV| 3.25 | 0.08 | - | 0.75 | - | - | - |
 |CD8 T cell diff| 3.17 | 2.83 | - | 0.79 | - | - | - |
 
-**- potentially an unlucky collision of evaluation points* 
+**- potentially an unlucky collision of evaluation points*
 
-### Inside of ParamPunPam.jl 
+### Inside of ParamPunPam.jl
 
-|Model|# points|discover shape|discover degrees|main loop|recover rationals|
-|-----|---|---|---|---|---|
+| Model | # points | discover shape | discover degrees | main loop | recover rationals |
+|:----- |:-------- |:-------------- |:---------------- |:--------- |:----------------- |
+
 SIWR with extra output|3906|2.07|6.27|364.09|0.0|
 |SIRS forced|290|3.16|10.4|78.36|0.0|
 |Goodwin oscillator|194|1.05|0.14|0.56|0.0|
@@ -93,7 +95,16 @@ SIWR with extra output|3906|2.07|6.27|364.09|0.0|
 Interpolated functions:
 
 ```julia
-AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[a, xi, k, bw, mu, gam, bi, 4*bi^3*mu^3*k^3*xi^3 - bi^2*gam*mu^4*k^3*xi^2 - 6*bi^2*gam*mu^3*k^3*xi^3 + 2*bi^2*gam*mu^3*k^3*xi^2*a - bi^2*gam*mu^2*k^3*xi^4 - 6*bi^2*gam*mu^2*k^3*xi^3*a + 4*bi^2*gam*mu^2*k^3*xi^2*a^2 - bi^2*mu^5*k^3*xi^2 - 6*bi^2*mu^4*k^3*xi^3 + 2*bi^2*mu^4*k^3*xi^2*a + 12*bi^2*mu^3*bw*k^3*xi^3 - bi^2*mu^3*k^3*xi^4 - 6*bi^2*mu^3*k^3*xi^3*a + 4*bi^2*mu^3*k^3*xi^2*a^2 + bi*gam^2*mu^4*k^3*xi^2 - bi*gam^2*mu^4*k^3*xi*a + 2*bi*gam^2*mu^3*k^3*xi^3 + bi*gam^2*mu^3*k^3*xi^2*a - 3*bi*gam^2*mu^3*k^3*xi*a^2 + bi*gam^2*mu^2*k^3*xi^4 + 3*bi*gam^2*mu^2*k^3*xi^3*a - bi*gam^2*mu^2*k^3*xi^2*a^2 - 3*bi*gam^2*mu^2*k^3*xi*a^3 + bi*gam^2*mu*k^3*xi^4*a + bi*gam^2*mu*k^3*xi^3*a^2 - bi*gam^2*mu*k^3*xi^2*a^3 - bi*gam^2*mu*k^3*xi*a^4 + 2*bi*gam*mu^5*k^3*xi^2 - 2*bi*gam*mu^5*k^3*xi*a - 2*bi*gam*mu^4*bw*k^3*xi^2 + 4*bi*gam*mu^4*k^3*xi^3 + 2*bi*gam*mu^4*k^3*xi^2*a - 6*bi*gam*mu^4*k^3*xi*a^2 - 12*bi*gam*mu^3*bw*k^3*xi^3 + 4*bi*gam*mu^3*bw*k^3*xi^2*a + 2*bi*gam*mu^3*k^3*xi^4 + 6*bi*gam*mu^3*k^3*xi^3*a - 2*bi*gam*mu^3*k^3*xi^2*a^2 - 6*bi*gam*mu^3*k^3*xi*a^3 - 2*bi*gam*mu^2*bw*k^3*xi^4 - 12*bi*gam*mu^2*bw*k^3*xi^3*a + 8*bi*gam*mu^2*bw*k^3*xi^2*a^2 + 2*bi*gam*mu^2*k^3*xi^4*a + 2*bi*gam*mu^2*k^3*xi^3*a^2 - 2*bi*gam*mu^2*k^3*xi^2*a^3 - 2*bi*gam*mu^2*k^3*xi*a^4 + bi*mu^6*k^3*xi^2 - bi*mu^6*k^3*xi*a - 2*bi*mu^5*bw*k^3*xi^2 + 2*bi*mu^5*k^3*xi^3 + bi*mu^5*k^3*xi^2*a - 3*bi*mu^5*k^3*xi*a^2 - 12*bi*mu^4*bw*k^3*xi^3 + 4*bi*mu^4*bw*k^3*xi^2*a + bi*mu^4*k^3*xi^4 + 3*bi*mu^4*k^3*xi^3*a - bi*mu^4*k^3*xi^2*a^2 - 3*bi*mu^4*k^3*xi*a^3 + 12*bi*mu^3*bw^2*k^3*xi^3 - 2*bi*mu^3*bw*k^3*xi^4 - 12*bi*mu^3*bw*k^3*xi^3*a + 8*bi*mu^3*bw*k^3*xi^2*a^2 + bi*mu^3*k^3*xi^4*a + bi*mu^3*k^3*xi^3*a^2 - bi*mu^3*k^3*xi^2*a^3 - bi*mu^3*k^3*xi*a^4 + gam^2*mu^4*bw*k^3*xi^2 - gam^2*mu^4*bw*k^3*xi*a + 2*gam^2*mu^3*bw*k^3*xi^3 + gam^2*mu^3*bw*k^3*xi^2*a - 3*gam^2*mu^3*bw*k^3*xi*a^2 + gam^2*mu^2*bw*k^3*xi^4 + 3*gam^2*mu^2*bw*k^3*xi^3*a - gam^2*mu^2*bw*k^3*xi^2*a^2 - 3*gam^2*mu^2*bw*k^3*xi*a^3 + gam^2*mu*bw*k^3*xi^4*a + gam^2*mu*bw*k^3*xi^3*a^2 - gam^2*mu*bw*k^3*xi^2*a^3 - gam^2*mu*bw*k^3*xi*a^4 + 2*gam*mu^5*bw*k^3*xi^2 - 2*gam*mu^5*bw*k^3*xi*a - gam*mu^4*bw^2*k^3*xi^2 + 4*gam*mu^4*bw*k^3*xi^3 + 2*gam*mu^4*bw*k^3*xi^2*a - 6*gam*mu^4*bw*k^3*xi*a^2 - 6*gam*mu^3*bw^2*k^3*xi^3 + 2*gam*mu^3*bw^2*k^3*xi^2*a + 2*gam*mu^3*bw*k^3*xi^4 + 6*gam*mu^3*bw*k^3*xi^3*a - 2*gam*mu^3*bw*k^3*xi^2*a^2 - 6*gam*mu^3*bw*k^3*xi*a^3 - gam*mu^2*bw^2*k^3*xi^4 - 6*gam*mu^2*bw^2*k^3*xi^3*a + 4*gam*mu^2*bw^2*k^3*xi^2*a^2 + 2*gam*mu^2*bw*k^3*xi^4*a + 2*gam*mu^2*bw*k^3*xi^3*a^2 - 2*gam*mu^2*bw*k^3*xi^2*a^3 - 2*gam*mu^2*bw*k^3*xi*a^4 + mu^6*bw*k^3*xi^2 - mu^6*bw*k^3*xi*a - mu^5*bw^2*k^3*xi^2 + 2*mu^5*bw*k^3*xi^3 + mu^5*bw*k^3*xi^2*a - 3*mu^5*bw*k^3*xi*a^2 - 6*mu^4*bw^2*k^3*xi^3 + 2*mu^4*bw^2*k^3*xi^2*a + mu^4*bw*k^3*xi^4 + 3*mu^4*bw*k^3*xi^3*a - mu^4*bw*k^3*xi^2*a^2 - 3*mu^4*bw*k^3*xi*a^3 + 4*mu^3*bw^3*k^3*xi^3 - mu^3*bw^2*k^3*xi^4 - 6*mu^3*bw^2*k^3*xi^3*a + 4*mu^3*bw^2*k^3*xi^2*a^2 + mu^3*bw*k^3*xi^4*a + mu^3*bw*k^3*xi^3*a^2 - mu^3*bw*k^3*xi^2*a^3 - mu^3*bw*k^3*xi*a^4]
+AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[
+    a,
+    xi,
+    k,
+    bw,
+    mu,
+    gam,
+    bi,
+    4 * bi^3 * mu^3 * k^3 * xi^3 - bi^2 * gam * mu^4 * k^3 * xi^2 - 6 * bi^2 * gam * mu^3 * k^3 * xi^3 + 2 * bi^2 * gam * mu^3 * k^3 * xi^2 * a - bi^2 * gam * mu^2 * k^3 * xi^4 - 6 * bi^2 * gam * mu^2 * k^3 * xi^3 * a + 4 * bi^2 * gam * mu^2 * k^3 * xi^2 * a^2 - bi^2 * mu^5 * k^3 * xi^2 - 6 * bi^2 * mu^4 * k^3 * xi^3 + 2 * bi^2 * mu^4 * k^3 * xi^2 * a + 12 * bi^2 * mu^3 * bw * k^3 * xi^3 - bi^2 * mu^3 * k^3 * xi^4 - 6 * bi^2 * mu^3 * k^3 * xi^3 * a + 4 * bi^2 * mu^3 * k^3 * xi^2 * a^2 + bi * gam^2 * mu^4 * k^3 * xi^2 - bi * gam^2 * mu^4 * k^3 * xi * a + 2 * bi * gam^2 * mu^3 * k^3 * xi^3 + bi * gam^2 * mu^3 * k^3 * xi^2 * a - 3 * bi * gam^2 * mu^3 * k^3 * xi * a^2 + bi * gam^2 * mu^2 * k^3 * xi^4 + 3 * bi * gam^2 * mu^2 * k^3 * xi^3 * a - bi * gam^2 * mu^2 * k^3 * xi^2 * a^2 - 3 * bi * gam^2 * mu^2 * k^3 * xi * a^3 + bi * gam^2 * mu * k^3 * xi^4 * a + bi * gam^2 * mu * k^3 * xi^3 * a^2 - bi * gam^2 * mu * k^3 * xi^2 * a^3 - bi * gam^2 * mu * k^3 * xi * a^4 + 2 * bi * gam * mu^5 * k^3 * xi^2 - 2 * bi * gam * mu^5 * k^3 * xi * a - 2 * bi * gam * mu^4 * bw * k^3 * xi^2 + 4 * bi * gam * mu^4 * k^3 * xi^3 + 2 * bi * gam * mu^4 * k^3 * xi^2 * a - 6 * bi * gam * mu^4 * k^3 * xi * a^2 - 12 * bi * gam * mu^3 * bw * k^3 * xi^3 + 4 * bi * gam * mu^3 * bw * k^3 * xi^2 * a + 2 * bi * gam * mu^3 * k^3 * xi^4 + 6 * bi * gam * mu^3 * k^3 * xi^3 * a - 2 * bi * gam * mu^3 * k^3 * xi^2 * a^2 - 6 * bi * gam * mu^3 * k^3 * xi * a^3 - 2 * bi * gam * mu^2 * bw * k^3 * xi^4 - 12 * bi * gam * mu^2 * bw * k^3 * xi^3 * a + 8 * bi * gam * mu^2 * bw * k^3 * xi^2 * a^2 + 2 * bi * gam * mu^2 * k^3 * xi^4 * a + 2 * bi * gam * mu^2 * k^3 * xi^3 * a^2 - 2 * bi * gam * mu^2 * k^3 * xi^2 * a^3 - 2 * bi * gam * mu^2 * k^3 * xi * a^4 + bi * mu^6 * k^3 * xi^2 - bi * mu^6 * k^3 * xi * a - 2 * bi * mu^5 * bw * k^3 * xi^2 + 2 * bi * mu^5 * k^3 * xi^3 + bi * mu^5 * k^3 * xi^2 * a - 3 * bi * mu^5 * k^3 * xi * a^2 - 12 * bi * mu^4 * bw * k^3 * xi^3 + 4 * bi * mu^4 * bw * k^3 * xi^2 * a + bi * mu^4 * k^3 * xi^4 + 3 * bi * mu^4 * k^3 * xi^3 * a - bi * mu^4 * k^3 * xi^2 * a^2 - 3 * bi * mu^4 * k^3 * xi * a^3 + 12 * bi * mu^3 * bw^2 * k^3 * xi^3 - 2 * bi * mu^3 * bw * k^3 * xi^4 - 12 * bi * mu^3 * bw * k^3 * xi^3 * a + 8 * bi * mu^3 * bw * k^3 * xi^2 * a^2 + bi * mu^3 * k^3 * xi^4 * a + bi * mu^3 * k^3 * xi^3 * a^2 - bi * mu^3 * k^3 * xi^2 * a^3 - bi * mu^3 * k^3 * xi * a^4 + gam^2 * mu^4 * bw * k^3 * xi^2 - gam^2 * mu^4 * bw * k^3 * xi * a + 2 * gam^2 * mu^3 * bw * k^3 * xi^3 + gam^2 * mu^3 * bw * k^3 * xi^2 * a - 3 * gam^2 * mu^3 * bw * k^3 * xi * a^2 + gam^2 * mu^2 * bw * k^3 * xi^4 + 3 * gam^2 * mu^2 * bw * k^3 * xi^3 * a - gam^2 * mu^2 * bw * k^3 * xi^2 * a^2 - 3 * gam^2 * mu^2 * bw * k^3 * xi * a^3 + gam^2 * mu * bw * k^3 * xi^4 * a + gam^2 * mu * bw * k^3 * xi^3 * a^2 - gam^2 * mu * bw * k^3 * xi^2 * a^3 - gam^2 * mu * bw * k^3 * xi * a^4 + 2 * gam * mu^5 * bw * k^3 * xi^2 - 2 * gam * mu^5 * bw * k^3 * xi * a - gam * mu^4 * bw^2 * k^3 * xi^2 + 4 * gam * mu^4 * bw * k^3 * xi^3 + 2 * gam * mu^4 * bw * k^3 * xi^2 * a - 6 * gam * mu^4 * bw * k^3 * xi * a^2 - 6 * gam * mu^3 * bw^2 * k^3 * xi^3 + 2 * gam * mu^3 * bw^2 * k^3 * xi^2 * a + 2 * gam * mu^3 * bw * k^3 * xi^4 + 6 * gam * mu^3 * bw * k^3 * xi^3 * a - 2 * gam * mu^3 * bw * k^3 * xi^2 * a^2 - 6 * gam * mu^3 * bw * k^3 * xi * a^3 - gam * mu^2 * bw^2 * k^3 * xi^4 - 6 * gam * mu^2 * bw^2 * k^3 * xi^3 * a + 4 * gam * mu^2 * bw^2 * k^3 * xi^2 * a^2 + 2 * gam * mu^2 * bw * k^3 * xi^4 * a + 2 * gam * mu^2 * bw * k^3 * xi^3 * a^2 - 2 * gam * mu^2 * bw * k^3 * xi^2 * a^3 - 2 * gam * mu^2 * bw * k^3 * xi * a^4 + mu^6 * bw * k^3 * xi^2 - mu^6 * bw * k^3 * xi * a - mu^5 * bw^2 * k^3 * xi^2 + 2 * mu^5 * bw * k^3 * xi^3 + mu^5 * bw * k^3 * xi^2 * a - 3 * mu^5 * bw * k^3 * xi * a^2 - 6 * mu^4 * bw^2 * k^3 * xi^3 + 2 * mu^4 * bw^2 * k^3 * xi^2 * a + mu^4 * bw * k^3 * xi^4 + 3 * mu^4 * bw * k^3 * xi^3 * a - mu^4 * bw * k^3 * xi^2 * a^2 - 3 * mu^4 * bw * k^3 * xi * a^3 + 4 * mu^3 * bw^3 * k^3 * xi^3 - mu^3 * bw^2 * k^3 * xi^4 - 6 * mu^3 * bw^2 * k^3 * xi^3 * a + 4 * mu^3 * bw^2 * k^3 * xi^2 * a^2 + mu^3 * bw * k^3 * xi^4 * a + mu^3 * bw * k^3 * xi^3 * a^2 - mu^3 * bw * k^3 * xi^2 * a^3 - mu^3 * bw * k^3 * xi * a^4,
+]
 ```
 
 ## SIRS forced
@@ -115,7 +126,14 @@ AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[a, xi, k, bw, mu, gam, bi, 4*bi^3*
 Interpolated functions:
 
 ```julia
-AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[g, mu, b0, nu, M^2, nu^3*mu + nu^3*g + 2651//741*nu^2*mu^2 + 3242//741*nu^2*mu*g + 197//247*nu^2*g^2 + 46//247*nu*M^2*mu + 46//247*nu*M^2*g + 1161//247*nu*mu^3 + 1421//247*nu*mu^2*g + 257//247*nu*mu*g^2 - 3//247*nu*g^3 + 46//247*M^2*mu^2 + 46//247*M^2*mu*g + 525//247*mu^4 + 525//247*mu^3*g]
+AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[
+    g,
+    mu,
+    b0,
+    nu,
+    M^2,
+    nu^3 * mu + nu^3 * g + 2651 // 741 * nu^2 * mu^2 + 3242 // 741 * nu^2 * mu * g + 197 // 247 * nu^2 * g^2 + 46 // 247 * nu * M^2 * mu + 46 // 247 * nu * M^2 * g + 1161 // 247 * nu * mu^3 + 1421 // 247 * nu * mu^2 * g + 257 // 247 * nu * mu * g^2 - 3 // 247 * nu * g^3 + 46 // 247 * M^2 * mu^2 + 46 // 247 * M^2 * mu * g + 525 // 247 * mu^4 + 525 // 247 * mu^3 * g,
+]
 ```
 
 ## Goodwin oscillator
@@ -125,7 +143,7 @@ AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[g, mu, b0, nu, M^2, nu^3*mu + nu^3
 ┌ Info: The shape of the basis is: 6 polynomials with monomials
 │   state.shape = Vector{Nemo.gfp_mpoly}[[y6, 1], [y5, y7, 1], [y3, 1], [y1, 1], [t, 1], [y7^2, y7, 1]]
 
- Info: The total degrees in the coefficients
+Info: The total degrees in the coefficients
 │   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (0, 6)], [(0, 0), (1, 0), (2, 0)]]
 
 ┌ Info: Output summary:
@@ -135,7 +153,14 @@ AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[g, mu, b0, nu, M^2, nu^3*mu + nu^3
 Interpolated functions:
 
 ```julia
-AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[sigma, delta + beta, c, b, delta*beta, b^2*c*sigma^2 + 1//3*b^2*c*sigma - 2//3*b*c*delta*sigma^2 - 2//3*b*c*sigma^2*beta + c*delta*sigma^3*beta]
+AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[
+    sigma,
+    delta + beta,
+    c,
+    b,
+    delta * beta,
+    b^2 * c * sigma^2 + 1 // 3 * b^2 * c * sigma - 2 // 3 * b * c * delta * sigma^2 - 2 // 3 * b * c * sigma^2 * beta + c * delta * sigma^3 * beta,
+]
 ```
 
 ## Chemical reaction network
@@ -157,7 +182,15 @@ AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[sigma, delta + beta, c, b, delta*b
 Interpolated functions:
 
 ```julia
-AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[k1, k6, k2, k4, k3, k5, 2*k5^2*k3^2*k4*k6*k1 + 2*k5^2*k3*k4*k2*k6*k1 + 3*k5*k3^2*k4^2*k6*k1 + 3*k5*k3*k4^2*k2*k6*k1 + k3^2*k4^3*k6*k1 + k3*k4^3*k2*k6*k1]
+AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[
+    k1,
+    k6,
+    k2,
+    k4,
+    k3,
+    k5,
+    2 * k5^2 * k3^2 * k4 * k6 * k1 + 2 * k5^2 * k3 * k4 * k2 * k6 * k1 + 3 * k5 * k3^2 * k4^2 * k6 * k1 + 3 * k5 * k3 * k4^2 * k2 * k6 * k1 + k3^2 * k4^3 * k6 * k1 + k3 * k4^3 * k2 * k6 * k1,
+]
 ```
 
 ## Akt pathway
@@ -168,7 +201,7 @@ AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[k1, k6, k2, k4, k3, k5, 2*k5^2*k3^
 
 ┌ Info: Given 225 functions in K(a2, a3, reaction_1_k1, reaction_4_k1, reaction_9_k1, reaction_1_k2, reaction_7_k1, reaction_6_k1, a1, reaction_3_k1, reaction_5_k1, reaction_2_k1, EGFR_turnover, reaction_2_k2, reaction_5_k2, reaction_8_k1)[t, y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16]
 
- Info: The shape of the basis is: 13 polynomials with monomials
+Info: The shape of the basis is: 13 polynomials with monomials
 │   state.shape = Vector{Nemo.gfp_mpoly}[[y16, 1], [y15, 1], [y14, 1], [y11, y12], [y10, 1], [y9, y12], [y8, 1], [y7, 1], [y4, 1], [y3, y5, y6, 1], [y2, y12], [y1, y12], [t*y12^8, 1]]
 
 ┌ Info: The total degrees in the coefficients
@@ -182,7 +215,21 @@ Warning: In Prime number approach the field order might be too small
 Interpolated functions:
 
 ```julia
-AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[reaction_8_k1, reaction_5_k2, reaction_2_k2, reaction_5_k1//reaction_2_k1, reaction_3_k1, a1//reaction_2_k1, reaction_6_k1, reaction_7_k1, reaction_4_k1, reaction_1_k1 - reaction_9_k1 - reaction_1_k2, a3//reaction_2_k1, a2//reaction_2_k1, (1//16*reaction_2_k1^7)//(a2^2*a3^3*reaction_1_k1*reaction_7_k1*reaction_6_k1^4*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1 + a2^2*a3^3*reaction_1_k1*reaction_7_k1*reaction_6_k1^3*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1^2 + a2^2*a3^3*reaction_1_k1*reaction_6_k1^4*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1 + a2^2*a3^3*reaction_1_k1*reaction_6_k1^3*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1^2 - a2^2*a3^3*reaction_4_k1*reaction_7_k1*reaction_6_k1^4*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1 - a2^2*a3^3*reaction_4_k1*reaction_7_k1*reaction_6_k1^3*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1^2 - a2^2*a3^3*reaction_4_k1*reaction_6_k1^4*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1 - a2^2*a3^3*reaction_4_k1*reaction_6_k1^3*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1^2 - a2^2*a3^3*reaction_9_k1*reaction_7_k1*reaction_6_k1^4*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1 - a2^2*a3^3*reaction_9_k1*reaction_7_k1*reaction_6_k1^3*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1^2 - a2^2*a3^3*reaction_9_k1*reaction_6_k1^4*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1 - a2^2*a3^3*reaction_9_k1*reaction_6_k1^3*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1^2 - a2^2*a3^3*reaction_1_k2*reaction_7_k1*reaction_6_k1^4*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1 - a2^2*a3^3*reaction_1_k2*reaction_7_k1*reaction_6_k1^3*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1^2 - a2^2*a3^3*reaction_1_k2*reaction_6_k1^4*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1 - a2^2*a3^3*reaction_1_k2*reaction_6_k1^3*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1^2)]
+AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[
+    reaction_8_k1,
+    reaction_5_k2,
+    reaction_2_k2,
+    reaction_5_k1 // reaction_2_k1,
+    reaction_3_k1,
+    a1 // reaction_2_k1,
+    reaction_6_k1,
+    reaction_7_k1,
+    reaction_4_k1,
+    reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+    a3 // reaction_2_k1,
+    a2 // reaction_2_k1,
+    (1 // 16 * reaction_2_k1^7) // (a2^2 * a3^3 * reaction_1_k1 * reaction_7_k1 * reaction_6_k1^4 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1 + a2^2 * a3^3 * reaction_1_k1 * reaction_7_k1 * reaction_6_k1^3 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1^2 + a2^2 * a3^3 * reaction_1_k1 * reaction_6_k1^4 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1 + a2^2 * a3^3 * reaction_1_k1 * reaction_6_k1^3 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1^2 - a2^2 * a3^3 * reaction_4_k1 * reaction_7_k1 * reaction_6_k1^4 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1 - a2^2 * a3^3 * reaction_4_k1 * reaction_7_k1 * reaction_6_k1^3 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1^2 - a2^2 * a3^3 * reaction_4_k1 * reaction_6_k1^4 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1 - a2^2 * a3^3 * reaction_4_k1 * reaction_6_k1^3 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1^2 - a2^2 * a3^3 * reaction_9_k1 * reaction_7_k1 * reaction_6_k1^4 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1 - a2^2 * a3^3 * reaction_9_k1 * reaction_7_k1 * reaction_6_k1^3 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1^2 - a2^2 * a3^3 * reaction_9_k1 * reaction_6_k1^4 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1 - a2^2 * a3^3 * reaction_9_k1 * reaction_6_k1^3 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1^2 - a2^2 * a3^3 * reaction_1_k2 * reaction_7_k1 * reaction_6_k1^4 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1 - a2^2 * a3^3 * reaction_1_k2 * reaction_7_k1 * reaction_6_k1^3 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1^2 - a2^2 * a3^3 * reaction_1_k2 * reaction_6_k1^4 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1 - a2^2 * a3^3 * reaction_1_k2 * reaction_6_k1^3 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1^2),
+]
 ```
 
 ## LLW1987_io
@@ -202,7 +249,12 @@ AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[reaction_8_k1, reaction_5_k2, reac
 Interpolated functions:
 
 ```julia
-AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[p3 + p1, p3*p1, p2*p4, p3^2*p1 + p3*p1^2]
+AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[
+    p3 + p1,
+    p3 * p1,
+    p2 * p4,
+    p3^2 * p1 + p3 * p1^2,
+]
 ```
 
 ## HIV2_io
@@ -222,7 +274,17 @@ AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[p3 + p1, p3*p1, p2*p4, p3^2*p1 + p
 Interpolated functions:
 
 ```julia
-AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[s, d, c + w1 + k1 + w2, b, k2*q2, (q1*k1 + w1*q2 + k1*q2)//q2, c*w1 + c*k1 + c*w2 + w1*w2 + k1*w2, c*w1*w2 + c*k1*w2, b*k2*d*s*q2 - c*w1*d*w2 - c*d*k1*w2]
+AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[
+    s,
+    d,
+    c + w1 + k1 + w2,
+    b,
+    k2 * q2,
+    (q1 * k1 + w1 * q2 + k1 * q2) // q2,
+    c * w1 + c * k1 + c * w2 + w1 * w2 + k1 * w2,
+    c * w1 * w2 + c * k1 * w2,
+    b * k2 * d * s * q2 - c * w1 * d * w2 - c * d * k1 * w2,
+]
 ```
 
 ## Biohydrogenation_io
@@ -238,12 +300,20 @@ AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[s, d, c + w1 + k1 + w2, b, k2*q2, 
 ┌ Info: Output summary:
 │     Maximal interpolated degrees are: 2 for num. and 5 for den.
 │     Maximal number of interpolated terms are: 2 for num. and 4 for den.
-│     
+│
 
 Interpolated functions:
 
 ```julia
-AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[k7, k6, k9//k10, k8 + 1//2*k10, k5, k10^2, k5*k6*k10^2 + 3//2*k8^2*k9*k6*k10 + 3//2*k8*k9*k6*k10^2 + 3//2*k6*k10^2*k7]
+AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[
+    k7,
+    k6,
+    k9 // k10,
+    k8 + 1 // 2 * k10,
+    k5,
+    k10^2,
+    k5 * k6 * k10^2 + 3 // 2 * k8^2 * k9 * k6 * k10 + 3 // 2 * k8 * k9 * k6 * k10^2 + 3 // 2 * k6 * k10^2 * k7,
+]
 ```
 
 ## Treatment_io
@@ -259,12 +329,24 @@ AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[k7, k6, k9//k10, k8 + 1//2*k10, k5
 ┌ Info: Output summary:
 │     Maximal interpolated degrees are: 6 for num. and 9 for den.
 │     Maximal number of interpolated terms are: 7 for num. and 10 for den.
-│     
+│
 
 Interpolated functions:
 
 ```julia
-AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[(1//4*g)//(b*nu + b*d*g), (1//2*g)//(b*nu + b*d*g), (1//4*g)//(b^2*nu^3*d + 3*b^2*nu^2*d^2*g - b^2*nu^2*d*g - b^2*nu^2*d*a + 3*b^2*nu*d^3*g^2 - 2*b^2*nu*d^2*g^2 - 2*b^2*nu*d^2*g*a + b^2*d^4*g^3 - b^2*d^3*g^3 - b^2*d^3*g^2*a), nu + g + a, b//g, d*g - g - a, d*g - g - a, nu + d*g, (1//2*nu + d*g - 1//2*g - 1//2*a)//(b*nu^2*d + 2*b*nu*d^2*g - b*nu*d*g - b*nu*d*a + b*d^3*g^2 - b*d^2*g^2 - b*d^2*g*a), nu*g + nu*a, 4*b*nu^2*d + 8*b*nu*d^2*g - 4*b*nu*d*g - 4*b*nu*d*a + 4*b*d^3*g^2 - 4*b*d^2*g^2 - 4*b*d^2*g*a]
+AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[
+    (1 // 4 * g) // (b * nu + b * d * g),
+    (1 // 2 * g) // (b * nu + b * d * g),
+    (1 // 4 * g) // (b^2 * nu^3 * d + 3 * b^2 * nu^2 * d^2 * g - b^2 * nu^2 * d * g - b^2 * nu^2 * d * a + 3 * b^2 * nu * d^3 * g^2 - 2 * b^2 * nu * d^2 * g^2 - 2 * b^2 * nu * d^2 * g * a + b^2 * d^4 * g^3 - b^2 * d^3 * g^3 - b^2 * d^3 * g^2 * a),
+    nu + g + a,
+    b // g,
+    d * g - g - a,
+    d * g - g - a,
+    nu + d * g,
+    (1 // 2 * nu + d * g - 1 // 2 * g - 1 // 2 * a) // (b * nu^2 * d + 2 * b * nu * d^2 * g - b * nu * d * g - b * nu * d * a + b * d^3 * g^2 - b * d^2 * g^2 - b * d^2 * g * a),
+    nu * g + nu * a,
+    4 * b * nu^2 * d + 8 * b * nu * d^2 * g - 4 * b * nu * d * g - 4 * b * nu * d * a + 4 * b * d^3 * g^2 - 4 * b * d^2 * g^2 - 4 * b * d^2 * g * a,
+]
 ```
 
 ## SLIQR
@@ -286,7 +368,22 @@ AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[(1//4*g)//(b*nu + b*d*g), (1//2*g)
 Interpolated functions:
 
 ```julia
-AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[g + a, s, Ninv, b, (e*a)//(e*s - s + a), (e*s*a)//(e*s - s + a), (e*s*a)//(e*s - s + a), (e*s^2 + e*s*g - s^2 - s*g + g*a + a^2)//(e*s - s + a), (e*s^2*g - s^2*g - s^2*a + s*g*a + s*a^2)//(e*s - s + a), 2*e*Ninv*s*g + 2*Ninv*s*a + 2*Ninv*g*a, (e^2*s*a - e^2*a^2 - e*s*a + e*a^2)//(e^2*s^2*g - 2*e*s^2*g - e*s^2*a + 2*e*s*g*a + e*s*a^2 + s^2*g + s^2*a - 2*s*g*a - 2*s*a^2 + g*a^2 + a^3), (e^2*s^2*g - e*s^2*g + 2*e*s*g*a - s^2*a - s*g*a + s*a^2 + g*a^2)//(e*s - s + a), (e^3*s^2*g*a - e^2*s^3*a - 2*e^2*s^2*g*a + e^2*s^2*a^2 + 2*e^2*s*g*a^2 + e*s^3*a + e*s^2*g*a - e*s^2*a^2 - 2*e*s*g*a^2 + e*g*a^3)//(e^2*s^3*g - 2*e*s^3*g - e*s^3*a + 2*e*s^2*g*a + e*s^2*a^2 + s^3*g + s^3*a - 2*s^2*g*a - 2*s^2*a^2 + s*g*a^2 + s*a^3), (e^3*s^3*g - 2*e^2*s^3*g - e^2*s^3*a + 3*e^2*s^2*g*a + e^2*s^2*a^2 + e*s^3*g - 4*e*s^2*g*a + 3*e*s*g*a^2 + s^3*a + s^2*g*a - 2*s^2*a^2 - 2*s*g*a^2 + s*a^3 + g*a^3)//(e^2*s^3*g - 2*e*s^3*g - e*s^3*a + 2*e*s^2*g*a + e*s^2*a^2 + s^3*g + s^3*a - 2*s^2*g*a - 2*s^2*a^2 + s*g*a^2 + s*a^3)]
+AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[
+    g + a,
+    s,
+    Ninv,
+    b,
+    (e * a) // (e * s - s + a),
+    (e * s * a) // (e * s - s + a),
+    (e * s * a) // (e * s - s + a),
+    (e * s^2 + e * s * g - s^2 - s * g + g * a + a^2) // (e * s - s + a),
+    (e * s^2 * g - s^2 * g - s^2 * a + s * g * a + s * a^2) // (e * s - s + a),
+    2 * e * Ninv * s * g + 2 * Ninv * s * a + 2 * Ninv * g * a,
+    (e^2 * s * a - e^2 * a^2 - e * s * a + e * a^2) // (e^2 * s^2 * g - 2 * e * s^2 * g - e * s^2 * a + 2 * e * s * g * a + e * s * a^2 + s^2 * g + s^2 * a - 2 * s * g * a - 2 * s * a^2 + g * a^2 + a^3),
+    (e^2 * s^2 * g - e * s^2 * g + 2 * e * s * g * a - s^2 * a - s * g * a + s * a^2 + g * a^2) // (e * s - s + a),
+    (e^3 * s^2 * g * a - e^2 * s^3 * a - 2 * e^2 * s^2 * g * a + e^2 * s^2 * a^2 + 2 * e^2 * s * g * a^2 + e * s^3 * a + e * s^2 * g * a - e * s^2 * a^2 - 2 * e * s * g * a^2 + e * g * a^3) // (e^2 * s^3 * g - 2 * e * s^3 * g - e * s^3 * a + 2 * e * s^2 * g * a + e * s^2 * a^2 + s^3 * g + s^3 * a - 2 * s^2 * g * a - 2 * s^2 * a^2 + s * g * a^2 + s * a^3),
+    (e^3 * s^3 * g - 2 * e^2 * s^3 * g - e^2 * s^3 * a + 3 * e^2 * s^2 * g * a + e^2 * s^2 * a^2 + e * s^3 * g - 4 * e * s^2 * g * a + 3 * e * s * g * a^2 + s^3 * a + s^2 * g * a - 2 * s^2 * a^2 - 2 * s * g * a^2 + s * a^3 + g * a^3) // (e^2 * s^3 * g - 2 * e * s^3 * g - e * s^3 * a + 2 * e * s^2 * g * a + e * s^2 * a^2 + s^3 * g + s^3 * a - 2 * s^2 * g * a - 2 * s^2 * a^2 + s * g * a^2 + s * a^3),
+]
 ```
 
 ## Fujita
@@ -315,7 +412,21 @@ AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[g + a, s, Ninv, b, (e*a)//(e*s - s
 Interpolated functions:
 
 ```julia
-AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[reaction_8_k1, reaction_5_k2, reaction_2_k2, reaction_5_k1//reaction_2_k1, reaction_3_k1, a1//reaction_2_k1, reaction_6_k1, reaction_7_k1, reaction_4_k1, reaction_1_k1 - reaction_9_k1 - reaction_1_k2, a3//reaction_2_k1, a2//reaction_2_k1, (1//16*reaction_2_k1^7)//(a2^2*a3^3*reaction_1_k1*reaction_7_k1*reaction_6_k1^4*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1 + a2^2*a3^3*reaction_1_k1*reaction_7_k1*reaction_6_k1^3*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1^2 + a2^2*a3^3*reaction_1_k1*reaction_6_k1^4*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1 + a2^2*a3^3*reaction_1_k1*reaction_6_k1^3*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1^2 - a2^2*a3^3*reaction_4_k1*reaction_7_k1*reaction_6_k1^4*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1 - a2^2*a3^3*reaction_4_k1*reaction_7_k1*reaction_6_k1^3*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1^2 - a2^2*a3^3*reaction_4_k1*reaction_6_k1^4*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1 - a2^2*a3^3*reaction_4_k1*reaction_6_k1^3*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1^2 - a2^2*a3^3*reaction_9_k1*reaction_7_k1*reaction_6_k1^4*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1 - a2^2*a3^3*reaction_9_k1*reaction_7_k1*reaction_6_k1^3*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1^2 - a2^2*a3^3*reaction_9_k1*reaction_6_k1^4*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1 - a2^2*a3^3*reaction_9_k1*reaction_6_k1^3*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1^2 - a2^2*a3^3*reaction_1_k2*reaction_7_k1*reaction_6_k1^4*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1 - a2^2*a3^3*reaction_1_k2*reaction_7_k1*reaction_6_k1^3*a1*reaction_3_k1*reaction_5_k1*reaction_8_k1^2 - a2^2*a3^3*reaction_1_k2*reaction_6_k1^4*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1 - a2^2*a3^3*reaction_1_k2*reaction_6_k1^3*a1*reaction_3_k1^2*reaction_5_k1*reaction_8_k1^2)]
+AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}[
+    reaction_8_k1,
+    reaction_5_k2,
+    reaction_2_k2,
+    reaction_5_k1 // reaction_2_k1,
+    reaction_3_k1,
+    a1 // reaction_2_k1,
+    reaction_6_k1,
+    reaction_7_k1,
+    reaction_4_k1,
+    reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+    a3 // reaction_2_k1,
+    a2 // reaction_2_k1,
+    (1 // 16 * reaction_2_k1^7) // (a2^2 * a3^3 * reaction_1_k1 * reaction_7_k1 * reaction_6_k1^4 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1 + a2^2 * a3^3 * reaction_1_k1 * reaction_7_k1 * reaction_6_k1^3 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1^2 + a2^2 * a3^3 * reaction_1_k1 * reaction_6_k1^4 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1 + a2^2 * a3^3 * reaction_1_k1 * reaction_6_k1^3 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1^2 - a2^2 * a3^3 * reaction_4_k1 * reaction_7_k1 * reaction_6_k1^4 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1 - a2^2 * a3^3 * reaction_4_k1 * reaction_7_k1 * reaction_6_k1^3 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1^2 - a2^2 * a3^3 * reaction_4_k1 * reaction_6_k1^4 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1 - a2^2 * a3^3 * reaction_4_k1 * reaction_6_k1^3 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1^2 - a2^2 * a3^3 * reaction_9_k1 * reaction_7_k1 * reaction_6_k1^4 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1 - a2^2 * a3^3 * reaction_9_k1 * reaction_7_k1 * reaction_6_k1^3 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1^2 - a2^2 * a3^3 * reaction_9_k1 * reaction_6_k1^4 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1 - a2^2 * a3^3 * reaction_9_k1 * reaction_6_k1^3 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1^2 - a2^2 * a3^3 * reaction_1_k2 * reaction_7_k1 * reaction_6_k1^4 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1 - a2^2 * a3^3 * reaction_1_k2 * reaction_7_k1 * reaction_6_k1^3 * a1 * reaction_3_k1 * reaction_5_k1 * reaction_8_k1^2 - a2^2 * a3^3 * reaction_1_k2 * reaction_6_k1^4 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1 - a2^2 * a3^3 * reaction_1_k2 * reaction_6_k1^3 * a1 * reaction_3_k1^2 * reaction_5_k1 * reaction_8_k1^2),
+]
 ```
 
 ## NFkB
@@ -412,7 +523,7 @@ Used 2560 interpolation points.
 ┌ Info: The shape of the basis is: 8 polynomials with monomials
 │   state.shape = Vector{Nemo.gfp_mpoly}[[y7, 1], [y6, 1], [y5, 1], [y4, 1], [y3, 1], [y2, 1], [y1, 1], [t, 1]]
 
- Info: The total degrees in the coefficients
+Info: The total degrees in the coefficients
 │   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (0, 17)]]
 
 ## MAPK model (6 outputs)
@@ -461,7 +572,7 @@ Process killed before the parameter degrees are discovered.
 ┌ Info: Given 1068 functions in K(c0001, a10, gamma1000, alpha10, b00, beta11, c0111, beta10, alpha11, beta01, alpha01, gamma1100, c0011, c0010, b10, gamma1101, a00, b01, c1011, a01, gamma1110, gamma0100)[t, y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22]
 
 ┌ Info: The shape of the basis is: 23 polynomials with monomials
-│   state.shape = Vector{Nemo.gfp_mpoly}[[y22, 1], [y21, 1], [y20, 1], [y19, 1], [y18, 1], [y17, 1], [y16, 1], [y15, 1], [y14, 1], [y13, 1], [y12, 1], [y11, 1], [y10, 1], [y9, 1], [y8, 1], [y7, 1], [y6, 1], [y5, 1], [y4, 1], [y3, 1], [y2, 1], [y1, 1], [t, 1]] 
+│   state.shape = Vector{Nemo.gfp_mpoly}[[y22, 1], [y21, 1], [y20, 1], [y19, 1], [y18, 1], [y17, 1], [y16, 1], [y15, 1], [y14, 1], [y13, 1], [y12, 1], [y11, 1], [y10, 1], [y9, 1], [y8, 1], [y7, 1], [y6, 1], [y5, 1], [y4, 1], [y3, 1], [y2, 1], [y1, 1], [t, 1]]
 
 ## SEAIJRC Covid model
 
@@ -623,27 +734,27 @@ Used 1310720 interpolation points.
 ┌ Info: The total degrees in the coefficients
 │   state.param_degrees = [[(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 0)], [(0, 0), (1, 1)], [(0, 0), (1, 7)]]
 
----
+* * *
 
 *Benchmarking environment:*
 
-* Total RAM (GiB): 2015
-* Processor: AMD EPYC 7702 64-Core Processor                
-* Julia version: 1.9.1
+  - Total RAM (GiB): 2015
+  - Processor: AMD EPYC 7702 64-Core Processor
+  - Julia version: 1.9.1
 
 Versions of the dependencies:
 
-* Primes : 0.5.3
-* BenchmarkTools : 1.3.2
-* IterTools : 1.8.0
-* PrecompileTools : 1.1.2
-* Symbolics : 5.5.0
-* SymbolicUtils : 1.0.5
-* DataStructures : 0.18.14
-* Groebner : 0.3.6
-* ParamPunPam : 0.0.1
-* ModelingToolkit : 8.60.0
-* AbstractAlgebra : 0.27.10
-* MacroTools : 0.5.10
-* Nemo : 0.32.7
-* SpecialFunctions : 2.3.0
+  - Primes : 0.5.3
+  - BenchmarkTools : 1.3.2
+  - IterTools : 1.8.0
+  - PrecompileTools : 1.1.2
+  - Symbolics : 5.5.0
+  - SymbolicUtils : 1.0.5
+  - DataStructures : 0.18.14
+  - Groebner : 0.3.6
+  - ParamPunPam : 0.0.1
+  - ModelingToolkit : 8.60.0
+  - AbstractAlgebra : 0.27.10
+  - MacroTools : 0.5.10
+  - Nemo : 0.32.7
+  - SpecialFunctions : 2.3.0

@@ -1,3 +1,1 @@
 # Globally Identifiable Functions
-
-
