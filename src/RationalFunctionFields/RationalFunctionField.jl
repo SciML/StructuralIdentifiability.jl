@@ -548,7 +548,7 @@ function simplified_generating_set(
         end
 
         # Compute some normal forms
-        up_to_degree = 2
+        up_to_degree = 3
         generators = monomial_generators_up_to_degree(
             new_rff,
             up_to_degree;

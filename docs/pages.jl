@@ -1,9 +1,11 @@
 pages = [
     "Home" => "index.md",
     "Tutorials" => Any[
+        "tutorials/creating_ode.md",
         "tutorials/local_identifiability.md",
         "tutorials/global_identifiability.md",
         "tutorials/identifiable_functions.md",
+        "tutorials/reparametrization.md",
         "tutorials/using_modeling_toolkit.md",
     ],
     "Basics" => Any["input/input.md", "identifiability/identifiability.md"],

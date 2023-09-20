@@ -17,6 +17,7 @@ using Nemo
 using Groebner
 using ParamPunPam
 using ParamPunPam: reduce_mod_p!, specialize_mod_p, AbstractBlackboxIdeal
+ParamPunPam.enable_progressbar(false)
 
 using ModelingToolkit
 
@@ -54,6 +55,7 @@ const _runtime_logger = Dict(
     :id_inclusion_check_mod_p => 0,
     :id_npoints_degree => 0,
     :id_npoints_interpolation => 0,
+    :id_beautifulization => 0,
 )
 
 include("util.jl")
