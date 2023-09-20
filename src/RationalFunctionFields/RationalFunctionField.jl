@@ -333,12 +333,12 @@ function groebner_basis_coeffs(
         _runtime_logger[:id_npoints_interpolation] +=
             ParamPunPam._runtime_data[:npoints_interpolation]
         _runtime_logger[:id_groebner_time] += runtime
-        @info "Groebner basis computed in $runtime seconds"
+        @debug "Groebner basis computed in $runtime seconds"
         basis_coeffs = map(collect ∘ coefficients, gb)
         basis_coeffs_set = mapreduce(Set, union!, basis_coeffs)
         fracs = collect(basis_coeffs_set)
         @debug "Generators up to degrees $(current_degrees) are" fracs
-        @info "Checking two-sided inclusion modulo a prime"
+        @debug "Checking two-sided inclusion modulo a prime"
         time_start = time_ns()
         # Check inclusion: <simplified generators> in <original generators> 
         new_rff = RationalFunctionField(fracs)
@@ -349,10 +349,10 @@ function groebner_basis_coeffs(
         runtime = (time_ns() - time_start) / 1e9
         _runtime_logger[:id_inclusion_check_mod_p] += runtime
         two_sided_inclusion = two_sided_inclusion && all(inclusion)
-        @info "Inclusion checked in $(runtime) seconds. Result: $two_sided_inclusion"
+        @debug "Inclusion checked in $(runtime) seconds. Result: $two_sided_inclusion"
         current_degrees = current_degrees .* 2
     end
-    @info "The coefficients of the Groebner basis are presented by $(length(fracs)) rational functions"
+    @debug "The coefficients of the Groebner basis are presented by $(length(fracs)) rational functions"
     new_rff.mqs.cached_groebner_bases[ordering, up_to_degree] = gb
     rff.mqs.cached_groebner_bases[ordering, up_to_degree] = gb
     return new_rff
@@ -401,7 +401,7 @@ function generating_sets_fan(
             # n1, n2 = div(n, 2), n - div(n, 2)
             n1, n2 = n - 1, 1
             ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
-            @info "Computing GB for ordering" ord
+            @debug "Computing GB for ordering" ord
             new_rff = groebner_basis_coeffs(
                 gb_rff,
                 seed = seed,
@@ -418,7 +418,7 @@ function generating_sets_fan(
             n = length(vars_shuffled)
             n1, n2 = max(n - 2, 1), min(2, length(vars) - 1)
             ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
-            @info "Computing GB for ordering" ord
+            @debug "Computing GB for ordering" ord
             new_rff = groebner_basis_coeffs(
                 gb_rff,
                 seed = seed,
@@ -436,7 +436,7 @@ function generating_sets_fan(
             n1 = div(n, 2)
             n2 = n - n1
             ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
-            @info "Computing GB for ordering" ord
+            @debug "Computing GB for ordering" ord
             new_rff = groebner_basis_coeffs(
                 gb_rff,
                 seed = seed,

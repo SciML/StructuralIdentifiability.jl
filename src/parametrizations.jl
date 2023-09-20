@@ -67,9 +67,21 @@ function check_constructive_field_membership(
     # If norm_form(Num) // norm_form(Den) does not belongs to K(T), then
     # the fraction does not belong to the field
     if iszero(den_rem)
+        @warn """
+        The element $tagged_num // $tagged_den is not in the sub-field
+        Normal form, numerator: $num_rem
+        Normal form, denominator: $den_rem
+        Common factor: $(common_factor)
+        """
         return false, zero(ring_of_tags) // one(ring_of_tags)
     end
     if total_degree(num_rem) > 0 || total_degree(den_rem) > 0
+        @warn """
+        The element $tagged_num // $tagged_den is not in the sub-field
+        Normal form, numerator: $num_rem
+        Normal form, denominator: $den_rem
+        Common factor: $(common_factor)
+        """
         return false, zero(ring_of_tags) // one(ring_of_tags)
     end
     # Now we know that the remainders belong to K(T). 
@@ -111,7 +123,7 @@ Follows the vein of Algorithm 1.17 from https://doi.org/10.1006/jsco.1998.0246
 
 ## Output
 
-Returns a 4-lement tuple 
+Returns a 4-element tuple 
 (`memberships`, `remainders`, `relations_between_tags`, `tag_to_gen`).
 
 - `memberships`: is `true` whenever `to_be_reduced[i]` belongs to the field.
@@ -155,7 +167,7 @@ function check_constructive_field_membership(
     else
         map(i -> "T$i", 1:length(fracs_gen))
     end
-    sat_string = "t"
+    sat_string = "_t"
     @info """
     Tags:
     $(join(map(x -> string(x[1]) * " -> " * string(x[2]),  zip(fracs_gen, tag_strings)), "\t\n"))
@@ -191,7 +203,7 @@ function check_constructive_field_membership(
     $tagged_mqs
     Monom ordering:
     $(ord)"""
-    tagged_mqs_gb = groebner(tagged_mqs, ordering = ord)
+    tagged_mqs_gb = groebner(tagged_mqs, ordering = ord, homogenize = :no)
     # Relations between tags in K[T]
     relations_between_tags = filter(
         poly -> isempty(intersect(vars(poly), vcat(sat_var, orig_vars))),
@@ -219,17 +231,25 @@ function check_constructive_field_membership(
         Original vars: $orig_strings"""
     end
     parametric_ring, _ =
-        PolynomialRing(FractionField(ring_of_tags), orig_strings, ordering = :lex)
+        PolynomialRing(FractionField(ring_of_tags), orig_strings, ordering = :degrevlex)
     relations_between_tags =
         map(poly -> parent_ring_change(poly, ring_of_tags), relations_between_tags)
     param_var_mapping = merge(
         Dict(gens(poly_ring_tag)[2:(nvars(poly_ring) + 1)] .=> gens(parametric_ring)),
         Dict(gens(poly_ring_tag)[(nvars(poly_ring) + 2):end] .=> gens(ring_of_tags)),
     )
+    @debug """
+    Variable mapping:
+    $param_var_mapping
+    Parametric ring:
+    $parametric_ring
+    """
     tagged_mqs_gb_param = map(
         poly -> crude_parent_ring_change(poly, parametric_ring, param_var_mapping),
         tagged_mqs_gb,
     )
+    tagged_mqs_gb_param = map(f -> divexact(f, leading_coefficient(f)), tagged_mqs_gb_param)
+    @debug "Tagged parametric mqs: $tagged_mqs_gb_param"
     # Reduce each fraction
     var_mapping = Dict(gens(poly_ring) .=> gens(parametric_ring))
     memberships = Vector{Bool}(undef, length(to_be_reduced))
@@ -298,9 +318,9 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     n_active_generators =
         (length(generating_funcs) - length(ode.u_vars) - length(ode.y_vars))
     tag_names = vcat(
-        ["T$i" for i in 1:n_active_generators],
-        map(string, ode.u_vars),
-        map(string, ode.y_vars),
+        ["_T$i" for i in 1:n_active_generators],
+        map(v -> "_$(uppercase(string(v)))", ode.u_vars),
+        map(v -> "_$(uppercase(string(v)))", ode.y_vars),
     )
     @info """
     Tag names: 
@@ -310,21 +330,21 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     To be reduced functions:
     $to_be_reduced_funcs
     """
-    soundness, new_dynamics_all, implicit_relations, new_vars =
+    membership, new_dynamics_all, implicit_relations, new_vars =
         check_constructive_field_membership(
             RationalFunctionField(generating_funcs),
             to_be_reduced_funcs;
             tag_names = tag_names,
         )
-    @assert all(soundness)
+    @assert all(membership)
     ring_of_tags = parent(first(keys(new_vars)))
     tags = gens(ring_of_tags)
     tag_inputs = tags[(n_active_generators + 1):(end - length(ode.y_vars))]
+    tag_outputs = tags[(end - length(ode.y_vars) + 1):end]
     new_dynamics_states = new_dynamics_all[1:length(new_states)]
     new_dynamics_outputs = new_dynamics_all[(length(new_states) + 1):end]
     new_outputs = Dict(
-        parent_ring_change(output, ring_of_tags) => dynamic for
-        (output, dynamic) in zip(ode.y_vars, new_dynamics_outputs)
+        output => dynamic for (output, dynamic) in zip(tag_outputs, new_dynamics_outputs)
     )
     # Old inputs map one to one to new inputs.
     new_inputs = empty(tags)
@@ -367,8 +387,12 @@ The function accepts the following optional arguments.
 """
 function reparametrize_global(ode::ODE{P}; p = 0.99, seed = 42) where {P}
     Random.seed!(seed)
-    id_funcs =
-        find_identifiable_functions(ode, with_states = true, strategy = (:hybrid,), p = p)
+    id_funcs = find_identifiable_functions(
+        ode,
+        with_states = true,
+        strategy = (:normalforms, 3),
+        p = p,
+    )
     ode_ring = parent(ode)
     @assert base_ring(parent(first(id_funcs))) == ode_ring
     @info "Constructing a new parametrization"

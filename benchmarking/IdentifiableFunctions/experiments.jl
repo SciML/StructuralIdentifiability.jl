@@ -969,6 +969,24 @@ begin
         y(t) = x1(t)
     )
 
+    CGV1990 = StructuralIdentifiability.@ODEmodel(
+        q1'(t) = k4 * q3(t) - (k3 + k7) * q1(t) + u(t),
+        q3'(t) =
+            k3 * q1(t) - k4 * q3(t) - k5 * q3(t) * (R * V3 - q35(t)) + k6 * q35(t) -
+            k5 * q3(t) * (5 * V36 / V3) * (S * V36 - q36(t)) + k6 * q36(t),
+        q35'(t) = k5 * q3(t) * (R * V3 - q35(t)) - k6 * q35(t),
+        q36'(t) = k5 * q3(t) * (5 * V36 / V3) * (S * V36 - q36(t)) - k6 * q36(t),
+        q7'(t) = k7 * q1(t),
+        y1(t) = q7(t)
+    )
+
+    Pivastatin = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = k3 * x3(t) - r3 * x1(t) - k1 * x1(t) * (T0 - x2(t)) + r1 * x2(t),
+        x2'(t) = k1 * x1(t) * (T0 - x2(t)) - (r1 + k2) * x2(t),
+        x3'(t) = r3 * x1(t) - (k3 + k4) * x3(t) + k2 * x2(t),
+        y1(t) = k * (x2(t) + x3(t))
+    )
+
     using Nemo, Logging
     using JuliaInterpreter
     Groebner = StructuralIdentifiability.Groebner
@@ -976,18 +994,34 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-@time StructuralIdentifiability.find_identifiable_functions(
-    seuir,
-    with_states = true,
-    strategy = (:normalforms, 2),
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = x1 + x2^2 + a^2,
+    x2'(t) = x2 + a * d^3,
+    y(t) = x1
 )
+
+@time new_ode, new_vars, algebraic_relations =
+    StructuralIdentifiability.reparametrize_global(Bilirubin2_io)
+
+###
+# TODO
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = x1 + a * x2,
+    x2'(t) = a * x1 + x2,
+    y(t) = x1
+)
+
+@time new_ode, new_vars, algebraic_relations =
+    StructuralIdentifiability.reparametrize_global(ode)
+
+###
 
 StructuralIdentifiability._runtime_logger[:id_total]
 
 StructuralIdentifiability._runtime_logger[:id_beautifulization]
 
 @my_profview id_funcs1 = StructuralIdentifiability.find_identifiable_functions(
-    Bilirubin2_io,
+    sliqr,
     with_states = true,
     strategy = (:hybrid, 3),
 )
