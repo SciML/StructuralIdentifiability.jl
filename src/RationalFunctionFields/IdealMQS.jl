@@ -148,6 +148,10 @@ AbstractAlgebra.base_ring(ideal::IdealMQS) = base_ring(ideal.nums_qq[1])
 AbstractAlgebra.parent(ideal::IdealMQS) = ideal.parent_ring_param
 ParamPunPam.parent_params(ideal::IdealMQS) = base_ring(ideal.parent_ring_param)
 
+function are_generators_zero(mqs::IdealMQS)
+    return all(x -> length(x) == 1, mqs.funcs_den_nums)
+end
+
 @noinline function __throw_unlucky_evaluation(msg)
     throw(AssertionError("""
     Encountered a very unlucky evaluation point.

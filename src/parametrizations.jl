@@ -387,12 +387,8 @@ The function accepts the following optional arguments.
 """
 function reparametrize_global(ode::ODE{P}; p = 0.99, seed = 42) where {P}
     Random.seed!(seed)
-    id_funcs = find_identifiable_functions(
-        ode,
-        with_states = true,
-        strategy = (:normalforms, 3),
-        p = p,
-    )
+    id_funcs =
+        find_identifiable_functions(ode, with_states = true, simplify = :strong, p = p)
     ode_ring = parent(ode)
     @assert base_ring(parent(first(id_funcs))) == ode_ring
     @info "Constructing a new parametrization"

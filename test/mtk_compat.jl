@@ -31,11 +31,11 @@
     eqs = [D(x) ~ (-V_m * x) / (k_m + x) + k01 * x, y1 ~ c * x]
     de = ODESystem(eqs, t, name = :Test)
 
-    correct = [k01, c * k_m, V_m / k_m]
+    correct = [k01, c * k_m, V_m * c]
     result = find_identifiable_functions(de)
     @test isequal(Set(correct), Set(result))
 
-    correct = [k01, c * x, k_m / x, V_m / x]
+    correct = [k01, c * x, k_m * c, V_m * c]
     result = find_identifiable_functions(de, with_states = true)
     @test isequal(Set(correct), Set(result))
 

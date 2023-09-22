@@ -9,6 +9,10 @@ ode = StructuralIdentifiability.@ODEmodel(x'(t) = a * x(t) + u(t), y(t) = x(t))
 ident_funcs = [a]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
+ode = StructuralIdentifiability.@ODEmodel(x1'(t) = a, x2'(t) = -a, y(t) = x1 + x2)
+ident_funcs = []
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
 # Parameter a is not identifiable, and neither are any combinations thereof.
 ode = StructuralIdentifiability.@ODEmodel(
     x1'(t) = x2(t) - a,
@@ -936,7 +940,7 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 @testset "Identifiable functions of parameters" begin
     p = 0.99
     for case in test_cases
-        for strategy in [(:gb,), (:normalforms, 2), (:hybrid, 1)]
+        for simplify in [:weak, :standard] # :strong]
             ode = case.ode
             true_ident_funcs = case.ident_funcs
             with_states = false
@@ -945,7 +949,7 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
             end
             result_funcs = StructuralIdentifiability.find_identifiable_functions(
                 ode,
-                strategy = strategy,
+                simplify = simplify,
                 with_states = with_states,
             )
 
@@ -958,7 +962,7 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
             R = parent(numerator(result_funcs[1]))
 
-            @info "Test, result_funcs = \n$result_funcs" case strategy R with_states
+            @info "Test, result_funcs = \n$result_funcs" case simplify R with_states
 
             true_ident_funcs = map(f -> f // one(f), true_ident_funcs)
             true_ident_funcs = map(

@@ -308,6 +308,9 @@ function groebner_basis_coeffs(
     rational_interpolator = :VanDerHoevenLecerf,
 )
     mqs = rff.mqs
+    if are_generators_zero(mqs)
+        return rff
+    end
     gb, fracs, new_rff = nothing, nothing, nothing
     # Check if the basis is in cache
     if haskey(mqs.cached_groebner_bases, (ordering, up_to_degree))
@@ -380,6 +383,9 @@ function generating_sets_fan(
     nbases = length(vars)
     @info "Computing $nbases Groebner bases for block orderings. Simplification code is $code"
     ordering_to_generators = Dict()
+    if code == 0
+        return ordering_to_generators
+    end
     # The first basis in some ordering
     ord = InputOrdering()
     new_rff = groebner_basis_coeffs(rff, seed = seed, ordering = ord)
@@ -476,7 +482,7 @@ function simplified_generating_set(
     rff::RationalFunctionField;
     p = 0.99,
     seed = 42,
-    strategy = (:gb,),
+    simplify = :standard,
     check_variables = false, # almost always slows down and thus turned off
     rational_interpolator = :VanDerHoevenLecerf,
 )
@@ -507,6 +513,18 @@ function simplified_generating_set(
         rff = RationalFunctionField(field_gens)
     end
 
+    normalforms_degree = 2
+    gbfan_simplification_code = 1
+    if simplify === :standard
+        # pass
+    elseif simplify === :weak
+        normalforms_degree = 2
+        gbfan_simplification_code = 0
+    elseif simplify === :strong
+        normalforms_degree = 3
+        gbfan_simplification_code = 3
+    end
+
     # Compute the first GB in some ordering
     new_rff = groebner_basis_coeffs(
         rff,
@@ -517,53 +535,24 @@ function simplified_generating_set(
     if isempty(new_fracs)
         return new_fracs
     end
-    # If a set of GBs is needed
-    if first(strategy) === :gbfan
-        @assert length(strategy) == 2
-        _, code = strategy
-        fan = generating_sets_fan(new_rff, code; seed = seed)
-        for (ord, generators) in fan
-            append!(new_fracs, generators)
-        end
-    end
-    # If normal forms are needed
-    if first(strategy) === :normalforms
-        @assert length(strategy) == 2
-        _, up_to_degree = strategy
-        generators = monomial_generators_up_to_degree(
-            new_rff,
-            up_to_degree;
-            seed = seed,
-            strategy = :monte_carlo,
-        )
+
+    # Compute some normal forms
+    generators = monomial_generators_up_to_degree(
+        new_rff,
+        normalforms_degree;
+        seed = seed,
+        strategy = :monte_carlo,
+    )
+    append!(new_fracs, generators)
+
+    # Compute some GBs
+    fan = generating_sets_fan(new_rff, gbfan_simplification_code; seed = seed)
+    for (ord, generators) in fan
         append!(new_fracs, generators)
     end
-    # Something in the middle
-    if first(strategy) === :hybrid
-        @assert 1 <= length(strategy) <= 2
-        if length(strategy) == 1
-            code = 10
-        else
-            code = strategy[2]
-        end
 
-        # Compute some normal forms
-        up_to_degree = 3
-        generators = monomial_generators_up_to_degree(
-            new_rff,
-            up_to_degree;
-            seed = seed,
-            strategy = :monte_carlo,
-        )
-        append!(new_fracs, generators)
-
-        # Compute some GBs
-        fan = generating_sets_fan(new_rff, code; seed = seed)
-        for (ord, generators) in fan
-            append!(new_fracs, generators)
-        end
-    end
     new_fracs_unique = unique(new_fracs)
+
     @info """
     Final cleaning and simplification of generators. 
     Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique."""

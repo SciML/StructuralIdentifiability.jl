@@ -135,7 +135,7 @@ function initial_identifiable_functions(
                 RationalFunctionField(id_funcs_no_states_param),
                 p = p,
                 seed = 42,
-                strategy = (:gb,),
+                simplify = :standard,
                 rational_interpolator = rational_interpolator,
             )
         dennums_simplified = fractions_to_dennums(no_states_simplified)
