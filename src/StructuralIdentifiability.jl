@@ -81,8 +81,6 @@ include("pb_representation.jl")
 include("submodels.jl")
 include("discrete.jl")
 
-# TODO: handle finding identifiabile functions in case there are no parameters
-
 """
     assess_identifiability(ode::ODE{P}, p::Float64=0.99) where P <: MPolyElem{fmpq}
 
@@ -108,11 +106,10 @@ Input:
 Assesses identifiability of a given ODE model. The result is guaranteed to be correct with the probability
 at least `p`.
 
-If `funcs_to_check` are given, then the function will assess the identifiability of the provided functions
-and return a list of the same length with each element being one of `:nonidentifiable`, `:locally`, `:globally`.
-
-If `funcs_to_check` are not given, the function will assess identifiability of the parameters, and the result will
-be a dictionary from the parameters to their identifiability properties (again, one of `:nonidentifiable`, `:locally`, `:globally`).
+If `funcs_to_check` are given, then the function will assess the identifiability of the provided functions.
+Otherwise, it will assess identifiability of all the parameters and states.
+The function returns a dictionary from the functions to check to their identifiability properties 
+(one of `:nonidentifiable`, `:locally`, `:globally`).
 """
 function assess_identifiability(
     ode::ODE{P},

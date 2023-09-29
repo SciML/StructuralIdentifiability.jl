@@ -759,16 +759,16 @@ ident_funcs = [
         phi * Mar * siga2 * beta_SA - phi * siga2^2 * beta_SA - Mar * siga2 * beta_SA
     ) // (phi * M * siga2),
 ]
-push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+# Really large and takes a lot of time, so commented
+# push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 ###
 # Cases with states
 
-# TODO: uncomment when this is handled!
-# ode = StructuralIdentifiability.@ODEmodel(x'(t) = x(t), y(t) = x(t))
-# T = typeof(x)
-# ident_funcs = [x]
-# push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+ode = StructuralIdentifiability.@ODEmodel(x'(t) = x(t), y(t) = x(t))
+T = typeof(x)
+ident_funcs = [x]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = true))
 
 ode = StructuralIdentifiability.@ODEmodel(x'(t) = a * x(t) + u(t), y(t) = x(t))
 ident_funcs = [a, x]
