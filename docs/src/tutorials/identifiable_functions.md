@@ -24,7 +24,7 @@ find_identifiable_functions(LLW1987)
 And even of parameters and states:
 
 ```@example
-find_identifiable_functions(LLW1987, with_states=true)
+find_identifiable_functions(LLW1987, with_states = true)
 ```
 
 By default, `find_identifiable_functions` tries to simplify the output functions as much as possible. This feature is useful, for example, in [Model Reparametrization](@ref).
