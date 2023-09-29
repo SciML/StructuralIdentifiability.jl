@@ -256,8 +256,7 @@ ident_funcs = [
     (e * dr^2 - e * dr * d + rR * dr * a + dr * d * g - dr * r * a - d^2 * g) //
     (dr^2 + dr * a - d^2 - d * a),
 ]
-# TODO: GB fails
-# push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # QY system.
 # (this is a big one)
