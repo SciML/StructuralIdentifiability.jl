@@ -73,28 +73,75 @@ Parameters (8):
  y1(t) ~ C(t)
  y2(t) ~ N_inv</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @time global_id = assess_identifiability(ode, measured_quantities = measured_quantities)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Preproccessing `ModelingToolkit.AbstractTimeDependentSystem` object
 [ Info: Assessing local identifiability
-[ Info: Local identifiability assessed in 0.076377774 seconds
+[ Info: Local identifiability assessed in 0.183038721 seconds
 [ Info: Assessing global identifiability
+[ Info: Functions to check involve states
 [ Info: Computing IO-equations
-┌ Info: Computed in 12.884267396 seconds
+┌ Info: Computed in 15.057361691 seconds
 │   :ioeq_time = :ioeq_time
-└   ioeq_time = 12.884267396
+└   ioeq_time = 15.057361691
 [ Info: Computing Wronskians
-┌ Info: Computed in 6.345314007 seconds
+┌ Info: Computed in 7.221913494 seconds
 │   :wrnsk_time = :wrnsk_time
-└   wrnsk_time = 6.345314007
+└   wrnsk_time = 7.221913494
 [ Info: Dimensions of the Wronskians [1282, 2]
-┌ Info: Ranks of the Wronskians computed in 0.445535631 seconds
+┌ Info: Ranks of the Wronskians computed in 0.39914238 seconds
 │   :rank_time = :rank_time
-└   rank_times = 0.445535631
-[ Info: Global identifiability assessed in 35.820055844 seconds
- 35.929879 seconds (57.28 M allocations: 6.839 GiB, 9.64% gc time)
-Dict{SymbolicUtils.BasicSymbolic{Real}, Symbol} with 8 entries:
+└   rank_times = 0.39914238
+[ Info: Simplifying identifiable functions
+⌜ # Computing specializations..     Time: 0:00:03✓ # Computing specializations..     Time: 0:00:03
+⌜ # Computing specializations..     Time: 0:00:00⌝ # Computing specializations..     Time: 0:00:00⌟ # Computing specializations..     Time: 0:00:00⌞ # Computing specializations..     Time: 0:00:01⌜ # Computing specializations..     Time: 0:00:01✓ # Computing specializations..     Time: 0:00:01
+⌜ # Computing specializations..    Time: 0:00:00
+  Points:  2
+⌝ # Computing specializations..    Time: 0:00:00
+  Points:  4
+⌟ # Computing specializations..    Time: 0:00:00
+  Points:  6
+⌞ # Computing specializations..    Time: 0:00:01
+  Points:  8
+⌜ # Computing specializations..    Time: 0:00:01
+  Points:  10
+⌝ # Computing specializations..    Time: 0:00:01
+  Points:  12
+⌟ # Computing specializations..    Time: 0:00:02
+  Points:  14
+⌞ # Computing specializations..    Time: 0:00:02
+  Points:  16
+⌜ # Computing specializations..    Time: 0:00:02
+  Points:  18
+⌝ # Computing specializations..    Time: 0:00:03
+  Points:  20
+⌟ # Computing specializations..    Time: 0:00:03
+  Points:  22
+⌞ # Computing specializations..    Time: 0:00:03
+  Points:  24
+✓ # Computing specializations..    Time: 0:00:03
+┌ Info: Computing normal forms (probabilistic)
+│ Variables (8 in total): Nemo.QQMPolyRingElem[q, b, N_inv, k, g1, r, alpha, g2]
+│ Up to degree: 2
+└ Modulo: Finite field of characteristic 1073741827
+[ Info: Used specialization points: 8
+[ Info: Computing 9 Groebner bases for block orderings. Simplification code is 1
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 92 fractions 8 are syntactically unique.
+[ Info: Checking inclusion with probability 0.991
+[ Info: Inclusion checked in 22.096900508 seconds. Result: true
+[ Info: Out of 1465 initial generators there are 7 indepdendent
+[ Info: The ranking of the new set of generators is 1757
+[ Info: Global identifiability assessed in 64.421749878 seconds
+ 64.681913 seconds (225.04 M allocations: 17.929 GiB, 18.42% gc time)
+Dict{SymbolicUtils.BasicSymbolic{Real}, Symbol} with 14 entries:
+  E(t)  =&gt; :nonidentifiable
+  S(t)  =&gt; :nonidentifiable
+  J(t)  =&gt; :globally
+  C(t)  =&gt; :globally
   g1    =&gt; :globally
   q     =&gt; :nonidentifiable
   r     =&gt; :nonidentifiable
   k     =&gt; :globally
+  A(t)  =&gt; :nonidentifiable
+  I(t)  =&gt; :globally
   b     =&gt; :globally
   g2    =&gt; :globally
   alpha =&gt; :globally
-  N_inv =&gt; :globally</code></pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>K. Roosa and G. Chowell. <a href="https://doi.org/10.1186/s12976-018-0097-6"><em>Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models</em></a>, Theor Biol Med Model 16, 1 (2019)</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../reparametrization/">« Model Reparametrization</a><a class="docs-footer-nextpage" href="../../input/input/">Parsing input ODE system »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 29 September 2023 23:12">Friday 29 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  N_inv =&gt; :globally</code></pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>K. Roosa and G. Chowell. <a href="https://doi.org/10.1186/s12976-018-0097-6"><em>Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models</em></a>, Theor Biol Med Model 16, 1 (2019)</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../reparametrization/">« Model Reparametrization</a><a class="docs-footer-nextpage" href="../../input/input/">Parsing input ODE system »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Saturday 30 September 2023 20:27">Saturday 30 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
