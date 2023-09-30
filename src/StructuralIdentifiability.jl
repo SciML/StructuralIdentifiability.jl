@@ -180,19 +180,21 @@ function assess_identifiability(
     if isempty(measured_quantities)
         measured_quantities = get_measured_quantities(ode)
     end
-    if length(funcs_to_check) == 0
-        funcs_to_check = ModelingToolkit.parameters(ode)
-    end
+
     ode, conversion = preprocess_ode(ode, measured_quantities)
-    out_dict = Dict{Num, Symbol}()
+    conversion_back = Dict(v => k for (k, v) in conversion)
+    if isempty(funcs_to_check)
+        funcs_to_check = [conversion_back[x] for x in [ode.parameters..., ode.x_vars...]]
+    end
     funcs_to_check_ = [eval_at_nemo(each, conversion) for each in funcs_to_check]
+
     result = assess_identifiability(ode, funcs_to_check_, p)
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     return out_dict
 end
 
-#using PrecompileTools
-#include("precompile.jl")
+using PrecompileTools
+include("precompile.jl")
 
 end

@@ -10,22 +10,19 @@ $\begin{cases}
 
 which involves
 
-  * a vector $\mathbf{x}(t)$ of the state variables of the system,
+  - a vector $\mathbf{x}(t)$ of the state variables of the system,
 
-  * a vector $\mathbf{u}(t)$ of extermal inputs,
-
-  * a vector $\mathbf{p}$ of scalar parameters,
-
-  * a vector $\mathbf{y}(t)$ of outputs (i.e., observations),
-
-  * and vectors of rational functions $\mathbf{f}$ and $\mathbf{g}$ (for discussion of the non-rational case, see this [issue](https://github.com/SciML/StructuralIdentifiability.jl/issues/144)).
+  - a vector $\mathbf{u}(t)$ of extermal inputs,
+  - a vector $\mathbf{p}$ of scalar parameters,
+  - a vector $\mathbf{y}(t)$ of outputs (i.e., observations),
+  - and vectors of rational functions $\mathbf{f}$ and $\mathbf{g}$ (for discussion of the non-rational case, see this [issue](https://github.com/SciML/StructuralIdentifiability.jl/issues/144)).
 
 In the standard setup, inputs and outputs are assumed to be known, and the goal is to assess
 **identifiability** of parameters and/or states from the input-output data.
 In the case of states, this property is also called **observability**.
 
 There are two ways to define such a system to be processed using `StructuralIdentifiability.jl`.
-We will demonstrate them using the following example system 
+We will demonstrate them using the following example system
 (Wright's population model of two mutualist species with control[^1]):
 
 $\begin{cases}
@@ -42,13 +39,15 @@ One way to define the model is to use the `@ODEmodel` macro provided by the `Str
 using StructuralIdentifiability
 
 ode = @ODEmodel(
-    x1'(t) = r1 * x1(t) * (1 - c1 * x1(t)) + beta1 * x1(t) * x2(t) / (chi1 + x2(t)) + u(t),
+    x1'(t) =
+        r1 * x1(t) * (1 - c1 * x1(t)) + beta1 * x1(t) * x2(t) / (chi1 + x2(t)) + u(t),
     x2'(t) = r2 * x2(t) * (1 - c2 * x2(t)) + beta2 * x1(t) * x2(t) / (chi2 + x1(t)),
     y(t) = x1(t)
 )
 ```
 
 Then one can, for example, assess identifiability of the parameters and states by
+
 ```@example 1
 assess_identifiability(ode)
 ```
@@ -81,6 +80,7 @@ ode_mtk = ODESystem(eqs, t, name = :mutualist)
 ```
 
 Then, for example, the identifiability of parameters and states can be assessed as follows:
+
 ```@example 2
 assess_identifiability(ode_mtk, measured_quantities = measured_quantities)
 ```

@@ -6,8 +6,13 @@
     eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
     de = ODESystem(eqs, t, name = :Test)
 
-    correct =
-        Dict(a01 => :nonidentifiable, a21 => :nonidentifiable, a12 => :nonidentifiable)
+    correct = Dict(
+        a01 => :nonidentifiable,
+        a21 => :nonidentifiable,
+        a12 => :nonidentifiable,
+        x0 => :globally,
+        x1 => :nonidentifiable,
+    )
 
     @test isequal(correct, assess_identifiability(de; measured_quantities = [y1 ~ x0]))
     @test isequal(correct, assess_identifiability(de; measured_quantities = [x0]))
@@ -47,8 +52,13 @@
     eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
     de = ODESystem(eqs, t, name = :Test)
 
-    correct =
-        Dict(a01 => :nonidentifiable, a21 => :nonidentifiable, a12 => :nonidentifiable)
+    correct = Dict(
+        a01 => :nonidentifiable,
+        a21 => :nonidentifiable,
+        a12 => :nonidentifiable,
+        x0 => :globally,
+        x1 => :nonidentifiable,
+    )
 
     @test isequal(correct, assess_identifiability(de))
 
@@ -343,6 +353,8 @@
         γ => :nonidentifiable,
         β => :globally,
         wolves₊δ => :globally,
+        rabbits₊x => :nonidentifiable,
+        wolves₊y => :globally,
     )
     @test result == correct
 
