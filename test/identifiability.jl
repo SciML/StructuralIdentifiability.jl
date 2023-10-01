@@ -209,7 +209,7 @@
     #-------------------------------------------------------------------------- 
 
     for case in test_cases
-        result = assess_identifiability(case[:ode], case[:funcs])
+        result = assess_identifiability(case[:ode], funcs_to_check = case[:funcs])
         @test result == case[:correct]
     end
 end

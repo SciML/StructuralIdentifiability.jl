@@ -195,55 +195,31 @@ function assess_local_identifiability(
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
 
     if isequal(type, :SE)
-        result = assess_local_identifiability(ode, funcs_to_check_, p, type)
+        result = assess_local_identifiability(
+            ode,
+            funcs_to_check = funcs_to_check_,
+            p = p,
+            type = type,
+        )
         nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
         out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
         return out_dict
     elseif isequal(type, :ME)
-        result, bd = assess_local_identifiability(ode, funcs_to_check_, p, type)
+        result, bd = assess_local_identifiability(
+            ode,
+            funcs_to_check = funcs_to_check_,
+            p = p,
+            type = type,
+        )
         nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
         out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
         return (out_dict, bd)
     end
 end
 # ------------------------------------------------------------------------------
-"""
-    assess_local_identifiability(ode::ODE{P}, p::Float64 = 0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
-
-Input:
-- `ode` - the ODE model
-- `p` - probability of correctness
-- `type` - identifiability type (`:SE` for single-experiment, `:ME` for multi-experiment)
-
-Output:
-- for `type=:SE`, the result is a dictionary from each parameter to boolean;
-- for `type=:ME`, the result is a tuple with the dictionary as in `:SE` case and array of number of experiments.
-
-The main entry point for local identifiability checks.
-Call this function to automatically take care of local identifiability of all parameters and initial conditions.
-The result is correct with probability at least `p`.
-
-`type` can be either `:SE` (single-experiment identifiability) or `:ME` (multi-experiment identifiability).
-The return value is a tuple consisting of the array of bools and the number of experiments to be performed.
-"""
-function assess_local_identifiability(
-    ode::ODE{P},
-    p::Float64 = 0.99,
-    type = :SE,
-) where {P <: MPolyElem{Nemo.fmpq}}
-    funcs_to_check = ode.parameters
-    if type == :SE
-        funcs_to_check = vcat(funcs_to_check, ode.x_vars)
-    end
-    result = assess_local_identifiability(ode, funcs_to_check, p, type)
-    if type == :SE
-        return Dict(a => result[a] for a in funcs_to_check)
-    end
-    return (Dict(a => result[1][a] for a in funcs_to_check), result[2])
-end
 
 """
-    assess_local_identifiability(ode::ODE{P}, funcs_to_check::Array{<: Any, 1}, p::Float64=0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
+    assess_local_identifiability(ode::ODE{P}; funcs_to_check::Array{<: Any, 1}, p::Float64=0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
 
 Checks the local identifiability/observability of the functions in `funcs_to_check`. The result is correct with probability at least `p`.
 
@@ -253,12 +229,18 @@ Call this function if you have a specific collection of parameters of which you 
 If the type is `:ME`, states are not allowed to appear in the `funcs_to_check`.
 """
 function assess_local_identifiability(
-    ode::ODE{P},
-    funcs_to_check::Array{<:Any, 1},
+    ode::ODE{P};
+    funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
     p::Float64 = 0.99,
     type = :SE,
     trbasis = nothing,
 ) where {P <: MPolyElem{Nemo.fmpq}}
+    if isempty(funcs_to_check)
+        funcs_to_check = ode.parameters
+        if type == :SE
+            funcs_to_check = vcat(funcs_to_check, ode.x_vars)
+        end
+    end
 
     # Checking whether the states appear in the ME case
     if type == :ME

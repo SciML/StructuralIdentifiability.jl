@@ -82,47 +82,40 @@ include("submodels.jl")
 include("discrete.jl")
 
 """
-    assess_identifiability(ode::ODE{P}, p::Float64=0.99) where P <: MPolyElem{fmpq}
+    assess_identifiability(ode; funcs_to_check = [], p=0.99)
 
 Input:
 - `ode` - the ODE model
-- `p` - probability of correctness.
-
-Assesses identifiability (both local and global) of a given ODE model (parameters detected automatically). The result is guaranteed to be correct with the probability
-at least `p`.
-"""
-function assess_identifiability(ode::ODE{P}, p::Float64 = 0.99) where {P <: MPolyElem{fmpq}}
-    result = assess_identifiability(ode, vcat(ode.parameters, ode.x_vars), p)
-    return result #Dict(param => res for (param, res) in zip(ode.parameters, result_list))
-end
-
-"""
-    assess_identifiability(ode, [funcs_to_check, p=0.99])
-
-Input:
-- `ode` - the ODE model
+- `funcs_to_check` - list of functions to check identifiability for; if empty, all parameters
+   and states are taken
 - `p` - probability of correctness.
     
 Assesses identifiability of a given ODE model. The result is guaranteed to be correct with the probability
 at least `p`.
-
-If `funcs_to_check` are given, then the function will assess the identifiability of the provided functions.
-Otherwise, it will assess identifiability of all the parameters and states.
 The function returns a dictionary from the functions to check to their identifiability properties 
 (one of `:nonidentifiable`, `:locally`, `:globally`).
 """
 function assess_identifiability(
-    ode::ODE{P},
-    funcs_to_check::Array{<:RingElem, 1},
+    ode::ODE{P};
+    funcs_to_check::Array{<:RingElem, 1} = Array{RingElem, 1}(),
     p::Float64 = 0.99,
 ) where {P <: MPolyElem{fmpq}}
     p_glob = 1 - (1 - p) * 0.9
     p_loc = 1 - (1 - p) * 0.1
 
+    if isempty(funcs_to_check)
+        funcs_to_check = vcat(ode.parameters, ode.x_vars)
+    end
+
     @info "Assessing local identifiability"
     trbasis = Array{fmpq_mpoly, 1}()
-    runtime = @elapsed local_result =
-        assess_local_identifiability(ode, funcs_to_check, p_loc, :SE, trbasis)
+    runtime = @elapsed local_result = assess_local_identifiability(
+        ode,
+        funcs_to_check = funcs_to_check,
+        p = p_loc,
+        type = :SE,
+        trbasis = trbasis,
+    )
     @info "Local identifiability assessed in $runtime seconds"
     @debug "Trasncendence basis to be specialized is $trbasis"
     _runtime_logger[:loc_time] = runtime
@@ -188,7 +181,7 @@ function assess_identifiability(
     end
     funcs_to_check_ = [eval_at_nemo(each, conversion) for each in funcs_to_check]
 
-    result = assess_identifiability(ode, funcs_to_check_, p)
+    result = assess_identifiability(ode, funcs_to_check = funcs_to_check_, p = p)
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     return out_dict
