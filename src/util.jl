@@ -463,7 +463,7 @@ function eval_at_nemo(e::Union{Float16, Float32, Float64}, vals::Dict)
     else
         out = rationalize(e)
     end
-    @warn "Floating points are not allowed, value $e will be converted to $(out)."
+    @warn "Floating point value $e will be converted to $(out)."
     return out
 end
 
