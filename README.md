@@ -101,7 +101,7 @@ Dict{Any, Symbol} with 2 entries:
 
 ### Assessing local identifiability
 
-Local identifiability can be assessed efficiently even for the models for which global identifiability analysis is out of reach. 
+Local identifiability can be assessed efficiently even for the models for which global identifiability analysis is out of reach.
 This can be done using the `assess_local_identifiability` function, for example:
 
 ```julia
