@@ -159,6 +159,45 @@ end
 
 # ------------------------------------------------------------------------------
 
+function homogenize(fs)
+    ring = parent(fs[1])
+    newring, hom_vars = PolynomialRing(
+        base_ring(ring),
+        vcat("X0", map(string, gens(ring))),
+        ordering = ordering(ring),
+    )
+    Fs = empty(fs)
+    for f in fs
+        D = total_degree(f)
+        new_f = zero(newring)
+        for term in terms(f)
+            cf = coeff(term, 1)
+            ev = monomial(term, 1)
+            d = total_degree(ev)
+            new_f += cf * evaluate(ev, hom_vars[2:end]) * hom_vars[1]^(D - d)
+        end
+        push!(Fs, new_f)
+    end
+    return Fs
+end
+
+function dehomogenize(Fs)
+    ring = parent(Fs[1])
+    newring, dehom_vars = PolynomialRing(
+        base_ring(ring),
+        map(string, gens(ring)[2:end]),
+        ordering = ordering(ring),
+    )
+    fs = empty(Fs)
+    for F in Fs
+        f = evaluate(F, vcat(one(newring), dehom_vars))
+        push!(fs, f)
+    end
+    return fs
+end
+
+# ------------------------------------------------------------------------------
+
 """
     parent_ring_change(poly, new_ring)
 
@@ -370,6 +409,42 @@ end
 # ------------------------------------------------------------------------------
 
 """
+    gen_tag_name(base; stop_words)
+    gen_tag_names(n, base; stop_words)
+
+Generates a string which will not collide with the words in `stop_words`.
+
+## Arguments
+
+- `n`: Generates a sequence of unique strings of length `n`
+- `base`: A string or a vector of strings, the base for the generated sequence
+- `stop_words`: A vector of strings, stop words
+"""
+function gen_tag_name(base = "T"; stop_words = Vector{String}())
+    return first(gen_tag_names(1, base, stop_words = stop_words))
+end
+
+function gen_tag_names(n::Integer, base = "T"; stop_words = Vector{String}())
+    sequence = if base isa Vector{String}
+        @assert n == length(base)
+        base
+    else
+        repeat([base], n)
+    end
+    while true
+        rand_token = Int(rand(UInt8))
+        sequence = map(c -> "$(rand_token)__$c", sequence)
+        sequence = map(ic -> "$(ic[2])_$(ic[1])", enumerate(sequence))
+        if all(elem -> !(elem in stop_words), sequence)
+            break
+        end
+    end
+    return sequence
+end
+
+# ------------------------------------------------------------------------------
+
+"""
     switch_ring(v, ring)
 
 For a variable `v`, returns a variable in `ring` with the same name
@@ -424,7 +499,7 @@ function eval_at_nemo(e::Union{Float16, Float32, Float64}, vals::Dict)
     else
         out = rationalize(e)
     end
-    @warn "Floating points are not allowed, value $e will be converted to $(out)."
+    @warn "Floating point value $e will be converted to $(out)."
     return out
 end
 

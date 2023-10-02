@@ -8,20 +8,18 @@ system.
 ## Options
 
 This functions takes the following optional arguments:
-- `p`: A float in the range from 0 to 1, the probability of correctness. Default
-  is `0.99`.
-- `simplify`: When `true`, tries to simplify the identifiabile functions, and
-    returns an algebraically indepdendent set. Default is `true`.
 - `with_states`: When `true`, also reports the identifiabile functions in the
     ODE states. Default is `false`.
-- `strategy`: The simplification strategy. Possible options are:
-    - `(:gb, )`: Extract the coefficients of a Groebner basis of the MQS ideal
-      (default).
-    - `(:gbfan, N)`: Same as `:gb`, but computes `N` bases for different random
-        rankings of variables.
-    - `(:normalforms, N)`: Same as `:gb`, but adjoins the results of normal form
-      computations of monomials up to the total degree `N`. 
-    - `(:hybrid, )`: The best of all worlds.
+- `simplify`: The extent to which the output functions are simplified. Stronger
+  simplification may require more time. Possible options are:
+  - `:standard`: Default simplification.
+  - `:weak`: Weak simplification. This option is the fastest, but the output
+    functions can be quite complex.
+  - `:strong`: Strong simplification. This option is the slowest, but the output
+  functions are nice and simple.
+  - `:absent`: No simplification.
+- `p`: A float in the range from 0 to 1, the probability of correctness. Default
+  is `0.99`.
 - `seed`: The rng seed. Default value is `42`.
 
 ## Example
@@ -29,35 +27,44 @@ This functions takes the following optional arguments:
 ```jldoctest
 using StructuralIdentifiability
 
-de = @ODEmodel(
+ode = @ODEmodel(
     x0'(t) = -(a01 + a21) * x0(t) + a12 * x1(t),
     x1'(t) = a21 * x0(t) - a12 * x1(t),
     y(t) = x0(t)
 )
 
-find_identifiable_functions(de)
+find_identifiable_functions(ode)
 
 # prints
 3-element Vector{AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}}:
  a12 + a01 + a21
  a12*a01
 ```
+
 """
 function find_identifiable_functions(
     ode::ODE{T};
     p::Float64 = 0.99,
-    simplify = true,
     seed = 42,
     with_states = false,
-    adjoin_identifiable = false,
-    strategy = (:gb,),
+    simplify = :standard,
+    rational_interpolator = :VanDerHoevenLecerf,
 ) where {T <: MPolyElem{fmpq}}
-    @assert first(strategy) in (:gb, :gbfan, :normalforms, :hybrid)
+    Random.seed!(seed)
+    @assert simplify in (:standard, :weak, :strong, :absent)
+    _runtime_logger[:id_npoints_degree] = 0
+    _runtime_logger[:id_npoints_interpolation] = 0
+    _runtime_logger[:id_beautifulization] = 0.0
     runtime_start = time_ns()
     half_p = 0.5 + p / 2
-    id_funcs, bring =
-        initial_identifiable_functions(ode, p = half_p, with_states = with_states)
-    if simplify
+    id_funcs, bring = initial_identifiable_functions(
+        ode,
+        p = half_p,
+        with_states = with_states,
+        rational_interpolator = rational_interpolator,
+    )
+    # If simplification is needed
+    if simplify !== :absent
         if isempty(id_funcs)
             bring = parent(ode)
             id_funcs = [one(bring)]
@@ -66,13 +73,15 @@ function find_identifiable_functions(
             RationalFunctionField(id_funcs),
             p = half_p,
             seed = seed,
-            strategy = strategy,
+            simplify = simplify,
+            rational_interpolator = rational_interpolator,
         )
     else
         id_funcs_fracs = dennums_to_fractions(id_funcs)
     end
     id_funcs_fracs = [parent_ring_change(f, parent(ode)) for f in id_funcs_fracs]
     _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1e9
+    _runtime_logger[:are_id_funcs_polynomial] = all(isone ∘ denominator, id_funcs_fracs)
     @info "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds"
     return id_funcs_fracs
 end
@@ -115,12 +124,13 @@ find_identifiable_functions(de, measured_quantities = [y1 ~ x0])
 function find_identifiable_functions(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
-    simplify = true,
-    with_states = false,
-    p = 0.99,
+    p::Float64 = 0.99,
     seed = 42,
-    strategy = (:gb,),
+    with_states = false,
+    simplify = :standard,
+    rational_interpolator = :VanDerHoevenLecerf,
 )
+    Random.seed!(seed)
     if isempty(measured_quantities)
         measured_quantities = get_measured_quantities(ode)
     end
@@ -131,7 +141,7 @@ function find_identifiable_functions(
         p = p,
         seed = seed,
         with_states = with_states,
-        strategy = strategy,
+        rational_interpolator = rational_interpolator,
     )
     result = [parent_ring_change(f, ode.poly_ring) for f in result]
     nemo2mtk = Dict(v => Num(k) for (k, v) in conversion)

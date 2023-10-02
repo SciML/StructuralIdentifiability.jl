@@ -99,7 +99,7 @@ function states_generators(
                     extract_coefficients_ratfunc(lie_derivative(f, ode), ode.u_vars) for
                     f in curr
                 ],
-                init=empty(curr)
+                init = empty(curr),
             )
         end
     end

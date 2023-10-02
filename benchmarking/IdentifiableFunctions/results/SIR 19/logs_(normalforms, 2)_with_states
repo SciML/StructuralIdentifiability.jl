@@ -1,0 +1,78 @@
+ERROR: LoadError: UndefVarError: `homogenize_generators!` not defined
+Stacktrace:
+  [1] _groebner(polynomials::Vector{AbstractAlgebra.Generic.MPoly{Rational{BigInt}}}, kws::Groebner.KeywordsHandler{Groebner.InputOrdering}, representation::Groebner.PolynomialRepresentation)
+    @ Groebner ~/Groebner.jl/src/groebner/groebner.jl:45
+  [2] _groebner(polynomials::Vector{AbstractAlgebra.Generic.MPoly{Rational{BigInt}}}, kws::Groebner.KeywordsHandler{Groebner.InputOrdering})
+    @ Groebner ~/Groebner.jl/src/groebner/groebner.jl:12
+  [3] groebner(polynomials::Vector{AbstractAlgebra.Generic.MPoly{Rational{BigInt}}}; options::Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}})
+    @ Groebner ~/Groebner.jl/src/interface.jl:74
+  [4] groebner
+    @ ~/Groebner.jl/src/interface.jl:67 [inlined]
+  [5] macro expansion
+    @ ~/Groebner.jl/src/precompile.jl:14 [inlined]
+  [6] macro expansion
+    @ ~/.julia/packages/SnoopPrecompile/1XXT1/src/SnoopPrecompile.jl:62 [inlined]
+  [7] macro expansion
+    @ ~/Groebner.jl/src/precompile.jl:8 [inlined]
+  [8] top-level scope
+    @ ~/.julia/packages/SnoopPrecompile/1XXT1/src/SnoopPrecompile.jl:119
+  [9] include(mod::Module, _path::String)
+    @ Base ./Base.jl:457
+ [10] include(x::String)
+    @ Groebner ~/Groebner.jl/src/Groebner.jl:1
+ [11] top-level scope
+    @ ~/Groebner.jl/src/Groebner.jl:139
+ [12] include
+    @ ./Base.jl:457 [inlined]
+ [13] include_package_for_output(pkg::Base.PkgId, input::String, depot_path::Vector{String}, dl_load_path::Vector{String}, load_path::Vector{String}, concrete_deps::Vector{Pair{Base.PkgId, UInt128}}, source::String)
+    @ Base ./loading.jl:2049
+ [14] top-level scope
+    @ stdin:3
+in expression starting at /home/demin/Groebner.jl/src/precompile.jl:5
+in expression starting at /home/demin/Groebner.jl/src/Groebner.jl:1
+in expression starting at stdin:3
+ERROR: LoadError: Failed to precompile Groebner [0b43b601-686d-58a3-8a1c-6623616c7cd4] to "/home/demin/.julia/compiled/v1.9/Groebner/jl_8vRSJe".
+Stacktrace:
+  [1] error(s::String)
+    @ Base ./error.jl:35
+  [2] compilecache(pkg::Base.PkgId, path::String, internal_stderr::IO, internal_stdout::IO, keep_loaded_modules::Bool)
+    @ Base ./loading.jl:2300
+  [3] compilecache
+    @ ./loading.jl:2167 [inlined]
+  [4] _require(pkg::Base.PkgId, env::String)
+    @ Base ./loading.jl:1805
+  [5] _require_prelocked(uuidkey::Base.PkgId, env::String)
+    @ Base ./loading.jl:1660
+  [6] macro expansion
+    @ ./loading.jl:1648 [inlined]
+  [7] macro expansion
+    @ ./lock.jl:267 [inlined]
+  [8] require(into::Module, mod::Symbol)
+    @ Base ./loading.jl:1611
+  [9] include
+    @ ./Base.jl:457 [inlined]
+ [10] include_package_for_output(pkg::Base.PkgId, input::String, depot_path::Vector{String}, dl_load_path::Vector{String}, load_path::Vector{String}, concrete_deps::Vector{Pair{Base.PkgId, UInt128}}, source::String)
+    @ Base ./loading.jl:2049
+ [11] top-level scope
+    @ stdin:3
+in expression starting at /home/demin/StructuralIdentifiability.jl/src/StructuralIdentifiability.jl:1
+in expression starting at stdin:3
+ERROR: LoadError: Failed to precompile StructuralIdentifiability [220ca800-aa68-49bb-acd8-6037fa93a544] to "/home/demin/.julia/compiled/v1.9/StructuralIdentifiability/jl_ZLp6ZB".
+Stacktrace:
+ [1] error(s::String)
+   @ Base ./error.jl:35
+ [2] compilecache(pkg::Base.PkgId, path::String, internal_stderr::IO, internal_stdout::IO, keep_loaded_modules::Bool)
+   @ Base ./loading.jl:2300
+ [3] compilecache
+   @ ./loading.jl:2167 [inlined]
+ [4] _require(pkg::Base.PkgId, env::String)
+   @ Base ./loading.jl:1805
+ [5] _require_prelocked(uuidkey::Base.PkgId, env::String)
+   @ Base ./loading.jl:1660
+ [6] macro expansion
+   @ ./loading.jl:1648 [inlined]
+ [7] macro expansion
+   @ ./lock.jl:267 [inlined]
+ [8] require(into::Module, mod::Symbol)
+   @ Base ./loading.jl:1611
+in expression starting at /home/demin/StructuralIdentifiability.jl/benchmarking/IdentifiableFunctions/run_single_benchmark.jl:4

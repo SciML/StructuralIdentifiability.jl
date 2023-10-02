@@ -70,9 +70,9 @@ function normalform(p, basis, sugar_cubes)
     r, sugar
 end
 
-function gb(polys; use_sugar=true)
+function gb(polys; use_sugar = true)
     # The classic Buchberger algorithm
-    sort!(polys, by=leading_monomial)
+    sort!(polys, by = leading_monomial)
     critical_pairs = Vector{NTuple{2, Int}}()
     basis = empty(polys)
     sugar_cubes = Int[]

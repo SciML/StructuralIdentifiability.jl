@@ -2,8 +2,6 @@
 
 `StructuralIdentifiability.jl` is a comprehensive toolbox for assessing identifiability parameters.
 
-This documentation contains information about the functionality of the package as well as examples of use cases.
-
 ## Installation
 
 To install StructuralIdentifiability.jl, use the Julia package manager:
@@ -36,7 +34,8 @@ Pkg.add("StructuralIdentifiability")
 
   - Local identifiability checks
   - Global identifiability checks
-  - Assessment of identifiable functions of parameters
+  - Assessment of identifiable functions of parameters and states
+  - Model reparametrization (experimental)
 
 ## Contributing
 

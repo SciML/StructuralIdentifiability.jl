@@ -1,3 +1,34 @@
+#=
+This script runs benchmarks and collects useful statistics.
+
+To benchmark a particular function `StructuralIdentifiability.XYZ`, execute the
+following command in your favorite terminal from this directory:
+
+```
+$ julia run_benchmarks.jl XYZ
+```
+
+`XYZ` can be one of the following:
+- `find_identifiable_functions`,
+- `reparametrize_global`.
+
+Going into details, this will:
+1. Load all benchmark models from benchmarks.jl and create a directory
+   `benchmark_results`.
+2. Run the function `StructuralIdentifiability.XYZ`, collect useful runtime
+   statistics, and write them to `benchmark_results`.
+3. Read the statistics from `benchmark_results` and produce a table with
+   results.
+
+Below in the file there is a description of some potentially useful command line
+arguments.
+A more involved way of running benchmarks could be the following:
+
+```
+julia run_benchmarks.jl XYZ --target="id_total, id_are_polynomial" --timeout=3600 --keywords="(strategy=(:hybrid,),with_states=true); (strategy=(:normalforms,3),with_states=true)"
+```
+=#
+
 using ArgParse
 using CpuId, Logging, Pkg, Printf
 using Base.Threads
@@ -9,9 +40,9 @@ using StructuralIdentifiability
 using StructuralIdentifiability: _runtime_logger, ODE
 using StructuralIdentifiability.ParamPunPam
 
-global_logger(Logging.SimpleLogger(stdout, Logging.Warn))
+global_logger(Logging.ConsoleLogger(stdout, Logging.Warn))
 include("benchmarks.jl")
-global_logger(Logging.SimpleLogger(stdout, Logging.Info))
+global_logger(Logging.ConsoleLogger(stdout, Logging.Info))
 
 const _progressbar_color = :light_green
 const _progressbar_value_color = :light_green
@@ -20,28 +51,71 @@ progressbar_enabled() =
 
 include("utils.jl")
 
+const BENCHMARK_TABLE = "benchmark_result.md"
+
 function parse_commandline()
     s = ArgParseSettings()
     #! format: off
     @add_arg_table s begin
+        "function"
+            help = "The function to benchmark."
+            arg_type = String
+            required = true
+        "--keywords"
+            help = """
+            Keyword arguments to be passed to `function`. 
+            Semicolon-separated list of named tuples."""
+            arg_type = String
+            default = ""
+            # default = "(strategy=(:gb, ),); (strategy=(:gb, ),with_states=true); (strategy=(:normalforms, 2),); (strategy=(:normalforms, 2),with_states=true); (strategy=(:normalforms, 3),); (strategy=(:normalforms, 3),with_states=true); (strategy=(:hybrid, ),); (strategy=(:hybrid, ),with_states=true)"
+        "--target"
+            help = """
+            Statistics to be displayed in the table.
+            Comma-separated list of entities.
+            NOTE: each of these must be present in the list of
+            `ALL_POSSIBLE_CATEGORIES` in `utils.jl`"""
+            arg_type = String
+            default = "id_total"
         "--timeout"
             help = "Timeout, s."
             arg_type = Int
             default = 300
+        "--workers"
+            help = "The number of available worker processes."
+            arg_type = Int
+            default = 4
         "--skip"
-            help = "Systems to skip."
+            help = "Skip specified benchmark models."
             arg_type = Vector{String}
-            default = ["NFkB"]
+            default = ["NFkB", 
+                "JAK-STAT 1", 
+                "LeukaemiaLeon2021", 
+                "MAPK model (5 outputs bis)", 
+                "QWWC", 
+                "TumorHu2019", 
+                "TumorPillis2007", 
+                "cLV1 (1o)"]
+        "--models"
+            help = """
+            Run specified benchmark models. 
+            A comma-separated list of names.
+            Leave empty for selecting all models."""
+            arg_type = String
+            default = ""
+        "--augment"
+            help = "Augment the benchmark dataset with similar models."
+            arg_type = Bool
+            default = false
         "--regen"
             help = "Re-generate the folder with benchmarks from scratch."
             arg_type = Bool
-            default = true
-        "--keywords"
+            default = false
+        "--tableonly"
             help = """
-            Keyword arguments to `find_identifiable_functions`. 
-            Semicolon-separated list of named tuples."""
-            default = String
-            default = "(strategy=(:gb, ),); (strategy=(:gb, ),with_states=true); (strategy=(:normalforms, 2),); (strategy=(:normalforms, 2),with_states=true); (strategy=(:normalforms, 3),); (strategy=(:normalforms, 3),with_states=true); (strategy=(:hybrid, ),); (strategy=(:hybrid, ),with_states=true)"
+            Do not run benchmarks. 
+            Just construct the table from the existing directory."""
+            arg_type = Bool
+            default = false
     end
     #! format: on
 
@@ -50,11 +124,12 @@ end
 
 function populate_benchmarks(args, kwargs)
     regen = args["regen"]
-    !regen && return true
+    dir_present = isdir((@__DIR__) * "/$BENCHMARK_RESULTS/")
+    dir_present && !regen && return false
     @debug "Re-generating the benchmarks folder"
     try
-        if isdir((@__DIR__) * "/systems/")
-            rm((@__DIR__) * "/systems/", recursive = true, force = true)
+        if isdir((@__DIR__) * "/$BENCHMARK_RESULTS/")
+            rm((@__DIR__) * "/$BENCHMARK_RESULTS/", recursive = true, force = true)
         end
     catch err
         @info "Something went wrong when deleting the benchmarks folder"
@@ -74,8 +149,8 @@ function populate_benchmarks(args, kwargs)
         name = bmark[:name]
         system = bmark[:ode]
         @debug "Generating $name"
-        mkpath((@__DIR__) * "/systems/$name/")
-        fd = open((@__DIR__) * "/systems/$name/$name.jl", "w")
+        mkpath((@__DIR__) * "/$BENCHMARK_RESULTS/$name/")
+        fd = open((@__DIR__) * "/$BENCHMARK_RESULTS/$name/$name.jl", "w")
         println(fd, "# $name")
         println(fd, "#! format: off")
         println(fd, "using StructuralIdentifiability")
@@ -91,40 +166,53 @@ end
 function run_benchmarks(args, kwargs)
     to_skip = args["skip"]
     timeout = args["timeout"]
-    dirnames = first(walkdir((@__DIR__) * "/systems/"))[2]
-    to_run_names = setdiff(dirnames, to_skip)
+    @assert timeout > 0
+    function_name = args["function"]
+    @assert function_name in ("find_identifiable_functions", "reparametrize_global")
+    nworkers = args["workers"]
+    @assert nworkers > 0
+
+    dirnames = first(walkdir((@__DIR__) * "/$BENCHMARK_RESULTS/"))[2]
+    models_from_args = filter(s -> !isempty(s), map(strip, split(args["models"], ",")))
+    to_run_names = if isempty(models_from_args)
+        dirnames
+    else
+        models_from_args
+    end
+    to_run_names = setdiff(to_run_names, to_skip)
     to_run_indices = collect(1:length(to_run_names))
 
-    nworkers = 16
-
     @info """
-    Running benchmarks.
+    Benchmarking `$function_name`."""
+    @info """
+    Passing these keyword arguments to `$function_name`:
+    \t$(join(map(string, kwargs), "\n\t"))"""
+    @info """
     Number of benchmark systems: $(length(to_run_indices))
     Workers: $(nworkers)
-    Timeout: $timeout seconds
-    Keywords for `find_identifiable_functions`:
-    \t$(join(map(string, kwargs), "\n\t"))"""
+    Timeout: $timeout seconds"""
     @info """
     Benchmark systems:
     $to_run_names"""
 
     seconds_passed(from_t) = round((time_ns() - from_t) / 1e9, digits = 2)
 
-    queue = [(kw, idx) for kw in kwargs for idx in to_run_indices]
-    procs = []
-    log_fd = []
-    keywords = []
-    exited = []
+    queue = [
+        (problem_id = problem, function_kwargs = kw) for kw in kwargs for
+        problem in to_run_indices
+    ]
+    processes = []
+    running = []
     errored = []
-    running = 0
 
-    generate_showvalues(procs) =
+    generate_showvalues(processes) =
         () -> [(
             :Active,
             join(
                 map(
-                    proc -> string(proc.name) * " / " * string(proc.id),
-                    filter(proc -> process_running(proc.proc), procs),
+                    proc ->
+                        string(proc.problem_name) * " / " * string(proc.global_run_id),
+                    filter(proc -> process_running(proc.julia_process), processes),
                 ),
                 ", ",
             ),
@@ -138,73 +226,90 @@ function run_benchmarks(args, kwargs)
         enabled = progressbar_enabled(),
         color = _progressbar_color,
     )
-
     while true
-        if !isempty(queue) && running < nworkers
+        if !isempty(queue) && length(running) < nworkers
+            task = pop!(queue)
+            function_kwargs = task.function_kwargs
+            problem_id = task.problem_id
+            problem_name = to_run_names[problem_id]
+            global_id = keywords_to_global_id(function_kwargs)
+            @debug "Running $problem_name / $global_id. Kwargs:\n$function_kwargs"
+            logfn = generic_filename("logs", global_id)
+            logs = open((@__DIR__) * "/$BENCHMARK_RESULTS/$problem_name/$logfn", "w")
+            # escaping ':' for Windows
+            function_kwargs_esc = replace(string(function_kwargs), ":" => "\\:")
+            cmd = Cmd([
+                "julia",
+                (@__DIR__) * "/run_single_benchmark.jl",
+                "$function_name",
+                "$problem_name",
+                "$function_kwargs_esc",
+            ])
+            cmd = Cmd(cmd, ignorestatus = true, detach = false, env = copy(ENV))
+            proc = run(pipeline(cmd, stdout = logs, stderr = logs), wait = false)
+            push!(
+                processes,
+                (
+                    problem_id = problem_id,
+                    problem_name = problem_name,
+                    function_name = function_name,
+                    function_kwargs = function_kwargs,
+                    julia_process = proc,
+                    start_time = time_ns(),
+                    global_run_id = global_id,
+                    logfile = logs,
+                    # errfile = errs,
+                ),
+            )
+            push!(running, processes[end])
             next!(
                 prog,
-                showvalues = generate_showvalues(procs),
+                showvalues = generate_showvalues(processes),
                 step = 0,
                 valuecolor = _progressbar_value_color,
                 # spinner = "⌜⌝⌟⌞",
             )
-            (kw, idx) = pop!(queue)
-            name = to_run_names[idx]
-            id = keywords_to_id(kw)
-            @debug "Running $name / $id"
-            logs = open((@__DIR__) * "/systems/$name/logs_$id", "w")
-            cmd = Cmd(["julia", (@__DIR__) * "/run_single_benchmark.jl", "$name", "$kw"])
-            cmd = Cmd(cmd, ignorestatus = true, detach = false, env = copy(ENV))
-            proc = run(pipeline(cmd, stdout = logs, stderr = logs), wait = false)
-            push!(log_fd, logs)
-            push!(keywords, kw)
-            push!(
-                procs,
-                (index = idx, name = name, proc = proc, start_time = time_ns(), id = id),
-            )
-            running += 1
         end
 
         sleep(0.2)
-        i = 1
-        for i in 1:length(procs)
-            i in exited && continue
-            proc = procs[i]
-            if process_exited(proc.proc)
-                running -= 1
-                push!(exited, i)
-                if proc.proc.exitcode != 0
-                    push!(errored, i)
+        to_be_removed = []
+        for i in 1:length(running)
+            proc = running[i]
+            if process_exited(proc.julia_process)
+                push!(to_be_removed, i)
+                if proc.julia_process.exitcode != 0
+                    push!(errored, proc)
                 end
-                close(log_fd[i])
-                kw = keywords[i]
+                close(proc.logfile)
+                # close(proc.errfile)
+                kw = proc.function_kwargs
                 start_time = proc.start_time
                 next!(
                     prog,
-                    showvalues = generate_showvalues(procs),
+                    showvalues = generate_showvalues(processes),
                     valuecolor = _progressbar_value_color,
                 )
-                @debug "Yielded $(proc.name) / $(kw) after $(seconds_passed(start_time)) seconds"
+                @debug "Yielded $(proc.problem_name) / $(kw) after $(seconds_passed(start_time)) seconds"
             end
-            if process_running(proc.proc)
+            if process_running(proc.julia_process)
                 start_time = proc.start_time
                 if seconds_passed(start_time) > timeout
-                    kill(proc.proc)
-                    close(log_fd[i])
-                    kw = keywords[i]
-                    running -= 1
-                    push!(exited, i)
+                    push!(to_be_removed, i)
+                    kill(proc.julia_process)
+                    close(proc.logfile)
+                    # close(proc.errfile)
+                    kw = proc.function_kwargs
                     next!(
                         prog,
-                        showvalues = generate_showvalues(procs),
+                        showvalues = generate_showvalues(processes),
                         valuecolor = _progressbar_value_color,
                     )
-                    @debug "Timed-out $(proc.name) / $(kw) after $(seconds_passed(start_time)) seconds"
+                    @debug "Timed-out $(proc.problem_name) / $(kw) after $(seconds_passed(start_time)) seconds"
                 end
             end
         end
-        if length(exited) == length(to_run_names) * length(kwargs)
-            @debug "Exited $exited"
+        deleteat!(running, to_be_removed)
+        if isempty(queue) && isempty(running)
             @debug "All benchmarks finished"
             break
         end
@@ -213,8 +318,8 @@ function run_benchmarks(args, kwargs)
 
     if !isempty(errored)
         printstyled("(!) Maybe errored:\n", color = :red)
-        for i in errored
-            println("\t$(procs[i].name) / $(procs[i].id)")
+        for proc in errored
+            println("\t$(proc.problem_name) / $(proc.global_run_id)")
         end
     end
 
@@ -222,114 +327,127 @@ function run_benchmarks(args, kwargs)
 end
 
 function collect_timings(args, kwargs, names; content = :compare)
-    resulting_md = ""
+    function_name = args["function"]
+    targets = map(Symbol, map(strip, split(args["target"], ",")))
+    @assert all(target -> target in ALL_CATEGORIES, targets)
+    @assert length(targets) > 0
+    @info """
+    Collecting benchmark results for `$function_name`.
 
-    resulting_md *= """
-    ## Benchmark results
+    Keyword arguments of interest:
+    \t$(join(map(string, kwargs), "\n\t"))
 
-    Timestamp: $(now())
-    Timeout: $(args["timeout"]) s
-
-    **Timings in seconds.**
-
+    Statistics of interest:
+    \t$(join(map(string, targets), "\n\t"))
     """
 
     cannot_collect = []
     names = sort(names)
-    runtimes = Dict()
+    kwids = map(keywords_to_global_id, kwargs)
+
+    # Collect timings and data from directory BENCHMARK_RESULTS.
+    data = Dict()
     for name in names
         @debug "==== Reading $name"
-        runtimes[name] = Dict()
-        for kw in kwargs
-            timings = nothing
-            id = keywords_to_id(kw)
-            runtimes[name][id] = Dict()
+        data[name] = Dict()
+        for kwid in kwids
+            timings_file = nothing
+            #####
+            data[name][kwid] = Dict()
+            timingsfn = timings_filename(kwid)
             try
-                @debug "==== Opening /systems/$name/timings_$id"
-                timings = open((@__DIR__) * "/systems/$name/timings_$id", "r")
+                @debug "==== Opening /$BENCHMARK_RESULTS/$name/$timingsfn"
+                timings_file =
+                    open((@__DIR__) * "/$BENCHMARK_RESULTS/$name/$timingsfn", "r")
             catch e
-                @debug "Cannot collect timings for $name / $id"
-                push!(cannot_collect, (name, id))
+                @debug "Cannot collect timings for $name / $kwid"
+                push!(cannot_collect, (name, kwid))
                 continue
             end
-            lines = readlines(timings)
+            lines = readlines(timings_file)
             if isempty(lines)
-                @debug "Cannot collect timings for $name / $id"
-                push!(cannot_collect, (name, id))
+                @debug "Cannot collect timings for $name / $kwid"
+                push!(cannot_collect, (name, kwid))
                 continue
             end
             @assert lines[1] == name
             for line in lines[2:end]
                 k, v = split(line, ", ")
-                runtimes[name][id][Symbol(k)] = parse(Float64, v)
+                data[name][kwid][Symbol(k)] = parse(Float64, v)
             end
-            close(timings)
+            close(timings_file)
+            #####
+            datafn = data_filename(kwid)
+            data_file = nothing
+            try
+                @debug "==== Opening /$BENCHMARK_RESULTS/$name/$datafn"
+                data_file = open((@__DIR__) * "/$BENCHMARK_RESULTS/$name/$datafn", "r")
+            catch e
+                @debug "Cannot collect data for $name / $kwid"
+                push!(cannot_collect, (name, kwid))
+                continue
+            end
+            lines = readlines(data_file)
+            if isempty(lines)
+                @debug "Cannot collect data for $name / $kwid"
+                push!(cannot_collect, (name, kwid))
+                continue
+            end
+            @assert lines[1] == name
+            for line in lines[2:end]
+                k, v = map(strip, split(line, ","))
+                data[name][kwid][Symbol(k)] = v
+            end
+            close(data_file)
         end
     end
 
     if !isempty(cannot_collect)
         printstyled("(!) Cannot collect timings for:\n", color = :red)
-        for (name, id) in cannot_collect
-            println("\t$name / $id")
+        for (name, kwid) in cannot_collect
+            println("\t$name / $kwid")
         end
     end
 
-    if content === :compare
-        ids = map(keywords_to_id, kwargs)
-        resulting_md *= "|Model|" * join(map(String ∘ Symbol, ids), "|") * "|\n"
-        resulting_md *= "|-----|" * join(["---" for _ in ids], "|") * "|\n"
-        for name in names
-            times = runtimes[name]
-            resulting_md *= "|$name|"
-            for c in ids
-                if isempty(times[c])
+    # Print the table to BENCHMARK_TABLE.
+    resulting_md = ""
+    resulting_md *= """
+    ## Benchmark results
+
+    $(now())
+
+    - Benchmarked function: `$(args["function"])`
+    - Workers: $(args["workers"])
+    - Timeout: $(args["timeout"]) s
+
+    **All timings in seconds.**
+
+    """
+
+    makecolname(kw, target) =
+        kw === Symbol("") ? HUMAN_READABLE_CATEGORIES[target] :
+        Symbol(Symbol(kw), Symbol(" / "), HUMAN_READABLE_CATEGORIES[target])
+    columns = [makecolname(kwid, target) for kwid in kwids for target in targets]
+    resulting_md *= "|Model|" * join(map(string, columns), "|") * "|\n"
+    resulting_md *= "|-----|" * join(["---" for _ in columns], "|") * "|\n"
+    for name in names
+        model_data = data[name]
+        resulting_md *= "|$name|"
+        for kwid in kwids
+            if !haskey(model_data, kwid)
+                resulting_md *= (" - " * "|")^length(columns)
+                continue
+            end
+            for target in targets
+                if !haskey(model_data[kwid], target)
                     resulting_md *= " - " * "|"
                 else
-                    resulting_md *= @sprintf("%.2f", times[c][:id_total]) * "|"
+                    formatting_style = CATEGORY_FORMAT[target]
+                    resulting_md *= formatting_style(model_data[kwid][target]) * "|"
                 end
             end
-            resulting_md *= "\n"
         end
-    elseif length(content) == 2
-        @assert content[1] === :compare
-        feature = content[2]
-        ids = map(keywords_to_id, kwargs)
-        resulting_md *= "|Model|" * join(map(s -> String(Symbol(s)), ids), "|") * "|\n"
-        resulting_md *= "|-----|" * join(["---" for _ in ids], "|") * "|\n"
-        for name in names
-            times = runtimes[name]
-            resulting_md *= "|$name|"
-            for c in ids
-                if isempty(times[c])
-                    resulting_md *= " - " * "|"
-                else
-                    # resulting_md *= @sprintf("%.2f", times[c][feature]) * "|"
-                    resulting_md *= repr(round(Int, times[c][feature])) * "|"
-                end
-            end
-            resulting_md *= "\n"
-        end
-    else
-        kw = first(kwargs)
-        id = keywords_to_id(kw)
-        resulting_md *= "\nKeywords:\n$kw\n"
-        resulting_md *=
-            "|Model|" *
-            join(map(c -> HUMAN_READABLE_CATEGORIES[c], ALL_CATEGORIES), "|") *
-            "|\n"
-        resulting_md *= "|-----|" * join(["---" for _ in ALL_CATEGORIES], "|") * "|\n"
-        for name in names
-            times = runtimes[name]
-            resulting_md *= "|$name|"
-            for c in ALL_CATEGORIES
-                if isempty(times)
-                    resulting_md *= " - " * "|"
-                else
-                    resulting_md *= @sprintf("%.2f", times[c]) * "|"
-                end
-            end
-            resulting_md *= "\n"
-        end
+        resulting_md *= "\n"
     end
 
     resulting_md *= "\n*Benchmarking environment:*\n\n"
@@ -346,7 +464,7 @@ function collect_timings(args, kwargs, names; content = :compare)
         end
     end
 
-    open((@__DIR__) * "/benchmark_result.md", "w") do io
+    open((@__DIR__) * "/$BENCHMARK_TABLE", "w") do io
         write(io, resulting_md)
     end
 end
@@ -354,18 +472,38 @@ end
 function main()
     timestamp = time_ns()
     args = parse_commandline()
-    kwargs = parse_keywords(args["keywords"])
     @debug "Command-line args:"
     for (arg, val) in args
         @debug "$arg  =>  $val"
     end
-    @debug "Keywords for `find_identifiable_functions`"
+    kwargs = parse_keywords(args["keywords"])
+    @debug "Keywords for `$(args["function"])`"
     @debug kwargs
-    flag = populate_benchmarks(args, kwargs)
-    systems = run_benchmarks(args, kwargs)
-    collect_timings(args, kwargs, systems, content = :compare)
+    if args["tableonly"]
+        dirnames = first(walkdir((@__DIR__) * "/$BENCHMARK_RESULTS/"))[2]
+        models_from_args = filter(s -> !isempty(s), map(strip, split(args["models"], ",")))
+        problems = if isempty(models_from_args)
+            dirnames
+        else
+            models_from_args
+        end
+        problems = setdiff(problems, args["skip"])
+    else
+        flag = populate_benchmarks(args, kwargs)
+        problems = run_benchmarks(args, kwargs)
+        printstyled(
+            """
+            Benchmarking had finished in $(round((time_ns() - timestamp) / 1e9, digits=2)) seconds.
+            Results are written to /$BENCHMARK_RESULTS
+            """,
+            color = :light_green,
+        )
+    end
+    collect_timings(args, kwargs, problems)
     printstyled(
-        "Benchmarking finished in $(round((time_ns() - timestamp) / 1e9, digits=2)) s\n",
+        """
+        Table with results is written to /$BENCHMARK_TABLE
+        """,
         color = :light_green,
     )
 end

@@ -22,14 +22,16 @@ function extract_identifiable_functions_raw(
 
     @debug "Extracting coefficients"
     flush(stdout)
-    nonparameters = filter(
-        v -> !(var_to_str(v) in map(var_to_str, ode.parameters)),
-        gens(parent(first(values(io_equations)))),
-    )
-    for eq in values(io_equations)
-        eq_coefs = collect(values(extract_coefficients(eq, nonparameters)))
-        eq_coefs = [parent_ring_change(c, bring) for c in eq_coefs]
-        push!(coeff_lists[:no_states], eq_coefs)
+    if !isempty(ode.parameters)
+        nonparameters = filter(
+            v -> !(var_to_str(v) in map(var_to_str, ode.parameters)),
+            gens(parent(first(values(io_equations)))),
+        )
+        for eq in values(io_equations)
+            eq_coefs = collect(values(extract_coefficients(eq, nonparameters)))
+            eq_coefs = [parent_ring_change(c, bring) for c in eq_coefs]
+            push!(coeff_lists[:no_states], eq_coefs)
+        end
     end
 
     for p in known
@@ -84,6 +86,7 @@ function initial_identifiable_functions(
     known::Array{T, 1} = Array{T, 1}(),
     with_states::Bool = false,
     var_change_policy = :default,
+    rational_interpolator = :VanDerHoevenLecerf,
 ) where {T}
     @info "Computing IO-equations"
     ioeq_time =
@@ -92,22 +95,26 @@ function initial_identifiable_functions(
     @info "Computed in $ioeq_time seconds" :ioeq_time ioeq_time
     _runtime_logger[:ioeq_time] = ioeq_time
 
-    @info "Computing Wronskians"
-    wrnsk_time = @elapsed wrnsk = wronskian(io_equations, ode)
-    @info "Computed in $wrnsk_time seconds" :wrnsk_time wrnsk_time
-    _runtime_logger[:wrnsk_time] = wrnsk_time
+    if isempty(ode.parameters)
+        @info "No parameters, so Wronskian computation is not needed"
+    else
+        @info "Computing Wronskians"
+        wrnsk_time = @elapsed wrnsk = wronskian(io_equations, ode)
+        @info "Computed in $wrnsk_time seconds" :wrnsk_time wrnsk_time
+        _runtime_logger[:wrnsk_time] = wrnsk_time
 
-    dims = map(ncols, wrnsk)
-    @info "Dimensions of the Wronskians $dims"
+        dims = map(ncols, wrnsk)
+        @info "Dimensions of the Wronskians $dims"
 
-    rank_times = @elapsed wranks = map(rank, wrnsk)
-    @debug "Dimensions of the Wronskians $dims"
-    @debug "Ranks of the Wronskians $wranks"
-    @info "Ranks of the Wronskians computed in $rank_times seconds" :rank_time rank_times
-    _runtime_logger[:rank_time] = rank_times
+        rank_times = @elapsed wranks = map(rank, wrnsk)
+        @debug "Dimensions of the Wronskians $dims"
+        @debug "Ranks of the Wronskians $wranks"
+        @info "Ranks of the Wronskians computed in $rank_times seconds" :rank_time rank_times
+        _runtime_logger[:rank_time] = rank_times
 
-    if any([dim != rk + 1 for (dim, rk) in zip(dims, wranks)])
-        @warn "One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still  would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)"
+        if any([dim != rk + 1 for (dim, rk) in zip(dims, wranks)])
+            @warn "One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still  would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)"
+        end
     end
 
     id_funcs, bring = extract_identifiable_functions_raw(
@@ -117,16 +124,32 @@ function initial_identifiable_functions(
         with_states,
     )
 
-    if with_states
+    if with_states && !isempty(ode.parameters)
         @debug "Generators of identifiable functions involve states, the parameter-only part is getting simplified"
+        # NOTE: switching to a ring without states for a moment
+        param_ring, _ = PolynomialRing(
+            base_ring(bring),
+            map(string, ode.parameters),
+            ordering = Nemo.ordering(bring),
+        )
+        id_funcs_no_states_param = map(
+            polys -> map(poly -> parent_ring_change(poly, param_ring), polys),
+            id_funcs[:no_states],
+        )
         _runtime_logger[:check_time] =
             @elapsed no_states_simplified = simplified_generating_set(
-                RationalFunctionField(id_funcs[:no_states]),
+                RationalFunctionField(id_funcs_no_states_param),
                 p = p,
                 seed = 42,
-                strategy = (:gb,),
+                simplify = :standard,
+                rational_interpolator = rational_interpolator,
             )
-        id_funcs[:no_states] = fractions_to_dennums(no_states_simplified)
+        dennums_simplified = fractions_to_dennums(no_states_simplified)
+        # switch back the ring
+        id_funcs[:no_states] = map(
+            polys -> map(poly -> parent_ring_change(poly, bring), polys),
+            dennums_simplified,
+        )
     end
 
     if !with_states

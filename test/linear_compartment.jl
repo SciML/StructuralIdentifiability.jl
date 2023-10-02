@@ -161,7 +161,7 @@
         for (e, id) in case[:result]
             correct[str_to_var("a_$(e[2])_$(e[1])", bring)] = id
         end
-        result = assess_identifiability(ode, collect(keys(correct)))
+        result = assess_identifiability(ode, funcs_to_check = collect(keys(correct)))
         @test correct == result
     end
 end

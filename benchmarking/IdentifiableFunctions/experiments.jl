@@ -850,18 +850,246 @@ begin
         y(t) = In(t) * Ninv
     )
 
+    pivastatin = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = k3 * x3(t) - r3 * x1(t) - k1 * x1(t) * (T0 - x2(t)) + r1 * x2(t),
+        x2'(t) = k1 * x1(t) * (T0 - x2(t)) - (r1 + k2) * x2(t),
+        x3'(t) = r3 * x1(t) - (k3 + k4) * x3(t) + k2 * x2(t),
+        y1(t) = k * (x2(t) + x3(t))
+    )
+
+    seuir = StructuralIdentifiability.@ODEmodel(
+        S'(t) = -beta * (U(t) + I(t)) * (S(t) / N),
+        E'(t) = beta * (U(t) + I(t)) * (S(t) / N) - E(t) * z,
+        U'(t) = (z - w) * E(t) - U(t) * d,
+        I'(t) = w * E(t) - I(t) * d,
+        R'(t) = (U(t) + I(t)) * d,
+        y1(t) = I(t)
+    )
+
+    llw1987 = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = -p1 * x1(t) + p2 * u(t),
+        x2'(t) = -p3 * x2(t) + p4 * u(t),
+        x3'(t) = -(p1 + p3) * x3(t) + (p4 * x1(t) + p2 * x2(t)) * u(t),
+        y1(t) = x3(t)
+    )
+
+    bruno2016 = StructuralIdentifiability.@ODEmodel(
+        beta'(t) = -kbeta * beta(t),
+        cry'(t) = -cry(t) * kcrybeta - cry(t) * kcryOH,
+        zea'(t) = -zea(t) * kzea,
+        beta10'(t) = cry(t) * kcryOH - beta10(t) * kbeta10 + kbeta * beta(t),
+        OHbeta10'(t) = cry(t) * kcrybeta + zea(t) * kzea - OHbeta10(t) * kOHbeta10,
+        betaio'(t) = cry(t) * kcrybeta + beta10(t) * kbeta10 + kbeta * beta(t),
+        OHbetaio'(t) = cry(t) * kcryOH + zea(t) * kzea + OHbeta10(t) * kOHbeta10,
+        y1(t) = beta(t),
+        y2(t) = beta10(t)
+    )
+
+    jak_stat = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = -t1 * x1(t) * 2 * u(t) - t5 * x1(t) + t6 * x2(t),
+        x2'(t) = t5 * x1(t) - t6 * x2(t),
+        x3'(t) = t1 * 2 * u(t) * x1(t) - t2 * x3(t) * (-x6(t) + 3),
+        x4'(t) = t2 * x3(t) * (-x6(t) + 3) - t3 * x4(t),
+        x5'(t) = t3 * x4(t) - t4 * x5(t),
+        x6'(t) =
+            -t7 * x3(t) * x6(t) / (1 + t13 * x1(t)) -
+            t7 * x4(t) * x6(t) / (1 + t13 * x10(t)) + t8 * (-x6(t) + 3) * 92,
+        x7'(t) = -t9 * x7(t) * (-x6(t) + 3) + t10 * (-x7(t) + 165) * 92,
+        x8'(t) = t11 * (-x7(t) + 165),
+        x9'(t) = -t12 * 2 * u(t) * x9(t),
+        x10'(t) = x8(t) * t14 / (t15 + x8(t)) - t16 * x10(t),
+        y1(t) = x1(t) + x3(t) + x4(t),
+        y2(t) = t18 * (x3(t) + x4(t) + x5(t) + (1 / 3 - x9(t))),
+        y3(t) = t19 * (x4(t) + x5(t)),
+        y4(t) = t20 * (-x6(t) + 3),
+        y5(t) = t21 * x8(t),
+        y6(t) = t22 * x8(t) * t17 / t11,
+        y7(t) = x10(t),
+        y8(t) = -x7(t) + 165
+    )
+
+    st = StructuralIdentifiability.@ODEmodel(
+        S'(t) = r * S(t) - (e + a * W(t)) * S(t) - d * W(t) * S(t) + g * R(t),
+        R'(t) = rR * R(t) + (e + a * W(t)) * S(t) - dr * W(t) * R(t) - g * R(t),
+        W'(t) = Dd * (T - W(t)),
+        y1(t) = S(t) + R(t),
+        y2(t) = T
+    )
+
+    highDimNonlin = StructuralIdentifiability.@ODEmodel(
+        x1'(t) =
+            (-p1 * km * x1(t) - p1 * x1(t)^2 + km * u(t) - x1(t) * vm + x1(t) * u(t)) //
+            (km + x1(t)),
+        x2'(t) = -p2 * x2(t) + p1 * x1(t),
+        x3'(t) = p2 * x2(t) - x3(t) * p3,
+        x4'(t) = x3(t) * p3 - x4(t) * p4,
+        x5'(t) = -p5 * x5(t) + x4(t) * p4,
+        x6'(t) = -p6 * x6(t) + p5 * x5(t),
+        x7'(t) = -p7 * x7(t) + p6 * x6(t),
+        x8'(t) = p7 * x7(t) - p8 * x8(t),
+        x9'(t) = -x9(t) * p9 + p8 * x8(t),
+        x10'(t) = x9(t) * p9 - x10(t) * p10,
+        x11'(t) = x10(t) * p10 - x11(t) * p11,
+        x12'(t) = x11(t) * p11 - p12 * x12(t),
+        x13'(t) = -x13(t) * p13 + p12 * x12(t),
+        x14'(t) = x13(t) * p13 - p14 * x14(t),
+        x15'(t) = -p15 * x15(t) + p14 * x14(t),
+        x16'(t) = p15 * x15(t) - x16(t) * p16,
+        x17'(t) = -p17 * x17(t) + x16(t) * p16,
+        x18'(t) = -p18 * x18(t) + p17 * x17(t),
+        x19'(t) = -x19(t) * p19 + p18 * x18(t),
+        x20'(t) = -p20 * x20(t) + x19(t) * p19,
+        y1(t) = x1(t),
+        y2(t) = x2(t),
+        y3(t) = x3(t),
+        y4(t) = x4(t),
+        y5(t) = x5(t),
+        y6(t) = x6(t),
+        y7(t) = x7(t),
+        y8(t) = x8(t),
+        y9(t) = x9(t),
+        y10(t) = x10(t),
+        y11(t) = x11(t),
+        y12(t) = x12(t),
+        y13(t) = x13(t),
+        y14(t) = x14(t),
+        y15(t) = x15(t),
+        y16(t) = x16(t),
+        y17(t) = x17(t),
+        y18(t) = x18(t),
+        y19(t) = x19(t),
+        y20(t) = x20(t)
+    )
+
+    goodwin = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = -b * x1(t) + 1 / (c + x4(t)),
+        x2'(t) = alpha * x1(t) - beta * x2(t),
+        x3'(t) = gama * x2(t) - delta * x3(t),
+        x4'(t) = sigma * x4(t) * (gama * x2(t) - delta * x3(t)) / x3(t),
+        y(t) = x1(t)
+    )
+
+    CGV1990 = StructuralIdentifiability.@ODEmodel(
+        q1'(t) = k4 * q3(t) - (k3 + k7) * q1(t) + u(t),
+        q3'(t) =
+            k3 * q1(t) - k4 * q3(t) - k5 * q3(t) * (R * V3 - q35(t)) + k6 * q35(t) -
+            k5 * q3(t) * (5 * V36 / V3) * (S * V36 - q36(t)) + k6 * q36(t),
+        q35'(t) = k5 * q3(t) * (R * V3 - q35(t)) - k6 * q35(t),
+        q36'(t) = k5 * q3(t) * (5 * V36 / V3) * (S * V36 - q36(t)) - k6 * q36(t),
+        q7'(t) = k7 * q1(t),
+        y1(t) = q7(t)
+    )
+
+    Pivastatin = StructuralIdentifiability.@ODEmodel(
+        x1'(t) = k3 * x3(t) - r3 * x1(t) - k1 * x1(t) * (T0 - x2(t)) + r1 * x2(t),
+        x2'(t) = k1 * x1(t) * (T0 - x2(t)) - (r1 + k2) * x2(t),
+        x3'(t) = r3 * x1(t) - (k3 + k4) * x3(t) + k2 * x2(t),
+        y1(t) = k * (x2(t) + x3(t))
+    )
+
     using Nemo, Logging
     using JuliaInterpreter
     Groebner = StructuralIdentifiability.Groebner
-    ParamPunPam = StructuralIdentifiability.ParamPunPam
+    # ParamPunPam = StructuralIdentifiability.ParamPunPam
     Base.global_logger(ConsoleLogger(Logging.Info))
+end
+
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = x1 + x2^2 + a^2,
+    x2'(t) = x2 + a * d^3,
+    y(t) = x1
+)
+
+@time new_ode, new_vars, algebraic_relations =
+    StructuralIdentifiability.reparametrize_global(Bilirubin2_io)
+
+###
+# TODO
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = x1 + a * x2,
+    x2'(t) = a * x1 + x2,
+    y(t) = x1
+)
+
+@time new_ode, new_vars, algebraic_relations =
+    StructuralIdentifiability.reparametrize_global(ode)
+
+###
+
+StructuralIdentifiability._runtime_logger[:id_total]
+
+StructuralIdentifiability._runtime_logger[:id_beautifulization]
+
+@my_profview id_funcs1 = StructuralIdentifiability.find_identifiable_functions(
+    sliqr,
+    with_states = true,
+    strategy = (:hybrid, 3),
+)
+
+StructuralIdentifiability._runtime_logger[:id_npoints_degree]  # 56, 156
+StructuralIdentifiability._runtime_logger[:id_npoints_interpolation]  # 1656, 1656
+
+funcs = StructuralIdentifiability.find_identifiable_functions(
+    sliqr,
+    with_states = true,
+    strategy = (:hybrid, 10),
+    seed = 42,
+)
+
+@my_profview funcs = StructuralIdentifiability.find_identifiable_functions(
+    Bilirubin2_io,
+    with_states = true,
+    strategy = (:hybrid, 12),
+)
+
+funcs3 = StructuralIdentifiability.find_identifiable_functions(
+    Bilirubin2_io,
+    with_states = true,
+    strategy = (:normalforms, 3),
+)
+
+funcs4 = StructuralIdentifiability.find_identifiable_functions(
+    Bilirubin2_io,
+    with_states = true,
+    strategy = (:normalforms, 5),
+)
+
+F = funcs
+F = vcat(funcs[1:6], funcs[8:end])
+for i in 1:length(F)
+    F_without_i =
+        StructuralIdentifiability.RationalFunctionField(F[filter(j -> j != i, 1:length(F))])
+    res = StructuralIdentifiability.field_contains(F_without_i, [F[i]], 0.99)
+    @info "" i res
 end
 
 #! format: off
 
+new_rff = StructuralIdentifiability.RationalFunctionField(funcs1)
+cfs = StructuralIdentifiability.beautifuly_generators(new_rff)
+gb_rff = StructuralIdentifiability.RationalFunctionField(cfs)
+
+K = GF(2^31 - 1)
+mqs = gb_rff.mqs
+vars = gens(parent(mqs))
+ParamPunPam.reduce_mod_p!(mqs, K)
+point = [rand(K) for _ in 1:length(vars) - 1]
+ideal_spec = StructuralIdentifiability.specialize_mod_p(mqs, point)
+
+ord = Groebner.Lex()
+
+hom_ideal_spec = StructuralIdentifiability.homogenize(ideal_spec)
+
+Groebner.groebner(hom_ideal_spec, ordering=ord)
+
+# n = length(vars_shuffled)
+# n1, n2 = div(n, 2), n - div(n, 2)
+# ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
+
 funcs1 = StructuralIdentifiability.find_identifiable_functions(
-    hiv,
-    with_states = false,
+    qy,
+    with_states = true,
+    strategy=(:hybrid,)
 )
 
 @my_profview funcs2 = StructuralIdentifiability.find_identifiable_functions(

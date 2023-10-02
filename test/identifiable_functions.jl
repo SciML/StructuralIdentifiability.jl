@@ -9,6 +9,10 @@ ode = StructuralIdentifiability.@ODEmodel(x'(t) = a * x(t) + u(t), y(t) = x(t))
 ident_funcs = [a]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
+ode = StructuralIdentifiability.@ODEmodel(x1'(t) = a, x2'(t) = -a, y(t) = x1 + x2)
+ident_funcs = []
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+
 # Parameter a is not identifiable, and neither are any combinations thereof.
 ode = StructuralIdentifiability.@ODEmodel(
     x1'(t) = x2(t) - a,
@@ -22,9 +26,8 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 # Example 2 from 
 # "On Global Identifiability for Arbitrary Model Parametrizations",
 # DOI: 10.1016/0005-1098(94)90029-9
-ode = StructuralIdentifiability.@ODEmodel(x1'(t) = Θ * x2(t)^2, x2'(t) = u, y(t) = x1(t))
-# TODO: do we want u^2 Θ or Θ in the output?
-ident_funcs = [u^2 * Θ]
+ode = StructuralIdentifiability.@ODEmodel(x1'(t) = Θ * x2(t)^2, x2'(t) = u(t), y(t) = x1(t))
+ident_funcs = [Θ]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # Example 4 from 
@@ -51,7 +54,7 @@ ode = StructuralIdentifiability.@ODEmodel(
 ident_funcs = [(a01 * a12), (a01 + a12 + a21)]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
-# TODO: uncomment when identifiability can handle nos states 
+# TODO: uncomment when identifiability can handle models with no states 
 # ode = StructuralIdentifiability.@ODEmodel(
 #     y(t) = a*u(t)
 # )
@@ -169,8 +172,21 @@ ode = StructuralIdentifiability.@ODEmodel(
     x4'(t) = k41 * x1(t) - k14 * x4(t),
     y1(t) = x1(t)
 )
-# TODO
-# ident_funcs = [k01, k31 + k21 + k41, k31 * k21 * k41, k31 * k21 + k31 * k41 + k21 * k41]
+ident_funcs = [
+    k01 // one(k01),
+    k12 * k13 * k14 // one(k01),
+    k31 * k21 * k41 // one(k01),
+    k12 + k13 + k14 // one(k01),
+    k31 + k21 + k41 // one(k01),
+    k12 * k13 + k12 * k14 + k13 * k14 // one(k01),
+    k31 * k21 + k31 * k41 + k21 * k41 // one(k01),
+    k31 * k12 - 2 * k31 * k13 + k31 * k14 - 2 * k21 * k12 +
+    k21 * k13 +
+    k21 * k14 +
+    k12 * k41 +
+    k13 * k41 - 2 * k14 * k41 // one(k01),
+]
+# Too slow with hybrid strategy :(
 # push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # Biohydrogenation_io
@@ -194,11 +210,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     y1(t) = x4(t),
     y2(t) = x5(t)
 )
-# TODO: simplify?
-#   k9 // k10, k10^2
-# into
-#   k9 * k10, k10^2
-ident_funcs = [k7, k6, k5, k9 // k10, k10^2, k8 + 1 // 2 * k10]
+ident_funcs = [k7, k6, k5, k10^2, k9 * k10, k8 + 1 // 2 * k10]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # SLIQR
@@ -244,8 +256,7 @@ ident_funcs = [
     (e * dr^2 - e * dr * d + rR * dr * a + dr * d * g - dr * r * a - d^2 * g) //
     (dr^2 + dr * a - d^2 - d * a),
 ]
-# TODO: GB fails
-# push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # QY system.
 # (this is a big one)
@@ -747,16 +758,16 @@ ident_funcs = [
         phi * Mar * siga2 * beta_SA - phi * siga2^2 * beta_SA - Mar * siga2 * beta_SA
     ) // (phi * M * siga2),
 ]
-push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+# Really large and takes a lot of time, so commented
+# push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 ###
 # Cases with states
 
-# TODO: uncomment when this is handled!
-# ode = StructuralIdentifiability.@ODEmodel(x'(t) = x(t), y(t) = x(t))
-# T = typeof(x)
-# ident_funcs = [x]
-# push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+ode = StructuralIdentifiability.@ODEmodel(x'(t) = x(t), y(t) = x(t))
+T = typeof(x)
+ident_funcs = [x]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = true))
 
 ode = StructuralIdentifiability.@ODEmodel(x'(t) = a * x(t) + u(t), y(t) = x(t))
 ident_funcs = [a, x]
@@ -815,6 +826,24 @@ push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
 
 ode = StructuralIdentifiability.@ODEmodel(x'(t) = a * x(t) + b * u(t), y(t) = c * x(t))
 ident_funcs = [b * c, a, x // b]
+push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
+
+# llw1987 model
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = -p1 * x1(t) + p2 * u(t),
+    x2'(t) = -p3 * x2(t) + p4 * u(t),
+    x3'(t) = -(p1 + p3) * x3(t) + (p4 * x1(t) + p2 * x2(t)) * u(t),
+    y1(t) = x3(t)
+)
+ident_funcs = [
+    x3,
+    x2 * x1 // one(x1),
+    p3 * p1 // one(x1),
+    p2 * p4 // one(x1),
+    (p3 + p1) // one(x1),
+    (p2 * x2 + p4 * x1) // one(x1),
+    (p3 - p1) // (p2 * x2 - p4 * x1),
+]
 push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
 
 # Regression test: Previously failed for with_states=true because of the bug in
@@ -876,6 +905,21 @@ ident_funcs = [
 ]
 push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
 
+# Bruno2016 model 
+ode = StructuralIdentifiability.@ODEmodel(
+    beta'(t) = -kbeta * beta(t),
+    cry'(t) = -cry(t) * kcrybeta - cry(t) * kcryOH,
+    zea'(t) = -zea(t) * kzea,
+    beta10'(t) = cry(t) * kcryOH - beta10(t) * kbeta10 + kbeta * beta(t),
+    OHbeta10'(t) = cry(t) * kcrybeta + zea(t) * kzea - OHbeta10(t) * kOHbeta10,
+    betaio'(t) = cry(t) * kcrybeta + beta10(t) * kbeta10 + kbeta * beta(t),
+    OHbetaio'(t) = cry(t) * kcryOH + zea(t) * kzea + OHbeta10(t) * kOHbeta10,
+    y1(t) = beta(t),
+    y2(t) = beta10(t)
+)
+ident_funcs = [beta10, beta, kbeta, kbeta10, cry * kcryOH, kcrybeta + kcryOH]
+push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
+
 # STAT-5 model from 
 # MODELING THE NONLINEAR DYNAMICS OF CELLULAR SIGNAL TRANSDUCTION
 # DOI: https://doi.org/10.1142/S0218127404010461
@@ -892,10 +936,10 @@ ident_funcs = [k3, k1 // k7, k5 // k2, k6 // k2, k7 * EpoR_A]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # TODO: verify that Maple returns the same
-@testset "Identifiable functions of parameters" failfast = true begin
+@testset "Identifiable functions of parameters" begin
     p = 0.99
     for case in test_cases
-        for strategy in [(:gb,), (:normalforms, 2), (:hybrid,)]
+        for simplify in [:weak, :standard] # :strong]
             ode = case.ode
             true_ident_funcs = case.ident_funcs
             with_states = false
@@ -904,7 +948,7 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
             end
             result_funcs = StructuralIdentifiability.find_identifiable_functions(
                 ode,
-                strategy = strategy,
+                simplify = simplify,
                 with_states = with_states,
             )
 
@@ -913,9 +957,11 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
                 continue
             end
 
+            @test parent(numerator(result_funcs[1])) == parent(ode)
+
             R = parent(numerator(result_funcs[1]))
 
-            @info "Test, result_funcs = \n$result_funcs" case strategy R with_states
+            @info "Test, result_funcs = \n$result_funcs" case simplify R with_states
 
             true_ident_funcs = map(f -> f // one(f), true_ident_funcs)
             true_ident_funcs = map(
