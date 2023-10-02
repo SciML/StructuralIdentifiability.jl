@@ -8,6 +8,7 @@
         StructuralIdentifiability.check_constructive_field_membership(
             StructuralIdentifiability.RationalFunctionField(generators),
             map(f -> f // one(f), to_be_reduced),
+            tag_names = ["T1", "T2"],
         )
     tags = gens(base_ring(parent(first(remainders))))
 
@@ -24,6 +25,16 @@
     append!(
         cases,
         [(generators = [T1^2], to_be_reduced = [T1, T1^2], memberships = Bool[0, 1])],
+    )
+
+    R, (T1, t, _t) = PolynomialRing(Nemo.QQ, ["T1", "t", "_t"])
+    append!(
+        cases,
+        [(
+            generators = [T1, t, _t],
+            to_be_reduced = [_t, t, T1 * t * _t],
+            memberships = Bool[1, 1, 1],
+        )],
     )
 
     R, (x,) = PolynomialRing(Nemo.QQ, ["x"])

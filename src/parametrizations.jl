@@ -165,9 +165,9 @@ function check_constructive_field_membership(
         @assert length(fracs_gen) == length(tag_names)
         tag_names
     else
-        map(i -> "T$i", 1:length(fracs_gen))
+        gen_tag_names(length(fracs_gen), "Tag")
     end
-    sat_string = "_t"
+    sat_string = gen_tag_name("Sat")
     @info """
     Tags:
     $(join(map(x -> string(x[1]) * " -> " * string(x[2]),  zip(fracs_gen, tag_strings)), "\t\n"))
@@ -318,9 +318,9 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     n_active_generators =
         (length(generating_funcs) - length(ode.u_vars) - length(ode.y_vars))
     tag_names = vcat(
-        ["_T$i" for i in 1:n_active_generators],
-        map(v -> "_$(uppercase(string(v)))", ode.u_vars),
-        map(v -> "_$(uppercase(string(v)))", ode.y_vars),
+        gen_tag_names(n_active_generators, "Internal"),
+        gen_tag_names(length(ode.u_vars), "Input"),
+        gen_tag_names(length(ode.y_vars), "Output"),
     )
     @info """
     Tag names: 
