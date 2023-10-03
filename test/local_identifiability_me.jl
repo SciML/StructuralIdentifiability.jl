@@ -136,7 +136,7 @@ end
         for n in n_min:n_max
             model = _linear_compartment_model(case[:graph](n), [1])
             println(case[:name] * ", n = $n")
-            @time result = assess_local_identifiability(model, 0.97, :ME)
+            @time result = assess_local_identifiability(model, type = :ME)
             correct = undef
             if n - n_min + 1 > length(case[:bound])
                 correct = case[:bound][end]
@@ -210,7 +210,12 @@ end
     #--------------------------------------------------------------------------
 
     for case in test_cases
-        result = assess_local_identifiability(case[:ode], case[:funcs], 0.932, :ME)
+        result = assess_local_identifiability(
+            case[:ode],
+            funcs_to_check = case[:funcs],
+            p = 0.932,
+            type = :ME,
+        )
         @test result == case[:correct]
     end
 end

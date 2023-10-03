@@ -1,4 +1,4 @@
-PROJECTION_VARNAME = "rand_proj_var"
+const PROJECTION_VARNAME = "rand_proj_var"
 
 # ------------------------------------------------------------------------------
 
@@ -15,8 +15,15 @@ end
 
 # ------------------------------------------------------------------------------
 
-function diff_poly(poly::P, derivation::Dict{P, P}) where {P <: MPolyElem}
+function diff_poly(poly::P, derivation::Dict{P, T}) where {P <: MPolyElem, T}
     return sum(derivative(poly, x) * xd for (x, xd) in derivation)
+end
+
+function diff_frac(frac::Generic.Frac{F}, derivation::Dict{P, T}) where {F, P, T}
+    num, den = unpack_fraction(frac)
+    numd = den * diff_poly(num, derivation) - num * diff_poly(den, derivation)
+    dend = den^2
+    return numd // dend
 end
 
 # ------------------------------------------------------------------------------
@@ -86,7 +93,7 @@ Finds the input-output projections of an ODE system
 Input:
 - `ode` - the ODE system
 - `auto_var_change` - whether to perform automatic variable change
-- `extra_projection` - a linear formin the derivatives of outputs (in any ring) to be
+- `extra_projection` - a linear form in the derivatives of outputs (in any ring) to be
   used for extra projection
 
 Output:
@@ -119,7 +126,7 @@ function find_ioprojections(
             y_name, ord =
                 decompose_derivative(var_to_str(y), [var_to_str(v) for v in ode.y_vars])
             y0 = str_to_var(y_name * "_0", ring)
-            # basically a vector of Lie derivtaives of y encoded as equations
+            # basically a vector of Lie deriviatives of y encoded as equations
             # on the derivtaives over x's, params, and derivatives of u's
             y_ders = [(y0, y_equations[y0])]
             for i in 1:ord
@@ -201,7 +208,7 @@ function find_ioprojections(
         our_choice = sort(var_degs_next)[1]
         var_elim_deg, var_elim = our_choice[1], our_choice[3]
 
-        @debug "Elimination of $var_elim, $(length(x_equations)) left; $(Dates.now())"
+        @debug "Elimination of $var_elim, $(length(x_equations)) left"
         flush(stdout)
 
         # Possible variable change for Axy + Bx + p(y) (x = var_elim)
@@ -213,7 +220,7 @@ function find_ioprojections(
                     A, B = simplify_frac(A, B)
                     if isempty(filter!(v -> (v in keys(x_equations)), vars(A))) && (B != 0) # && (length(coeffs(A))==1)
                         # variable change x_i' --> x_i' - (B/A)', x_i --> x_i - B/A
-                        @debug "\t Applying variable change: $(x) --> $(x) - ( $B )/( $A ); $(Dates.now())"
+                        @debug "\t Applying variable change: $(x) --> $(x) - ( $B )/( $A )"
                         flush(stdout)
                         dB = diff_poly(B, derivation)
                         dA = diff_poly(A, derivation)

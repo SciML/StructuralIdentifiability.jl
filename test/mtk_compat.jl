@@ -6,8 +6,13 @@
     eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
     de = ODESystem(eqs, t, name = :Test)
 
-    correct =
-        Dict(a01 => :nonidentifiable, a21 => :nonidentifiable, a12 => :nonidentifiable)
+    correct = Dict(
+        a01 => :nonidentifiable,
+        a21 => :nonidentifiable,
+        a12 => :nonidentifiable,
+        x0 => :globally,
+        x1 => :nonidentifiable,
+    )
 
     @test isequal(correct, assess_identifiability(de; measured_quantities = [y1 ~ x0]))
     @test isequal(correct, assess_identifiability(de; measured_quantities = [x0]))
@@ -15,6 +20,30 @@
         correct,
         assess_identifiability(de; measured_quantities = [(y1 ~ x0).rhs]),
     )
+
+    # check identifiabile functions
+    correct = [a01 * a12, a01 + a12 + a21]
+    result = find_identifiable_functions(de, measured_quantities = [y1 ~ x0])
+    @test isequal(Set(correct), Set(result))
+
+    # --------------------------------------------------------------------------
+
+    # check identifiabile functions
+    @parameters V_m k_m k01 c
+    @variables t x(t) y1(t) [output = true]
+    D = Differential(t)
+
+    eqs = [D(x) ~ (-V_m * x) / (k_m + x) + k01 * x, y1 ~ c * x]
+    de = ODESystem(eqs, t, name = :Test)
+
+    correct = [k01, c * k_m, V_m * c]
+    result = find_identifiable_functions(de)
+    @test isequal(Set(correct), Set(result))
+
+    correct = [k01, c * x, k_m * c, V_m * c]
+    result = find_identifiable_functions(de, with_states = true)
+    @test isequal(Set(correct), Set(result))
+
     # --------------------------------------------------------------------------
     @parameters a01 a21 a12
     @variables t x0(t) x1(t) y1(t) [output = true]
@@ -23,8 +52,13 @@
     eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
     de = ODESystem(eqs, t, name = :Test)
 
-    correct =
-        Dict(a01 => :nonidentifiable, a21 => :nonidentifiable, a12 => :nonidentifiable)
+    correct = Dict(
+        a01 => :nonidentifiable,
+        a21 => :nonidentifiable,
+        a12 => :nonidentifiable,
+        x0 => :globally,
+        x1 => :nonidentifiable,
+    )
 
     @test isequal(correct, assess_identifiability(de))
 
@@ -119,6 +153,11 @@
             type = :ME,
         ),
     )
+
+    # checking identifiabile functions
+    correct = [a, bw, χ, bi, k, γ, μ]
+    result = find_identifiable_functions(de, measured_quantities = measured_quantities)
+    @test isequal(Set(correct), Set(result))
 
     # --------------------------------------------------------------------------
     @parameters mu bi bw a xi gm k
@@ -243,6 +282,12 @@
             funcs_to_check = to_check,
         ),
     )
+
+    # check identifiabile functions
+    result = find_identifiable_functions(de, measured_quantities = measured_quantities)
+    correct = [b, a, c^2]
+    @test isequal(Set(result), Set(correct))
+
     # ----------
     @parameters a b
     @variables t c(t) x1(t) x2(t) y1(t) y2(t)
@@ -308,6 +353,8 @@
         γ => :nonidentifiable,
         β => :globally,
         wolves₊δ => :globally,
+        rabbits₊x => :nonidentifiable,
+        wolves₊y => :globally,
     )
     @test result == correct
 
@@ -319,6 +366,9 @@
     measured_quantities = [w ~ x]
     result = assess_identifiability(sys, measured_quantities = measured_quantities)
     @test result[a] == :globally
+
+    result = find_identifiable_functions(sys, measured_quantities = measured_quantities)
+    @test isequal(result, [a])
 
     #----------------------------------
 

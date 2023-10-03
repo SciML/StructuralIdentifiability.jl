@@ -6,7 +6,7 @@ using TestSetExtensions
 using StructuralIdentifiability.Nemo
 using StructuralIdentifiability.ModelingToolkit
 using StructuralIdentifiability:
-    check_field_membership,
+    field_contains,
     check_identifiability,
     check_primality_zerodim,
     check_primality,
@@ -52,7 +52,12 @@ using StructuralIdentifiability:
     sequence_solution,
     differentiate_sequence_solution,
     differentiate_sequence_output,
-    _assess_local_identifiability_discrete
+    _assess_local_identifiability_discrete,
+    extract_coefficients,
+    extract_coefficients_ratfunc,
+    lie_derivative,
+    states_generators,
+    RationalFunctionField
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)
@@ -76,6 +81,6 @@ end
 @test isempty(Test.detect_ambiguities(StructuralIdentifiability))
 @test isempty(Test.detect_unbound_args(StructuralIdentifiability))
 
-@testset "All the tests" begin
+@time @testset "All the tests" verbose = true begin
     @includetests ARGS
 end

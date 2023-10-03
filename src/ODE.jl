@@ -14,7 +14,10 @@ struct ODE{P}
     parameters::Array{P, 1}
     x_equations::Dict{P, <:Union{P, Generic.Frac{P}}}
     y_equations::Dict{P, <:Union{P, Generic.Frac{P}}}
+
     function ODE{P}(
+        x_vars::Array{P, 1},
+        y_vars::Array{P, 1},
         x_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
         y_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
         inputs::Array{P, 1},
@@ -22,11 +25,10 @@ struct ODE{P}
         # Initialize ODE
         # x_eqs is a dictionary x_i => f_i(x, u, params)
         # y_eqs is a dictionary y_i => g_i(x, u, params)
-
-        num, den = unpack_fraction(collect(values(x_eqs))[1])
-        poly_ring = parent(num)
-        x_vars = collect(keys(x_eqs))
-        y_vars = collect(keys(y_eqs))
+        if isempty(y_eqs)
+            @info "Could not find output variables in the model."
+        end
+        poly_ring = parent(first(vcat(y_vars, x_vars)))
         u_vars = inputs
         parameters = filter(
             v -> (!(v in x_vars) && !(v in u_vars) && !(v in y_vars)),
@@ -34,6 +36,20 @@ struct ODE{P}
         )
         new{P}(poly_ring, x_vars, y_vars, u_vars, parameters, x_eqs, y_eqs)
     end
+
+    function ODE{P}(
+        x_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
+        y_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
+        inputs::Array{P, 1},
+    ) where {P <: MPolyElem{<:FieldElem}}
+        x_vars = collect(keys(x_eqs))
+        y_vars = collect(keys(y_eqs))
+        return ODE{P}(x_vars, y_vars, x_eqs, y_eqs, inputs)
+    end
+end
+
+function Base.parent(ode::ODE)
+    return ode.poly_ring
 end
 
 #------------------------------------------------------------------------------
@@ -43,10 +59,15 @@ function add_outputs(ode::ODE{P}, extra_y::Dict{String, <:RingElem}) where {P <:
         vcat(collect(map(var_to_str, gens(ode.poly_ring))), collect(keys(extra_y)))
     new_ring, new_vars = Nemo.PolynomialRing(base_ring(ode.poly_ring), new_var_names)
 
+    new_x = Array{P, 1}([parent_ring_change(x, new_ring) for x in ode.x_vars])
     new_x_eqs = Dict{P, Union{P, Generic.Frac{P}}}(
         parent_ring_change(x, new_ring) => parent_ring_change(f, new_ring) for
         (x, f) in ode.x_equations
     )
+    new_y = Array{P, 1}([parent_ring_change(y, new_ring) for y in ode.y_vars])
+    for y in keys(extra_y)
+        push!(new_y, str_to_var(y, new_ring))
+    end
     new_y_eqs = Dict{P, Union{P, Generic.Frac{P}}}(
         parent_ring_change(y, new_ring) => parent_ring_change(g, new_ring) for
         (y, g) in ode.y_equations
@@ -56,7 +77,7 @@ function add_outputs(ode::ODE{P}, extra_y::Dict{String, <:RingElem}) where {P <:
     )
     merge!(new_y_eqs, extra_y_eqs)
     new_us = map(v -> switch_ring(v, new_ring), ode.u_vars)
-    return ODE{P}(new_x_eqs, new_y_eqs, new_us)
+    return ODE{P}(new_x, new_y, new_x_eqs, new_y_eqs, new_us)
 end
 
 #------------------------------------------------------------------------------
@@ -223,6 +244,8 @@ function reduce_ode_mod_p(ode::ODE{<:MPolyElem{Nemo.fmpq}}, p::Int)
         Nemo.PolynomialRing(Nemo.GF(p), map(var_to_str, gens(ode.poly_ring)))
     new_type = typeof(new_vars[1])
     new_inputs = map(u -> switch_ring(u, new_ring), ode.u_vars)
+    new_x = map(x -> switch_ring(x, new_ring), ode.x_vars)
+    new_y = map(y -> switch_ring(y, new_ring), ode.y_vars)
     new_x_eqs = Dict{new_type, Union{new_type, Generic.Frac{new_type}}}()
     new_y_eqs = Dict{new_type, Union{new_type, Generic.Frac{new_type}}}()
     for (old, new) in Dict(ode.x_equations => new_x_eqs, ode.y_equations => new_y_eqs)
@@ -231,12 +254,12 @@ function reduce_ode_mod_p(ode::ODE{<:MPolyElem{Nemo.fmpq}}, p::Int)
             new[new_v] = _reduce_mod_p(f, p)
         end
     end
-    return ODE{new_type}(new_x_eqs, new_y_eqs, new_inputs)
+    return ODE{new_type}(new_x, new_y, new_x_eqs, new_y_eqs, new_inputs)
 end
 
 #------------------------------------------------------------------------------
 
-function _extract_aux!(funcs, x_vars, all_symb, eq, ders_ok = false)
+function _extract_aux!(funcs, all_symb, eq, ders_ok = false)
     aux_symb = Set([:(+), :(-), :(=), :(*), :(^), :t, :(/), :(//)])
     MacroTools.postwalk(
         x -> begin
@@ -248,7 +271,6 @@ function _extract_aux!(funcs, x_vars, all_symb, eq, ders_ok = false)
                         ),
                     )
                 end
-                push!(x_vars, f)
                 push!(all_symb, f)
             elseif @capture(x, f_(t))
                 push!(funcs, f)
@@ -261,21 +283,41 @@ function _extract_aux!(funcs, x_vars, all_symb, eq, ders_ok = false)
     )
 end
 
+"""
+  For an expression of the form f'(t) or f(t) returns (f, true) and (f, false), resp
+"""
+function _get_var(expr)
+    if @capture(expr, f_'(t))
+        return (f, true)
+    end
+    if @capture(expr, f_(t))
+        return (f, false)
+    end
+    error("cannot extract the single function name from $expr")
+end
+
 function macrohelper_extract_vars(equations::Array{Expr, 1})
-    funcs, x_vars, all_symb = Set(), Set(), Set()
+    funcs, all_symb = Set(), Set()
+    x_vars, y_vars = Vector(), Vector()
     aux_symb = Set([:(+), :(-), :(=), :(*), :(^), :t, :(/), :(//)])
     for eq in equations
         if eq.head != :(=)
-            _extract_aux!(funcs, x_vars, all_symb, eq)
+            _extract_aux!(funcs, all_symb, eq)
         else
             lhs, rhs = eq.args[1:2]
-            _extract_aux!(funcs, x_vars, all_symb, lhs, true)
-            _extract_aux!(funcs, x_vars, all_symb, rhs)
+            _extract_aux!(funcs, all_symb, lhs, true)
+            _extract_aux!(funcs, all_symb, rhs)
+            (v, is_state) = _get_var(lhs)
+            if is_state
+                push!(x_vars, v)
+            else
+                push!(y_vars, v)
+            end
         end
     end
-    io_vars = setdiff(funcs, x_vars)
+    u_vars = setdiff(funcs, vcat(x_vars, y_vars))
     all_symb = collect(all_symb)
-    return collect(x_vars), collect(io_vars), collect(all_symb)
+    return x_vars, y_vars, collect(u_vars), collect(all_symb)
 end
 
 function macrohelper_extract_vars(equations::Array{Symbol, 1})
@@ -295,20 +337,35 @@ end
 #------------------------------------------------------------------------------
 
 """
-Macro for creating an ODE from a list of equations.
-Also injects all variables into the global scope.
+    macro ODEmodel
 
-This macro accepts a sybolically written ODE system and generates an `ODE` structure instance:
-```julia
+Macro for creating an ODE from a list of equations.
+It also injects all variables into the global scope.
+
+## Example
+
+Creating a simple `ODE`:
+
+```jldoctest
+using StructuralIdentifiability
+
 ode = @ODEmodel(
-    x1'(t) = -k1 * x1(t),
-    y1(t) = x1(t)
+    x1'(t) = a * x1(t) + u(t),
+    x2'(t) = b * x2(t) + c*x1(t)*x2(t),
+    y(t) = x1(t)
 )
 ```
+
+Here,
+- `x1`, `x2` are state variables
+- `y` is an output variable
+- `u` is an input variable
+- `a`, `b`, `c` are time-indepdendent parameters
+
 """
 macro ODEmodel(ex::Expr...)
     equations = [ex...]
-    x_vars, io_vars, all_symb = macrohelper_extract_vars(equations)
+    x_vars, y_vars, u_vars, all_symb = macrohelper_extract_vars(equations)
 
     # creating the polynomial ring
     vars_list = :([$(all_symb...)])
@@ -322,11 +379,16 @@ macro ODEmodel(ex::Expr...)
     )
     assignments = [:($(all_symb[i]) = $vars_aux[$i]) for i in 1:length(all_symb)]
 
+    # setting x_vars and y_vars in the right order
+    vx = gensym()
+    vy = gensym()
+    x_var_expr = :($vx = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}([$(x_vars...)]))
+    y_var_expr = :($vy = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}([$(y_vars...)]))
+
     # preparing equations
     equations = map(macrohelper_clean, equations)
     x_dict = gensym()
     y_dict = gensym()
-    y_vars = Set()
     x_dict_create_expr = :(
         $x_dict = Dict{
             StructuralIdentifiability.Nemo.fmpq_mpoly,
@@ -355,16 +417,27 @@ macro ODEmodel(ex::Expr...)
             throw("Problem with parsing at $eq")
         end
         lhs, rhs = eq.args[1:2]
-        loc_all_symb = macrohelper_extract_vars([rhs])[3]
+        loc_all_symb = macrohelper_extract_vars([rhs])[4]
         to_insert = undef
         if lhs in x_vars
             to_insert = x_dict
-        elseif lhs in io_vars
+        elseif lhs in y_vars
             to_insert = y_dict
-            push!(y_vars, lhs)
         else
             throw("Unknown left-hand side $lhs")
         end
+
+        uniqueness_check_expr = quote
+            if haskey($to_insert, $lhs)
+                throw(
+                    DomainError(
+                        $lhs,
+                        "The variable occurs twice in the left-hand-side of the ODE system",
+                    ),
+                )
+            end
+        end
+        push!(eqs_expr, uniqueness_check_expr)
         if isempty(loc_all_symb)
             push!(eqs_expr, :($to_insert[$lhs] = $R($rhs)))
         else
@@ -372,7 +445,6 @@ macro ODEmodel(ex::Expr...)
         end
     end
 
-    u_vars = setdiff(io_vars, y_vars)
     params = setdiff(all_symb, union(x_vars, y_vars, u_vars))
     allnames = map(
         string,
@@ -396,7 +468,9 @@ macro ODEmodel(ex::Expr...)
     ]
 
     # creating the ode object
-    ode_expr = :(ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(
+    ode_expr = :(StructuralIdentifiability.ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(
+        $vx,
+        $vy,
         $x_dict,
         $y_dict,
         Array{StructuralIdentifiability.Nemo.fmpq_mpoly}([$(u_vars...)]),
@@ -407,6 +481,8 @@ macro ODEmodel(ex::Expr...)
         logging_exprs...,
         exp_ring,
         assignments...,
+        x_var_expr,
+        y_var_expr,
         x_dict_create_expr,
         y_dict_create_expr,
         eqs_expr...,
@@ -425,14 +501,14 @@ function Base.show(io::IO, ode::ODE)
         base_ring(ode.poly_ring),
         [varstr[v] for v in gens(ode.poly_ring)],
     )
-    for (x, eq) in ode.x_equations
+    for x in ode.x_vars
         print(io, var_to_str(x) * "'(t) = ")
-        print(io, evaluate(eq, vars_print))
+        print(io, evaluate(ode.x_equations[x], vars_print))
         print(io, "\n")
     end
-    for (y, eq) in ode.y_equations
+    for y in ode.y_vars
         print(io, var_to_str(y) * "(t) = ")
-        print(io, evaluate(eq, vars_print))
+        print(io, evaluate(ode.y_equations[y], vars_print))
         print(io, "\n")
     end
 end
@@ -496,6 +572,8 @@ function __preprocess_ode(
     measured_quantities::Array{<:Tuple{String, <:SymbolicUtils.BasicSymbolic}},
 )
     @info "Preproccessing `ModelingToolkit.AbstractTimeDependentSystem` object"
+    polytype = StructuralIdentifiability.Nemo.fmpq_mpoly
+    fractype = StructuralIdentifiability.Nemo.Generic.Frac{polytype}
     diff_eqs =
         filter(eq -> !(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
     # performing full structural simplification
@@ -526,33 +604,21 @@ function __preprocess_ode(
     generators = vcat(string.(input_symbols), [e[1] for e in measured_quantities])
     generators = map(g -> replace(g, "(t)" => ""), generators)
     R, gens_ = Nemo.PolynomialRing(Nemo.QQ, generators)
-    y_vars = [str_to_var(e[1], R) for e in measured_quantities]
+    y_vars = Vector{polytype}([str_to_var(e[1], R) for e in measured_quantities])
     symb2gens = Dict(input_symbols .=> gens_[1:length(input_symbols)])
-    state_eqn_dict = Dict{
-        StructuralIdentifiability.Nemo.fmpq_mpoly,
-        Union{
-            StructuralIdentifiability.Nemo.fmpq_mpoly,
-            StructuralIdentifiability.Nemo.Generic.Frac{
-                StructuralIdentifiability.Nemo.fmpq_mpoly,
-            },
-        },
-    }()
-    out_eqn_dict = Dict{
-        StructuralIdentifiability.Nemo.fmpq_mpoly,
-        Union{
-            StructuralIdentifiability.Nemo.fmpq_mpoly,
-            StructuralIdentifiability.Nemo.Generic.Frac{
-                StructuralIdentifiability.Nemo.fmpq_mpoly,
-            },
-        },
-    }()
+
+    x_vars = Vector{polytype}()
+
+    state_eqn_dict = Dict{polytype, Union{polytype, fractype}}()
+    out_eqn_dict = Dict{polytype, Union{polytype, fractype}}()
 
     for i in 1:length(diff_eqs)
+        x = substitute(state_vars[i], symb2gens)
+        push!(x_vars, x)
         if !(typeof(diff_eqs[i].rhs) <: Number)
-            state_eqn_dict[substitute(state_vars[i], symb2gens)] =
-                eval_at_nemo(diff_eqs[i].rhs, symb2gens)
+            state_eqn_dict[x] = eval_at_nemo(diff_eqs[i].rhs, symb2gens)
         else
-            state_eqn_dict[substitute(state_vars[i], symb2gens)] = R(diff_eqs[i].rhs)
+            state_eqn_dict[x] = R(diff_eqs[i].rhs)
         end
     end
     for i in 1:length(measured_quantities)
@@ -561,10 +627,12 @@ function __preprocess_ode(
 
     inputs_ = [substitute(each, symb2gens) for each in inputs]
     if isequal(length(inputs_), 0)
-        inputs_ = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}()
+        inputs_ = Vector{polytype}()
     end
     return (
-        StructuralIdentifiability.ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(
+        StructuralIdentifiability.ODE{polytype}(
+            x_vars,
+            y_vars,
             state_eqn_dict,
             out_eqn_dict,
             inputs_,

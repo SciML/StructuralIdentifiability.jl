@@ -12,6 +12,8 @@
 ## About
 
 `StructuralIdentifiability.jl` is a Julia package for assessing structural parameter identifiability of parametric ODE models, both local and global.
+This includes computation of identifiable functions of states and parameters. The package also offers functionality to assess local identifiability
+in discrete-time models.
 For an introduction to structural identifiability, we refer to [[2]](#review).
 
 ## How to install
@@ -73,30 +75,34 @@ The returned value is a dictionary from the parameter of the model to one of the
 For example, for the `ode` defined above, it will be
 
 ```
-Dict{Nemo.fmpq_mpoly, Symbol} with 4 entries:
+Dict{Any, Symbol} with 7 entries:
   a12 => :locally
   a21 => :globally
   a01 => :locally
   b   => :nonidentifiable
+  x2  => :globally
+  x1  => :locally
+  x3  => :nonidentifiable
 ```
 
 If one is interested in the identifiability of particular functions of the parameter, one can pass a list of them as a second argument:
 
 ```julia
-assess_identifiability(ode, [a01 + a12, a01 * a12])
+assess_identifiability(ode, funcs_to_check = [a01 + a12, a01 * a12])
 ```
 
-This will return a list of the results (i.e., `:globally`, `:locally`, or `:nonidentifiable`). In this example:
+This will return:
 
 ```
-2-element Vector{Symbol}:
- :globally
- :globally
+Dict{Any, Symbol} with 2 entries:
+  a12 + a01 => :globally
+  a12*a01   => :globally
 ```
 
 ### Assessing local identifiability
 
-Local identifiability can be assessed efficiently even for the models for which global identifiability analysis is out of reach. Moreover, the package can also assess local observability of the state variables. This can be done using the `assess_local_identifiability` function, for example:
+Local identifiability can be assessed efficiently even for the models for which global identifiability analysis is out of reach.
+This can be done using the `assess_local_identifiability` function, for example:
 
 ```julia
 assess_local_identifiability(ode)
@@ -124,12 +130,6 @@ As for `assess_identifiability`, one can assess local identifiability of arbitra
 assess_identifiability(ode; p = 0.999)
 ```
 
-## Algorithms
-
-The algorithm used for assessing global identifiability is described in [[1]](#global).
-Local identifiability is assessed using the algorithm by Sedoglavic [[4]](#local).
-We also use some of the algorithms described in [[3]](#allident).
-
 ## Contacts
 
 Maintained by Gleb Pogudin ([gleb.pogudin@polytechnique.edu](mailto:gleb.pogudin@polytechnique.edu))
@@ -155,21 +155,3 @@ preprint, 2020.
 Alexandre Sedoglavic,
 [*A probabilistic algorithm to test local algebraic observability in polynomial time*](https://doi.org/10.1006/jsco.2002.0532),
 Journal of Symbolic Computation, 2002.
-
-## Other identifiability software
-
-The following software can be used to assess both local and global identifiability
-
-  - [SIAN](https://github.com/pogudingleb/SIAN) is written in Maple, there is a [Julia version](https://github.com/alexeyovchinnikov/SIAN-Julia). There is also a [webapp](https://maple.cloud/app/6509768948056064) with extended functionality.
-  - [DAISY](https://daisy.dei.unipd.it/) a package for the Reduce computer algebra system
-  - [COMBOS](http://biocyb1.cs.ucla.edu/combos/), a webapp.
-
-Some benchmarking results for them can be found in [this paper](https://doi.org/10.1093/bioinformatics/bty1069).
-
-The following software can be used to assess local identifiability
-
-  - [STRIKE-GOLDD](https://sites.google.com/site/strikegolddtoolbox/) in Matlab
-  - [ObservabilityTest](https://github.com/sedoglavic/ObservabilityTest/) in Maple
-  - [IdentifiabilityAnalysis](http://www.fcc.chalmers.se/software/other-software/identifiabilityanalysis/) in Mathematica
-
-If your software is not listed here, sorry, we either forgot or did not know about it, feel free to contact Gleb Pogudin.

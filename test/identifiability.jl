@@ -34,8 +34,16 @@
         x1'(t) = c * x1(t) + d * x0(t) * x1(t),
         y(t) = x0(t)
     )
-    funcs_to_test = [a, b, c, d]
-    correct = [:globally, :nonidentifiable, :globally, :globally]
+    funcs_to_test = [a, b, c, d, b * x1, x0, x1]
+    correct = [
+        :globally,
+        :nonidentifiable,
+        :globally,
+        :globally,
+        :globally,
+        :globally,
+        :nonidentifiable,
+    ]
     push!(
         test_cases,
         Dict(
@@ -151,8 +159,57 @@
 
     #-------------------------------------------------------------------------- 
 
+    ode = @ODEmodel(
+        x1'(t) = -(a21 + a31 + a01) * x1(t) + a12 * x2(t) + a13 * x3(t) + u(t),
+        x2'(t) = a21 * x1(t) - a12 * x2(t),
+        x3'(t) = a31 * x1(t) - a13 * x3(t),
+        y(t) = x1(t)
+    )
+    funcs_to_test = [x1, x2, x3, a31 + a21, (a21 - a31) // (a12 - a13)]
+    correct = [:globally, :locally, :locally, :globally, :globally]
+    push!(
+        test_cases,
+        Dict(
+            :ode => ode,
+            :funcs => funcs_to_test,
+            :correct => Dict(funcs_to_test .=> correct),
+        ),
+    )
+
+    #-------------------------------------------------------------------------- 
+
+    ode = @ODEmodel(
+        S'(t) = -b * S(t) * In(t) / N,
+        E'(t) = b * S(t) * In(t) / N - nu * E(t),
+        In'(t) = nu * E(t) - a * In(t),
+        y1(t) = In(t),
+        y2(t) = N
+    )
+    funcs_to_test = [b, N, In, a, nu, S, E, a * nu, a + nu]
+    correct = [
+        :globally,
+        :globally,
+        :globally,
+        :locally,
+        :locally,
+        :locally,
+        :locally,
+        :globally,
+        :globally,
+    ]
+    push!(
+        test_cases,
+        Dict(
+            :ode => ode,
+            :funcs => funcs_to_test,
+            :correct => Dict(funcs_to_test .=> correct),
+        ),
+    )
+
+    #-------------------------------------------------------------------------- 
+
     for case in test_cases
-        result = assess_identifiability(case[:ode], case[:funcs])
+        result = assess_identifiability(case[:ode], funcs_to_check = case[:funcs])
         @test result == case[:correct]
     end
 end

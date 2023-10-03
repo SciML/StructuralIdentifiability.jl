@@ -32,7 +32,7 @@ function det_minor_expansion_inner(
         cache[discarded] = result
     end
     if length(discarded[1]) < 3
-        @debug "Discarded: $discarded; $(Dates.now())"
+        @debug "Discarded: $discarded"
         flush(stdout)
     end
     return result
@@ -322,13 +322,13 @@ function eliminate_var(
         lg = coeff(g, [var_elim], [Nemo.degree(g, var_elim)])
         (flag, q) = divides(lg, lf)
         if flag
-            @debug "\t Decreasing degree with linear combination $(Dates.now())"
+            @debug "\t Decreasing degree with linear combination"
             flush(stdout)
             g = g - q * f * var_elim^(Nemo.degree(g, var_elim) - Nemo.degree(f, var_elim))
         elseif (Nemo.degree(g, var_elim) == Nemo.degree(f, var_elim))
             (flag, q) = divides(lf, lg)
             if flag
-                @debug "\t Decreasing degree with linear combination $(Dates.now())"
+                @debug "\t Decreasing degree with linear combination"
                 flush(stdout)
                 f = f - q * g
             else
@@ -376,7 +376,7 @@ function eliminate_var(
         resultant = f
     else
         if Nemo.degree(f, var_elim) > 1
-            @debug "Calculating Bezout Matrix $(Dates.now())"
+            @debug "Calculating Bezout Matrix"
             flush(stdout)
             M = Bezout_matrix(f, g, var_elim)
         else
@@ -384,7 +384,7 @@ function eliminate_var(
             flush(stdout)
             M = Sylvester_matrix(f, g, var_elim)
         end
-        @debug "Simplifying the matrix $(Dates.now())"
+        @debug "Simplifying the matrix"
         flush(stdout)
         M_simp, matrix_factors = simplify_matrix(M)
         @debug "Removed factors $(map(length, matrix_factors))"
@@ -395,7 +395,7 @@ function eliminate_var(
             end
         end
         @debug "\t Matrix size: \n $M_size"
-        @debug "\t Computing determinant $(Dates.now())"
+        @debug "\t Computing determinant"
         flush(stdout)
         resultant = det_minor_expansion(M_simp)
     end
@@ -413,7 +413,7 @@ function eliminate_var(
     res = choose(factors, generic_point_generator)
     for f in factors
         if f != res
-            @debug "\t \t Size of extra factor: $(length(f)); $(Dates.now())"
+            @debug "\t \t Size of extra factor: $(length(f))"
             @debug "\t \t It is $f"
             flush(stdout)
         end

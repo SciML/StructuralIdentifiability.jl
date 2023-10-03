@@ -1,0 +1,250 @@
+┌ Warning: Module Groebner with build ID fafbfcfd-e38f-37d1-0000-0c1083141a1f is missing from the cache.
+│ This may mean Groebner [0b43b601-686d-58a3-8a1c-6623616c7cd4] does not support precompilation but is imported by a module that does.
+└ @ Base loading.jl:1793
+┌ Warning: Module Symbolics with build ID fafbfcfd-011a-198d-0000-0c25e359d248 is missing from the cache.
+│ This may mean Symbolics [0c5d862f-8b57-4792-8d23-62f2024744c7] does not support precompilation but is imported by a module that does.
+└ @ Base loading.jl:1793
+WARNING: using OrdinaryDiffEq.isconstant in module ModelingToolkit conflicts with an existing identifier.
+WARNING: using OrdinaryDiffEq.islinear in module ModelingToolkit conflicts with an existing identifier.
+┌ Error: Error during loading of extension SparseDiffToolsSymbolicsExt of SparseDiffTools, use `Base.retry_load_extensions()` to retry.
+│   exception =
+│    1-element ExceptionStack:
+│    Declaring __precompile__(false) is not allowed in files that are being precompiled.
+│    Stacktrace:
+│      [1] _require(pkg::Base.PkgId, env::Nothing)
+│        @ Base ./loading.jl:1825
+│      [2] _require_prelocked(uuidkey::Base.PkgId, env::Nothing)
+│        @ Base ./loading.jl:1660
+│      [3] _require_prelocked(uuidkey::Base.PkgId)
+│        @ Base ./loading.jl:1658
+│      [4] run_extension_callbacks(extid::Base.ExtensionId)
+│        @ Base ./loading.jl:1255
+│      [5] run_extension_callbacks(pkgid::Base.PkgId)
+│        @ Base ./loading.jl:1290
+│      [6] run_package_callbacks(modkey::Base.PkgId)
+│        @ Base ./loading.jl:1124
+│      [7] _tryrequire_from_serialized(modkey::Base.PkgId, path::String, ocachepath::String, sourcepath::String, depmods::Vector{Any})
+│        @ Base ./loading.jl:1398
+│      [8] _require_search_from_serialized(pkg::Base.PkgId, sourcepath::String, build_id::UInt128)
+│        @ Base ./loading.jl:1494
+│      [9] _require(pkg::Base.PkgId, env::String)
+│        @ Base ./loading.jl:1783
+│     [10] _require_prelocked(uuidkey::Base.PkgId, env::String)
+│        @ Base ./loading.jl:1660
+│     [11] macro expansion
+│        @ ./loading.jl:1648 [inlined]
+│     [12] macro expansion
+│        @ ./lock.jl:267 [inlined]
+│     [13] require(into::Module, mod::Symbol)
+│        @ Base ./loading.jl:1611
+│     [14] include(mod::Module, _path::String)
+│        @ Base ./Base.jl:457
+│     [15] include(x::String)
+│        @ ModelingToolkit ~/.julia/packages/ModelingToolkit/okjHa/src/ModelingToolkit.jl:4
+│     [16] top-level scope
+│        @ ~/.julia/packages/ModelingToolkit/okjHa/src/ModelingToolkit.jl:124
+│     [17] include
+│        @ ./Base.jl:457 [inlined]
+│     [18] include_package_for_output(pkg::Base.PkgId, input::String, depot_path::Vector{String}, dl_load_path::Vector{String}, load_path::Vector{String}, concrete_deps::Vector{Pair{Base.PkgId, UInt128}}, source::String)
+│        @ Base ./loading.jl:2049
+│     [19] top-level scope
+│        @ stdin:3
+│     [20] eval
+│        @ ./boot.jl:370 [inlined]
+│     [21] include_string(mapexpr::typeof(identity), mod::Module, code::String, filename::String)
+│        @ Base ./loading.jl:1903
+│     [22] include_string
+│        @ ./loading.jl:1913 [inlined]
+│     [23] exec_options(opts::Base.JLOptions)
+│        @ Base ./client.jl:305
+│     [24] _start()
+│        @ Base ./client.jl:522
+└ @ Base loading.jl:1261
+WARNING: using OrdinaryDiffEq.islinear in module ModelingToolkit conflicts with an existing identifier.
+WARNING: using OrdinaryDiffEq.isconstant in module ModelingToolkit conflicts with an existing identifier.
+┌ Info: 
+└   FUNCTION_NAME = "find_identifiable_functions"
+┌ Info: 
+└   PROBLEM_NAME = "SEIR_1_io"
+┌ Info: 
+└   KWARGS = (with_states = true, strategy = (:normalforms, 2))
+┌ Info: 
+└   GLOBAL_ID = Symbol("(:normalforms, 2)_with_states")
+┌ Warning: The call to compilecache failed to create a usable precompiled cache file for ModelingToolkit [961ee093-0014-501f-94e3-6117800e7a78]
+│   exception = Required dependency Symbolics [0c5d862f-8b57-4792-8d23-62f2024744c7] failed to load from a cache file.
+└ @ Base loading.jl:1818
+[ Info: Summary of the model:
+[ Info: State variables: S, E, I, R, Q
+[ Info: Parameters: beta, gamma, v, psi
+[ Info: Inputs: 
+[ Info: Outputs: y1
+[ Info: Summary of the model:
+[ Info: State variables: x1, x2
+[ Info: Parameters: a, b, d, c
+[ Info: Inputs: 
+[ Info: Outputs: y
+[ Info: Computing IO-equations
+┌ Info: Computed in 10.580514418 seconds
+│   :ioeq_time = :ioeq_time
+└   ioeq_time = 10.580514418
+[ Info: Computing Wronskians
+┌ Info: Computed in 11.512913351 seconds
+│   :wrnsk_time = :wrnsk_time
+└   wrnsk_time = 11.512913351
+[ Info: Dimensions of the Wronskians [15]
+┌ Info: Ranks of the Wronskians computed in 0.033978314 seconds
+│   :rank_time = :rank_time
+└   rank_times = 0.033978314
+⌜ # Computing specializations..  	 Time: 0:00:10[K✓ # Computing specializations..  	 Time: 0:00:10[K
+⌜ # Computing specializations..  	 Time: 0:00:04[K✓ # Computing specializations..  	 Time: 0:00:04[K
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 4 for num. and 2 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 13.316464652 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 4.620160681 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 8 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 4 fractions 4 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 5.702402407 seconds. Result: true
+[ Info: Out of 18 initial generators there are 4 indepdendent
+[ Info: The ranking of the new set of generators is 690
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 4 for num. and 2 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 5.28268861 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 1.467603715 seconds. Result: false
+┌ Info: Computing parametric Groebner basis up to degrees (4, 4)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 4 for num. and 3 for den.
+│ Maximal number of interpolated terms are: 4 for num. and 3 for den.
+└ Points used: 72.
+[ Info: Groebner basis computed in 0.047463799 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.004834266 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 15 rational functions
+┌ Info: Computing normal forms (probabilistic)
+│ Variables (9 in total): Nemo.QQMPolyRingElem[beta, gamma, v, psi, S, E, I, R, Q]
+│ Up to degree: 2
+└ Modulo: Finite field of characteristic 1073741827
+[ Info: Used specialization points: 35
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 15 fractions 13 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 2.312039813 seconds. Result: true
+[ Info: Out of 9 initial generators there are 8 indepdendent
+[ Info: The ranking of the new set of generators is 59150
+[ Info: The search for identifiable functions concluded in 76.810540272 seconds
+[ Info: Processing SEIR_1_io
+┌ Info: Averaging over 1 runs.
+│ Using keyword arguments:
+│ NamedTuple{(:with_states, :strategy), Tuple{Bool, Tuple{Symbol, Int64}}}
+│ (with_states = true, strategy = (:normalforms, 2))
+└ ID: (:normalforms, 2)_with_states
+[ Info: Computing IO-equations
+┌ Info: Computed in 0.013821427 seconds
+│   :ioeq_time = :ioeq_time
+└   ioeq_time = 0.013821427
+[ Info: Computing Wronskians
+┌ Info: Computed in 0.012568032 seconds
+│   :wrnsk_time = :wrnsk_time
+└   wrnsk_time = 0.012568032
+[ Info: Dimensions of the Wronskians [15]
+┌ Info: Ranks of the Wronskians computed in 3.8253e-5 seconds
+│   :rank_time = :rank_time
+└   rank_times = 3.8253e-5
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 4 for num. and 2 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.023285556 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.063337333 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 8 rational functions
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 4 fractions 4 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 0.002686253 seconds. Result: true
+[ Info: Out of 18 initial generators there are 4 indepdendent
+[ Info: The ranking of the new set of generators is 690
+[ Info: Simplifying identifiable functions
+┌ Info: Computing parametric Groebner basis up to degrees (2, 2)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 2 for num. and 2 for den.
+│ Maximal number of interpolated terms are: 4 for num. and 2 for den.
+└ Points used: 48.
+[ Info: Groebner basis computed in 0.031627232 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.003128036 seconds. Result: false
+┌ Info: Computing parametric Groebner basis up to degrees (4, 4)
+│ Ordering, input / target: degrevlex / InputOrdering
+│ Rational interpolator: VanDerHoevenLecerf
+│ Polynomial interpolator: PrimesBenOrTiwari
+│ Estimate degrees: true
+└ Assess correctness: false
+┌ Info: Basis interpolated exponents summary:
+│ Maximal interpolated degrees are: 4 for num. and 3 for den.
+│ Maximal number of interpolated terms are: 4 for num. and 3 for den.
+└ Points used: 72.
+[ Info: Groebner basis computed in 0.092174798 seconds
+[ Info: Checking two-sided inclusion modulo a prime
+[ Info: Inclusion checked in 0.004175772 seconds. Result: true
+[ Info: The coefficients of the Groebner basis are presented by 15 rational functions
+┌ Info: Computing normal forms (probabilistic)
+│ Variables (9 in total): Nemo.QQMPolyRingElem[beta, gamma, v, psi, S, E, I, R, Q]
+│ Up to degree: 2
+└ Modulo: Finite field of characteristic 1073741827
+[ Info: Used specialization points: 35
+┌ Info: Final cleaning and simplification of generators. 
+└ Out of 15 fractions 13 are syntactically unique.
+[ Info: Checking inclusion with probability 0.995
+[ Info: Inclusion checked in 0.040439877 seconds. Result: true
+[ Info: Out of 9 initial generators there are 8 indepdendent
+[ Info: The ranking of the new set of generators is 59150
+[ Info: The search for identifiable functions concluded in 0.554938256 seconds
+┌ Info: Result is
+│   result =
+│    8-element Vector{AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}}:
+│     Q
+│     gamma
+│     I*psi
+│     beta*I
+│     beta*gamma - beta*v
+│     v*psi - v - psi
+│     (gamma*S)//(I*gamma*psi - I*gamma - I*psi)
+└     (I*gamma*psi - I*psi + gamma*E)//(I*gamma*psi - I*gamma - I*psi)

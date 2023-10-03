@@ -21,15 +21,35 @@ function eval_at_dict(poly::P, d::Dict{P, <:RingElem}) where {P <: MPolyElem}
     return evaluate(poly, point)
 end
 
+function eval_at_dict(poly::P, d::Dict{P, S}) where {P <: MPolyElem, S <: Real}
+    R = parent(poly)
+    @assert R == parent(first(keys(d)))
+    xs = gens(parent(first(keys(d))))
+    xs_sym = [get(d, x, 0.0) for x in xs if string(x) in map(string, gens(R))]
+    accum = zero(valtype(d))
+    for t in terms(poly)
+        cf = coeff(t, 1)
+        # Nemo.QQ --> Rational{BigInt}
+        # NOTE: what about Nemo.GF|ZZ?
+        cf_ = BigInt(numerator(cf)) // BigInt(denominator(cf))
+        ex = exponent_vector(t, 1)
+        accum += cf_ * prod(xs_sym .^ ex)
+    end
+    return accum
+end
+
+function eval_at_dict(rational::Generic.Frac{T}, d::Dict{T, V}) where {T <: MPolyElem, V}
+    f, g = unpack_fraction(rational)
+    return eval_at_dict(f, d) / eval_at_dict(g, d)
+end
+
 function eval_at_dict(
-    rational::Generic.Frac{<:P},
-    d::Dict{P, <:RingElem},
-) where {P <: MPolyElem}
+    rational::Generic.Frac{<:T},
+    d::Dict{T, <:RingElem},
+) where {T <: MPolyElem}
     f, g = unpack_fraction(rational)
     return eval_at_dict(f, d) * inv(eval_at_dict(g, d))
 end
-
-# TODO: merge the three functions below
 
 function eval_at_dict(
     rational::Generic.Frac{<:P},
@@ -38,22 +58,6 @@ function eval_at_dict(
     f, g = unpack_fraction(rational)
     return eval_at_dict(f, d) // eval_at_dict(g, d)
 end
-
-#function eval_at_dict(
-#    rational::Generic.Frac{<:P},
-#    d::Dict{P, <:Generic.Frac},
-#) where {P <: MPolyElem}
-#    f, g = unpack_fraction(rational)
-#    return eval_at_dict(f, d) // eval_at_dict(g, d)
-#end
-
-#function eval_at_dict(
-#    rational::Generic.Frac{<:P},
-#    d::Dict{P, <:MPolyElem},
-#) where {P <: MPolyElem}
-#    f, g = unpack_fraction(rational)
-#    return eval_at_dict(f, d) // eval_at_dict(g, d)
-#end
 
 # ------------------------------------------------------------------------------
 
@@ -72,6 +76,49 @@ function simplify_frac(numer::P, denom::P) where {P <: MPolyElem}
     sub_numer = divexact(numer, gcd_sub)
     sub_denom = divexact(denom, gcd_sub)
     return sub_numer, sub_denom
+end
+
+function is_rational_func_const(f)
+    is_constant(numerator(f)) && is_constant(denominator(f))
+end
+
+function is_rational_func_normalized(f)
+    leading_coefficient(denominator(f)) > 0 && isone(gcd(numerator(f), denominator(f)))
+end
+
+"""
+    compare_rational_func_by(f, g, by)
+
+Returns 
+- `-1` if `f < g`,
+- `0` if `f = g`, and 
+- `1` if `f > g`.
+
+Functions' numerators and denominators are compared using `by`.
+"""
+function compare_rational_func_by(f, g, by::By, priority = :numerator) where {By}
+    # Specializes on the type of `by`
+    numf, denf = unpack_fraction(f)
+    numg, deng = unpack_fraction(g)
+    keynumf, keydenf = by(numf), by(denf)
+    keynumg, keydeng = by(numg), by(deng)
+    if priority === :numerator
+        keynumf < keynumg && return -1
+        keynumf > keynumg && return 1
+        keydenf < keydeng && return -1
+        keydenf > keydeng && return 1
+    elseif priority === :denominator
+        keydenf < keydeng && return -1
+        keydenf > keydeng && return 1
+        keynumf < keynumg && return -1
+        keynumf > keynumg && return 1
+    elseif priority === :additive
+        keydenf + keynumf < keynumg + keydeng && return -1
+        keydenf + keynumf > keynumg + keydeng && return 1
+    else
+        throw(DomainError("Unknown value for keyword argument priority", priority))
+    end
+    return 0
 end
 
 # ------------------------------------------------------------------------------
@@ -112,6 +159,45 @@ end
 
 # ------------------------------------------------------------------------------
 
+function homogenize(fs)
+    ring = parent(fs[1])
+    newring, hom_vars = PolynomialRing(
+        base_ring(ring),
+        vcat("X0", map(string, gens(ring))),
+        ordering = ordering(ring),
+    )
+    Fs = empty(fs)
+    for f in fs
+        D = total_degree(f)
+        new_f = zero(newring)
+        for term in terms(f)
+            cf = coeff(term, 1)
+            ev = monomial(term, 1)
+            d = total_degree(ev)
+            new_f += cf * evaluate(ev, hom_vars[2:end]) * hom_vars[1]^(D - d)
+        end
+        push!(Fs, new_f)
+    end
+    return Fs
+end
+
+function dehomogenize(Fs)
+    ring = parent(Fs[1])
+    newring, dehom_vars = PolynomialRing(
+        base_ring(ring),
+        map(string, gens(ring)[2:end]),
+        ordering = ordering(ring),
+    )
+    fs = empty(Fs)
+    for F in Fs
+        f = evaluate(F, vcat(one(newring), dehom_vars))
+        push!(fs, f)
+    end
+    return fs
+end
+
+# ------------------------------------------------------------------------------
+
 """
     parent_ring_change(poly, new_ring)
 
@@ -125,41 +211,47 @@ Output:
 """
 function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :byname)
     old_ring = parent(poly)
-    # construct a mapping for the variable indices
-    var_mapping = Array{Any, 1}()
-
-    if matching == :byname
-        for u in symbols(old_ring)
-            push!(var_mapping, findfirst(v -> (string(u) == string(v)), symbols(new_ring)))
+    # Construct a mapping for the variable indices.
+    # Zero indicates no image of the old variable in the new ring  
+    var_mapping = zeros(Int, max(nvars(old_ring), nvars(new_ring)))
+    if matching === :byname
+        old_symbols, new_symbols = symbols(old_ring), symbols(new_ring)
+        for i in 1:length(old_symbols)
+            u = old_symbols[i]
+            found = findfirst(v -> (u === v), new_symbols)
+            isnothing(found) && continue
+            var_mapping[i] = found
         end
-    elseif matching == :byindex
-        append!(var_mapping, 1:nvars(new_ring))
-        if nvars(new_ring) < nvars(old_ring)
-            append!(var_mapping, Array{Any, 1}[nothing, nvars(old_ring) - nvars(new_ring)])
-        end
+    elseif matching === :byindex
+        var_mapping[1:nvars(new_ring)] .= 1:nvars(new_ring)
     else
         throw(Base.ArgumentError("Unknown matching type: $matching"))
     end
-    builder = MPolyBuildCtx(new_ring)
-    for term in zip(exponent_vectors(poly), coefficients(poly))
-        exp, coef = term
-        new_exp = [0 for _ in gens(new_ring)]
-        for i in 1:length(exp)
-            if exp[i] != 0
-                if var_mapping[i] == nothing
-                    throw(
-                        Base.ArgumentError(
-                            "The polynomial contains a variable $(gens(old_ring)[i]) not present in the new ring $poly",
-                        ),
-                    )
-                else
-                    new_exp[var_mapping[i]] = exp[i]
-                end
-            end
+    # Hoist the compatibility check out of the loop
+    for i in 1:nvars(old_ring)
+        if degree(poly, i) > 0 && iszero(var_mapping[i])
+            throw(
+                Base.ArgumentError(
+                    """
+                    The polynomial $poly contains a variable $(gens(old_ring)[i]) not present in the new ring.
+                    New ring variables are $(gens(new_ring)))""",
+                ),
+            )
         end
-        push_term!(builder, base_ring(new_ring)(coef), new_exp)
     end
-    return finish(builder)
+    bring = base_ring(new_ring)
+    exps = Vector{Vector{Int}}(undef, length(poly))
+    coefs = map(c -> bring(c), coefficients(poly))
+    @inbounds for i in 1:length(poly)
+        evec = exponent_vector(poly, i)
+        new_exp = zeros(Int, nvars(new_ring))
+        for i in 1:length(evec)
+            iszero(var_mapping[i]) && continue
+            new_exp[var_mapping[i]] = evec[i]
+        end
+        exps[i] = new_exp
+    end
+    return new_ring(coefs, exps)
 end
 
 function parent_ring_change(
@@ -192,25 +284,29 @@ function uncertain_factorization(f::MPolyElem{fmpq})
     end
     main_var = vars_f[end]
     d = Nemo.degree(f, main_var)
-    lc_f = coeff(f, [main_var], [d])
-    gcd_coef = lc_f
-    for i in (d - 1):-1:0
-        gcd_coef = gcd(gcd_coef, coeff(f, [main_var], [i]))
+    mainvar_coeffs = [coeff(f, [main_var], [i]) for i in 0:d]
+    gcd_coef = mainvar_coeffs[end]
+    for i in d:-1:1
+        #@info "Degrees $(total_degree(gcd_coef)) and $(total_degree(mainvar_coeffs[i]))"
+        gcd_coef = gcd(gcd_coef, mainvar_coeffs[i])
+        #@info "Time $tm and new degree $(total_degree(gcd_coef))"
     end
     f = divexact(f, gcd_coef)
-    lc_f = coeff(f, [main_var], [d])
 
-    is_irr = undef
+    is_irr = false
     while true
-        plugin = rand(5:10, length(vars_f) - 1)
-        if evaluate(lc_f, vars_f[1:(end - 1)], plugin) != 0
-            f_sub = evaluate(f, vars_f[1:(end - 1)], plugin)
-            uni_ring, var_uni = Nemo.PolynomialRing(base_ring(f), string(main_var))
-            f_uni = to_univariate(uni_ring, f_sub)
-            # if !issquarefree(f_uni)
-            if !isone(gcd(f, derivative(f, main_var)))
-                @debug "GCD is $(gcd(f, derivative(f, main_var)))"
-                f = divexact(f, gcd(f, derivative(f, main_var)))
+        plugin = rand(-3:3, length(gens(parent(f))))
+        if evaluate(mainvar_coeffs[end], plugin) != 0
+            uni_ring, T = Nemo.PolynomialRing(base_ring(f), "T")
+            f_uni = sum([evaluate(mainvar_coeffs[i + 1], plugin) * T^i for i in 0:d])
+            if !isone(gcd(f_uni, derivative(f_uni)))
+                factor_out = gcd(f, derivative(f, main_var))
+                if degree(factor_out, main_var) != degree(gcd(f_uni, derivative(f_uni)))
+                    continue
+                end
+                @debug "Nonsquarefree poly, dividing by $factor_out"
+                f = divexact(f, factor_out)
+                f_uni = divexact(f_uni, gcd(f_uni, derivative(f_uni)))
             end
             # end
             is_irr = Nemo.isirreducible(f_uni)
@@ -220,6 +316,7 @@ function uncertain_factorization(f::MPolyElem{fmpq})
 
     coeff_factors = uncertain_factorization(gcd_coef)
     push!(coeff_factors, (f, is_irr))
+    return coeff_factors
 end
 
 # ------------------------------------------------------------------------------
@@ -258,32 +355,38 @@ Output:
 - dictionary with keys being tuples of length `lenght(variables)` and values being polynomials in the variables other than those which are the coefficients at the corresponding monomials (in a smaller polynomial ring)
 """
 function extract_coefficients(poly::P, variables::Array{P, 1}) where {P <: MPolyElem}
-    var_to_ind = Dict((v, findfirst(e -> (e == v), gens(parent(poly)))) for v in variables)
-    indices = [var_to_ind[v] for v in variables]
+    xs = gens(parent(poly))
+    @assert all(in(xs), variables)
+    cut_indices = map(v -> findfirst(x -> x == v, xs), variables)
+    coeff_indices = setdiff(collect(1:length(xs)), cut_indices)
+    coeff_vars = xs[coeff_indices]
 
-    coeff_vars =
-        filter(v -> !(var_to_str(v) in map(var_to_str, variables)), gens(parent(poly)))
-    new_ring, new_vars =
-        Nemo.PolynomialRing(base_ring(parent(poly)), map(var_to_str, coeff_vars))
-    coeff_var_to_ind =
-        Dict((v, findfirst(e -> (e == v), gens(parent(poly)))) for v in coeff_vars)
-    FieldType = typeof(one(base_ring(new_ring)))
+    K = base_ring(parent(poly))
+    new_ring, _ = Nemo.PolynomialRing(K, map(vv -> var_to_str(vv, xs = xs), coeff_vars))
+    FieldType = elem_type(K)
 
-    result = Dict{Array{Int, 1}, Dict{Array{Int, 1}, FieldType}}()
+    result = Dict{Vector{Int}, Tuple{Vector{Vector{Int}}, Vector{FieldType}}}()
 
-    for (monom, coef) in zip(exponent_vectors(poly), coefficients(poly))
-        var_slice = [monom[i] for i in indices]
+    @inbounds for i in 1:length(poly)
+        coef = coeff(poly, i)
+        evec = exponent_vector(poly, i)
+        var_slice = [evec[i] for i in cut_indices]
         if !haskey(result, var_slice)
-            result[var_slice] = Dict{Array{Int, 1}, FieldType}()
+            monom_vect, coef_vect = Vector{Vector{Int}}(), Vector{FieldType}()
+            sizehint!(monom_vect, 8)
+            sizehint!(coef_vect, 8)
+            result[var_slice] = (monom_vect, coef_vect)
         end
-        new_monom = [0 for _ in 1:length(coeff_vars)]
+        monom_vect, coef_vect = result[var_slice]
+        new_monom = Vector{Int}(undef, length(coeff_vars))
         for i in 1:length(new_monom)
-            new_monom[i] = monom[coeff_var_to_ind[coeff_vars[i]]]
+            new_monom[i] = evec[coeff_indices[i]]
         end
-        result[var_slice][new_monom] = coef
+        push!(monom_vect, new_monom)
+        push!(coef_vect, coef)
     end
 
-    return Dict(k => dict_to_poly(v, new_ring) for (k, v) in result)
+    return Dict(k => new_ring(v[2], v[1]) for (k, v) in result)
 end
 
 # ------------------------------------------------------------------------------
@@ -298,9 +401,45 @@ end
 
 # ------------------------------------------------------------------------------
 
-function var_to_str(v::MPolyElem)
-    ind = findfirst(vv -> vv == v, gens(parent(v)))
+function var_to_str(v::MPolyElem; xs = gens(parent(v)))
+    ind = findfirst(vv -> vv == v, xs)
     return string(symbols(parent(v))[ind])
+end
+
+# ------------------------------------------------------------------------------
+
+"""
+    gen_tag_name(base; stop_words)
+    gen_tag_names(n, base; stop_words)
+
+Generates a string which will not collide with the words in `stop_words`.
+
+## Arguments
+
+- `n`: Generates a sequence of unique strings of length `n`
+- `base`: A string or a vector of strings, the base for the generated sequence
+- `stop_words`: A vector of strings, stop words
+"""
+function gen_tag_name(base = "T"; stop_words = Vector{String}())
+    return first(gen_tag_names(1, base, stop_words = stop_words))
+end
+
+function gen_tag_names(n::Integer, base = "T"; stop_words = Vector{String}())
+    sequence = if base isa Vector{String}
+        @assert n == length(base)
+        base
+    else
+        repeat([base], n)
+    end
+    while true
+        rand_token = Int(rand(UInt8))
+        sequence = map(c -> "$(rand_token)__$c", sequence)
+        sequence = map(ic -> "$(ic[2])_$(ic[1])", enumerate(sequence))
+        if all(elem -> !(elem in stop_words), sequence)
+            break
+        end
+    end
+    return sequence
 end
 
 # ------------------------------------------------------------------------------
@@ -360,7 +499,7 @@ function eval_at_nemo(e::Union{Float16, Float32, Float64}, vals::Dict)
     else
         out = rationalize(e)
     end
-    @warn "Floating points are not allowed, value $e will be converted to $(out)."
+    @warn "Floating point value $e will be converted to $(out)."
     return out
 end
 
@@ -370,6 +509,7 @@ end
     decompose_derivative(varname, prefixes)
 
 Determines if it is possible to represent the `varname` as `a_number` where `a` is an element of `prefixes`
+If yes, returns a pair (a, number), otherwise nothing
 """
 function decompose_derivative(varname::String, prefixes::Array{String})
     for pr in prefixes
@@ -400,4 +540,20 @@ function difforder(diffpoly::MPolyElem, prefix::String)
         end
     end
     return max(orders...)
+end
+
+function get_measured_quantities(ode::ModelingToolkit.ODESystem)
+    if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
+        @info "Measured quantities are not provided, trying to find the outputs in input ODE."
+        return filter(
+            eq -> (ModelingToolkit.isoutput(eq.lhs)),
+            ModelingToolkit.equations(ode),
+        )
+    else
+        throw(
+            error(
+                "Measured quantities (output functions) were not provided and no outputs were found.",
+            ),
+        )
+    end
 end
