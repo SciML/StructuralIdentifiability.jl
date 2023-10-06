@@ -1,10 +1,12 @@
 using StructuralIdentifiability
 
+# N = S + E + U + I + R
+
 # 1.
 # Non-polynomial
 SEUIR = StructuralIdentifiability.@ODEmodel(
-    S'(t) = -beta * (U(t) + I(t)) * (S(t) / N),
-    E'(t) = beta * (U(t) + I(t)) * (S(t) / N) - E(t) * z,
+    S'(t) = -beta * (U(t) + I(t)) * (S(t) / (S + E + U + I + R)),
+    E'(t) = beta * (U(t) + I(t)) * (S(t) / (S + E + U + I + R)) - E(t) * z,
     U'(t) = (z - w) * E(t) - U(t) * d,
     I'(t) = w * E(t) - I(t) * d,
     R'(t) = (U(t) + I(t)) * d,
@@ -13,7 +15,7 @@ SEUIR = StructuralIdentifiability.@ODEmodel(
 funcs = StructuralIdentifiability.find_identifiable_functions(
     SEUIR,
     with_states = true,
-    strategy = (:hybrid, 3),
+    simplify = :strong,
     seed = 42,
 )
 
@@ -30,7 +32,7 @@ Goodwin = StructuralIdentifiability.@ODEmodel(
 funcs = StructuralIdentifiability.find_identifiable_functions(
     Goodwin,
     with_states = true,
-    strategy = (:hybrid, 3),
+    simplify = :strong,
     seed = 42,
 )
 
@@ -55,7 +57,7 @@ KD1999 = StructuralIdentifiability.@ODEmodel(
 funcs = StructuralIdentifiability.find_identifiable_functions(
     KD1999,
     with_states = true,
-    strategy = (:normalforms, 3),
+    simplify = :strong,
     seed = 42,
 )
 
@@ -71,6 +73,6 @@ LLW1987_io = StructuralIdentifiability.@ODEmodel(
 funcs = StructuralIdentifiability.find_identifiable_functions(
     LLW1987_io,
     with_states = true,
-    strategy = (:normalforms, 3),
+    simplify = :strong,
     seed = 42,
 )
