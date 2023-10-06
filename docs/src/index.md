@@ -106,6 +106,7 @@ link =
     ".jl/tree/gh-pages/v" *
     version *
     "/assets/Manifest.toml"
+nothing
 ```
 
 ```@raw html
@@ -123,6 +124,7 @@ link =
     ".jl/tree/gh-pages/v" *
     version *
     "/assets/Project.toml"
+nothing
 ```
 
 ```@raw html
