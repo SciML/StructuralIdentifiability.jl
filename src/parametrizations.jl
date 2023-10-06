@@ -53,11 +53,11 @@ function check_constructive_field_membership(
     end
     # Compute the remainders module the MQS.
     # These belong to K(T)[x].
-    @info """
+    @debug """
     Reducing $tagged_num, $tagged_den"""
     _, num_rem = divrem(tagged_num, tagged_mqs)
     _, den_rem = divrem(tagged_den, tagged_mqs)
-    @info """
+    @debug """
     Normal forms modulo MQS: 
     Num: $(num_rem)
     Den: $(den_rem)"""
@@ -95,7 +95,7 @@ function check_constructive_field_membership(
     _, num_den_factored = divrem(num_den, tag_relations)
     num_factored = num_num_factored // denominator(num)
     den_factored = num_den_factored // denominator(den)
-    @info """
+    @debug """
     After factoring out relations:
     Num: $(num_factored)
     Den: $(den_factored)
@@ -198,7 +198,7 @@ function check_constructive_field_membership(
     # - the GB of the MQS in K(T)[x][t].
     # ord = Lex()
     ord = DegRevLex([sat_var]) * DegRevLex(orig_vars) * DegRevLex(tag_vars)
-    @info """
+    @debug """
     Tagged MQS ideal:
     $tagged_mqs
     Monom ordering:
@@ -212,7 +212,7 @@ function check_constructive_field_membership(
     # The basis in K[T][x]
     tagged_mqs_gb = setdiff(tagged_mqs_gb, relations_between_tags)
     tagged_mqs_gb = filter(poly -> isempty(intersect(vars(poly), [sat_var])), tagged_mqs_gb)
-    @info """
+    @debug """
     Tagged MQS GB:
     $tagged_mqs_gb
     Relations between tags:
@@ -364,6 +364,44 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
         state = tags[i]
         new_vars_vector_field[state] = new_dynamics_states[i]
     end
+    @info "Converting variable names to human-readable ones"
+    internal_variable_names = map(i -> "X$i", 1:length(new_states))
+    parameter_variable_names = map(i -> "a$i", 1:length(new_params))
+    input_variable_names = map(i -> "u$i", 1:length(tag_inputs))
+    output_variable_names = map(i -> "y$i", 1:length(tag_outputs))
+    all_variable_names = vcat(
+        internal_variable_names,
+        parameter_variable_names,
+        input_variable_names,
+        output_variable_names,
+    )
+    ring_output, _ = PolynomialRing(
+        base_ring(ring_of_tags),
+        all_variable_names,
+        ordering = Nemo.ordering(ring_of_tags),
+    )
+    new_vars_vector_field = Dict(
+        parent_ring_change(var_old, ring_output, matching = :byindex) =>
+            parent_ring_change(var_expr, ring_output, matching = :byindex) for
+        (var_old, var_expr) in new_vars_vector_field
+    )
+    new_inputs = map(
+        var_old -> parent_ring_change(var_old, ring_output, matching = :byindex),
+        new_inputs,
+    )
+    new_outputs = Dict(
+        parent_ring_change(var_old, ring_output, matching = :byindex) =>
+            parent_ring_change(var_expr, ring_output, matching = :byindex) for
+        (var_old, var_expr) in new_outputs
+    )
+    new_vars = Dict(
+        parent_ring_change(var_old, ring_output, matching = :byindex) => var_expr for
+        (var_old, var_expr) in new_vars
+    )
+    implicit_relations = map(
+        var_old -> parent_ring_change(var_old, ring_output, matching = :byindex),
+        implicit_relations,
+    )
     @assert parent(first(keys(new_vars_vector_field))) ==
             base_ring(parent(first(values(new_vars_vector_field)))) ==
             parent(first(keys(new_outputs))) ==
