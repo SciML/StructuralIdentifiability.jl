@@ -1,0 +1,12 @@
+dx1/dt = -reaction,1,k1*x9 + reaction,1,k2*x9 - x1*EGFR,turnover + EGFR,turnover*u1;
+dx2/dt = -reaction,4,k1*x2 + reaction,9,k1*x9 - x2*x4*reaction,2,k1 + reaction,3,k1*x3 + x3*reaction,2,k2;
+dx3/dt = x2*x4*reaction,2,k1 - reaction,3,k1*x3 - x3*reaction,2,k2;
+dx4/dt = x5*reaction,7,k1 - x2*x4*reaction,2,k1 + x3*reaction,2,k2;
+dx5/dt = -x5*reaction,7,k1 - x5*reaction,5,k1*x6 + reaction,6,k1*x7 + reaction,3,k1*x3 + x7*reaction,5,k2;
+dx6/dt = x8*reaction,8,k1 - x5*reaction,5,k1*x6 + x7*reaction,5,k2;
+dx7/dt = x5*reaction,5,k1*x6 - reaction,6,k1*x7 - x7*reaction,5,k2;
+dx8/dt = -x8*reaction,8,k1 + reaction,6,k1*x7;
+dx9/dt = reaction,1,k1*x9 - reaction,9,k1*x9 - reaction,1,k2*x9;
+y1 = x2*a1 + a1*x3;
+y2 = a2*x5 + a2*x7;
+y3 = x8*a3

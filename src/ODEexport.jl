@@ -213,8 +213,9 @@ function print_for_COMBOS(ode::ODE)
     for (y, g) in ode.y_equations
         push!(eqs, "$(varstr[y]) = " * _lhs_to_str(g))
     end
+    sort!(eqs)
 
-    result = result * join(eqs, "; ")
+    result = result * join(eqs, ";\n")
 
     result = replace(result, "//" => "/")
     result = replace(result, "_" => ",")

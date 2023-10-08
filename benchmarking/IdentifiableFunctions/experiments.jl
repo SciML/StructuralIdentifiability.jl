@@ -994,6 +994,14 @@ begin
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
+dennums, ring =
+    StructuralIdentifiability.initial_identifiable_functions(Pivastatin, p = 0.99);
+fracs = StructuralIdentifiability.dennums_to_fractions(dennums);
+
+rff = StructuralIdentifiability.RationalFunctionField(dennums);
+gb = StructuralIdentifiability.groebner_basis_coeffs(rff);
+StructuralIdentifiability.dennums_to_fractions(gb.dennums)
+
 ode = StructuralIdentifiability.@ODEmodel(
     x1'(t) = x1 + x2^2 + a^2,
     x2'(t) = x2 + a * d^3,
@@ -1003,6 +1011,43 @@ ode = StructuralIdentifiability.@ODEmodel(
 @time new_ode, new_vars, algebraic_relations =
     StructuralIdentifiability.reparametrize_global(Bilirubin2_io)
 
+##################
+##################
+##################
+
+ode = StructuralIdentifiability.@ODEmodel( # define the ODE system
+    x1'(t) = -a * x1(t) + b * x2(t),
+    x2'(t) = -b * x2(t),
+    y(t) = x1(t)
+)
+
+l1 = StructuralIdentifiability.lie_derivative(x1, ode)
+StructuralIdentifiability.lie_derivative(l1, ode)
+
+ioeqs = StructuralIdentifiability.find_ioequations(ode)
+StructuralIdentifiability.states_generators(ode, ioeqs)
+StructuralIdentifiability.find_identifiable_functions(ode, with_states = true)
+
+StructuralIdentifiability.reparametrize_global(ode)
+
+ff1 = [x1, a * b, a + b, b * x2 + b * x1]
+ff2 = [a * b, a + b, x1, -a * x1 + b * x2, a^2 * x1 - a * b * x2 - b^2 * x2]
+
+a = StructuralIdentifiability.check_constructive_field_membership(
+    StructuralIdentifiability.RationalFunctionField(ff2[1:(end - 1)]),
+    [ff2[end] // one(ff2[end])],
+)
+
+StructuralIdentifiability.fields_equal(
+    StructuralIdentifiability.RationalFunctionField(ff1),
+    StructuralIdentifiability.RationalFunctionField(ff2),
+    0.99,
+)
+
+##################
+##################
+##################
+
 ###
 # TODO
 ode = StructuralIdentifiability.@ODEmodel(
@@ -1010,6 +1055,8 @@ ode = StructuralIdentifiability.@ODEmodel(
     x2'(t) = a * x1 + x2,
     y(t) = x1
 )
+
+StructuralIdentifiability.find_identifiable_functions(ode, with_states = true)
 
 @time new_ode, new_vars, algebraic_relations =
     StructuralIdentifiability.reparametrize_global(ode)
@@ -1154,6 +1201,18 @@ rels2
 
 rel3 = StructuralIdentifiability.linear_relations_between_normal_forms(rff, 2)
 length(rel3)
+
+R, (a, b) = QQ["a", "b"]
+f = [a*b // R(1), (a + b) // (R(1))]
+StructuralIdentifiability._runtime_logger[:id_inclusion_check_mod_p] = 0.0
+rff = StructuralIdentifiability.RationalFunctionField(f);
+
+f2 = [f[2] // f[1], f[2] + 1]
+rff2 = StructuralIdentifiability.RationalFunctionField(f2);
+
+a = StructuralIdentifiability.check_constructive_field_membership(rff2, [f[1] // R(1)])
+
+StructuralIdentifiability.fields_equal(rff, rff2, 0.99)
 
 R, (a, b, c) = QQ["a", "b", "c"]
 f = [a*b // R(1), (b*c + a*b) // (a*b)]
