@@ -343,7 +343,10 @@
 
     function getbyname(sys, name)
         println(name)
-        return first([v for v in vcat(states(sys), parameters(sys)) if replace(string(v), "(t)" => "") == name])
+        return first([
+            v for v in vcat(states(sys), parameters(sys)) if
+            replace(string(v), "(t)" => "") == name
+        ])
     end
 
     @named ltk_mtk = lotka_volterra_creator()
