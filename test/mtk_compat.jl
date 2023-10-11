@@ -341,10 +341,19 @@
         ModelingToolkit.compose(ODESystem(eqs, t, [], ps; name = name), wolves, rabbits)
     end
 
+    function getbyname(sys, name)
+        println(name)
+        return first([v for v in vcat(states(sys), parameters(sys)) if replace(string(v), "(t)" => "") == name])
+    end
+
     @named ltk_mtk = lotka_volterra_creator()
     simp_ltk_mtk = structural_simplify(ltk_mtk)
-    @unpack wolves₊δ, rabbits₊α, β, γ, wolves₊y, rabbits₊x = simp_ltk_mtk
-    @unpack wolves₊y, rabbits₊x = simp_ltk_mtk
+    wolves₊δ = getbyname(simp_ltk_mtk, "wolves₊δ")
+    rabbits₊α = getbyname(simp_ltk_mtk, "rabbits₊α")
+    β = getbyname(simp_ltk_mtk, "β")
+    γ = getbyname(simp_ltk_mtk, "γ")
+    wolves₊y = getbyname(simp_ltk_mtk, "wolves₊y")
+    rabbits₊x = getbyname(simp_ltk_mtk, "rabbits₊x")
     @variables y(t)
     measured_quantities = [y ~ wolves₊y]
     result = assess_identifiability(simp_ltk_mtk, measured_quantities = measured_quantities)
