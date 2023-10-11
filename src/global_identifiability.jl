@@ -92,7 +92,7 @@ function initial_identifiable_functions(
     ioeq_time =
         @elapsed io_equations = find_ioequations(ode; var_change_policy = var_change_policy)
     @debug "Sizes: $(map(length, values(io_equations)))"
-    @info "Computed in $ioeq_time seconds" :ioeq_time ioeq_time
+    @info "IO-equations computed in $ioeq_time seconds"
     _runtime_logger[:ioeq_time] = ioeq_time
 
     if isempty(ode.parameters)
@@ -100,7 +100,7 @@ function initial_identifiable_functions(
     else
         @info "Computing Wronskians"
         wrnsk_time = @elapsed wrnsk = wronskian(io_equations, ode)
-        @info "Computed in $wrnsk_time seconds" :wrnsk_time wrnsk_time
+        @info "Wronskians computed in $wrnsk_time seconds"
         _runtime_logger[:wrnsk_time] = wrnsk_time
 
         dims = map(ncols, wrnsk)
@@ -109,7 +109,7 @@ function initial_identifiable_functions(
         rank_times = @elapsed wranks = map(rank, wrnsk)
         @debug "Dimensions of the Wronskians $dims"
         @debug "Ranks of the Wronskians $wranks"
-        @info "Ranks of the Wronskians computed in $rank_times seconds" :rank_time rank_times
+        @info "Ranks of the Wronskians computed in $rank_times seconds"
         _runtime_logger[:rank_time] = rank_times
 
         if any([dim != rk + 1 for (dim, rk) in zip(dims, wranks)])
@@ -152,10 +152,11 @@ function initial_identifiable_functions(
         )
     end
 
-    if !with_states
-        return id_funcs[:no_states], bring
+    output_funcs = id_funcs[:no_states]
+    if with_states
+        output_funcs = vcat(id_funcs[:with_states], output_funcs)
     end
-    return vcat(id_funcs[:with_states], id_funcs[:no_states]), bring
+    return output_funcs, bring
 end
 
 # ------------------------------------------------------------------------------

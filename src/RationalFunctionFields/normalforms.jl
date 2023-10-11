@@ -296,6 +296,7 @@ function linear_relations_between_normal_forms(
     up_to_degree::Integer;
     seed = 42,
 ) where {T}
+    time_start = time_ns()
     mqs = IdealMQS(fractions_to_dennums(fracs))
     ring = parent(mqs)
     ring_param = ParamPunPam.parent_params(mqs)
@@ -304,10 +305,11 @@ function linear_relations_between_normal_forms(
     finite_field = Nemo.GF(2^30 + 3)
     ParamPunPam.reduce_mod_p!(mqs, finite_field)
     @info """
-    Computing normal forms (probabilistic)
-    Variables ($nparams in total): $xs_param
-    Up to degree: $up_to_degree
-    Modulo: $finite_field"""
+    Computing normal forms of degree $up_to_degree in $nparams variables"""
+    @debug """In normalforms
+    Modulo: $finite_field
+    Variables: $xs_param
+    """
     # We first compute relations between the normal forms of linear monomials.
     # Then, we use this knowledge to drop out some monomials of higher degrees.
     tref = TinyRowEchelonForm{Int}()
@@ -391,7 +393,6 @@ function linear_relations_between_normal_forms(
             break
         end
     end
-    @info "Used specialization points: $iters"
     union!(complete_intersection_relations_ff, relations_ff_1)
     @debug "Reconstructing relations to rationals"
     relations_qq = Vector{Generic.Frac{elem_type(ring_param)}}(
@@ -412,5 +413,8 @@ function linear_relations_between_normal_forms(
         relation_qq_param = evaluate(relation_qq, vcat(xs_param, one(ring)))
         relations_qq[i] = relation_qq_param // one(relation_qq_param)
     end
+    @info """
+    Normal forms computed in $((time_ns() - time_start) / 1e9) seconds. 
+    Used $iters specialization points"""
     relations_qq
 end

@@ -1108,8 +1108,102 @@ ode = @ODEmodel(
     y6(t) = x12(t)
 )
 
+import Nemo
+# Why is this so?
 QQ = StructuralIdentifiability.Nemo.QQ
 
+"""
+    Test_dense_n(n; [inputs, outputs])
+
+Creates a fully dense model of the form:
+
+    xi' = pi1 x1 + ... + pin xn + ci ui
+    yk = xi
+
+where 1 <= i <= `n` and
+    - ci = 1 whenever i in `inputs`, and otherwise ci = 0.
+    - the state `xi` is observed whenever i is in `outputs`.
+
+## Example
+
+```jldoctest
+Test_dense_n(2, inputs=1:1, outputs=1:2)
+
+# returns
+x1'(t) = x1(t)*p11 + x2(t)*p12 + u1(t)
+x2'(t) = x1(t)*p21 + x2(t)*p22
+y1(t) = x1(t)
+y2(t) = x2(t)
+```
+"""
+function Test_dense_n(n::Integer; inputs = 1:1, outputs = 1:n)
+    function gen_vector_field(ring, states_vars, params_vars, input_vars, inputs)
+        eqs = Dict{elem_type(ring), elem_type(ring)}()
+        for i in 1:length(states_vars)
+            eqs[states_vars[i]] = sum(states_vars .* params_vars[(1 + (i - 1) * n):(i * n)])
+            if i in inputs
+                eqs[states_vars[i]] += input_vars[1]
+                input_vars = input_vars[2:end]
+            end
+        end
+        eqs
+    end
+    function gen_output(ring, states_vars, params_vars, output_vars, outputs)
+        eqs = Dict{elem_type(ring), elem_type(ring)}()
+        for i in 1:length(states_vars)
+            if i in outputs
+                eqs[output_vars[1]] = states_vars[i]
+                output_vars = output_vars[2:end]
+            end
+        end
+        eqs
+    end
+    states_str = ["x$i" for i in 1:n]
+    params_str = ["p$i$j" for i in 1:n for j in 1:n]
+    inputs_str = ["u$i" for i in 1:length(inputs)]
+    outputs_str = ["y$i" for i in 1:length(outputs)]
+    vars_str = vcat(states_str, params_str, inputs_str, outputs_str)
+    ring, vars = Nemo.PolynomialRing(QQ, vars_str)
+    states_vars = vars[1:length(states_str)]
+    params_vars = vars[(length(states_str) + 1):(length(states_str) + length(params_str))]
+    input_vars =
+        vars[(length(states_str) + length(params_str) + 1):(length(states_str) + length(
+            params_str,
+        ) + length(inputs_str))]
+    output_vars =
+        vars[(length(states_str) + length(params_str) + length(inputs_str) + 1):end]
+    states_eqs = gen_vector_field(ring, states_vars, params_vars, input_vars, inputs)
+    output_eqs = gen_output(ring, states_vars, params_vars, output_vars, outputs)
+    StructuralIdentifiability.ODE{elem_type(ring)}(
+        states_vars,
+        output_vars,
+        states_eqs,
+        output_eqs,
+        input_vars,
+    )
+end
+
+# Examples and tests from
+#   On Finding and Using Identifiable Parameter
+#   Combinations in Nonlinear Dynamic Systems Biology
+#   Models and COMBOS: A Novel Web Implementation
+# By Nicolette Meshkat, Christine Er-zhen Kuo, Joseph DiStefano III
+# PMID: 25350289
+#
+# "Test-model X$
+Test_dense_n_type_1(n) = Test_dense_n(n, inputs = 1:1, outputs = 1:n)
+Test_dense_n_type_2(n) = Test_dense_n(n, inputs = 1:1, outputs = 1:(n - 1))
+Test_dense_n_type_3(n) = Test_dense_n(n, inputs = 1:1, outputs = 1:1)
+Test_dense_n_type_4(n) = Test_dense_n(n, inputs = 1:1, outputs = n:n)
+Test_dense_n_type_5(n) = Test_dense_n(n, inputs = 1:1, outputs = [1, n])
+
+push!(benchmarks, Dict(:name => "Test-dense-2-type-1", :ode => Test_dense_n_type_1(3)))
+push!(benchmarks, Dict(:name => "Test-dense-2-type-2", :ode => Test_dense_n_type_2(3)))
+push!(benchmarks, Dict(:name => "Test-dense-2-type-3", :ode => Test_dense_n_type_3(3)))
+push!(benchmarks, Dict(:name => "Test-dense-2-type-4", :ode => Test_dense_n_type_4(3)))
+push!(benchmarks, Dict(:name => "Test-dense-2-type-5", :ode => Test_dense_n_type_5(3)))
+
+# NFkB
 ode = set_parameter_values(
     ode,
     Dict(

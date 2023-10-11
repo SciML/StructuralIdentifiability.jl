@@ -4,26 +4,6 @@ begin
     using BenchmarkTools, Logging
     import Nemo, Profile
 
-    macro my_profview(ex)
-        :((VSCodeServer.Profile).clear();
-        VSCodeServer.Profile.init(n = 10^8, delay = 0.0001);
-        VSCodeServer.Profile.start_timer();
-        $ex;
-        VSCodeServer.Profile.stop_timer();
-        VSCodeServer.view_profile(;))
-    end
-
-    macro my_profview_allocs(ex)
-        :((VSCodeServer.Profile).clear();
-        VSCodeServer.Profile.Allocs.start(sample_rate = 1.0);
-        try
-            $ex
-        finally
-            VSCodeServer.Profile.Allocs.stop()
-        end;
-        VSCodeServer.view_profile_allocs(;))
-    end
-
     mapk_6_out = StructuralIdentifiability.@ODEmodel(
         KS00'(t) =
             -a00 * K(t) * S00(t) +
@@ -992,7 +972,72 @@ begin
     Groebner = StructuralIdentifiability.Groebner
     # ParamPunPam = StructuralIdentifiability.ParamPunPam
     Base.global_logger(ConsoleLogger(Logging.Info))
+
+    macro my_profview(ex)
+        :((VSCodeServer.Profile).clear();
+        VSCodeServer.Profile.init(n = 10^7, delay = 0.001);
+        VSCodeServer.Profile.start_timer();
+        $ex;
+        VSCodeServer.Profile.stop_timer();
+        VSCodeServer.view_profile(;))
+    end
+
+    macro my_profview_allocs(ex)
+        :((VSCodeServer.Profile).clear();
+        VSCodeServer.Profile.Allocs.start(sample_rate = 1.0);
+        try
+            $ex
+        finally
+            VSCodeServer.Profile.Allocs.stop()
+        end;
+        VSCodeServer.view_profile_allocs(;))
+    end
 end
+
+@my_profview StructuralIdentifiability.find_identifiable_functions(akt, with_states = false)
+
+###################
+
+# On Finding and Using Identifiable Parameter
+# Combinations in Nonlinear Dynamic Systems Biology
+# Models and COMBOS: A Novel Web Implementation
+# By Nicolette Meshkat, Christine Er-zhen Kuo, Joseph DiStefano III
+# PMID: 25350289
+
+# Example 1 & Example 2
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = -(k01 + k21) * x1 + k12 * x2 + u(t),
+    x2'(t) = k21 * x1 - (k02 + k12) * x2,
+    y(t) = x1 / V1
+)
+
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = k11 * x1 + k12 * x2 + u(t),
+    x2'(t) = k21 * x1 + k22 * x2,
+    y(t) = x1 / V
+)
+
+StructuralIdentifiability.assess_identifiability(ode)
+
+StructuralIdentifiability.find_identifiable_functions(ode)
+
+id = StructuralIdentifiability.find_identifiable_functions(ode, with_states = true)
+
+new_ode, new_vars, _ = StructuralIdentifiability.reparametrize_global(ode)
+
+###################
+
+# Test model 1
+# We are better than COMBOS
+ode = Test_dense_n_type_4(4)
+
+id = StructuralIdentifiability.find_identifiable_functions(
+    ode,
+    with_states = false,
+    simplify = :standard,
+)
+
+###################
 
 dennums, ring =
     StructuralIdentifiability.initial_identifiable_functions(Pivastatin, p = 0.99);

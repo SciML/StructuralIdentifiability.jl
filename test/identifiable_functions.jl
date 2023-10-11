@@ -935,7 +935,72 @@ ode = StructuralIdentifiability.@ODEmodel(
 ident_funcs = [k3, k1 // k7, k5 // k2, k6 // k2, k7 * EpoR_A]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
-# TODO: verify that Maple returns the same
+###
+# Examples and tests from
+#   On Finding and Using Identifiable Parameter
+#   Combinations in Nonlinear Dynamic Systems Biology
+#   Models and COMBOS: A Novel Web Implementation
+# By Nicolette Meshkat, Christine Er-zhen Kuo, Joseph DiStefano III
+# PMID: 25350289
+
+# Example 1 & Example 2
+# Models of the turnover of cholesterol
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = -(k01 + k21) * x1 + k12 * x2 + u(t),
+    x2'(t) = k21 * x1 - (k02 + k12) * x2,
+    y(t) = x1 / V1
+)
+ident_funcs = [x1, V1, k12 * x2, k12 * k21, k01 + k21, k12 + k02]
+push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
+
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = k11 * x1 + k12 * x2 + u(t),
+    x2'(t) = k21 * x1 + k22 * x2,
+    y(t) = x1 / V1
+)
+ident_funcs = [x1, V1, k12 * x2, k12 * k21, k11, k22]
+push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
+
+# Example test model of type 2 for n = 3
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = x1(t) * p11 + x2(t) * p12 + x3(t) * p13 + u1(t),
+    x2'(t) = x1(t) * p21 + x2(t) * p22 + x3(t) * p23,
+    x3'(t) = x1(t) * p31 + x2(t) * p32 + x3(t) * p33,
+    y1(t) = x1(t),
+    y2(t) = x2(t)
+)
+ident_funcs = [
+    p21,
+    p11,
+    p22 + p33,
+    p22 * p33 - p23 * p32,
+    p21 * p33 - p23 * p31,
+    p12 * p21 + p13 * p31,
+    p12 * p21 * p33 - p12 * p23 * p31 - p13 * p21 * p32 + p13 * p22 * p31,
+]
+push!(test_cases, (ode = ode, with_states = false, ident_funcs = ident_funcs))
+# same, but with_states=true
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = x1(t) * p11 + x2(t) * p12 + x3(t) * p13 + u1(t),
+    x2'(t) = x1(t) * p21 + x2(t) * p22 + x3(t) * p23,
+    x3'(t) = x1(t) * p31 + x2(t) * p32 + x3(t) * p33,
+    y1(t) = x1(t),
+    y2(t) = x2(t)
+)
+ident_funcs = [
+    x2,
+    x1,
+    p21,
+    p11,
+    p22 + p33,
+    -x2 * p33 + x3 * p23,
+    p22 * p33 - p23 * p32,
+    p21 * p33 - p23 * p31,
+    x2 * p12 + x3 * p13,
+    p12 * p21 + p13 * p31,
+]
+push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
+
 @testset "Identifiable functions of parameters" begin
     p = 0.99
     for case in test_cases

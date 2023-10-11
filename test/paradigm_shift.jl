@@ -237,6 +237,14 @@ cases = [
             y(t) = x1
         ),
     ),
+    (
+        # Example 1 & Example 2 from PMID: 25350289
+        ode = StructuralIdentifiability.@ODEmodel(
+            x1'(t) = -(k01 + k21) * x1 + k12 * x2 + u(t),
+            x2'(t) = k21 * x1 - (k02 + k12) * x2,
+            y(t) = x1 / V1
+        ),
+    ),
 ]
 
 @testset "Global reparametrizations" begin

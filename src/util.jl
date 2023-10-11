@@ -557,3 +557,38 @@ function get_measured_quantities(ode::ModelingToolkit.ODESystem)
         )
     end
 end
+
+# -----------------------------------------------------------------------------
+
+function jacobian_at_point(funcs, with_respect_to, point)
+    @assert !isempty(funcs)
+    K = parent(first(point))
+    MSpace = Nemo.MatrixSpace(K, length(funcs), length(with_respect_to))
+    jac = zero(MSpace)
+    for i in 1:length(funcs)
+        for j in 1:length(with_respect_to)
+            df = derivative(funcs[i], with_respect_to[j])
+            jac[i, j] = evaluate(df, point)
+        end
+    end
+    return jac
+end
+
+function are_algebraically_independent(funcs::Vector{T}) where {P, T <: Generic.Frac{P}}
+    @assert !isempty(funcs)
+    ring = parent(first(funcs))
+    K = base_ring(base_ring(ring))
+    present_vars = reduce(union, map(vars, funcs))
+    if length(present_vars) < length(funcs)
+        return false
+    end
+    max_total_deg = maximum(total_degree, funcs)
+    sampling_bound = 10 * (max_total_deg * length(funcs) + 1)
+    @debug "The sampling bound" sampling_bound
+    x0 = map(_ -> K(rand(1:sampling_bound)), 1:nvars(base_ring(ring)))
+    @debug "Evaluation point" x0
+    jac_x0 = jacobian_at_point(funcs, present_vars, x0)
+    max_dim = minimum(size(jac_x0))
+    first_minor = det(jac_x0[1:max_dim, 1:max_dim])
+    return !iszero(first_minor)
+end
