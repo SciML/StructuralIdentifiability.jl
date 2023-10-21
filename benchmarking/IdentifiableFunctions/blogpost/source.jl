@@ -1,5 +1,5 @@
 import Pkg;
-Pkg.activate("benchmarking/IdentifiableFunctions/blogpost");
+Pkg.activate(@__DIR__);
 
 using DiffEqParamEstim, DifferentialEquations, RecursiveArrayTools, Plots
 using Optimization, ForwardDiff, OptimizationOptimJL, OptimizationBBO
@@ -24,9 +24,16 @@ ode = @ODEmodel(
 	x2'(t) = M * x1(t),
     y(t) = x1
 )
-#!format: on
 
 find_identifiable_functions(ode, with_states = true)
+
+ode = StructuralIdentifiability.@ODEmodel(
+    x1'(t) = (a + b)*x1(t) + a*b,
+    y1(t) = x1(t),
+)
+
+find_identifiable_functions(ode)
+#!format: on
 
 ######################
 ######################

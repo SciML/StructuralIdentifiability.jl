@@ -21,13 +21,12 @@ using StructuralIdentifiability
 
 # 2. Define the system
 function f(du, u, p, t)
-    du[1] = -p[1] * u[2]
-    du[2] = p[1] * u[1]
+    du[1] = (p[1] * p[2]) * u[1] + (p[1] + p[2])
 end
 
-# 3. Generate the time-series x1(t), x2(t) that solve the above system for M = 1.5
-p = [1.5]
-u0 = [1.0; 1.0]
+# 3. Generate the time-series x1(t) that solve the above system for M = 1.5
+p = [0.3, 1.4]
+u0 = [1.0;]
 tspan = (0.0, 10.0)
 prob = ODEProblem(f, u0, tspan, p)
 sol = solve(prob, Tsit5())
@@ -43,8 +42,8 @@ function build_cost_function(
     prob_generator = DiffEqParamEstim.STANDARD_PROB_GENERATOR,
 )
     # adapted from build_loss_objective in DiffEqParamEstim.jl
-    cost_function = function (pu0, _ = nothing)
-        tmp_prob = remake(prob, p = pu0[1], u0 = pu0[2:end])
+    cost_function = function (p, _ = nothing)
+        tmp_prob = prob_generator(prob, p)
         sol = solve(
             tmp_prob,
             alg;
@@ -63,36 +62,24 @@ function build_cost_function(
     OptimizationFunction(cost_function, Optimization.AutoForwardDiff())
 end
 # Take M = 1.4 as the initial approximation.
-p0 = [1.4]
+p0 = [0.2, 1.6]
 l2_loss = estimated -> sum((data_x1 - estimated) .^ 2)
-prob = ODEProblem(f, u0, tspan, p)
 cost_function = build_cost_function(prob, Tsit5(), l2_loss, t)
 # Sanity check
-cost_function([p[1], u0...])
-@assert cost_function(p[1], u0) < 1e-2 && cost_function(p0[1], u0) > 1.0
+@assert cost_function([0.3, 1.4]) < 1e-2
 
-optprob = Optimization.OptimizationProblem(cost_function, [p0..., 1.0, 1.1])
+optprob = Optimization.OptimizationProblem(cost_function, p0)
 optsol = solve(optprob, BFGS())
 @show optsol
-@assert abs(p[1] - optsol[1]) < 1e-2
+@assert sum(abs, p - optsol) < 1e-2
 
 # 5. Plot the landscape of the loss function
-vals_1, vals_2 = -2.0:0.03:2.0, -2.0:0.03:2.0
+vals_1, vals_2 = 0.1:0.1:2.0, 0.1:0.1:2.0
 cost = reshape(
-    [cost_function([v1, u0[1], v2]) for v1 in vals_1 for v2 in vals_2],
+    [cost_function([v1, v2]) for v1 in vals_1 for v2 in vals_2],
     (length(vals_1), length(vals_2)),
 )
-contourf(
-    vals_1,
-    vals_2,
-    log10.(cost),
-    xaxis = "\$M\$",
-    yaxis = "\$x_2(0)\$",
-    title = "L2 cost function",
-    levels = 7,
-    lw = 1,
-    color = :turbo,
-)
+contourf(vals_1, vals_2, cost, levels = 8, color = :turbo)
 
 plot(
     vals,
