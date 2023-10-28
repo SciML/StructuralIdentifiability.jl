@@ -54,15 +54,16 @@ function local_normal_forms(
 )
     @assert !isempty(point)
     @assert parent(first(point)) == finite_field
-    point_ff_ext = vcat(point, one(finite_field))
+    @assert mqs.sat_var_index == 1
+    point_ff_ext = vcat(one(finite_field), point)
     gens_ff_spec = specialize_mod_p(mqs, point)
     gb_ff_spec = Groebner.groebner(gens_ff_spec)
     ring_ff = parent(gb_ff_spec[1])
     xs_ff = gens(ring_ff)
     normal_forms_ff = Vector{elem_type(ring_ff)}(undef, 0)
     monoms_ff = Vector{elem_type(ring_ff)}(undef, 0)
-    @assert mqs.sat_var_index == length(xs_ff)
-    xs_ff = xs_ff[1:(end - 1)]
+    @assert mqs.sat_var_index == 1
+    xs_ff = xs_ff[2:end]
     pivot_vectors = map(f -> exponent_vector(f, 1), xs_ff)
     @debug """
     variables in the finite field: $(xs_ff)
@@ -358,7 +359,8 @@ function linear_relations_between_normal_forms(
         n_relations_ff = length(complete_intersection_relations_ff)
         # Filter out some relations from the complete intersection
         zeroed_relations_inds = Vector{Int}()
-        point_ext = vcat(point, one(finite_field))
+        @assert mqs.sat_var_index == 1
+        point_ext = vcat(one(finite_field), point)
         for i in 1:length(complete_intersection_relations_ff)
             relation = complete_intersection_relations_ff[i]
             relation_mqs = relation - evaluate(relation, point_ext)
@@ -409,7 +411,8 @@ function linear_relations_between_normal_forms(
             modulo: $finite_field"""
             throw(ErrorException("Rational reconstruction failed."))
         end
-        relation_qq_param = evaluate(relation_qq, vcat(xs_param, one(ring)))
+        @assert mqs.sat_var_index == 1
+        relation_qq_param = evaluate(relation_qq, vcat(one(ring_param), xs_param))
         relations_qq[i] = relation_qq_param // one(relation_qq_param)
     end
     relations_qq

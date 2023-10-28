@@ -209,7 +209,7 @@ Input
 Output:
 - a polynomial in `new_ring` “equal” to `poly`
 """
-function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :byname)
+function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :byname, shift = 0)
     old_ring = parent(poly)
     # Construct a mapping for the variable indices.
     # Zero indicates no image of the old variable in the new ring  
@@ -223,7 +223,7 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :by
             var_mapping[i] = found
         end
     elseif matching === :byindex
-        var_mapping[1:nvars(new_ring)] .= 1:nvars(new_ring)
+        var_mapping[1:(nvars(new_ring) - shift)] .= (1 + shift):nvars(new_ring)
     else
         throw(Base.ArgumentError("Unknown matching type: $matching"))
     end
@@ -451,6 +451,7 @@ For a variable `v`, returns a variable in `ring` with the same name
 """
 function switch_ring(v::MPolyElem, ring::MPolyRing)
     ind = findfirst(vv -> vv == v, gens(parent(v)))
+
     return str_to_var(string(symbols(parent(v))[ind]), ring)
 end
 

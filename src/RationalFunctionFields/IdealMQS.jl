@@ -90,16 +90,15 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         existing_varnames = map(String, symbols(ring))
         ystrs = ["y$i" for i in 1:length(existing_varnames)]
         @assert !(sat_varname in ystrs) "The name of the saturation variable collided with a primary variable"
-        sat_var_index = length(ystrs) + 1
-        varnames = push!(ystrs, sat_varname)
+        sat_var_index = 1
+        varnames = vcat([sat_varname], ystrs)
         @debug "Saturating variable is $sat_varname, index is $sat_var_index"
         flush(stdout)
         R_sat, v_sat = Nemo.PolynomialRing(K, varnames, ordering = ordering)
         # Saturation
-        @assert sat_var_index == length(v_sat)
         t_sat = v_sat[sat_var_index]
         den_lcm_orig = den_lcm
-        den_lcm = parent_ring_change(den_lcm, R_sat, matching = :byindex)
+        den_lcm = parent_ring_change(den_lcm, R_sat, matching = :byindex, shift = 1)
         den_lcm_sat = parent_ring_change(den_lcm, R_sat)
         sat_qq = den_lcm_sat * t_sat - 1
         # We construct the array of numerators nums_qq and the array of
@@ -114,13 +113,13 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         for i in 1:length(funcs_den_nums)
             plist = funcs_den_nums[i]
             den = plist[pivots_indices[i]]
-            den = parent_ring_change(den, R_sat, matching = :byindex)
+            den = parent_ring_change(den, R_sat, matching = :byindex, shift = 1)
             push!(dens_qq, den)
             push!(dens_indices, (length(nums_qq) + 1, length(nums_qq) + length(plist) - 1))
             for j in 1:length(plist)
                 j == pivots_indices[i] && continue
                 num = plist[j]
-                num = parent_ring_change(num, R_sat, matching = :byindex)
+                num = parent_ring_change(num, R_sat, matching = :byindex, shift = 1)
                 push!(nums_qq, num)
             end
         end
@@ -243,9 +242,9 @@ function ParamPunPam.specialize_mod_p(
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
     # +1 actual variable because of the saturation!
     @assert length(point) + 1 == nvars(parent(nums_gf[1]))
-    # NOTE: Assuming the saturating variable is the last one
-    @assert mqs.sat_var_index == length(point) + 1
-    point_sat = vcat(point, one(K_1))
+    # NOTE: Assuming the saturating variable is the first one
+    @assert mqs.sat_var_index == 1
+    point_sat = vcat(one(K_1), point)
     nums_gf_spec = map(num -> evaluate(num, point_sat), nums_gf)
     dens_gf_spec = map(den -> evaluate(den, point_sat), dens_gf)
     polys = Vector{typeof(sat_gf)}(undef, length(nums_gf_spec) + 1)
@@ -273,9 +272,9 @@ function specialize(mqs::IdealMQS, point::Vector{Nemo.fmpq}; saturated = true)
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
     # +1 actual variable because of the saturation!
     @assert length(point) + 1 == nvars(parent(nums_qq[1]))
-    # NOTE: Assuming the saturating variable is the last one
-    @assert mqs.sat_var_index == length(point) + 1
-    point_sat = vcat(point, one(K))
+    # NOTE: Assuming the saturating variable is the first one
+    @assert mqs.sat_var_index == 1
+    point_sat = vcat(one(K), point)
     nums_qq_spec = map(num -> evaluate(num, point_sat), nums_qq)
     dens_qq_spec = map(den -> evaluate(den, point_sat), dens_qq)
     polys = Vector{typeof(sat_qq)}(undef, length(nums_qq_spec) + 1)
