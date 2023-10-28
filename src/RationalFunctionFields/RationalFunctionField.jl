@@ -493,7 +493,7 @@ function simplified_generating_set(
     check_variables = false, # almost always slows down and thus turned off
     rational_interpolator = :VanDerHoevenLecerf,
 )
-    @info "Simplifying identifiable functions"
+    @info "Simplifying generating set"
     _runtime_logger[:id_groebner_time] = 0.0
     _runtime_logger[:id_calls_to_gb] = 0
     _runtime_logger[:id_inclusion_check_mod_p] = 0.0
@@ -502,8 +502,7 @@ function simplified_generating_set(
     _runtime_logger[:id_normalforms_time] = 0.0
     _runtime_logger[:id_ranking] = 0
 
-    # Checking identifiability of particular variables and adding them to the
-    # field
+    # Checking membership of particular variables and adding them to the field
     if check_variables
         vars = gens(poly_ring(rff))
         containment = field_contains(rff, vars, (1.0 + p) / 2)

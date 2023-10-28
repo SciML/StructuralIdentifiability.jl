@@ -10,6 +10,27 @@ end
 
 # ------------------------------------------------------------------------------
 
+function append_at_index(vec::Vector{T}, idx::Integer, val::T) where {T}
+    # NOTE: could also just use insert!
+    @assert (idx == 1) || (idx == length(vec) + 1)
+    if idx == 1
+        vcat(val, vec)
+    else
+        vcat(vec, val)
+    end
+end
+
+function cut_at_index(vec::Vector{T}, idx::Integer) where {T}
+    @assert (idx == 1) || (idx == length(vec))
+    if idx == 1
+        vec[2:end]
+    else
+        vec[1:(end - 1)]
+    end
+end
+
+# ------------------------------------------------------------------------------
+
 """
     eval_at_dict(f, d)
 
@@ -398,7 +419,7 @@ end
 
 function str_to_var(s::String, ring::MPolyRing)
     ind = findfirst(v -> (string(v) == s), symbols(ring))
-    if ind == nothing
+    if ind === nothing
         throw(Base.KeyError("Variable $s is not found in ring $ring"))
     end
     return gens(ring)[ind]
