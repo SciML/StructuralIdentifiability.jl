@@ -72,15 +72,19 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         funcs_den_nums = map(plist -> filter(!iszero, plist), funcs_den_nums)
         # funcs_den_nums = filter(plist -> length(plist) > 1, funcs_den_nums)
         @assert !isempty(funcs_den_nums) "All elements of the ideal are zero"
-        pivots = map(plist -> findmin(total_degree, plist)[2], funcs_den_nums)
+        pivots =
+            map(plist -> findmin(p -> (total_degree(p), length(p)), plist), funcs_den_nums)
         pivots_indices = map(last, pivots)
-        @debug "\tDegrees are $(map(first, pivots))"
+        for plist in funcs_den_nums
+            @debug "\tDegrees in this list are $(map(total_degree, plist))"
+        end
+        @debug "\tDegrees and lengths are $(map(first, pivots))"
         den_lcm = mapreduce(
             i -> funcs_den_nums[i][pivots_indices[i]],
             lcm,
             1:length(funcs_den_nums),
         )
-        @debug "Rational functions common denominator" den_lcm
+        @debug "Rational functions common denominator is of degree $(total_degree(den_lcm)) and of length $(length(den_lcm))"
         is_constant(den_lcm) &&
             (@debug "Common denominator of the field generators is constant")
         existing_varnames = map(String, symbols(ring))
@@ -89,6 +93,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         sat_var_index = length(ystrs) + 1
         varnames = push!(ystrs, sat_varname)
         @debug "Saturating variable is $sat_varname, index is $sat_var_index"
+        flush(stdout)
         R_sat, v_sat = Nemo.PolynomialRing(K, varnames, ordering = ordering)
         # Saturation
         @assert sat_var_index == length(v_sat)
@@ -121,6 +126,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         end
         parent_ring_param, _ = PolynomialRing(ring, varnames, ordering = ordering)
         @debug "Constructed MQS ideal in $R_sat with $(length(nums_qq) + 1) elements"
+        flush(stdout)
         @assert length(pivots_indices) == length(dens_indices) == length(dens_qq)
         @assert length(pivots_indices) == length(funcs_den_nums)
 

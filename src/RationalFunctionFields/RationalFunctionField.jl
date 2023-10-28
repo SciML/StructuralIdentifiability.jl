@@ -101,8 +101,10 @@ function field_contains(
         return Bool[]
     end
     @debug "Finding pivot polynomials"
+    flush(stdout)
     pivots = map(plist -> plist[findmin(map(total_degree, plist))[2]], ratfuncs)
     @debug "\tDegrees are $(map(total_degree, pivots))"
+    flush(stdout)
 
     @debug "Estimating the sampling bound"
     # uses Theorem 3.3 from https://arxiv.org/pdf/2111.00991.pdf
@@ -122,6 +124,7 @@ function field_contains(
         degree = max(degree, extra_degree + maximum(total_degree, plist))
     end
     @debug "\tBound for the degrees is $degree"
+    flush(stdout)
 
     total_vars = foldl(
         union,
@@ -136,14 +139,18 @@ function field_contains(
         ceil(1 / (1 - p)),
     )
     @debug "\tSampling from $(-sampling_bound) to $(sampling_bound)"
+    flush(stdout)
 
     mqs = field.mqs
     param_ring = ParamPunPam.parent_params(mqs)
     point = map(v -> Nemo.QQ(rand((-sampling_bound):sampling_bound)), gens(param_ring))
     mqs_specialized = specialize(mqs, point)
     @debug "Computing Groebner basis ($(length(mqs_specialized)) equations)"
+    flush(stdout)
     mqs_ratfuncs = specialize(IdealMQS(ratfuncs), point; saturated = false)
     @assert parent(first(mqs_specialized)) == parent(first(mqs_ratfuncs))
+    @debug "Starting the groebner basis computation"
+    flush(stdout)
     gb = groebner(mqs_specialized)
     result = map(iszero, normalform(gb, mqs_ratfuncs))
     return result
