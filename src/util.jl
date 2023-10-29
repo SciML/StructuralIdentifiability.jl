@@ -10,6 +10,27 @@ end
 
 # ------------------------------------------------------------------------------
 
+function append_at_index(vec::Vector{T}, idx::Integer, val::T) where {T}
+    # NOTE: could also just use insert!
+    @assert (idx == 1) || (idx == length(vec) + 1)
+    if idx == 1
+        vcat(val, vec)
+    else
+        vcat(vec, val)
+    end
+end
+
+function cut_at_index(vec::Vector{T}, idx::Integer) where {T}
+    @assert (idx == 1) || (idx == length(vec))
+    if idx == 1
+        vec[2:end]
+    else
+        vec[1:(end - 1)]
+    end
+end
+
+# ------------------------------------------------------------------------------
+
 """
     eval_at_dict(f, d)
 
@@ -209,7 +230,12 @@ Input
 Output:
 - a polynomial in `new_ring` “equal” to `poly`
 """
-function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :byname)
+function parent_ring_change(
+    poly::MPolyElem,
+    new_ring::MPolyRing;
+    matching = :byname,
+    shift = 0,
+)
     old_ring = parent(poly)
     # Construct a mapping for the variable indices.
     # Zero indicates no image of the old variable in the new ring  
@@ -223,7 +249,7 @@ function parent_ring_change(poly::MPolyElem, new_ring::MPolyRing; matching = :by
             var_mapping[i] = found
         end
     elseif matching === :byindex
-        var_mapping[1:nvars(new_ring)] .= 1:nvars(new_ring)
+        var_mapping[1:(nvars(new_ring) - shift)] .= (1 + shift):nvars(new_ring)
     else
         throw(Base.ArgumentError("Unknown matching type: $matching"))
     end
@@ -393,7 +419,7 @@ end
 
 function str_to_var(s::String, ring::MPolyRing)
     ind = findfirst(v -> (string(v) == s), symbols(ring))
-    if ind == nothing
+    if ind === nothing
         throw(Base.KeyError("Variable $s is not found in ring $ring"))
     end
     return gens(ring)[ind]
@@ -451,6 +477,7 @@ For a variable `v`, returns a variable in `ring` with the same name
 """
 function switch_ring(v::MPolyElem, ring::MPolyRing)
     ind = findfirst(vv -> vv == v, gens(parent(v)))
+
     return str_to_var(string(symbols(parent(v))[ind]), ring)
 end
 
