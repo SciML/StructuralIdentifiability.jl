@@ -330,7 +330,7 @@ function macrohelper_clean(ex::Expr)
     ex = MacroTools.postwalk(x -> @capture(x, f_'(t)) ? f : x, ex)
     ex = MacroTools.postwalk(x -> @capture(x, f_(t)) ? f : x, ex)
     ex = MacroTools.postwalk(x -> x == :(/) ? :(//) : x, ex)
-    ex = MacroTools.postwalk(x -> typeof(x) <: Float64 ? rationalize(x) : x, ex)
+    ex = MacroTools.postwalk(x -> x isa Float64 ? rationalize(x) : x, ex)
     return ex
 end
 
@@ -615,7 +615,7 @@ function __preprocess_ode(
     for i in 1:length(diff_eqs)
         x = substitute(state_vars[i], symb2gens)
         push!(x_vars, x)
-        if !(typeof(diff_eqs[i].rhs) <: Number)
+        if !(diff_eqs[i].rhs isa Number)
             state_eqn_dict[x] = eval_at_nemo(diff_eqs[i].rhs, symb2gens)
         else
             state_eqn_dict[x] = R(diff_eqs[i].rhs)
