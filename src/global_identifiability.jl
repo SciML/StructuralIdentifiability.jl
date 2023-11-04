@@ -113,7 +113,7 @@ function initial_identifiable_functions(
         _runtime_logger[:rank_time] = rank_times
 
         if any([dim != rk + 1 for (dim, rk) in zip(dims, wranks)])
-            @warn "One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still  would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)"
+            @warn "One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)"
         end
     end
 
@@ -176,6 +176,7 @@ function check_identifiability(
             break
         end
     end
+    states_needed = states_needed || isempty(ode.parameters)
 
     half_p = 0.5 + p / 2
     identifiable_functions_raw, bring = initial_identifiable_functions(

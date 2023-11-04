@@ -37,7 +37,7 @@ find_identifiable_functions(LLW1987, with_states = true)
 ```
 
 By default, `find_identifiable_functions` tries to simplify the output functions as much as possible, and it has `simplify` keyword responsible for
-the degree of simplification. The default value is `:standard` but one could use `:string` to try to simplify further
+the degree of simplification. The default value is `:standard` but one could use `:strong` to try to simplify further
 (at the expense of heavier computation) or use `:weak` to simplify less (but compute faster).
 
 [^1]: > Y. Lecourtier, F. Lamnabhi-Lagarrigue, and E. Walter, [*A method to prove that nonlinear models can be unidentifiable*](https://doi.org/10.1109/CDC.1987.272467), Proceedings of the 26th Conference on Decision and Control, December 1987, 2144-2145;
