@@ -937,7 +937,7 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 ode = @ODEmodel(x1'(t) = x1, x2'(t) = x2, y(t) = x1 + x2(t))
 ident_funcs = [x1 + x2]
-push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = true))
 
 # TODO: verify that Maple returns the same
 @testset "Identifiable functions of parameters" begin
