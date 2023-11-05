@@ -388,7 +388,7 @@ function generating_sets_fan(
     time_start = time_ns()
     vars = gens(parent(rff.mqs))
     nbases = length(vars)
-    @info "Computing $nbases Groebner bases for block orderings. Simplification code is $code"
+    @info "Computing $nbases Groebner bases for degrees $up_to_degree for block orderings"
     ordering_to_generators = Dict()
     if code == 0
         return ordering_to_generators
@@ -461,6 +461,7 @@ function generating_sets_fan(
         end
     end
     _runtime_logger[:id_gbfan_time] = (time_ns() - time_start) / 1e9
+    @info "Computed Groebner bases in $((time_ns() - time_start) / 1e9) seconds"
     return ordering_to_generators
 end
 
@@ -493,7 +494,7 @@ function simplified_generating_set(
     check_variables = false, # almost always slows down and thus turned off
     rational_interpolator = :VanDerHoevenLecerf,
 )
-    @info "Simplifying generating set"
+    @info "Simplifying generating set. Simplification level: $simplify"
     _runtime_logger[:id_groebner_time] = 0.0
     _runtime_logger[:id_calls_to_gb] = 0
     _runtime_logger[:id_inclusion_check_mod_p] = 0.0
@@ -556,26 +557,24 @@ function simplified_generating_set(
     for (ord, generators) in fan
         append!(new_fracs, generators)
     end
-
     new_fracs_unique = unique(new_fracs)
-
-    @info """
+    @debug """
     Final cleaning and simplification of generators. 
     Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique."""
     runtime =
         @elapsed new_fracs = beautifuly_generators(RationalFunctionField(new_fracs_unique))
-    @info "Checking inclusion with probability $p"
+    @debug "Checking inclusion with probability $p"
     runtime = @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), p)
     _runtime_logger[:id_inclusion_check] = runtime
-    @info "Inclusion checked in $(_runtime_logger[:id_inclusion_check]) seconds. Result: $result"
     if !result
         @warn "Field membership check failed. Error will follow."
         throw("The new subfield generators are not correct.")
     end
-    @info "Out of $(length(rff.mqs.nums_qq)) initial generators there are $(length(new_fracs)) indepdendent"
+    @info "Inclusion checked with probability $p in $(_runtime_logger[:id_inclusion_check]) seconds"
+    @debug "Out of $(length(rff.mqs.nums_qq)) initial generators there are $(length(new_fracs)) indepdendent"
     ranking = generating_set_rank(new_fracs)
     _runtime_logger[:id_ranking] = ranking
-    @info "The ranking of the new set of generators is $ranking"
+    @debug "The ranking of the new set of generators is $ranking"
     return new_fracs
 end
 
