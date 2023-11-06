@@ -133,7 +133,16 @@ function ode_aux(ode::ODE{P}, submodel::Set{fmpq_mpoly}) where {P <: MPolyElem}
         dict_type(parent_ring_change(y, S) => parent_ring_change(f, S) for (y, f) in new_y)
     fin_u = [parent_ring_change(u, S) for u in new_u]
 
-    return ODE{fmpq_mpoly}(fin_x, fin_y, fin_u)
+    new_x_vars = [
+        parent_ring_change(x, S) for
+        x in ode.x_vars if var_to_str(x) in map(var_to_str, collect(keys(fin_x)))
+    ]
+    new_y_vars = [
+        parent_ring_change(y, S) for
+        y in ode.y_vars if var_to_str(y) in map(var_to_str, collect(keys(fin_y)))
+    ]
+
+    return ODE{fmpq_mpoly}(new_x_vars, new_y_vars, fin_x, fin_y, fin_u)
 end
 
 # ------------------------------------------------------------------------------
