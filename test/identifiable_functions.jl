@@ -935,6 +935,10 @@ ode = StructuralIdentifiability.@ODEmodel(
 ident_funcs = [k3, k1 // k7, k5 // k2, k6 // k2, k7 * EpoR_A]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
+ode = @ODEmodel(x1'(t) = x1, x2'(t) = x2, y(t) = x1 + x2(t))
+ident_funcs = [x1 + x2]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = true))
+
 # TODO: verify that Maple returns the same
 @testset "Identifiable functions of parameters" begin
     p = 0.99

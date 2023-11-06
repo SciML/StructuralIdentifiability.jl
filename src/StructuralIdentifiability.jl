@@ -97,7 +97,7 @@ The function returns a dictionary from the functions to check to their identifia
 """
 function assess_identifiability(
     ode::ODE{P};
-    funcs_to_check::Array{<:RingElem, 1} = Array{RingElem, 1}(),
+    funcs_to_check = Vector(),
     p::Float64 = 0.99,
 ) where {P <: MPolyElem{fmpq}}
     p_glob = 1 - (1 - p) * 0.9

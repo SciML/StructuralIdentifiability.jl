@@ -56,6 +56,16 @@ function find_identifiable_functions(
     _runtime_logger[:id_npoints_interpolation] = 0
     _runtime_logger[:id_beautifulization] = 0.0
     runtime_start = time_ns()
+    if isempty(ode.parameters) && !with_states
+        @warn """
+        There are no parameters in the given ODE, thus no identifiabile
+        functions.
+        Use `find_identifiable_functions` with keyword `with_states=true` to
+        compute the functions with the ODE states included."""
+        bring = parent(ode)
+        id_funcs = [one(bring)]
+        return id_funcs
+    end
     half_p = 0.5 + p / 2
     id_funcs, bring = initial_identifiable_functions(
         ode,

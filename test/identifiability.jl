@@ -28,6 +28,26 @@
     )
 
     #--------------------------------------------------------------------------
+    # No parameters no worry
+
+    ode = @ODEmodel(x1'(t) = x1, x2'(t) = x2, y(t) = x1 + x2(t))
+    funcs_to_test = [x1, x2, x1 + x2]
+    correct = [:nonidentifiable, :nonidentifiable, :globally]
+    push!(
+        test_cases,
+        Dict(
+            :ode => ode,
+            :funcs => funcs_to_test,
+            :correct => Dict(funcs_to_test .=> correct),
+        ),
+    )
+
+    # Also test when `funcs_to_test` is empty!
+    funcs_to_test = Vector{typeof(x1)}()
+    correct = Dict(x1 => :nonidentifiable, x2 => :nonidentifiable)
+    push!(test_cases, Dict(:ode => ode, :funcs => funcs_to_test, :correct => correct))
+
+    #--------------------------------------------------------------------------
 
     ode = @ODEmodel(
         x0'(t) = a * x0(t) - b * x0(t) * x1(t) + u(t),

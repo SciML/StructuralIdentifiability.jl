@@ -1,3 +1,17 @@
+"""
+    extract_identifiable_functions_raw(io_equations, ode, known, with_states)
+
+Takes as input input-output equations, the corresponding ode, a list of functions assumed to be known
+and a flag `with_states`.
+Extracts generators of the field of identifiable functions (with or without states) withous
+any simplifications.
+
+Returns a tuple consisting of
+- a dictionary with at most two keys: `:no_states` and `:with_states`. The respective values
+are identifiable functions containing or not the state variables
+- a polynomial ring containing all returned identifiable functions
+(parameters or parameters + states)
+"""
 function extract_identifiable_functions_raw(
     io_equations::Dict{P, P},
     ode::ODE{P},
@@ -79,6 +93,10 @@ This function takes the following optional arguments:
 - `with_states`: Also report the identifiabile functions in states. Default is
   `false`. If this is `true`, the identifiable functions involving parameters only
    will be simplified
+
+The function returns a tuple containing the following:
+- a list of identifiable functions (as pairs [num, denum])
+- the ring containing all these functuons (either parameters only of with states)
 """
 function initial_identifiable_functions(
     ode::ODE{T};
@@ -113,7 +131,7 @@ function initial_identifiable_functions(
         _runtime_logger[:rank_time] = rank_times
 
         if any([dim != rk + 1 for (dim, rk) in zip(dims, wranks)])
-            @warn "One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still  would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)"
+            @warn "One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)"
         end
     end
 
@@ -159,7 +177,18 @@ function initial_identifiable_functions(
 end
 
 # ------------------------------------------------------------------------------
+"""
+    check_identifiability(ode, funcs_to_check; known, p, var_change_policy)
 
+Input:
+- `ode` - the ODE model
+- `funcs_to_check` - the functions to check identifiability for
+- `known` - a list of functions in states which are assumed to be known and generic
+- `p` - probability of correctness
+- `var_change` - a policy for variable change (`:default`, `:yes`, `:no`), affects only the runtime
+
+Output: a list L of booleans with L[i] being the identifiability status of the i-th function to check
+"""
 function check_identifiability(
     ode::ODE{P},
     funcs_to_check::Array{<:Any, 1};
@@ -175,6 +204,9 @@ function check_identifiability(
             states_needed = true
             break
         end
+    end
+    if !states_needed && isempty(ode.parameters)
+        return [true for _ in funcs_to_check]
     end
 
     half_p = 0.5 + p / 2
