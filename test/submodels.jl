@@ -7,7 +7,7 @@
                 y1(t) = x1(t),
                 y2(t) = x2(t)
             ),
-            :submodels => Set([(Set(["x1"]), Set(["y1"]), Set{String}())]),
+            :submodels => Set([(["x1"], ["y1"], Vector{String}())]),
         ),
         Dict(
             :ode => @ODEmodel(
@@ -17,7 +17,7 @@
                 y2(t) = x1(t)^2,
                 y3(t) = x2(t)
             ),
-            :submodels => Set([(Set(["x1"]), Set(["y1", "y2"]), Set{String}())]),
+            :submodels => Set([(["x1"], ["y1", "y2"], Vector{String}())]),
         ),
         Dict(
             :ode => @ODEmodel(
@@ -29,9 +29,9 @@
                 y3(t) = x1(t) + x3(t)
             ),
             :submodels => Set([
-                (Set(["x1", "x2"]), Set(["y1"]), Set{String}()),
-                (Set(["x2", "x3"]), Set(["y2"]), Set{String}()),
-                (Set(["x1", "x3"]), Set(["y3"]), Set{String}()),
+                (["x1", "x2"], ["y1"], Vector{String}()),
+                (["x2", "x3"], ["y2"], Vector{String}()),
+                (["x1", "x3"], ["y3"], Vector{String}()),
             ]),
         ),
         Dict(
@@ -41,7 +41,7 @@
                 y1(t) = x1(t),
                 y2(t) = x2(t)
             ),
-            :submodels => Set([(Set(["x1"]), Set(["y1"]), Set{String}())]),
+            :submodels => Set([(["x1"], ["y1"], Vector{String}())]),
         ),
         Dict(
             :ode => @ODEmodel(
@@ -51,7 +51,7 @@
                 y1(t) = d(t) * x1(t),
                 y2(t) = x3(t)
             ),
-            :submodels => Set([(Set(["x1", "x2"]), Set(["y1"]), Set(["a", "b", "d"]))]),
+            :submodels => Set([(["x1", "x2"], ["y1"], ["a", "b", "d"])]),
         ),
         Dict(
             :ode => @ODEmodel(
@@ -63,8 +63,8 @@
                 y3(t) = x3(t)
             ),
             :submodels => Set([
-                (Set(["x1", "x2"]), Set(["y1", "y2"]), Set(["a", "d"])),
-                (Set(["x1"]), Set(["y1"]), Set{String}()),
+                (["x1", "x2"], ["y1", "y2"], ["a", "d"]),
+                (["x1"], ["y1"], Vector{String}()),
             ]),
         ),
         Dict(
@@ -94,27 +94,27 @@
             ),
             :submodels => Set([
                 (
-                    Set(["x0", "x1", "x2", "x3", "x02", "x12", "x22", "x32", "o1", "o12"]),
-                    Set(["y0", "y1", "y2", "y3"]),
-                    Set(),
+                    ["o1", "x0", "x1", "x2", "x3", "o12", "x02", "x12", "x22", "x32"],
+                    ["y0", "y1", "y2", "y3"],
+                    Vector{String}(),
                 ),
                 (
-                    Set([
+                    [
+                        "o1",
                         "x0",
                         "x1",
                         "x2",
                         "x3",
                         "x4",
-                        "x42",
+                        "o12",
                         "x02",
                         "x12",
                         "x22",
                         "x32",
-                        "o1",
-                        "o12",
-                    ]),
-                    Set(["y0", "y1", "y2", "y3", "y5"]),
-                    Set(),
+                        "x42",
+                    ],
+                    ["y0", "y1", "y2", "y3", "y5"],
+                    Vector{String}(),
                 ),
             ]),
         ),
@@ -124,9 +124,9 @@
         submodels = find_submodels(c[:ode])
         submodels = Set([
             (
-                Set(map(var_to_str, ode.x_vars)),
-                Set(map(var_to_str, ode.y_vars)),
-                Set(map(var_to_str, ode.u_vars)),
+                collect(map(var_to_str, ode.x_vars)),
+                collect(map(var_to_str, ode.y_vars)),
+                collect(map(var_to_str, ode.u_vars)),
             ) for ode in submodels
         ])
         @test submodels == c[:submodels]
