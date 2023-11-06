@@ -1,4 +1,4 @@
-# ָFunctions to Assess Identifiability
+# Functions to Assess Identifiability
 
 ## Assessing All Types of Identifiability
 
