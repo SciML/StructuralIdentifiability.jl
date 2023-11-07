@@ -168,7 +168,7 @@ function check_constructive_field_membership(
         gen_tag_names(length(fracs_gen), "Tag")
     end
     sat_string = gen_tag_name("Sat")
-    @info """
+    @debug """
     Tags:
     $(join(map(x -> string(x[1]) * " -> " * string(x[2]),  zip(fracs_gen, tag_strings)), "\t\n"))
     Saturation tag:
@@ -303,7 +303,7 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     # Compute the new dynamics in terms of the original variables.
     # Paying attenton to the order..
     new_vector_field = vector_field_along(ode.x_equations, new_states)
-    @info "New vector field:\n$new_vector_field"
+    @debug "New vector field:\n$new_vector_field"
     new_states = collect(keys(new_vector_field))
     new_dynamics = [new_vector_field[new_state] for new_state in new_states]
     # Express the new dynamics in terms of new states and new parameters.
@@ -327,7 +327,7 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     $tag_names
     Generating functions:
     $generating_funcs
-    To be reduced functions:
+    Functions to be reduced:
     $to_be_reduced_funcs
     """
     membership, new_dynamics_all, implicit_relations, new_vars =
@@ -414,7 +414,13 @@ end
 """
     reparametrize_global(ode, options...)
 
-Casts an incantation and returns a rabbit.
+Finds a reparametrization of `ode` in terms of globally identifiabile functions.
+
+Returns a tuple (`new_ode`, `new_vars`, `implicit_relations`), such that:
+- `new_ode` is the reparametrized ODE system
+- `new_vars` is a mapping from the new variables to the original ones
+- `relations` is the array of implicit algebraic relations among `new_vars`.
+  Usually, `relations` is empty.
 
 ## Options
 
@@ -422,6 +428,41 @@ The function accepts the following optional arguments.
 
 - `seed`: A float in the range from 0 to 1, random seed (default is `seed = 42`). 
 - `p`: The probability of correctness (default is `p = 0.99`).
+
+## Example
+
+```jldoctest
+using StructuralIdentifiability
+
+ode = @ODEmodel(
+    x1'(t) = a * x1(t) - b*x1(t)*x2(t),
+    x2'(t) = -c * x2(t) + d*x1(t)*x2(t),
+    y(t) = x1(t)
+)
+
+new_ode, new_vars, relations = reparametrize_global(ode)
+```
+
+Then, we have the following:
+
+```
+# new_ode
+X2'(t) = X1(t)*X2(t)*a2 - X2(t)*a1
+X1'(t) = -X1(t)*X2(t) + X1(t)*a3
+y1(t) = X1(t)
+
+# new_vars
+Dict{Nemo.QQMPolyRingElem, AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}} with 6 entries:
+  X2 => b*x2
+  y1 => y
+  X1 => x1
+  a2 => d
+  a3 => a
+  a1 => c
+```
+
+Notice that the `new_ode` is fully identifiabile, and has `1` less parameter
+compared to the original one.
 """
 function reparametrize_global(ode::ODE{P}; p = 0.99, seed = 42) where {P}
     Random.seed!(seed)
