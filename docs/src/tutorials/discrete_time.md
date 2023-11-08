@@ -20,6 +20,7 @@ Again, we will distinguish two types of identifiability
 Currently, `StructuralIdentifiability.jl` allows to assess only local identifiability for discrete-time models,
 and below we will describe how this can be done.
 As a running example, we will use the following discrete version of the [SIR](https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology#The_SIR_model) model:
+
 $\begin{cases}
 S(t + 1) = S(t) - \beta S(t) I(t),\\
 I(t + 1) = I(t) + \beta S(t) I(t) - \alpha I(t),\\
