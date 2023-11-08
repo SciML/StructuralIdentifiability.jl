@@ -18,7 +18,7 @@ makedocs(
         canonical = "https://docs.sciml.ai/StructuralIdentifiability/stable/",
     ),
     pages = pages,
-    checkdocs = :none,
+    checkdocs = :exports,
 )
 
 deploydocs(repo = "github.com/SciML/StructuralIdentifiability.jl.git"; push_preview = true)
