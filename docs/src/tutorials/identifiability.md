@@ -15,7 +15,7 @@ Typically, two types of identifiability are distinguished
 
   - **local** identifiability: the value can be recovered up to finitely many options;
 
-  - **global** identifiability: the value can be recoevered uniquely.
+  - **global** identifiability: the value can be recovered uniquely.
 
 Note that in the case of states, term **observability** it typically used. We will use **identifiability** for both
 states and parameters for brevity and uniformity.

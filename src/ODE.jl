@@ -1,4 +1,3 @@
-# P is the type of polynomials in the rhs of the ODE system
 """
 The main structure that represents input ODE system.
 
@@ -6,7 +5,7 @@ Stores information about states (`x_vars`), outputs (`y_vars`), inputs (`u_vars`
 
 This structure is constructed via `@ODEmodel` macro.
 """
-struct ODE{P}
+struct ODE{P} # P is the type of polynomials in the rhs of the ODE system
     poly_ring::MPolyRing
     x_vars::Array{P, 1}
     y_vars::Array{P, 1}
