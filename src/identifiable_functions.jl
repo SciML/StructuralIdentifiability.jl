@@ -49,12 +49,10 @@ function find_identifiable_functions(
     with_states = false,
     simplify = :standard,
     rational_interpolator = :VanDerHoevenLecerf,
+    loglevel = Logging.Info,
 ) where {T <: MPolyElem{fmpq}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
-    _runtime_logger[:id_npoints_degree] = 0
-    _runtime_logger[:id_npoints_interpolation] = 0
-    _runtime_logger[:id_beautifulization] = 0.0
     runtime_start = time_ns()
     if isempty(ode.parameters) && !with_states
         @warn """
@@ -139,6 +137,7 @@ function find_identifiable_functions(
     with_states = false,
     simplify = :standard,
     rational_interpolator = :VanDerHoevenLecerf,
+    loglevel = Logging.Info,
 )
     Random.seed!(seed)
     if isempty(measured_quantities)
@@ -152,6 +151,7 @@ function find_identifiable_functions(
         seed = seed,
         with_states = with_states,
         rational_interpolator = rational_interpolator,
+        loglevel = loglevel,
     )
     result = [parent_ring_change(f, ode.poly_ring) for f in result]
     nemo2mtk = Dict(v => Num(k) for (k, v) in conversion)

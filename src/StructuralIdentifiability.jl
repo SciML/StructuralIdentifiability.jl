@@ -25,7 +25,7 @@ using ModelingToolkit
 export ODE, @ODEmodel, preprocess_ode
 
 # assessing identifiability
-export assess_local_identifiability, assess_global_identifiability, assess_identifiability
+export assess_local_identifiability, assess_identifiability
 
 # auxuliary function
 export set_parameter_values
@@ -48,16 +48,7 @@ export find_submodels
 # finding identifiabile reparametrizations
 export reparametrize_global
 
-# would be great to merge with the Julia logger
-const _runtime_logger = Dict(
-    :id_calls_to_gb => 0,
-    :id_groebner_time => 0.0,
-    :id_inclusion_check_mod_p => 0,
-    :id_npoints_degree => 0,
-    :id_npoints_interpolation => 0,
-    :id_beautifulization => 0,
-)
-
+include("logging.jl")
 include("util.jl")
 include("power_series_utils.jl")
 include("ODE.jl")
@@ -99,7 +90,9 @@ function assess_identifiability(
     ode::ODE{P};
     funcs_to_check = Vector(),
     p::Float64 = 0.99,
+    loglevel = Logging.Info
 ) where {P <: MPolyElem{fmpq}}
+    restart_logging(loglevel = loglevel)
     p_glob = 1 - (1 - p) * 0.9
     p_loc = 1 - (1 - p) * 0.1
 
@@ -107,7 +100,7 @@ function assess_identifiability(
         funcs_to_check = vcat(ode.parameters, ode.x_vars)
     end
 
-    @info "Assessing local identifiability"
+    info_si("Assessing local identifiability")
     trbasis = Array{fmpq_mpoly, 1}()
     runtime = @elapsed local_result = assess_local_identifiability(
         ode,
@@ -116,8 +109,8 @@ function assess_identifiability(
         type = :SE,
         trbasis = trbasis,
     )
-    @info "Local identifiability assessed in $runtime seconds"
-    @debug "Trasncendence basis to be specialized is $trbasis"
+    info_si("Local identifiability assessed in $runtime seconds")
+    debug_si("Trasncendence basis to be specialized is $trbasis")
     _runtime_logger[:loc_time] = runtime
 
     loc_id = [local_result[each] for each in funcs_to_check]
@@ -128,10 +121,10 @@ function assess_identifiability(
         end
     end
 
-    @info "Assessing global identifiability"
+    info_si("Assessing global identifiability")
     runtime = @elapsed global_result =
         assess_global_identifiability(ode, locally_identifiable, trbasis, p_glob)
-    @info "Global identifiability assessed in $runtime seconds"
+    info_si("Global identifiability assessed in $runtime seconds")
     _runtime_logger[:glob_time] = runtime
 
     result = Dict{Any, Symbol}()
@@ -169,6 +162,7 @@ function assess_identifiability(
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = [],
     p = 0.99,
+    loglevel = Logging.Info
 )
     if isempty(measured_quantities)
         measured_quantities = get_measured_quantities(ode)
@@ -181,7 +175,7 @@ function assess_identifiability(
     end
     funcs_to_check_ = [eval_at_nemo(each, conversion) for each in funcs_to_check]
 
-    result = assess_identifiability(ode, funcs_to_check = funcs_to_check_, p = p)
+    result = assess_identifiability(ode, funcs_to_check = funcs_to_check_, p = p, loglevel = loglevel)
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     return out_dict
