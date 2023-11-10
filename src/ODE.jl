@@ -459,11 +459,6 @@ macro ODEmodel(ex::Expr...)
         end
     end
 
-    info_si("Summary of the model:")
-    info_si("State variables: " * join(map(string, collect(x_vars)), ", "))
-    info_si("Parameters: " * join(map(string, collect(params)), ", "))
-    info_si("Inputs: " * join(map(string, collect(u_vars)), ", "))
-    info_si("Outputs: " * join(map(string, collect(y_vars)), ", "))
     logging_exprs = [
         :(StructuralIdentifiability.info_si("Summary of the model:")),
         :(StructuralIdentifiability.info_si("State variables: " * $(join(map(string, collect(x_vars)), ", ")))),
