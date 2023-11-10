@@ -988,14 +988,15 @@ begin
     )
 
     using Nemo, Logging
-    using JuliaInterpreter
     Groebner = StructuralIdentifiability.Groebner
     # ParamPunPam = StructuralIdentifiability.ParamPunPam
     Base.global_logger(ConsoleLogger(Logging.Info))
 end
 
-dennums, ring =
-    StructuralIdentifiability.initial_identifiable_functions(Pivastatin, p = 0.99);
+res = StructuralIdentifiability.find_identifiable_functions(CGV1990);
+
+res = StructuralIdentifiability.assess_identifiability(CGV1990);
+
 fracs = StructuralIdentifiability.dennums_to_fractions(dennums);
 
 rff = StructuralIdentifiability.RationalFunctionField(dennums);

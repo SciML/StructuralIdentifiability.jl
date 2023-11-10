@@ -10,7 +10,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-function append_at_index(vec::Vector{T}, idx::Integer, val::T) where {T}
+function append_at_index(vec::Vector{T}, idx::Integer, val) where {T}
     # NOTE: could also just use insert!
     @assert (idx == 1) || (idx == length(vec) + 1)
     if idx == 1
@@ -20,12 +20,12 @@ function append_at_index(vec::Vector{T}, idx::Integer, val::T) where {T}
     end
 end
 
-function cut_at_index(vec::Vector{T}, idx::Integer) where {T}
+function cut_at_index(vec::Vector{T}, idx::Integer, count::Integer) where {T}
     @assert (idx == 1) || (idx == length(vec))
     if idx == 1
-        vec[2:end]
+        vec[(count + 1):end]
     else
-        vec[1:(end - 1)]
+        vec[1:(end - count)]
     end
 end
 
