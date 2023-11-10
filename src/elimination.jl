@@ -32,8 +32,7 @@ function det_minor_expansion_inner(
         cache[discarded] = result
     end
     if length(discarded[1]) < 3
-        @debug "Discarded: $discarded"
-        flush(stdout)
+        debug_si("Discarded: $discarded")
     end
     return result
 end
@@ -202,12 +201,11 @@ function Base.iterate(
     i::Int = 1,
 ) where {P <: MPolyElem{<:FieldElem}}
     if i > length(gpg.cached_points)
-        @debug "Generating new point on the variety"
+        debug_si("Generating new point on the variety")
         sample_max = i * 50
         result = undef
         while true
-            @debug "Preparing initial condition"
-            flush(stdout)
+            debug_si("Preparing initial condition")
             base_field = base_ring(gpg.big_ring)
             param_values = Dict{P, Int}(p => rand(1:sample_max) for p in gpg.ode.parameters)
             initial_conditions =
@@ -216,8 +214,7 @@ function Base.iterate(
                 u => [rand(1:sample_max) for _ in 1:(gpg.precision)] for
                 u in gpg.ode.u_vars
             )
-            @debug "Computing a power series solution"
-            flush(stdout)
+            debug_si("Computing a power series solution")
             ps_solution = undef
             try
                 ps_solution = power_series_solution(
@@ -228,13 +225,11 @@ function Base.iterate(
                     gpg.precision,
                 )
             catch e
-                @debug "$e"
-                flush(stdout)
+                debug_si("$e")
                 continue
             end
 
-            @debug "Constructing the point"
-            flush(stdout)
+            debug_si("Constructing the point")
             result = Dict{P, gpg.number_type}(
                 switch_ring(p, gpg.big_ring) => base_field(c) for (p, c) in param_values
             )
@@ -283,7 +278,6 @@ function choose(
         # get accounts for the fact that the big ring may contain some auxiliary variables, e.g. rand_proj_var
         point = [get(p, v, zero(base_ring(parent(polys[1])))) for v in vars]
         polys = filter(e -> (evaluate(e, point) == 0), polys)
-        flush(stdout)
         if length(polys) <= 1
             break
         end
@@ -322,14 +316,12 @@ function eliminate_var(
         lg = coeff(g, [var_elim], [Nemo.degree(g, var_elim)])
         (flag, q) = divides(lg, lf)
         if flag
-            @debug "\t Decreasing degree with linear combination"
-            flush(stdout)
+            debug_si("\t Decreasing degree with linear combination")
             g = g - q * f * var_elim^(Nemo.degree(g, var_elim) - Nemo.degree(f, var_elim))
         elseif (Nemo.degree(g, var_elim) == Nemo.degree(f, var_elim))
             (flag, q) = divides(lf, lg)
             if flag
-                @debug "\t Decreasing degree with linear combination"
-                flush(stdout)
+                debug_si("\t Decreasing degree with linear combination")
                 f = f - q * g
             else
                 break
@@ -376,32 +368,28 @@ function eliminate_var(
         resultant = f
     else
         if Nemo.degree(f, var_elim) > 1
-            @debug "Calculating Bezout Matrix"
-            flush(stdout)
+            debug_si("Calculating the Bezout Matrix")
             M = Bezout_matrix(f, g, var_elim)
         else
-            @debug "Calculating Sylvester matrix"
-            flush(stdout)
+            debug_si("Calculating the Sylvester matrix")
             M = Sylvester_matrix(f, g, var_elim)
         end
-        @debug "Simplifying the matrix"
-        flush(stdout)
+        debug_si("Simplifying the matrix")
         M_simp, matrix_factors = simplify_matrix(M)
-        @debug "Removed factors $(map(length, matrix_factors))"
+        debug_si("Removed factors $(map(length, matrix_factors))")
         M_size = zero(Nemo.MatrixSpace(Nemo.ZZ, ncols(M_simp), ncols(M_simp)))
         for i in 1:ncols(M_simp)
             for j in 1:ncols(M_simp)
                 M_size[i, j] = length(M_simp[i, j])
             end
         end
-        @debug "\t Matrix size: \n $M_size"
-        @debug "\t Computing determinant"
-        flush(stdout)
+        debug_si("\t Matrix size: \n $M_size")
+        debug_si("\t Computing determinant")
         resultant = det_minor_expansion(M_simp)
     end
-    @debug "Degrees are", [(v, Nemo.degree(resultant, v)) for v in vars(resultant)]
+    debug_si("Degrees are $([(v, Nemo.degree(resultant, v)) for v in vars(resultant)])")
     # Step 4: Eliminate extra factors
-    @debug "Eliminating extra factors"
+    debug_si("Eliminating extra factors")
     factors = fast_factor(resultant)
     for mfac in matrix_factors
         for fac in fast_factor(mfac)
@@ -413,9 +401,8 @@ function eliminate_var(
     res = choose(factors, generic_point_generator)
     for f in factors
         if f != res
-            @debug "\t \t Size of extra factor: $(length(f))"
-            @debug "\t \t It is $f"
-            flush(stdout)
+            debug_si("\t \t Size of extra factor: $(length(f))")
+            debug_si("\t \t It is $f")
         end
     end
     return res

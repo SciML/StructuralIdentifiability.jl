@@ -27,15 +27,14 @@ function extract_identifiable_functions_raw(
     bring, _ = Nemo.PolynomialRing(base_ring(ode.poly_ring), varnames)
 
     if with_states
-        @debug "Computing Lie derivatives"
+        debug_si("Computing Lie derivatives")
         for f in states_generators(ode, io_equations)
             num, den = unpack_fraction(parent_ring_change(f, bring))
             push!(coeff_lists[:with_states], [den, num])
         end
     end
 
-    @debug "Extracting coefficients"
-    flush(stdout)
+    debug_si("Extracting coefficients")
     if !isempty(ode.parameters)
         nonparameters = filter(
             v -> !(var_to_str(v) in map(var_to_str, ode.parameters)),
@@ -57,7 +56,7 @@ function extract_identifiable_functions_raw(
                 push!(coeff_lists[:no_states], as_list)
             end
         else
-            @debug "Known quantity $p cannot be casted and is thus dropped"
+            debug_si("Known quantity $p cannot be casted and is thus dropped")
         end
     end
 
@@ -106,32 +105,32 @@ function initial_identifiable_functions(
     var_change_policy = :default,
     rational_interpolator = :VanDerHoevenLecerf,
 ) where {T}
-    @info "Computing IO-equations"
+    info_si("Computing IO-equations")
     ioeq_time =
         @elapsed io_equations = find_ioequations(ode; var_change_policy = var_change_policy)
-    @debug "Sizes: $(map(length, values(io_equations)))"
-    @info "Computed IO-equations in $ioeq_time seconds"
+    debug_si("Sizes: $(map(length, values(io_equations)))")
+    info_si("Computed IO-equations in $ioeq_time seconds")
     _runtime_logger[:ioeq_time] = ioeq_time
 
     if isempty(ode.parameters)
-        @info "No parameters, so Wronskian computation is not needed"
+        info_si("No parameters, so Wronskian computation is not needed")
     else
-        @info "Computing Wronskians"
+        info_si("Computing Wronskians")
         wrnsk_time = @elapsed wrnsk = wronskian(io_equations, ode)
-        @info "Computed Wronskians in $wrnsk_time seconds"
+        info_si("Computed Wronskians in $wrnsk_time seconds")
         _runtime_logger[:wrnsk_time] = wrnsk_time
 
         dims = map(ncols, wrnsk)
-        @info "Dimensions of the Wronskians $dims"
+        info_si("Dimensions of the Wronskians $dims")
 
         rank_times = @elapsed wranks = map(rank, wrnsk)
-        @debug "Dimensions of the Wronskians $dims"
-        @debug "Ranks of the Wronskians $wranks"
-        @info "Ranks of the Wronskians computed in $rank_times seconds"
+        debug_si("Dimensions of the Wronskians $dims")
+        debug_si("Ranks of the Wronskians $wranks")
+        info_si("Ranks of the Wronskians computed in $rank_times seconds")
         _runtime_logger[:rank_time] = rank_times
 
         if any([dim != rk + 1 for (dim, rk) in zip(dims, wranks)])
-            @warn "One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia)"
+            warn_si("One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia) or transforming all the parameters to states with zero derivative")
         end
     end
 
@@ -143,7 +142,7 @@ function initial_identifiable_functions(
     )
 
     if with_states && !isempty(ode.parameters)
-        @debug "Generators of identifiable functions involve states, the parameter-only part is getting simplified"
+        debug_si("Generators of identifiable functions involve states, the parameter-only part is getting simplified")
         # NOTE: switching to a ring without states for a moment
         param_ring, _ = PolynomialRing(
             base_ring(bring),
@@ -200,7 +199,7 @@ function check_identifiability(
     for f in funcs_to_check
         num, den = unpack_fraction(f)
         if !all(v -> v in ode.parameters, union(vars(num), vars(den)))
-            @info "Functions to check involve states"
+            info_si("Functions to check involve states")
             states_needed = true
             break
         end
@@ -306,7 +305,7 @@ function assess_global_identifiability(
 ) where {P <: MPolyElem{fmpq}}
     submodels = find_submodels(ode)
     if length(submodels) > 0
-        @info "Note: the input model has nontrivial submodels. If the computation for the full model will be too heavy, you may want to try to first analyze one of the submodels. They can be produced using function `find_submodels`"
+        info_si("Note: the input model has nontrivial submodels. If the computation for the full model will be too heavy, you may want to try to first analyze one of the submodels. They can be produced using function `find_submodels`")
     end
 
     result = check_identifiability(

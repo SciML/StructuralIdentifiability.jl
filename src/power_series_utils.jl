@@ -261,7 +261,7 @@ function ps_ode_solution(
 
     cur_prec = 1
     while cur_prec < prec
-        @debug "\t Computing power series solution, currently at precision $cur_prec"
+        debug_si("\t Computing power series solution, currently at precision $cur_prec")
         new_prec = min(prec, 2 * cur_prec)
         for i in 1:length(x_vars)
             set_precision!(solution[x_vars[i]], new_prec)

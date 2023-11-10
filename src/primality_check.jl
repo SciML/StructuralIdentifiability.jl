@@ -6,8 +6,8 @@ function check_primality_zerodim(J::Array{fmpq_mpoly, 1})
     dim = length(basis)
     S = Nemo.MatrixSpace(Nemo.QQ, dim, dim)
     matrices = []
-    @debug "" J basis
-    @debug "Dim is $dim"
+    debug_si("$J $basis")
+    debug_si("Dim is $dim")
     for v in gens(parent(first(J)))
         M = zero(S)
         for (i, vec) in enumerate(basis)
@@ -17,13 +17,13 @@ function check_primality_zerodim(J::Array{fmpq_mpoly, 1})
             end
         end
         push!(matrices, M)
-        @debug "Multiplication by $v" M
+        debug_si("Multiplication by $v: $M")
     end
     generic_multiplication = sum(Nemo.QQ(rand(1:100)) * M for M in matrices)
-    @debug "" generic_multiplication
+    debug_si("$generic_multiplication")
 
     R, t = Nemo.PolynomialRing(Nemo.QQ, "t")
-    @debug "" Nemo.charpoly(R, generic_multiplication)
+    debug_si("$(Nemo.charpoly(R, generic_multiplication))")
 
     return Nemo.isirreducible(Nemo.charpoly(R, generic_multiplication))
 end

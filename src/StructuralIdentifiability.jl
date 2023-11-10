@@ -90,7 +90,7 @@ function assess_identifiability(
     ode::ODE{P};
     funcs_to_check = Vector(),
     p::Float64 = 0.99,
-    loglevel = Logging.Info
+    loglevel = Logging.Info,
 ) where {P <: MPolyElem{fmpq}}
     restart_logging(loglevel = loglevel)
     p_glob = 1 - (1 - p) * 0.9
@@ -108,6 +108,7 @@ function assess_identifiability(
         p = p_loc,
         type = :SE,
         trbasis = trbasis,
+        loglevel = loglevel,
     )
     info_si("Local identifiability assessed in $runtime seconds")
     debug_si("Trasncendence basis to be specialized is $trbasis")
@@ -162,7 +163,7 @@ function assess_identifiability(
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = [],
     p = 0.99,
-    loglevel = Logging.Info
+    loglevel = Logging.Info,
 )
     if isempty(measured_quantities)
         measured_quantities = get_measured_quantities(ode)

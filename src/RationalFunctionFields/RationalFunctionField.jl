@@ -100,13 +100,11 @@ function field_contains(
     if isempty(ratfuncs)
         return Bool[]
     end
-    @debug "Finding pivot polynomials"
-    flush(stdout)
+    debug_si("Finding pivot polynomials")
     pivots = map(plist -> plist[findmin(map(total_degree, plist))[2]], ratfuncs)
-    @debug "\tDegrees are $(map(total_degree, pivots))"
-    flush(stdout)
+    debug_si("\tDegrees are $(map(total_degree, pivots))")
 
-    @debug "Estimating the sampling bound"
+    debug_si("Estimating the sampling bound")
     # uses Theorem 3.3 from https://arxiv.org/pdf/2111.00991.pdf
     # the comments below use the notation from the theorem
     ring = parent(first(first(ratfuncs)))
@@ -123,14 +121,13 @@ function field_contains(
         extra_degree = total_degree(den_lcm) - total_degree(field.mqs.dens_qq[i])
         degree = max(degree, extra_degree + maximum(total_degree, plist))
     end
-    @debug "\tBound for the degrees is $degree"
-    flush(stdout)
+    debug_si("\tBound for the degrees is $degree")
 
     total_vars = foldl(
         union,
         map(plist -> foldl(union, map(poly -> Set(vars(poly)), plist)), field.dennums),
     )
-    @debug "\tThe total number of variables in $(length(total_vars))"
+    debug_si("\tThe total number of variables in $(length(total_vars))")
 
     sampling_bound = BigInt(
         3 *
@@ -138,19 +135,16 @@ function field_contains(
         (length(ratfuncs)) *
         ceil(1 / (1 - p)),
     )
-    @debug "\tSampling from $(-sampling_bound) to $(sampling_bound)"
-    flush(stdout)
+    debug_si("\tSampling from $(-sampling_bound) to $(sampling_bound)")
 
     mqs = field.mqs
     param_ring = ParamPunPam.parent_params(mqs)
     point = map(v -> Nemo.QQ(rand((-sampling_bound):sampling_bound)), gens(param_ring))
     mqs_specialized = specialize(mqs, point)
-    @debug "Computing Groebner basis ($(length(mqs_specialized)) equations)"
-    flush(stdout)
+    debug_si("Computing Groebner basis ($(length(mqs_specialized)) equations)")
     mqs_ratfuncs = specialize(IdealMQS(ratfuncs), point; saturated = false)
     @assert parent(first(mqs_specialized)) == parent(first(mqs_ratfuncs))
-    @debug "Starting the groebner basis computation"
-    flush(stdout)
+    debug_si("Starting the groebner basis computation")
     gb = groebner(mqs_specialized)
     result = map(iszero, normalform(gb, mqs_ratfuncs))
     return result
@@ -226,13 +220,13 @@ function beautifuly_generators(
     fracs = filter(!is_rational_func_const, fracs)
     fracs = unique(fracs)
     if isempty(fracs)
-        @debug "The set of generators is empty"
+        debug_si("The set of generators is empty")
         return fracs
     end
     # Remove redundant pass
     if discard_redundant
         sort!(fracs, lt = rational_function_cmp)
-        @debug "The pool of fractions:\n$(join(map(repr, fracs), ",\n"))"
+        debug_si("The pool of fractions:\n$(join(map(repr, fracs), ",\n"))")
         if reversed_order
             non_redundant = collect(1:length(fracs))
             for i in length(fracs):-1:1
@@ -242,9 +236,9 @@ function beautifuly_generators(
                 end
                 result =
                     check_field_membership_mod_p(fracs[setdiff(non_redundant, i)], [func])
-                @debug "Simplification: inclusion check" func result
+                debug_si("Simplification: inclusion check $func $result")
                 if result[1]
-                    @debug "The function $func is discarded"
+                    debug_si("The function $func is discarded")
                     setdiff!(non_redundant, i)
                 end
             end
@@ -254,14 +248,14 @@ function beautifuly_generators(
             for i in 2:length(fracs)
                 func = fracs[i]
                 result = check_field_membership_mod_p(fracs[non_redundant], [func])
-                @debug "Simplification: inclusion check" func result
+                debug_si("Simplification: inclusion check $func $result")
                 if !result[1]
-                    @debug "The function $func is included in the set of generators"
+                    debug_si("The function $func is included in the set of generators")
                     push!(non_redundant, i)
                 end
             end
         end
-        @debug "Out of $(length(fracs)) simplified generators there are $(length(non_redundant)) non redundant"
+        debug_si("Out of $(length(fracs)) simplified generators there are $(length(non_redundant)) non redundant")
         fracs = fracs[non_redundant]
     end
     sort!(fracs, lt = rational_function_cmp)
@@ -321,7 +315,7 @@ function groebner_basis_coeffs(
     gb, fracs, new_rff = nothing, nothing, nothing
     # Check if the basis is in cache
     if haskey(mqs.cached_groebner_bases, (ordering, up_to_degree))
-        @debug "Cache hit with ($ordering, $up_to_degree)!"
+        debug_si("Cache hit with ($ordering, $up_to_degree)!")
         gb = mqs.cached_groebner_bases[ordering, up_to_degree]
         basis_coeffs = map(collect ∘ coefficients, gb)
         fracs = collect(mapreduce(Set, union!, basis_coeffs))
@@ -331,7 +325,7 @@ function groebner_basis_coeffs(
     current_degrees = (2, 2)
     two_sided_inclusion = false
     while !two_sided_inclusion && all(current_degrees .<= up_to_degree)
-        @debug "Computing GB with parameters up to degrees $(current_degrees)"
+        debug_si("Computing GB with parameters up to degrees $(current_degrees)")
         runtime = @elapsed gb = ParamPunPam.paramgb(
             mqs,
             up_to_degree = current_degrees,
@@ -343,12 +337,12 @@ function groebner_basis_coeffs(
         _runtime_logger[:id_npoints_interpolation] +=
             ParamPunPam._runtime_data[:npoints_interpolation]
         _runtime_logger[:id_groebner_time] += runtime
-        @debug "Groebner basis computed in $runtime seconds"
+        debug_si("Groebner basis computed in $runtime seconds")
         basis_coeffs = map(collect ∘ coefficients, gb)
         basis_coeffs_set = mapreduce(Set, union!, basis_coeffs)
         fracs = collect(basis_coeffs_set)
-        @debug "Generators up to degrees $(current_degrees) are" fracs
-        @debug "Checking two-sided inclusion modulo a prime"
+        debug_si("Generators up to degrees $(current_degrees) are $fracs")
+        debug_si("Checking two-sided inclusion modulo a prime")
         time_start = time_ns()
         # Check inclusion: <simplified generators> in <original generators> 
         new_rff = RationalFunctionField(fracs)
@@ -359,10 +353,10 @@ function groebner_basis_coeffs(
         runtime = (time_ns() - time_start) / 1e9
         _runtime_logger[:id_inclusion_check_mod_p] += runtime
         two_sided_inclusion = two_sided_inclusion && all(inclusion)
-        @debug "Inclusion checked in $(runtime) seconds. Result: $two_sided_inclusion"
+        debug_si("Inclusion checked in $(runtime) seconds. Result: $two_sided_inclusion")
         current_degrees = current_degrees .* 2
     end
-    @debug "The coefficients of the Groebner basis are presented by $(length(fracs)) rational functions"
+    debug_si("The coefficients of the Groebner basis are presented by $(length(fracs)) rational functions")
     new_rff.mqs.cached_groebner_bases[ordering, up_to_degree] = gb
     rff.mqs.cached_groebner_bases[ordering, up_to_degree] = gb
     return new_rff
@@ -388,7 +382,7 @@ function generating_sets_fan(
     time_start = time_ns()
     vars = gens(parent(rff.mqs))
     nbases = length(vars)
-    @info "Computing $nbases Groebner bases for degrees $up_to_degree for block orderings"
+    info_si("Computing $nbases Groebner bases for degrees $up_to_degree for block orderings")
     ordering_to_generators = Dict()
     if code == 0
         return ordering_to_generators
@@ -414,7 +408,7 @@ function generating_sets_fan(
             # n1, n2 = div(n, 2), n - div(n, 2)
             n1, n2 = n - 1, 1
             ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
-            @debug "Computing GB for ordering" ord
+            debug_si("Computing GB for ordering $ord")
             new_rff = groebner_basis_coeffs(
                 gb_rff,
                 seed = seed,
@@ -431,7 +425,7 @@ function generating_sets_fan(
             n = length(vars_shuffled)
             n1, n2 = max(n - 2, 1), min(2, length(vars) - 1)
             ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
-            @debug "Computing GB for ordering" ord
+            debug_si("Computing GB for ordering $ord")
             new_rff = groebner_basis_coeffs(
                 gb_rff,
                 seed = seed,
@@ -449,7 +443,7 @@ function generating_sets_fan(
             n1 = div(n, 2)
             n2 = n - n1
             ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
-            @debug "Computing GB for ordering" ord
+            debug_si("Computing GB for ordering $ord")
             new_rff = groebner_basis_coeffs(
                 gb_rff,
                 seed = seed,
@@ -461,7 +455,7 @@ function generating_sets_fan(
         end
     end
     _runtime_logger[:id_gbfan_time] = (time_ns() - time_start) / 1e9
-    @info "Computed Groebner bases in $((time_ns() - time_start) / 1e9) seconds"
+    info_si("Computed Groebner bases in $((time_ns() - time_start) / 1e9) seconds")
     return ordering_to_generators
 end
 
@@ -494,7 +488,7 @@ function simplified_generating_set(
     check_variables = false, # almost always slows down and thus turned off
     rational_interpolator = :VanDerHoevenLecerf,
 )
-    @info "Simplifying generating set. Simplification level: $simplify"
+    info_si("Simplifying generating set. Simplification level: $simplify")
     _runtime_logger[:id_groebner_time] = 0.0
     _runtime_logger[:id_calls_to_gb] = 0
     _runtime_logger[:id_inclusion_check_mod_p] = 0.0
@@ -558,23 +552,23 @@ function simplified_generating_set(
         append!(new_fracs, generators)
     end
     new_fracs_unique = unique(new_fracs)
-    @debug """
+    debug_si("""
     Final cleaning and simplification of generators. 
-    Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique."""
+    Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique.""")
     runtime =
         @elapsed new_fracs = beautifuly_generators(RationalFunctionField(new_fracs_unique))
-    @debug "Checking inclusion with probability $p"
+    debug_si("Checking inclusion with probability $p")
     runtime = @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), p)
     _runtime_logger[:id_inclusion_check] = runtime
     if !result
-        @warn "Field membership check failed. Error will follow."
+        warn_si("Field membership check failed. Error will follow.")
         throw("The new subfield generators are not correct.")
     end
-    @info "Inclusion checked with probability $p in $(_runtime_logger[:id_inclusion_check]) seconds"
-    @debug "Out of $(length(rff.mqs.nums_qq)) initial generators there are $(length(new_fracs)) indepdendent"
+    info_si("Inclusion checked with probability $p in $(_runtime_logger[:id_inclusion_check]) seconds")
+    debug_si("Out of $(length(rff.mqs.nums_qq)) initial generators there are $(length(new_fracs)) indepdendent")
     ranking = generating_set_rank(new_fracs)
     _runtime_logger[:id_ranking] = ranking
-    @debug "The ranking of the new set of generators is $ranking"
+    debug_si("The ranking of the new set of generators is $ranking")
     return new_fracs
 end
 

@@ -91,7 +91,7 @@ function common_ring(poly::MPolyElem, pbr::PBRepresentation)
         if d != nothing
             max_ords[d[1]] = max(d[2], max_ords[d[1]])
         elseif !(var_to_str(v) in pbr.param_names)
-            @warn "New variable $(var_to_str(v)), treating as a scalar parameter"
+            warn_si("New variable $(var_to_str(v)), treating as a scalar parameter")
             push!(new_params, var_to_str(v))
         end
     end

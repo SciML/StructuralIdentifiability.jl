@@ -29,8 +29,10 @@ function linear_compartment_model(
     graph::Vector{Vector{Int}},
     inputs::Vector{Int},
     outputs::Vector{Int},
-    leaks::Vector{Int},
+    leaks::Vector{Int};
+    loglevel = Logging.Info,
 )
+    restart_logging(loglevel = loglevel)
     n = length(graph)
     x_vars_names = ["x$i" for i in 1:n]
     y_vars_names = ["y$i" for i in outputs]

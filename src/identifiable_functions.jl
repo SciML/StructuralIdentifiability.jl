@@ -51,15 +51,16 @@ function find_identifiable_functions(
     rational_interpolator = :VanDerHoevenLecerf,
     loglevel = Logging.Info,
 ) where {T <: MPolyElem{fmpq}}
+    restart_logging(loglevel=loglevel) 
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
     runtime_start = time_ns()
     if isempty(ode.parameters) && !with_states
-        @warn """
+        warn_si("""
         There are no parameters in the given ODE, thus no identifiabile
         functions.
         Use `find_identifiable_functions` with keyword `with_states=true` to
-        compute the functions with the ODE states included."""
+        compute the functions with the ODE states included.""")
         bring = parent(ode)
         id_funcs = [one(bring)]
         return id_funcs
@@ -90,7 +91,7 @@ function find_identifiable_functions(
     id_funcs_fracs = [parent_ring_change(f, parent(ode)) for f in id_funcs_fracs]
     _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1e9
     _runtime_logger[:are_id_funcs_polynomial] = all(isone ∘ denominator, id_funcs_fracs)
-    @info "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds"
+    info_si("The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds")
     return id_funcs_fracs
 end
 
@@ -104,6 +105,8 @@ system.
 
 This functions takes the following optional arguments:
 - `measured_quantities` - the output functions of the model.
+- `loglevel` - the verbosity of the logging 
+  (can be Logging.Error, Logging.Warn, Logging.Info, Logging.Debug)
 
 ## Example
 

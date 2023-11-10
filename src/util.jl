@@ -167,13 +167,11 @@ function make_substitution(
     d = Nemo.degree(f, var_sub)
 
     result = 0
-    @debug "Substitution in a polynomial of degree $d"
-    flush(stdout)
+    debug_si("Substitution in a polynomial of degree $d")
     for i in 0:d
-        @debug "\t Degree $i"
-        flush(stdout)
+        debug_si("\t Degree $i")
         result += coeff(f, [var_sub], [i]) * (val_numer^i) * (val_denom^(d - i))
-        @debug "\t Intermediate result of size $(length(result))"
+        debug_si("\t Intermediate result of size $(length(result))")
     end
     return result
 end
@@ -313,9 +311,7 @@ function uncertain_factorization(f::MPolyElem{fmpq})
     mainvar_coeffs = [coeff(f, [main_var], [i]) for i in 0:d]
     gcd_coef = mainvar_coeffs[end]
     for i in d:-1:1
-        #@info "Degrees $(total_degree(gcd_coef)) and $(total_degree(mainvar_coeffs[i]))"
         gcd_coef = gcd(gcd_coef, mainvar_coeffs[i])
-        #@info "Time $tm and new degree $(total_degree(gcd_coef))"
     end
     f = divexact(f, gcd_coef)
 
@@ -330,11 +326,10 @@ function uncertain_factorization(f::MPolyElem{fmpq})
                 if degree(factor_out, main_var) != degree(gcd(f_uni, derivative(f_uni)))
                     continue
                 end
-                @debug "Nonsquarefree poly, dividing by $factor_out"
+                debug_si("Nonsquarefree poly, dividing by $factor_out")
                 f = divexact(f, factor_out)
                 f_uni = divexact(f_uni, gcd(f_uni, derivative(f_uni)))
             end
-            # end
             is_irr = Nemo.isirreducible(f_uni)
             break
         end
@@ -526,7 +521,7 @@ function eval_at_nemo(e::Union{Float16, Float32, Float64}, vals::Dict)
     else
         out = rationalize(e)
     end
-    @warn "Floating point value $e will be converted to $(out)."
+    warn_si("Floating point value $e will be converted to $(out).")
     return out
 end
 
@@ -571,7 +566,7 @@ end
 
 function get_measured_quantities(ode::ModelingToolkit.ODESystem)
     if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
-        @info "Measured quantities are not provided, trying to find the outputs in input ODE."
+        info_si("Measured quantities are not provided, trying to find the outputs in input ODE.")
         return filter(
             eq -> (ModelingToolkit.isoutput(eq.lhs)),
             ModelingToolkit.equations(ode),

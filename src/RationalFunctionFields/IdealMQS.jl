@@ -63,11 +63,11 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         # We prepare and store them to construct ideal specializations later 
         @assert !isempty(funcs_den_nums)
         @assert sat_var_position in (:first, :last)
-        ordering !== :degrevlex && (@warn "Ordering is not degrevlex but $ordering")
+        ordering !== :degrevlex && (warn_si("Ordering is not degrevlex but $ordering"))
         ring = parent(first(first(funcs_den_nums)))
-        @debug "Constructing the MQS ideal in $ring"
+        debug_si("Constructing the MQS ideal in $ring")
         K, n = base_ring(ring), nvars(ring)
-        @debug "Finding pivot polynomials"
+        debug_si("Finding pivot polynomials")
         # In the component f1,f2,... find the polynomial with the minimal total
         # degree and length. Such element will serve as a normalizing term for
         # the component
@@ -78,17 +78,17 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
             map(plist -> findmin(p -> (total_degree(p), length(p)), plist), funcs_den_nums)
         pivots_indices = map(last, pivots)
         for plist in funcs_den_nums
-            @debug "\tDegrees in this list are $(map(total_degree, plist))"
+            debug_si("\tDegrees in this list are $(map(total_degree, plist))")
         end
-        @debug "\tDegrees and lengths are $(map(first, pivots))"
+        debug_si("\tDegrees and lengths are $(map(first, pivots))")
         den_lcm = mapreduce(
             i -> funcs_den_nums[i][pivots_indices[i]],
             lcm,
             1:length(funcs_den_nums),
         )
-        @debug "Rational functions common denominator is of degree $(total_degree(den_lcm)) and of length $(length(den_lcm))"
+        debug_si("Rational functions common denominator is of degree $(total_degree(den_lcm)) and of length $(length(den_lcm))")
         is_constant(den_lcm) &&
-            (@debug "Common denominator of the field generators is constant")
+            (debug_si("Common denominator of the field generators is constant"))
         existing_varnames = map(String, symbols(ring))
         ystrs = ["y$i" for i in 1:length(existing_varnames)]
         @assert !(sat_varname in ystrs) "The name of the saturation variable collided with a primary variable"
@@ -99,8 +99,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
             length(ystrs) + 1
         end
         varnames = append_at_index(ystrs, sat_var_index, sat_varname)
-        @debug "Saturating variable is $sat_varname, index is $sat_var_index"
-        flush(stdout)
+        debug_si("Saturating variable is $sat_varname, index is $sat_var_index")
         R_sat, v_sat = Nemo.PolynomialRing(K, varnames, ordering = ordering)
         # Saturation
         t_sat = v_sat[sat_var_index]
@@ -146,8 +145,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
             end
         end
         parent_ring_param, _ = PolynomialRing(ring, varnames, ordering = ordering)
-        @debug "Constructed MQS ideal in $R_sat with $(length(nums_qq) + 1) elements"
-        flush(stdout)
+        debug_si("Constructed MQS ideal in $R_sat with $(length(nums_qq) + 1) elements")
         @assert length(pivots_indices) == length(dens_indices) == length(dens_qq)
         @assert length(pivots_indices) == length(funcs_den_nums)
 
@@ -200,12 +198,12 @@ function fractionfree_generators_raw(mqs::IdealMQS)
     old_varnames = map(i -> "y$i", 1:length(varnames))
     new_varnames = map(i -> "라$i", 1:(length(varnames) + 1))
     if !isempty(intersect(old_varnames, new_varnames))
-        @warn "Intersection in two sets of variables!" varnames new_varnames
+        warn_si("Intersection in two sets of variables! $varnames $new_varnames")
     end
     # NOTE: new variables go first!
     big_ring, big_vars =
         PolynomialRing(K, vcat(new_varnames, old_varnames), ordering = :lex)
-    @info "" mqs.sat_var_index varnames ring_params parent(mqs.sat_qq)
+    info_si("$(mqs.sat_var_index) $(varnames) $ring_params $(parent(mqs.sat_qq))")
     nums_qq, dens_qq, sat_qq = mqs.nums_qq, mqs.dens_qq, mqs.sat_qq
     nums_y = map(num -> parent_ring_change(num, big_ring, matching = :byindex), nums_qq)
     dens_y = map(den -> parent_ring_change(den, big_ring, matching = :byindex), dens_qq)
@@ -232,10 +230,10 @@ function ParamPunPam.reduce_mod_p!(
     mqs::IdealMQS,
     ff::Field,
 ) where {Field <: Union{Nemo.GaloisField, Nemo.GaloisFmpzField}}
-    @debug "Reducing MQS ideal modulo $(ff)"
+    debug_si("Reducing MQS ideal modulo $(ff)")
     # If there is a reduction modulo this field already,
     if haskey(mqs.cached_nums_gf, ff)
-        @debug "Cache hit with $(ff)!"
+        debug_si("Cache hit with $(ff)!")
         return nothing
     end
     nums_qq, dens_qq, sat_qq = mqs.nums_qq, mqs.dens_qq, mqs.sat_qq
@@ -255,7 +253,7 @@ function ParamPunPam.specialize_mod_p(
     saturated = true,
 ) where {T <: Union{gfp_elem, gfp_fmpz_elem}}
     K_1 = parent(first(point))
-    @debug "Evaluating MQS ideal over $K_1 at $point"
+    debug_si("Evaluating MQS ideal over $K_1 at $point")
     @assert haskey(mqs.cached_nums_gf, K_1)
     nums_gf, dens_gf, sat_gf =
         mqs.cached_nums_gf[K_1], mqs.cached_dens_gf[K_1], mqs.cached_sat_gf[K_1]
@@ -286,7 +284,7 @@ function ParamPunPam.specialize_mod_p(
 end
 
 function specialize(mqs::IdealMQS, point::Vector{Nemo.fmpq}; saturated = true)
-    @debug "Evaluating MQS ideal over QQ at $point"
+    debug_si("Evaluating MQS ideal over QQ at $point")
     nums_qq, dens_qq, sat_qq = mqs.nums_qq, mqs.dens_qq, mqs.sat_qq
     dens_indices = mqs.dens_indices
     K = base_ring(mqs)

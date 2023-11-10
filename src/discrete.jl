@@ -72,12 +72,12 @@ function differentiate_sequence_solution(
     inputs::Dict{P, Array{T, 1}},
     num_terms::Int,
 ) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
-    @debug "Computing the power series solution of the system"
+    debug_si("Computing the power series solution of the system")
     seq_sol = sequence_solution(dds, params, ic, inputs, num_terms)
     generalized_params = vcat(dds.x_vars, dds.parameters)
     bring = base_ring(dds.poly_ring)
 
-    @debug "Solving the variational system at the solution"
+    debug_si("Solving the variational system at the solution")
     part_diffs = Dict(
         (x, p) => derivative(dds.x_equations[x], p) for x in dds.x_vars for
         p in generalized_params
@@ -126,10 +126,10 @@ function differentiate_sequence_output(
     inputs::Dict{P, Array{T, 1}},
     num_terms::Int,
 ) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
-    @debug "Computing partial derivatives of the solution"
+    debug_si("Computing partial derivatives of the solution")
     seq_sol, sol_diff = differentiate_sequence_solution(dds, params, ic, inputs, num_terms)
 
-    @debug "Evaluating the partial derivatives of the outputs"
+    debug_si("Evaluating the partial derivatives of the outputs")
     generalized_params = vcat(dds.x_vars, dds.parameters)
     part_diffs = Dict(
         (y, p) => derivative(dds.y_equations[y], p) for y in dds.y_vars for
@@ -195,7 +195,7 @@ function _assess_local_identifiability_discrete(
 ) where {P <: MPolyElem{Nemo.fmpq}}
     bring = base_ring(dds.poly_ring)
 
-    @debug "Extending the model"
+    debug_si("Extending the model")
     dds_ext =
         add_outputs(dds, Dict("loc_aux_$i" => f for (i, f) in enumerate(funcs_to_check)))
 
@@ -206,7 +206,7 @@ function _assess_local_identifiability_discrete(
         known_ic = dds_ext.x_vars
     end
 
-    @debug "Computing the observability matrix"
+    debug_si("Computing the observability matrix")
     prec = length(dds.x_vars) + length(dds.parameters)
 
     # Computing the bound from the Schwartz-Zippel-DeMilo-Lipton lemma
@@ -221,7 +221,7 @@ function _assess_local_identifiability_discrete(
         Jac_degree += 2 * deg_y * prec
     end
     D = Int(ceil(Jac_degree * length(funcs_to_check) / (1 - p)))
-    @debug "Sampling range $D"
+    debug_si("Sampling range $D")
 
     # Parameter values are the same across all the replicas
     params_vals = Dict(p => bring(rand(1:D)) for p in dds_ext.parameters)
@@ -231,11 +231,11 @@ function _assess_local_identifiability_discrete(
         u => [bring(rand(1:D)) for i in 1:prec] for u in dds_ext.u_vars
     )
 
-    @debug "Computing the output derivatives"
+    debug_si("Computing the output derivatives")
     output_derivatives =
         differentiate_sequence_output(dds_ext, params_vals, ic, inputs, prec)
 
-    @debug "Building the matrices"
+    debug_si("Building the matrices")
     Jac = zero(
         Nemo.MatrixSpace(
             bring,
@@ -265,7 +265,7 @@ function _assess_local_identifiability_discrete(
         end
     end
 
-    @debug "Computing the result"
+    debug_si("Computing the result")
     base_rank = LinearAlgebra.rank(Jac)
     result = Dict{Any, Bool}()
     for i in 1:length(funcs_to_check)
@@ -314,7 +314,7 @@ function assess_local_identifiability(
 )
     if length(measured_quantities) == 0
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(dds))
-            @info "Measured quantities are not provided, trying to find the outputs in input dynamical system."
+            info_si("Measured quantities are not provided, trying to find the outputs in input dynamical system.")
             measured_quantities = filter(
                 eq -> (ModelingToolkit.isoutput(eq.lhs)),
                 ModelingToolkit.equations(dds),
@@ -342,7 +342,7 @@ function assess_local_identifiability(
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     if length(known_ic) > 0
-        @warn "Since known initial conditions were provided, identifiability of states (e.g., `x(t)`) is at t = 0 only !"
+        warn_si("Since known initial conditions were provided, identifiability of states (e.g., `x(t)`) is at t = 0 only !")
     end
     return out_dict
 end
