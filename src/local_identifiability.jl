@@ -171,7 +171,7 @@ function assess_local_identifiability(
     type = :SE,
     loglevel = Logging.Info,
 )
-    restart_logging(logelevel = loglevel)
+    restart_logging(loglevel = loglevel)
     if length(measured_quantities) == 0
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
             info_si("Measured quantities are not provided, trying to find the outputs in input ODE.")
