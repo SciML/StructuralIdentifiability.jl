@@ -22,7 +22,11 @@
             )
             assess_identifiability(ode, loglevel = Logging.Warn)
             assess_identifiability(de; measured_quantities = [x0], loglevel = Logging.Warn)
-            assess_identifiability(de; measured_quantities = [y ~ x0], loglevel = Logging.Warn)
+            assess_identifiability(
+                de;
+                measured_quantities = [y ~ x0],
+                loglevel = Logging.Warn,
+            )
             find_identifiable_functions(ode, with_states = true, loglevel = Logging.Warn)
             restart_logging(loglevel = Logging.Info)
         end

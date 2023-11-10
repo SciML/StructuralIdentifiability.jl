@@ -174,7 +174,9 @@ function assess_local_identifiability(
     restart_logging(loglevel = loglevel)
     if length(measured_quantities) == 0
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
-            info_si("Measured quantities are not provided, trying to find the outputs in input ODE.")
+            info_si(
+                "Measured quantities are not provided, trying to find the outputs in input ODE.",
+            )
             measured_quantities = filter(
                 eq -> (ModelingToolkit.isoutput(eq.lhs)),
                 ModelingToolkit.equations(ode),
@@ -202,7 +204,7 @@ function assess_local_identifiability(
             funcs_to_check = funcs_to_check_,
             p = p,
             type = type,
-            loglevel = loglevel
+            loglevel = loglevel,
         )
         nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
         out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
@@ -238,7 +240,7 @@ function assess_local_identifiability(
     p::Float64 = 0.99,
     type = :SE,
     trbasis = nothing,
-    loglevel = Logging.Info
+    loglevel = Logging.Info,
 ) where {P <: MPolyElem{Nemo.fmpq}}
     restart_logging(loglevel = loglevel)
     if isempty(funcs_to_check)
@@ -254,7 +256,9 @@ function assess_local_identifiability(
             num, den = unpack_fraction(f)
             for v in vcat(vars(num), vars(den))
                 if !(v in ode.parameters)
-                    error_si("Multi-experiment identifiability is not properly defined for the states")
+                    error_si(
+                        "Multi-experiment identifiability is not properly defined for the states",
+                    )
                     throw(ArgumentError("State variable $v appears in $f"))
                 end
             end

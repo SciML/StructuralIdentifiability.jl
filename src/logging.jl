@@ -8,8 +8,8 @@
 
 # not the exhaustive list, just the ones to be initialized
 const _runtime_rubrics = (
-    :id_calls_to_gb, 
-    :id_groebner_time, 
+    :id_calls_to_gb,
+    :id_groebner_time,
     :id_inclusion_check_mod_p,
     :id_npoints_degree,
     :id_npoints_interpolation,
@@ -25,12 +25,8 @@ const _runtime_logger = Dict(
     :id_beautifulization => 0,
 )
 
-const _si_logger = Ref{Logging.ConsoleLogger}(
-    Logging.ConsoleLogger(
-        Logging.Info,
-        show_limited = false,
-    )
-)
+const _si_logger =
+    Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(Logging.Info, show_limited = false))
 
 function restart_logging(; loglevel = Logging.Info)
     _si_logger[] = Logging.ConsoleLogger(loglevel, show_limited = false)

@@ -176,7 +176,12 @@ function assess_identifiability(
     end
     funcs_to_check_ = [eval_at_nemo(each, conversion) for each in funcs_to_check]
 
-    result = assess_identifiability(ode, funcs_to_check = funcs_to_check_, p = p, loglevel = loglevel)
+    result = assess_identifiability(
+        ode,
+        funcs_to_check = funcs_to_check_,
+        p = p,
+        loglevel = loglevel,
+    )
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     return out_dict

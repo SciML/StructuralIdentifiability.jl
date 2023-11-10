@@ -365,9 +365,11 @@ function linear_relations_between_normal_forms(
                 push!(zeroed_relations_inds, i)
             end
         end
-        debug_si("""
-        Relations in the previous intersection: $(length(complete_intersection_relations_ff))
-        Vanished at the current point: $(length(zeroed_relations_inds))""")
+        debug_si(
+            """
+   Relations in the previous intersection: $(length(complete_intersection_relations_ff))
+   Vanished at the current point: $(length(zeroed_relations_inds))""",
+        )
         non_zeroed_relations_inds =
             setdiff(collect(1:n_relations_ff), zeroed_relations_inds)
         zeroed_relations_from_complete_intersection =
@@ -383,7 +385,9 @@ function linear_relations_between_normal_forms(
             non_zeroed_relations_from_complete_intersection,
             zeroed_relations_from_complete_intersection,
         )
-        debug_si("There are $(length(complete_intersection_relations_ff)) relations in the intersection")
+        debug_si(
+            "There are $(length(complete_intersection_relations_ff)) relations in the intersection",
+        )
         m_relations_ff = length(complete_intersection_relations_ff)
         if n_relations_ff == m_relations_ff || isempty(complete_intersection_relations_ff)
             break
@@ -412,6 +416,8 @@ function linear_relations_between_normal_forms(
         )
         relations_qq[i] = relation_qq_param // one(relation_qq_param)
     end
-    info_si("Used $iters specializations in $((time_ns() - time_start) / 1e9) seconds, found $(length(complete_intersection_relations_ff)) relations")
+    info_si(
+        "Used $iters specializations in $((time_ns() - time_start) / 1e9) seconds, found $(length(complete_intersection_relations_ff)) relations",
+    )
     relations_qq
 end

@@ -168,12 +168,14 @@ function check_constructive_field_membership(
         gen_tag_names(length(fracs_gen), "Tag")
     end
     sat_string = gen_tag_name("Sat")
-    debug_si("""
-    Tags:
-    $(join(map(x -> string(x[1]) * " -> " * string(x[2]),  zip(fracs_gen, tag_strings)), "\t\n"))
-    Saturation tag:
-    $sat_string
-    """)
+    debug_si(
+        """
+Tags:
+$(join(map(x -> string(x[1]) * " -> " * string(x[2]),  zip(fracs_gen, tag_strings)), "\t\n"))
+Saturation tag:
+$sat_string
+""",
+    )
     poly_ring_tag, vars_tag = PolynomialRing(K, vcat(sat_string, orig_strings, tag_strings))
     sat_var = vars_tag[1]
     orig_vars = vars_tag[2:(nvars(poly_ring) + 1)]
@@ -225,10 +227,12 @@ function check_constructive_field_membership(
     ring_of_tags, tags = PolynomialRing(K, tag_strings)
     tag_to_gen = Dict(tags[i] => fracs_gen[i] for i in 1:length(fracs_gen))
     if !isempty(intersect(tag_strings, orig_strings))
-        warn_si("""
-        There is an intersection between the names of the tag variables and the original variables.
-        Tags: $tag_strings
-        Original vars: $orig_strings""")
+        warn_si(
+            """
+    There is an intersection between the names of the tag variables and the original variables.
+    Tags: $tag_strings
+    Original vars: $orig_strings""",
+        )
     end
     parametric_ring, _ =
         PolynomialRing(FractionField(ring_of_tags), orig_strings, ordering = :degrevlex)
@@ -464,7 +468,12 @@ Dict{Nemo.QQMPolyRingElem, AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}} w
 Notice that the `new_ode` is fully identifiabile, and has `1` less parameter
 compared to the original one.
 """
-function reparametrize_global(ode::ODE{P}; p = 0.99, seed = 42, loglevel = Logging.Info) where {P}
+function reparametrize_global(
+    ode::ODE{P};
+    p = 0.99,
+    seed = 42,
+    loglevel = Logging.Info,
+) where {P}
     restart_logging(loglevel = loglevel)
     Random.seed!(seed)
     id_funcs =

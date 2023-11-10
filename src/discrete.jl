@@ -314,7 +314,9 @@ function assess_local_identifiability(
 )
     if length(measured_quantities) == 0
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(dds))
-            info_si("Measured quantities are not provided, trying to find the outputs in input dynamical system.")
+            info_si(
+                "Measured quantities are not provided, trying to find the outputs in input dynamical system.",
+            )
             measured_quantities = filter(
                 eq -> (ModelingToolkit.isoutput(eq.lhs)),
                 ModelingToolkit.equations(dds),
@@ -342,7 +344,9 @@ function assess_local_identifiability(
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     if length(known_ic) > 0
-        warn_si("Since known initial conditions were provided, identifiability of states (e.g., `x(t)`) is at t = 0 only !")
+        warn_si(
+            "Since known initial conditions were provided, identifiability of states (e.g., `x(t)`) is at t = 0 only !",
+        )
     end
     return out_dict
 end

@@ -461,10 +461,18 @@ macro ODEmodel(ex::Expr...)
 
     logging_exprs = [
         :(StructuralIdentifiability.info_si("Summary of the model:")),
-        :(StructuralIdentifiability.info_si("State variables: " * $(join(map(string, collect(x_vars)), ", ")))),
-        :(StructuralIdentifiability.info_si("Parameters: " * $(join(map(string, collect(params)), ", ")))),
-        :(StructuralIdentifiability.info_si("Inputs: " * $(join(map(string, collect(u_vars)), ", ")))),
-        :(StructuralIdentifiability.info_si("Outputs: " * $(join(map(string, collect(y_vars)), ", ")))),
+        :(StructuralIdentifiability.info_si(
+            "State variables: " * $(join(map(string, collect(x_vars)), ", ")),
+        )),
+        :(StructuralIdentifiability.info_si(
+            "Parameters: " * $(join(map(string, collect(params)), ", ")),
+        )),
+        :(StructuralIdentifiability.info_si(
+            "Inputs: " * $(join(map(string, collect(u_vars)), ", ")),
+        )),
+        :(StructuralIdentifiability.info_si(
+            "Outputs: " * $(join(map(string, collect(y_vars)), ", ")),
+        )),
     ]
     # creating the ode object
     ode_expr = :(StructuralIdentifiability.ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(

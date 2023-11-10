@@ -215,7 +215,9 @@ function find_ioprojections(
                     A, B = simplify_frac(A, B)
                     if isempty(filter!(v -> (v in keys(x_equations)), vars(A))) && (B != 0) # && (length(coeffs(A))==1)
                         # variable change x_i' --> x_i' - (B/A)', x_i --> x_i - B/A
-                        debug_si("\t Applying variable change: $(x) --> $(x) - ( $B )/( $A )")
+                        debug_si(
+                            "\t Applying variable change: $(x) --> $(x) - ( $B )/( $A )",
+                        )
                         dB = diff_poly(B, derivation)
                         dA = diff_poly(A, derivation)
                         numer_d, denom_d = simplify_frac(A * dB - dA * B, A * A)
@@ -339,7 +341,7 @@ Output:
 function find_ioequations(
     ode::ODE{P};
     var_change_policy = :default,
-    loglevel = Logging.Info
+    loglevel = Logging.Info,
 ) where {P <: MPolyElem{<:FieldElem}}
     # Setting the var_change policy
     if (var_change_policy == :yes) ||
@@ -358,13 +360,17 @@ function find_ioequations(
 
     debug_si("Check whether the original projections are enough")
     if length(io_projections) == 1 || check_primality(io_projections)
-        debug_si("The projections generate an ideal with a single components of highest dimension, returning")
+        debug_si(
+            "The projections generate an ideal with a single components of highest dimension, returning",
+        )
         return io_projections
     end
 
     sampling_range = 5
     while true
-        debug_si("There are several components of the highest dimension, trying to isolate one")
+        debug_si(
+            "There are several components of the highest dimension, trying to isolate one",
+        )
         extra_projection = sum(rand(1:sampling_range) * v for v in keys(io_projections))
         debug_si("Extra projections: $extra_projection")
         new_projections, _, projection_equation =

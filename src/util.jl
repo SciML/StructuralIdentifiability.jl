@@ -566,7 +566,9 @@ end
 
 function get_measured_quantities(ode::ModelingToolkit.ODESystem)
     if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
-        info_si("Measured quantities are not provided, trying to find the outputs in input ODE.")
+        info_si(
+            "Measured quantities are not provided, trying to find the outputs in input ODE.",
+        )
         return filter(
             eq -> (ModelingToolkit.isoutput(eq.lhs)),
             ModelingToolkit.equations(ode),

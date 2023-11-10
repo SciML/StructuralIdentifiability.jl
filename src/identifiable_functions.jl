@@ -51,7 +51,7 @@ function find_identifiable_functions(
     rational_interpolator = :VanDerHoevenLecerf,
     loglevel = Logging.Info,
 ) where {T <: MPolyElem{fmpq}}
-    restart_logging(loglevel=loglevel) 
+    restart_logging(loglevel = loglevel)
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
     runtime_start = time_ns()
@@ -91,7 +91,9 @@ function find_identifiable_functions(
     id_funcs_fracs = [parent_ring_change(f, parent(ode)) for f in id_funcs_fracs]
     _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1e9
     _runtime_logger[:are_id_funcs_polynomial] = all(isone ∘ denominator, id_funcs_fracs)
-    info_si("The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds")
+    info_si(
+        "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds",
+    )
     return id_funcs_fracs
 end
 

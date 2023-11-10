@@ -255,7 +255,9 @@ function beautifuly_generators(
                 end
             end
         end
-        debug_si("Out of $(length(fracs)) simplified generators there are $(length(non_redundant)) non redundant")
+        debug_si(
+            "Out of $(length(fracs)) simplified generators there are $(length(non_redundant)) non redundant",
+        )
         fracs = fracs[non_redundant]
     end
     sort!(fracs, lt = rational_function_cmp)
@@ -356,7 +358,9 @@ function groebner_basis_coeffs(
         debug_si("Inclusion checked in $(runtime) seconds. Result: $two_sided_inclusion")
         current_degrees = current_degrees .* 2
     end
-    debug_si("The coefficients of the Groebner basis are presented by $(length(fracs)) rational functions")
+    debug_si(
+        "The coefficients of the Groebner basis are presented by $(length(fracs)) rational functions",
+    )
     new_rff.mqs.cached_groebner_bases[ordering, up_to_degree] = gb
     rff.mqs.cached_groebner_bases[ordering, up_to_degree] = gb
     return new_rff
@@ -382,7 +386,9 @@ function generating_sets_fan(
     time_start = time_ns()
     vars = gens(parent(rff.mqs))
     nbases = length(vars)
-    info_si("Computing $nbases Groebner bases for degrees $up_to_degree for block orderings")
+    info_si(
+        "Computing $nbases Groebner bases for degrees $up_to_degree for block orderings",
+    )
     ordering_to_generators = Dict()
     if code == 0
         return ordering_to_generators
@@ -552,9 +558,11 @@ function simplified_generating_set(
         append!(new_fracs, generators)
     end
     new_fracs_unique = unique(new_fracs)
-    debug_si("""
-    Final cleaning and simplification of generators. 
-    Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique.""")
+    debug_si(
+        """
+Final cleaning and simplification of generators. 
+Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique.""",
+    )
     runtime =
         @elapsed new_fracs = beautifuly_generators(RationalFunctionField(new_fracs_unique))
     debug_si("Checking inclusion with probability $p")
@@ -564,8 +572,12 @@ function simplified_generating_set(
         warn_si("Field membership check failed. Error will follow.")
         throw("The new subfield generators are not correct.")
     end
-    info_si("Inclusion checked with probability $p in $(_runtime_logger[:id_inclusion_check]) seconds")
-    debug_si("Out of $(length(rff.mqs.nums_qq)) initial generators there are $(length(new_fracs)) indepdendent")
+    info_si(
+        "Inclusion checked with probability $p in $(_runtime_logger[:id_inclusion_check]) seconds",
+    )
+    debug_si(
+        "Out of $(length(rff.mqs.nums_qq)) initial generators there are $(length(new_fracs)) indepdendent",
+    )
     ranking = generating_set_rank(new_fracs)
     _runtime_logger[:id_ranking] = ranking
     debug_si("The ranking of the new set of generators is $ranking")

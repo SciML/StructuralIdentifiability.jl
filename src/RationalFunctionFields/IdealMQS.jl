@@ -86,7 +86,9 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
             lcm,
             1:length(funcs_den_nums),
         )
-        debug_si("Rational functions common denominator is of degree $(total_degree(den_lcm)) and of length $(length(den_lcm))")
+        debug_si(
+            "Rational functions common denominator is of degree $(total_degree(den_lcm)) and of length $(length(den_lcm))",
+        )
         is_constant(den_lcm) &&
             (debug_si("Common denominator of the field generators is constant"))
         existing_varnames = map(String, symbols(ring))

@@ -130,7 +130,9 @@ function initial_identifiable_functions(
         _runtime_logger[:rank_time] = rank_times
 
         if any([dim != rk + 1 for (dim, rk) in zip(dims, wranks)])
-            warn_si("One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia) or transforming all the parameters to states with zero derivative")
+            warn_si(
+                "One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia) or transforming all the parameters to states with zero derivative",
+            )
         end
     end
 
@@ -142,7 +144,9 @@ function initial_identifiable_functions(
     )
 
     if with_states && !isempty(ode.parameters)
-        debug_si("Generators of identifiable functions involve states, the parameter-only part is getting simplified")
+        debug_si(
+            "Generators of identifiable functions involve states, the parameter-only part is getting simplified",
+        )
         # NOTE: switching to a ring without states for a moment
         param_ring, _ = PolynomialRing(
             base_ring(bring),
@@ -305,7 +309,9 @@ function assess_global_identifiability(
 ) where {P <: MPolyElem{fmpq}}
     submodels = find_submodels(ode)
     if length(submodels) > 0
-        info_si("Note: the input model has nontrivial submodels. If the computation for the full model will be too heavy, you may want to try to first analyze one of the submodels. They can be produced using function `find_submodels`")
+        info_si(
+            "Note: the input model has nontrivial submodels. If the computation for the full model will be too heavy, you may want to try to first analyze one of the submodels. They can be produced using function `find_submodels`",
+        )
     end
 
     result = check_identifiability(
