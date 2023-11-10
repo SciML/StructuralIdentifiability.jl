@@ -25,14 +25,16 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     # NB: this lists may have different length
     nums_qq::Vector{T}
     dens_qq::Vector{T}
-    sat_qq::T
+    sat_qq::Vector{T}
     # dens_indices[i] is a pair of form (from, to).
     # Denominator as index i corresponds to numerators at indices [from..to]
     dens_indices::Vector{Tuple{Int, Int}}
     # Indices of pivot elements for each component of funcs_den_nums 
     pivots_indices::Vector{Int}
     den_lcm::T
+    # Saturation
     sat_var_index::Int
+    sat_var_count::Int
     # Numerators and denominators over GF. 
     # We cache them and maintain a map:
     # a finite field --> an image over this finite field
@@ -46,16 +48,26 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     """
         IdealMQS(funcs_den_nums::Vector{Vector})
 
-    Given an array of polynomials, that is generators of form
+    Given an array of polynomials, that is generators of the form
         
         [[f1, f2, f3, ...], [g1, g2, g3, ...], ...]
 
-    constructs an MQS ideal.
+    constructs the corresponding MQS ideal.
+
+    ## Options
+
+    This constructor takes the following optional arguments:
+    - `sat_varname`: a string, name of the saturation variable.
+    - `sat_var_position`: a symbol, position of the saturation variable in the
+      monomial ordering. Possible options are `:first` and `:last`.
+    - `ordering`: a symbol, monomial ordering.
+    - `sat_factorize`: a bool, if the saturating `Q(y)` should be factored.
     """
     function IdealMQS(
         funcs_den_nums::Vector{Vector{PolyQQ}};
         sat_varname = "t",
         sat_var_position = :first,
+        sat_factorize = true,
         ordering = :degrevlex,
     ) where {PolyQQ}
         # We are given polynomials of form
@@ -102,7 +114,6 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         @debug "Saturating variable is $sat_varname, index is $sat_var_index"
         flush(stdout)
         R_sat, v_sat = Nemo.PolynomialRing(K, varnames, ordering = ordering)
-        # Saturation
         t_sat = v_sat[sat_var_index]
         den_lcm_orig = den_lcm
         den_lcm = parent_ring_change(
@@ -111,8 +122,32 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
             matching = :byindex,
             shift = Int(sat_var_index == 1),
         )
+        # Construct the saturating polynomial Q(x) * t - 1.
+        # If `sat_factorize` is true, then factorize Q(x).
         den_lcm_sat = parent_ring_change(den_lcm, R_sat)
-        sat_qq = den_lcm_sat * t_sat - 1
+        den_lcm_sat = divexact(den_lcm_sat, leading_coefficient(den_lcm_sat))
+        @assert isone(leading_coefficient(den_lcm_sat))
+        sat_qq = Vector{PolyQQ}()
+        # TODO: in addition to these cases, also do not factor the saturation
+        # polynomial when the ideal contains a single polynomial plus saturaton
+        # (this case is the most frequent one)
+        if !sat_factorize || isone(den_lcm_sat)
+            push!(sat_qq, den_lcm_sat * t_sat - 1)
+        else
+            fact_qq = Nemo.factor(den_lcm_sat)
+            # Potentially extend the ring with more variables for saturation
+            sat_varnames = map(i -> "$sat_varname$i", 1:length(fact_qq))
+            varnames = append_at_index(ystrs, sat_var_index, sat_varnames)
+            @debug "Saturating variables are $sat_varnames, index is $sat_var_index"
+            R_sat, v_sat = Nemo.PolynomialRing(K, varnames, ordering = ordering)
+            t_sat_many = v_sat[sat_var_index:(sat_var_index + length(sat_varnames) - 1)]
+            for ((sat_qq_factor, deg), sat_var_i) in zip(fact_qq, t_sat_many)
+                sat_qq_factor = parent_ring_change(sat_qq_factor, R_sat)
+                push!(sat_qq, sat_qq_factor^deg * sat_var_i - 1)
+            end
+        end
+        sat_var_count = length(sat_qq)
+        @info "Degrees of saturating polynomials are $(map(total_degree, sat_qq))"
         # We construct the array of numerators nums_qq and the array of
         # denominators dens_qq. Since there are usually more unique numerators
         # than denominators, we condense the array dens_qq and produce an
@@ -129,7 +164,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
                 den,
                 R_sat,
                 matching = :byindex,
-                shift = Int(sat_var_index == 1),
+                shift = sat_var_count * (sat_var_index == 1),
             )
             push!(dens_qq, den)
             push!(dens_indices, (length(nums_qq) + 1, length(nums_qq) + length(plist) - 1))
@@ -140,16 +175,17 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
                     num,
                     R_sat,
                     matching = :byindex,
-                    shift = Int(sat_var_index == 1),
+                    shift = sat_var_count * (sat_var_index == 1),
                 )
                 push!(nums_qq, num)
             end
         end
         parent_ring_param, _ = PolynomialRing(ring, varnames, ordering = ordering)
-        @debug "Constructed MQS ideal in $R_sat with $(length(nums_qq) + 1) elements"
+        @debug "Constructed MQS ideal in $R_sat with $(length(nums_qq)) + $(length(sat_qq)) elements"
         flush(stdout)
         @assert length(pivots_indices) == length(dens_indices) == length(dens_qq)
         @assert length(pivots_indices) == length(funcs_den_nums)
+        @assert length(sat_qq) == sat_var_count && length(sat_qq) > 0
 
         new{elem_type(R_sat)}(
             funcs_den_nums,
@@ -162,6 +198,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
             pivots_indices,
             den_lcm,
             sat_var_index,
+            sat_var_count,
             Dict(),
             Dict(),
             Dict(),
@@ -170,7 +207,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     end
 end
 
-Base.length(ideal::IdealMQS) = length(ideal.nums_qq) + 1
+Base.length(ideal::IdealMQS) = length(ideal.nums_qq) + length(ideal.sat_qq)
 AbstractAlgebra.base_ring(ideal::IdealMQS) = base_ring(ideal.nums_qq[1])
 AbstractAlgebra.parent(ideal::IdealMQS) = ideal.parent_ring_param
 ParamPunPam.parent_params(ideal::IdealMQS) = base_ring(ideal.parent_ring_param)
@@ -191,7 +228,8 @@ end
 end
 
 function fractionfree_generators_raw(mqs::IdealMQS)
-    # TODO: this assumes mqs.sat_var_index is last, and thus is broken
+    # TODO: this assumes mqs.sat_var_index is last, and thus is broken.
+    # TODO: well, now this is totally broken.
     ring_params = ParamPunPam.parent_params(mqs)
     K = base_ring(ring_params)
     varnames = map(string, Nemo.symbols(ring_params))
@@ -239,8 +277,8 @@ function ParamPunPam.reduce_mod_p!(
         return nothing
     end
     nums_qq, dens_qq, sat_qq = mqs.nums_qq, mqs.dens_qq, mqs.sat_qq
-    sat_gf = map_coefficients(c -> ff(c), sat_qq)
-    ring_ff = parent(sat_gf)
+    sat_gf = map(poly -> map_coefficients(c -> ff(c), poly), sat_qq)
+    ring_ff = parent(first(sat_gf))
     nums_gf = map(poly -> map_coefficients(c -> ff(c), poly, parent = ring_ff), nums_qq)
     dens_gf = map(poly -> map_coefficients(c -> ff(c), poly, parent = ring_ff), dens_qq)
     mqs.cached_nums_gf[ff] = nums_gf
@@ -263,12 +301,13 @@ function ParamPunPam.specialize_mod_p(
     K_2 = base_ring(nums_gf[1])
     @assert K_1 == K_2
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
-    # +1 actual variable because of the saturation!
-    @assert length(point) + 1 == nvars(parent(nums_gf[1]))
-    point_sat = append_at_index(point, mqs.sat_var_index, one(K_1))
+    # +k actual variables because of the saturation!
+    @assert length(point) + mqs.sat_var_count == nvars(parent(nums_gf[1]))
+    point_sat =
+        append_at_index(point, mqs.sat_var_index, map(_ -> one(K_1), 1:(mqs.sat_var_count)))
     nums_gf_spec = map(num -> evaluate(num, point_sat), nums_gf)
     dens_gf_spec = map(den -> evaluate(den, point_sat), dens_gf)
-    polys = Vector{typeof(sat_gf)}(undef, length(nums_gf_spec) + 1)
+    polys = Vector{eltype(sat_gf)}(undef, length(nums_gf_spec) + length(sat_gf))
     @inbounds for i in 1:length(dens_gf_spec)
         den, den_spec = dens_gf[i], dens_gf_spec[i]
         iszero(den_spec) && __throw_unlucky_evaluation("Point: $point")
@@ -278,9 +317,12 @@ function ParamPunPam.specialize_mod_p(
             polys[j] = num * den_spec - den * num_spec
         end
     end
-    polys[end] = sat_gf
-    if !saturated
-        resize!(polys, length(polys) - 1)
+    if saturated
+        for i in 1:length(sat_gf)
+            polys[length(nums_gf_spec) + i] = sat_gf[i]
+        end
+    else
+        resize!(polys, length(nums_gf_spec))
     end
     return polys
 end
@@ -291,12 +333,13 @@ function specialize(mqs::IdealMQS, point::Vector{Nemo.fmpq}; saturated = true)
     dens_indices = mqs.dens_indices
     K = base_ring(mqs)
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
-    # +1 actual variable because of the saturation!
-    @assert length(point) + 1 == nvars(parent(nums_qq[1]))
-    point_sat = append_at_index(point, mqs.sat_var_index, one(K))
+    # +k actual variables because of the saturation!
+    @assert length(point) + mqs.sat_var_count == nvars(parent(nums_qq[1]))
+    point_sat =
+        append_at_index(point, mqs.sat_var_index, map(_ -> one(K), 1:(mqs.sat_var_count)))
     nums_qq_spec = map(num -> evaluate(num, point_sat), nums_qq)
     dens_qq_spec = map(den -> evaluate(den, point_sat), dens_qq)
-    polys = Vector{typeof(sat_qq)}(undef, length(nums_qq_spec) + 1)
+    polys = Vector{eltype(sat_qq)}(undef, length(nums_qq_spec) + length(sat_qq))
     @inbounds for i in 1:length(dens_qq_spec)
         den, den_spec = dens_qq[i], dens_qq_spec[i]
         iszero(den_spec) && __throw_unlucky_evaluation("Point: $point")
@@ -306,9 +349,12 @@ function specialize(mqs::IdealMQS, point::Vector{Nemo.fmpq}; saturated = true)
             polys[j] = num * den_spec - den * num_spec
         end
     end
-    polys[end] = sat_qq
-    if !saturated
-        resize!(polys, length(polys) - 1)
+    if saturated
+        for i in 1:length(sat_qq)
+            polys[length(nums_qq_spec) + i] = sat_qq[i]
+        end
+    else
+        resize!(polys, length(nums_qq_spec))
     end
     return polys
 end

@@ -54,14 +54,20 @@ function local_normal_forms(
 )
     @assert !isempty(point)
     @assert parent(first(point)) == finite_field
-    point_ff_ext = append_at_index(point, mqs.sat_var_index, one(finite_field))
+    # TODO: it is possible that the saturation details should be hidden in the
+    # MQS ideal and not visible to the outside code
+    point_ff_ext = append_at_index(
+        point,
+        mqs.sat_var_index,
+        map(_ -> one(finite_field), 1:(mqs.sat_var_count)),
+    )
     gens_ff_spec = specialize_mod_p(mqs, point)
     gb_ff_spec = Groebner.groebner(gens_ff_spec)
     ring_ff = parent(gb_ff_spec[1])
     xs_ff = gens(ring_ff)
     normal_forms_ff = Vector{elem_type(ring_ff)}(undef, 0)
     monoms_ff = Vector{elem_type(ring_ff)}(undef, 0)
-    xs_ff = cut_at_index(xs_ff, mqs.sat_var_index)
+    xs_ff = cut_at_index(xs_ff, mqs.sat_var_index, mqs.sat_var_count)
     pivot_vectors = map(f -> exponent_vector(f, 1), xs_ff)
     @debug """
     variables in the finite field: $(xs_ff)
@@ -356,7 +362,11 @@ function linear_relations_between_normal_forms(
         n_relations_ff = length(complete_intersection_relations_ff)
         # Filter out some relations from the complete intersection
         zeroed_relations_inds = Vector{Int}()
-        point_ext = append_at_index(point, mqs.sat_var_index, one(finite_field))
+        point_ext = append_at_index(
+            point,
+            mqs.sat_var_index,
+            map(_ -> one(finite_field), 1:(mqs.sat_var_count)),
+        )
         for i in 1:length(complete_intersection_relations_ff)
             relation = complete_intersection_relations_ff[i]
             relation_mqs = relation - evaluate(relation, point_ext)
@@ -408,7 +418,11 @@ function linear_relations_between_normal_forms(
         end
         relation_qq_param = evaluate(
             relation_qq,
-            append_at_index(xs_param, mqs.sat_var_index, one(ring_param)),
+            append_at_index(
+                xs_param,
+                mqs.sat_var_index,
+                map(_ -> one(ring_param), 1:(mqs.sat_var_count)),
+            ),
         )
         relations_qq[i] = relation_qq_param // one(relation_qq_param)
     end
