@@ -92,7 +92,7 @@ Output:
 - a list `L[i]` of bools of length `length(rat_funcs)` such that `L[i]` is true iff
    the i-th function belongs to `field`
 """
-function field_contains(
+@timeit _to function field_contains(
     field::RationalFunctionField{T},
     ratfuncs::Vector{Vector{T}},
     p,
@@ -176,7 +176,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-function check_field_membership_mod_p!(
+@timeit _to function check_field_membership_mod_p!(
     generators::RationalFunctionField{T},
     tobereduced::RationalFunctionField{T},
 ) where {T}
@@ -209,7 +209,7 @@ Applies the following passes:
 1. Filter constants,
 2. Remove redundant generators.
 """
-function beautifuly_generators(
+@timeit _to function beautifuly_generators(
     rff::RationalFunctionField;
     discard_redundant = true,
     reversed_order = false,
@@ -303,7 +303,7 @@ end
 - `up_to_degree`: a tuple of integers, the degrees of numerator and denominator.
     The result is correct up to the requested degrees.
 """
-function groebner_basis_coeffs(
+@timeit _to function groebner_basis_coeffs(
     rff::RationalFunctionField;
     seed = 42,
     ordering = Groebner.InputOrdering(),
@@ -377,7 +377,7 @@ Returns a set of Groebner bases for multiple different rankings of variables.
 - Keyword `up_to_degree`: a tuple of integers, max. degrees of numerators and
   denominators. Result is correct up to the requested degrees.
 """
-function generating_sets_fan(
+@timeit _to function generating_sets_fan(
     rff::RationalFunctionField{T},
     code::Integer;
     seed = 42,
@@ -486,7 +486,7 @@ end
 Returns a simplified set of generators for `rff`. 
 Result is correct (in Monte-Carlo sense) with probability at least `p`.
 """
-function simplified_generating_set(
+@timeit _to function simplified_generating_set(
     rff::RationalFunctionField;
     p = 0.99,
     seed = 42,

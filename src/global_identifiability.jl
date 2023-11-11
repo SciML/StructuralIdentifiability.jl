@@ -12,7 +12,7 @@ are identifiable functions containing or not the state variables
 - a polynomial ring containing all returned identifiable functions
 (parameters or parameters + states)
 """
-function extract_identifiable_functions_raw(
+@timeit _to function extract_identifiable_functions_raw(
     io_equations::Dict{P, P},
     ode::ODE{P},
     known::Array{P, 1},
@@ -97,7 +97,7 @@ The function returns a tuple containing the following:
 - a list of identifiable functions (as pairs [num, denum])
 - the ring containing all these functuons (either parameters only of with states)
 """
-function initial_identifiable_functions(
+@timeit _to function initial_identifiable_functions(
     ode::ODE{T};
     p::Float64,
     known::Array{T, 1} = Array{T, 1}(),
@@ -192,7 +192,7 @@ Input:
 
 Output: a list L of booleans with L[i] being the identifiability status of the i-th function to check
 """
-function check_identifiability(
+@timeit _to function check_identifiability(
     ode::ODE{P},
     funcs_to_check::Array{<:Any, 1};
     known::Array{P, 1} = Array{P, 1}(),
@@ -300,7 +300,7 @@ Output:
 
 Checks global identifiability of functions of parameters specified in `funcs_to_check`.
 """
-function assess_global_identifiability(
+@timeit _to function assess_global_identifiability(
     ode::ODE{P},
     funcs_to_check::Array{<:Any, 1},
     known::Array{P, 1} = Array{P, 1}(),

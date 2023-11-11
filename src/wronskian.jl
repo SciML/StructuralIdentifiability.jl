@@ -197,7 +197,7 @@ Output:
 
 Computes the Wronskians of io_equations
 """
-function wronskian(io_equations::Dict{P, P}, ode::ODE{P}) where {P <: MPolyElem}
+@timeit _to function wronskian(io_equations::Dict{P, P}, ode::ODE{P}) where {P <: MPolyElem}
     debug_si("Compressing monomials")
     termlists = [monomial_compress(ioeq, ode)[2] for ioeq in values(io_equations)]
     debug_si("Matrix sizes $(map(length, termlists))")

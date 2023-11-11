@@ -10,6 +10,7 @@ using Logging
 using MacroTools
 using Primes
 using Random
+using TimerOutputs
 
 # Algebra packages
 using AbstractAlgebra
@@ -93,6 +94,8 @@ function assess_identifiability(
     loglevel = Logging.Info,
 ) where {P <: MPolyElem{fmpq}}
     restart_logging(loglevel = loglevel)
+    reset_timings()
+
     p_glob = 1 - (1 - p) * 0.9
     p_loc = 1 - (1 - p) * 0.1
 
@@ -110,9 +113,9 @@ function assess_identifiability(
         trbasis = trbasis,
         loglevel = loglevel,
     )
-    info_si("Local identifiability assessed in $runtime seconds")
+    # info_si("Local identifiability assessed in $runtime seconds")
     debug_si("Trasncendence basis to be specialized is $trbasis")
-    _runtime_logger[:loc_time] = runtime
+    # _runtime_logger[:loc_time] = runtime
 
     loc_id = [local_result[each] for each in funcs_to_check]
     locally_identifiable = Array{Any, 1}()

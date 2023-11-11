@@ -235,6 +235,8 @@ Call this function if you have a specific collection of parameters of which you 
 If the type is `:ME`, states are not allowed to appear in the `funcs_to_check`.
 """
 function assess_local_identifiability(
+    # TODO: report this bug (?) to TimerOutputs.jl
+    # @timeit _to function assess_local_identifiability(
     ode::ODE{P};
     funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
     p::Float64 = 0.99,
@@ -243,6 +245,8 @@ function assess_local_identifiability(
     loglevel = Logging.Info,
 ) where {P <: MPolyElem{Nemo.fmpq}}
     restart_logging(loglevel = loglevel)
+    reset_timings()
+
     if isempty(funcs_to_check)
         funcs_to_check = ode.parameters
         if type == :SE

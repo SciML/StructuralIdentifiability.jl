@@ -290,7 +290,7 @@ Relations may include monomials up to the total degree `up_to_degree`.
 Note: uses Monte-Carlo probabilistic algorithm. The probability of correctness
 is not specified but is assumed to be close to 1.
 """
-function linear_relations_between_normal_forms(
+@timeit _to function linear_relations_between_normal_forms(
     fracs::Vector{Generic.Frac{T}},
     up_to_degree::Integer;
     seed = 42,

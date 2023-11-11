@@ -52,6 +52,8 @@ function find_identifiable_functions(
     loglevel = Logging.Info,
 ) where {T <: MPolyElem{fmpq}}
     restart_logging(loglevel = loglevel)
+    reset_timings()
+
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
     runtime_start = time_ns()
@@ -94,6 +96,7 @@ function find_identifiable_functions(
     info_si(
         "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds",
     )
+    
     return id_funcs_fracs
 end
 

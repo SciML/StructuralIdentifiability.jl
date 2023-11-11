@@ -301,7 +301,7 @@ Input:
 Output:
 - `polynomial` - the desired factor of the resultant of `f` and `g`
 """
-function eliminate_var(
+@timeit _to function eliminate_var(
     f::P,
     g::P,
     var_elim::P,

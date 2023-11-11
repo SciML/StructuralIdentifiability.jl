@@ -101,7 +101,7 @@ Output:
 - generic point generator for the model (including the derivatives; mostly for testing)
 - an extra projection (if `extra_projection` was provided)
 """
-function find_ioprojections(
+@timeit _to function find_ioprojections(
     ode::ODE{P},
     auto_var_change::Bool,
     extra_projection = nothing,
@@ -338,7 +338,7 @@ Output:
 - a dictionary from “leaders” to the corresponding input-output equations; if an extra projection is needed,
   it will be the value corresponding to `rand_proj_var`
 """
-function find_ioequations(
+@timeit _to function find_ioequations(
     ode::ODE{P};
     var_change_policy = :default,
     loglevel = Logging.Info,
