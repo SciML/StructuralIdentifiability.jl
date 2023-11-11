@@ -90,6 +90,9 @@ function enable_timer(flag::Bool)
     nothing
 end
 
+# By default, the timer is disabled
+enable_timer(false)
+
 """
     reset_timings()
 
