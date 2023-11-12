@@ -32,7 +32,11 @@ end
 const _groebner_loglevel = Ref{Int}(0)
 
 function restart_logging(; loglevel = Logging.Info)
-    _si_logger[] = Logging.ConsoleLogger(loglevel, show_limited = false)
+    _si_logger[] = @static if VERSION >= v"1.7.0"
+        Logging.ConsoleLogger(loglevel, show_limited = false)
+    else
+        Logging.ConsoleLogger()
+    end
     for r in _runtime_rubrics
         _runtime_logger[r] = 0
     end
