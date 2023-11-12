@@ -203,7 +203,12 @@ $sat_string
     $tagged_mqs
     Monom ordering:
     $(ord)"""
-    tagged_mqs_gb = groebner(tagged_mqs, ordering = ord, homogenize = :no)
+    tagged_mqs_gb = groebner(
+        tagged_mqs,
+        ordering = ord,
+        homogenize = :no,
+        loglevel = _groebner_loglevel[],
+    )
     # Relations between tags in K[T]
     relations_between_tags = filter(
         poly -> isempty(intersect(vars(poly), vcat(sat_var, orig_vars))),
@@ -472,18 +477,11 @@ function reparametrize_global(
 ) where {P}
     restart_logging(loglevel = loglevel)
     with_logger(_si_logger[]) do
-        return _reparametrize_global(ode,
-            p = p, seed = seed,
-        )
+        return _reparametrize_global(ode, p = p, seed = seed)
     end
 end
 
-
-function _reparametrize_global(
-    ode::ODE{P};
-    p = 0.99,
-    seed = 42,
-) where {P}
+function _reparametrize_global(ode::ODE{P}; p = 0.99, seed = 42) where {P}
     Random.seed!(seed)
     id_funcs =
         find_identifiable_functions(ode, with_states = true, simplify = :strong, p = p)

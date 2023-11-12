@@ -56,7 +56,7 @@ function local_normal_forms(
     @assert parent(first(point)) == finite_field
     point_ff_ext = append_at_index(point, mqs.sat_var_index, one(finite_field))
     gens_ff_spec = specialize_mod_p(mqs, point)
-    gb_ff_spec = Groebner.groebner(gens_ff_spec)
+    gb_ff_spec = Groebner.groebner(gens_ff_spec, loglevel = _groebner_loglevel[])
     ring_ff = parent(gb_ff_spec[1])
     xs_ff = gens(ring_ff)
     normal_forms_ff = Vector{elem_type(ring_ff)}(undef, 0)

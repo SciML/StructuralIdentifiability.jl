@@ -25,12 +25,21 @@ const _runtime_logger = Dict(
 
 const _si_logger =
     Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(Logging.Info, show_limited = false))
+const _groebner_loglevel = Ref{Int}(0)
 
 function restart_logging(; loglevel = Logging.Info)
     _si_logger[] = Logging.ConsoleLogger(loglevel, show_limited = false)
     for r in _runtime_rubrics
         _runtime_logger[r] = 0
     end
+    if loglevel < Logging.Info
+        _groebner_loglevel[] = -2
+    elseif loglevel < Logging.Warn
+        _groebner_loglevel[] = 0
+    else
+        _groebner_loglevel[] = 10
+    end
+    return nothing
 end
 
 ###
