@@ -183,7 +183,7 @@ function assess_local_identifiability(
     end
 end
 
-function _assess_local_identifiability(
+@timeit _to function _assess_local_identifiability(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = Array{}[],
@@ -249,8 +249,6 @@ Call this function if you have a specific collection of parameters of which you 
 If the type is `:ME`, states are not allowed to appear in the `funcs_to_check`.
 """
 function assess_local_identifiability(
-    # TODO: report this bug (?) to TimerOutputs.jl
-    # @timeit _to function assess_local_identifiability(
     ode::ODE{P};
     funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
     p::Float64 = 0.99,
