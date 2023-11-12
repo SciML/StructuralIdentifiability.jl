@@ -10,10 +10,10 @@
     eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1]
     de = ODESystem(eqs, t, name = :Test)
     @compile_workload begin
-        with_logger(Logging.ConsoleLogger(Logging.Warn)) do
+        restart_logging(loglevel = Logging.Warn)
+        with_logger(_si_logger[]) do
             # all calls in this block will be precompiled, regardless of whether
             # they belong to your package or not (on Julia 1.8 and higher)
-            restart_logging(loglevel = Logging.Warn)
             ode = @ODEmodel(
                 x1'(t) = -(a01 + a21) * x1(t) + a12 * x2(t) + u(t),
                 x2'(t) = a21 * x1(t) - a12 * x2(t) - x3(t) / b,
@@ -28,7 +28,7 @@
                 loglevel = Logging.Warn,
             )
             find_identifiable_functions(ode, with_states = true, loglevel = Logging.Warn)
-            restart_logging(loglevel = Logging.Info)
         end
+        restart_logging(loglevel = Logging.Info)
     end
 end

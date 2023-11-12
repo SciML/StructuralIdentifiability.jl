@@ -26,7 +26,7 @@ const _runtime_logger = Dict(
 const _si_logger = @static if VERSION >= v"1.7.0"
     Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(Logging.Info, show_limited = false))
 else
-    Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger())
+    Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(stderr, Logging.Info))
 end
 
 const _groebner_loglevel = Ref{Int}(0)
@@ -35,7 +35,7 @@ function restart_logging(; loglevel = Logging.Info)
     _si_logger[] = @static if VERSION >= v"1.7.0"
         Logging.ConsoleLogger(loglevel, show_limited = false)
     else
-        Logging.ConsoleLogger()
+        Logging.ConsoleLogger(stderr, loglevel)
     end
     for r in _runtime_rubrics
         _runtime_logger[r] = 0
