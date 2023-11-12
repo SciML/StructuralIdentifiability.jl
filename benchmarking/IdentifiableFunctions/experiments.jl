@@ -995,8 +995,8 @@ begin
 end
 
 begin
-    StructuralIdentifiability.find_identifiable_functions(Pivastatin);
-    StructuralIdentifiability.print_timings_table();
+    StructuralIdentifiability.find_identifiable_functions(Pivastatin)
+    StructuralIdentifiability.print_timings_table()
 end
 
 fracs = StructuralIdentifiability.dennums_to_fractions(dennums);

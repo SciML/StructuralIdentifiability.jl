@@ -96,10 +96,7 @@ function assess_identifiability(
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
-        return _assess_identifiability(ode,
-            funcs_to_check = funcs_to_check,
-            p = p
-        )
+        return _assess_identifiability(ode, funcs_to_check = funcs_to_check, p = p)
     end
 end
 
@@ -108,7 +105,6 @@ function _assess_identifiability(
     funcs_to_check = Vector(),
     p::Float64 = 0.99,
 ) where {P <: MPolyElem{fmpq}}
- 
     p_glob = 1 - (1 - p) * 0.9
     p_loc = 1 - (1 - p) * 0.1
 
@@ -182,7 +178,8 @@ function assess_identifiability(
 )
     restart_logging(loglevel = loglevel)
     with_logger(_si_logger[]) do
-        return _assess_identifiability(ode,
+        return _assess_identifiability(
+            ode,
             measured_quantities = measured_quantities,
             funcs_to_check = funcs_to_check,
             p = p,
@@ -207,11 +204,7 @@ function _assess_identifiability(
     end
     funcs_to_check_ = [eval_at_nemo(each, conversion) for each in funcs_to_check]
 
-    result = _assess_identifiability(
-        ode,
-        funcs_to_check = funcs_to_check_,
-        p = p,
-    )
+    result = _assess_identifiability(ode, funcs_to_check = funcs_to_check_, p = p)
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     return out_dict

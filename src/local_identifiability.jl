@@ -173,7 +173,8 @@ function assess_local_identifiability(
 )
     restart_logging(loglevel = loglevel)
     with_logger(_si_logger[]) do
-        return _assess_local_identifiability(ode,
+        return _assess_local_identifiability(
+            ode,
             measured_quantities = measured_quantities,
             funcs_to_check = funcs_to_check,
             p = p,
@@ -260,7 +261,8 @@ function assess_local_identifiability(
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
-        return _assess_local_identifiability(ode,
+        return _assess_local_identifiability(
+            ode,
             funcs_to_check = funcs_to_check,
             p = p,
             type = type,
@@ -276,7 +278,6 @@ function _assess_local_identifiability(
     type = :SE,
     trbasis = nothing,
 ) where {P <: MPolyElem{Nemo.fmpq}}
- 
     if isempty(funcs_to_check)
         funcs_to_check = ode.parameters
         if type == :SE

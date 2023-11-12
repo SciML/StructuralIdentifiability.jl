@@ -54,7 +54,8 @@ function find_identifiable_functions(
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
-        return _find_identifiable_functions(ode,
+        return _find_identifiable_functions(
+            ode,
             p = p,
             seed = seed,
             with_states = with_states,
@@ -71,7 +72,7 @@ function _find_identifiable_functions(
     with_states = false,
     simplify = :standard,
     rational_interpolator = :VanDerHoevenLecerf,
-) where {T <: MPolyElem{fmpq}} 
+) where {T <: MPolyElem{fmpq}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
     runtime_start = time_ns()
@@ -112,7 +113,7 @@ function _find_identifiable_functions(
     _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1e9
     _runtime_logger[:are_id_funcs_polynomial] = all(isone ∘ denominator, id_funcs_fracs)
     @info "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds"
-    
+
     return id_funcs_fracs
 end
 
@@ -166,7 +167,8 @@ function find_identifiable_functions(
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
-        return _find_identifiable_functions(ode,
+        return _find_identifiable_functions(
+            ode,
             measured_quantities = measured_quantities,
             p = p,
             seed = seed,

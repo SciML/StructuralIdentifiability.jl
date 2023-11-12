@@ -29,7 +29,7 @@ function linear_compartment_model(
     graph::Vector{Vector{Int}},
     inputs::Vector{Int},
     outputs::Vector{Int},
-    leaks::Vector{Int}
+    leaks::Vector{Int},
 )
     n = length(graph)
     x_vars_names = ["x$i" for i in 1:n]
