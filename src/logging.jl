@@ -26,7 +26,7 @@ const _runtime_logger = Dict(
 const _si_logger = @static if VERSION >= v"1.7.0"
     Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(Logging.Info, show_limited = false))
 else
-    Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(Logging.Info))
+    Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger())
 end
 
 const _groebner_loglevel = Ref{Int}(0)
