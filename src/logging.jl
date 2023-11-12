@@ -3,8 +3,6 @@
 #   - si_logger (using Logging package) for logs
 #   - runtime_logger dictionary for recording runtime info
 #
-#   Defines functions to refresh both + specific logging functions
-#   info_si, debug_si, warn_si, and error_si calling @info, @debug, @warn, and @error, respectively
 
 # not the exhaustive list, just the ones to be initialized
 const _runtime_rubrics = (
@@ -32,34 +30,6 @@ function restart_logging(; loglevel = Logging.Info)
     _si_logger[] = Logging.ConsoleLogger(loglevel, show_limited = false)
     for r in _runtime_rubrics
         _runtime_logger[r] = 0
-    end
-end
-
-function info_si(s)
-    with_logger(_si_logger[]) do
-        @info s
-        flush(stdout)
-    end
-end
-
-function debug_si(s)
-    with_logger(_si_logger[]) do
-        @debug s
-        flush(stdout)
-    end
-end
-
-function warn_si(s)
-    with_logger(_si_logger[]) do
-        @warn s
-        flush(stdout)
-    end
-end
-
-function error_si(s)
-    with_logger(_si_logger[]) do
-        @error s
-        flush(stdout)
     end
 end
 

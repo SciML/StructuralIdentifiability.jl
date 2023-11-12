@@ -198,9 +198,9 @@ Output:
 Computes the Wronskians of io_equations
 """
 @timeit _to function wronskian(io_equations::Dict{P, P}, ode::ODE{P}) where {P <: MPolyElem}
-    debug_si("Compressing monomials")
+    @debug "Compressing monomials"
     termlists = [monomial_compress(ioeq, ode)[2] for ioeq in values(io_equations)]
-    debug_si("Matrix sizes $(map(length, termlists))")
+    @debug "Matrix sizes $(map(length, termlists))"
 
     # estimating the required order of truncation
     ord = max(map(length, termlists)...) + length(ode.x_vars)
@@ -214,7 +214,7 @@ Computes the Wronskians of io_equations
         [map(p -> parent_ring_change(p, polyring_red), tlist) for tlist in termlists]
     ode_red = reduce_ode_mod_p(ode, PRIME)
 
-    debug_si("Computing power series solution up to order $ord")
+    @debug "Computing power series solution up to order $ord"
     ps = power_series_solution(
         ode_red,
         Dict(p => rand(1:100) for p in ode_red.parameters),
@@ -222,7 +222,7 @@ Computes the Wronskians of io_equations
         Dict(u => [rand(1:100) for i in 0:ord] for u in ode_red.u_vars),
         ord,
     )
-    debug_si("Computing the derivatives of the solution")
+    @debug "Computing the derivatives of the solution"
     ps_ext = Dict{MPolyElem, Nemo.gfp_abs_series}()# Generic.AbsSeries}()
     for v in vcat(ode_red.y_vars, ode_red.u_vars)
         cur_ps = ps[v]
@@ -232,7 +232,7 @@ Computes the Wronskians of io_equations
         end
     end
 
-    debug_si("Constructing Wronskians")
+    @debug "Constructing Wronskians"
     result = []
     for (i, tlist) in enumerate(termlists)
         n = length(tlist)

@@ -146,7 +146,7 @@ Output:
                 coef * evaluate(y_eq, [y], [zero(ring)]) // derivative(y_eq, y)
         end
         projection_equation, _ = unpack_fraction(projection_equation)
-        debug_si("Extra projection equation $projection_equation")
+        @debug "Extra projection equation $projection_equation"
     end
 
     while true
@@ -157,9 +157,10 @@ Output:
         if isempty(var_degs)
             break
         end
-        debug_si("Current degrees of io-equations $var_degs")
-        debug_si("Orders: $y_orders")
-        debug_si("Sizes: $(Dict(y => length(eq) for (y, eq) in y_equations))")
+        @debug "Current degrees of io-equations $var_degs"
+        @debug "Orders: $y_orders"
+        @debug "Sizes: $(Dict(y => length(eq) for (y, eq) in y_equations))"
+        flush(_si_logger[].stream)
 
         # choosing the output to prolong
         outputs_with_scores = [
@@ -171,22 +172,22 @@ Output:
                 d[1],
             ) for d in var_degs
         ]
-        debug_si("Scores: $outputs_with_scores")
+        @debug "Scores: $outputs_with_scores"
         y_prolong = sort(outputs_with_scores)[1][end]
         y_orders[y_prolong] += 1
-        debug_si("Prolonging output $y_prolong")
+        @debug "Prolonging output $y_prolong"
 
         # Calculate the Lie derivative of the io_relation
-        debug_si("Prolonging")
+        @debug "Prolonging"
         next_y_equation = diff_poly(y_equations[y_prolong], derivation)
         for (x, eq) in x_equations
-            debug_si("Eliminating the derivative of $x")
+            @debug "Eliminating the derivative of $x"
             next_y_equation =
                 eliminate_var(eq, next_y_equation, derivation[x], point_generator)
         end
         for (y, eq) in y_equations
             if y != y_prolong
-                debug_si("Eliminating the leader of the equation for $y")
+                @debug "Eliminating the leader of the equation for $y"
                 # an ugly way of gettin the leader, to replace
                 next_y_equation = eliminate_var(
                     next_y_equation,
@@ -204,7 +205,7 @@ Output:
         our_choice = sort(var_degs_next)[1]
         var_elim_deg, var_elim = our_choice[1], our_choice[3]
 
-        debug_si("Elimination of $var_elim, $(length(x_equations)) left")
+        @debug "Elimination of $var_elim, $(length(x_equations)) left"
 
         # Possible variable change for Axy + Bx + p(y) (x = var_elim)
         if auto_var_change && (var_elim_deg == 1)
@@ -215,9 +216,7 @@ Output:
                     A, B = simplify_frac(A, B)
                     if isempty(filter!(v -> (v in keys(x_equations)), vars(A))) && (B != 0) # && (length(coeffs(A))==1)
                         # variable change x_i' --> x_i' - (B/A)', x_i --> x_i - B/A
-                        debug_si(
-                            "\t Applying variable change: $(x) --> $(x) - ( $B )/( $A )",
-                        )
+                        @debug "\t Applying variable change: $(x) --> $(x) - ( $B )/( $A )"
                         dB = diff_poly(B, derivation)
                         dA = diff_poly(A, derivation)
                         numer_d, denom_d = simplify_frac(A * dB - dA * B, A * A)
@@ -232,7 +231,7 @@ Output:
                             generator_var_change(point_generator, x, A * x + B, A)
 
                         # Change current system
-                        debug_si("Change in the system")
+                        @debug "Change in the system"
                         x_equations[x] = make_substitution(
                             x_equations[x],
                             derivation[x],
@@ -240,23 +239,23 @@ Output:
                             denom_d,
                         )
                         for xx in keys(x_equations)
-                            debug_si("\t Change in the equation for $xx")
+                            @debug "\t Change in the equation for $xx"
                             x_equations[xx] =
                                 make_substitution(x_equations[xx], x, A * x - B, A)
                         end
-                        debug_si("Change in the outputs")
+                        @debug "Change in the outputs"
                         for y in keys(y_equations)
-                            debug_si("\t Change in the output $y")
+                            @debug "\t Change in the output $y"
                             y_equations[y] =
                                 make_substitution(y_equations[y], x, A * x - B, A)
                         end
-                        debug_si("\t Change in the prolonged equation")
+                        @debug "\t Change in the prolonged equation"
                         next_y_equation =
                             make_substitution(next_y_equation, x, A * x - B, A)
                         # recalibrate system
-                        debug_si("Unmixing the derivatives")
+                        @debug "Unmixing the derivatives"
                         for xx in setdiff(keys(x_equations), [x])
-                            debug_si("\t Unmixing $xx")
+                            @debug "\t Unmixing $xx"
                             x_equations[x] = eliminate_var(
                                 x_equations[x],
                                 x_equations[xx],
@@ -265,10 +264,10 @@ Output:
                             )
                         end
                         # change the projection
-                        debug_si("Change of variables in the extra projection")
+                        @debug "Change of variables in the extra projection"
                         projection_equation =
                             make_substitution(projection_equation, x, A * x - B, A)
-                        debug_si("Change of variables performed")
+                        @debug "Change of variables performed"
                         break
                     end
                 end
@@ -277,16 +276,16 @@ Output:
 
         # Eliminate var_elim from the system
         delete!(x_equations, var_elim)
-        debug_si("Elimination in states")
+        @debug "Elimination in states"
         for (x, eq) in x_equations
-            debug_si("\t Elimination in the equation for $x")
+            @debug "\t Elimination in the equation for $x"
             x_equations[x] =
                 eliminate_var(eq, y_equations[y_prolong], var_elim, point_generator)
         end
-        debug_si("Elimination in y_equations")
+        @debug "Elimination in y_equations"
         for y in keys(y_equations)
             if y != y_prolong
-                debug_si("Elimination in the output $y")
+                @debug "Elimination in the output $y"
                 y_equations[y] = eliminate_var(
                     y_equations[y],
                     y_equations[y_prolong],
@@ -295,14 +294,14 @@ Output:
                 )
             end
         end
-        debug_si("\t Elimination in the extra projection")
+        @debug "\t Elimination in the extra projection"
         projection_equation = eliminate_var(
             projection_equation,
             y_equations[y_prolong],
             var_elim,
             point_generator,
         )
-        debug_si("\t Elimination in the prolonged equation")
+        @debug "\t Elimination in the prolonged equation"
         y_equations[y_prolong] = eliminate_var(
             y_equations[y_prolong],
             next_y_equation,
@@ -351,33 +350,29 @@ Output:
            (var_change_policy == :default && length(ode.y_vars) >= 3)
         auto_var_change = false
     else
-        error_si("Unknown var_change policy $var_change_policy")
+        @error "Unknown var_change policy $var_change_policy"
         return
     end
 
     io_projections, _, _ = find_ioprojections(ode, auto_var_change, nothing)
     ring = parent(first(values(io_projections)))
 
-    debug_si("Check whether the original projections are enough")
+    @debug "Check whether the original projections are enough"
     if length(io_projections) == 1 || check_primality(io_projections)
-        debug_si(
-            "The projections generate an ideal with a single components of highest dimension, returning",
-        )
+        @debug "The projections generate an ideal with a single components of highest dimension, returning"
         return io_projections
     end
 
     sampling_range = 5
     while true
-        debug_si(
-            "There are several components of the highest dimension, trying to isolate one",
-        )
+        @debug "There are several components of the highest dimension, trying to isolate one"
         extra_projection = sum(rand(1:sampling_range) * v for v in keys(io_projections))
-        debug_si("Extra projections: $extra_projection")
+        @debug "Extra projections: $extra_projection"
         new_projections, _, projection_equation =
             find_ioprojections(ode, auto_var_change, extra_projection)
-        debug_si("Check primality")
+        @debug "Check primality"
         if check_primality(io_projections, [projection_equation])
-            debug_si("Single component of highest dimension isolated, returning")
+            @debug "Single component of highest dimension isolated, returning"
             io_projections[str_to_var(PROJECTION_VARNAME, parent(projection_equation))] =
                 projection_equation
             break

@@ -31,14 +31,14 @@ function differentiate_solution(
     inputs::Dict{P, Array{T, 1}},
     prec::Int,
 ) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
-    debug_si("Computing the power series solution of the system")
+    @debug "Computing the power series solution of the system"
     ps_sol = power_series_solution(ode, params, ic, inputs, prec)
     ps_ring = parent(first(values(ps_sol)))
     for p in ode.parameters
         ps_sol[p] = ps_ring(params[p])
     end
 
-    debug_si("Building the variational system at the solution")
+    @debug "Building the variational system at the solution"
     # Y' = AY + B
     vars = vcat(ode.x_vars, ode.parameters)
     SA = AbstractAlgebra.MatrixSpace(ps_ring, length(ode.x_vars), length(ode.x_vars))
@@ -60,7 +60,7 @@ function differentiate_solution(
         initial_condition[i, i] = 1
     end
 
-    debug_si("Solving the variational system and forming the output")
+    @debug "Solving the variational system and forming the output"
     sol_var_system = ps_matrix_linear_de(A, B, initial_condition, prec)
     return (
         ps_sol,
@@ -87,14 +87,14 @@ function differentiate_output(
     inputs::Dict{P, Array{T, 1}},
     prec::Int,
 ) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
-    debug_si("Computing partial derivatives of the solution")
+    @debug "Computing partial derivatives of the solution"
     ps_sol, sol_diff = differentiate_solution(ode, params, ic, inputs, prec)
     ps_ring = parent(first(values(ps_sol)))
     for p in ode.parameters
         ps_sol[p] = ps_ring(params[p])
     end
 
-    debug_si("Evaluating the partial derivatives of the outputs")
+    @debug "Evaluating the partial derivatives of the outputs"
     result = Dict()
     for (y, g) in ode.y_equations
         result[y] = Dict()
@@ -172,11 +172,26 @@ function assess_local_identifiability(
     loglevel = Logging.Info,
 )
     restart_logging(loglevel = loglevel)
+    with_logger(_si_logger[]) do
+        return _assess_local_identifiability(ode,
+            measured_quantities = measured_quantities,
+            funcs_to_check = funcs_to_check,
+            p = p,
+            type = type,
+        )
+    end
+end
+
+function _assess_local_identifiability(
+    ode::ModelingToolkit.ODESystem;
+    measured_quantities = Array{ModelingToolkit.Equation}[],
+    funcs_to_check = Array{}[],
+    p::Float64 = 0.99,
+    type = :SE,
+)
     if length(measured_quantities) == 0
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
-            info_si(
-                "Measured quantities are not provided, trying to find the outputs in input ODE.",
-            )
+            @info "Measured quantities are not provided, trying to find the outputs in input ODE."
             measured_quantities = filter(
                 eq -> (ModelingToolkit.isoutput(eq.lhs)),
                 ModelingToolkit.equations(ode),
@@ -199,23 +214,21 @@ function assess_local_identifiability(
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
 
     if isequal(type, :SE)
-        result = assess_local_identifiability(
+        result = _assess_local_identifiability(
             ode,
             funcs_to_check = funcs_to_check_,
             p = p,
             type = type,
-            loglevel = loglevel,
         )
         nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
         out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
         return out_dict
     elseif isequal(type, :ME)
-        result, bd = assess_local_identifiability(
+        result, bd = _assess_local_identifiability(
             ode,
             funcs_to_check = funcs_to_check_,
             p = p,
             type = type,
-            loglevel = loglevel,
         )
         nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
         out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
@@ -246,7 +259,24 @@ function assess_local_identifiability(
 ) where {P <: MPolyElem{Nemo.fmpq}}
     restart_logging(loglevel = loglevel)
     reset_timings()
+    with_logger(_si_logger[]) do
+        return _assess_local_identifiability(ode,
+            funcs_to_check = funcs_to_check,
+            p = p,
+            type = type,
+            trbasis = trbasis,
+        )
+    end
+end
 
+function _assess_local_identifiability(
+    ode::ODE{P};
+    funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
+    p::Float64 = 0.99,
+    type = :SE,
+    trbasis = nothing,
+) where {P <: MPolyElem{Nemo.fmpq}}
+ 
     if isempty(funcs_to_check)
         funcs_to_check = ode.parameters
         if type == :SE
@@ -260,9 +290,7 @@ function assess_local_identifiability(
             num, den = unpack_fraction(f)
             for v in vcat(vars(num), vars(den))
                 if !(v in ode.parameters)
-                    error_si(
-                        "Multi-experiment identifiability is not properly defined for the states",
-                    )
+                    @error "Multi-experiment identifiability is not properly defined for the states"
                     throw(ArgumentError("State variable $v appears in $f"))
                 end
             end
@@ -270,7 +298,7 @@ function assess_local_identifiability(
     end
 
     # Computing the prime using Proposition 3.3 from https://doi.org/10.1006/jsco.2002.0532
-    debug_si("Computing the prime number")
+    @debug "Computing the prime number"
     d, h = 1, 1
     for f in vcat(collect(values(ode.x_equations)), collect(values(ode.y_equations)))
         df, hf = get_degree_and_coeffsize(f)
@@ -295,17 +323,17 @@ function assess_local_identifiability(
         4 * (n + ell)^2 * ((n + m) * h + log(2 * n * D))
     Dprime = max(Dprime, 1.0)
     prime = Primes.nextprime(Int(ceil(2 * mu * Dprime)))
-    debug_si("The prime is $prime")
+    @debug "The prime is $prime"
     F = Nemo.GF(prime)
 
-    debug_si("Extending the model")
+    @debug "Extending the model"
     ode_ext =
         add_outputs(ode, Dict("loc_aux_$i" => f for (i, f) in enumerate(funcs_to_check)))
 
-    debug_si("Reducing the system modulo prime")
+    @debug "Reducing the system modulo prime"
     ode_red = reduce_ode_mod_p(ode_ext, prime)
 
-    debug_si("Computing the observability matrix (and, if ME, the bound)")
+    @debug "Computing the observability matrix (and, if ME, the bound)"
     prec = length(ode.x_vars) + length(ode.parameters)
 
     # Parameter values are the same across all the replicas
@@ -325,10 +353,10 @@ function assess_local_identifiability(
             u => [F(rand(1:prime)) for i in 1:prec] for u in ode_red.u_vars
         )
 
-        debug_si("Computing the output derivatives")
+        @debug "Computing the output derivatives"
         output_derivatives = differentiate_output(ode_red, params_vals, ic, inputs, prec)
 
-        debug_si("Building the matrices")
+        @debug "Building the matrices"
         newJac = vcat(Jac, zero(Nemo.MatrixSpace(F, length(ode.x_vars), ncols(Jac))))
         newJac = hcat(
             newJac,
@@ -367,7 +395,7 @@ function assess_local_identifiability(
     end
 
     if !isnothing(trbasis)
-        debug_si("Transcendence basis computation requested")
+        @debug "Transcendence basis computation requested"
         reverted_Jac = zero(Nemo.MatrixSpace(F, size(Jac)[2], size(Jac)[1]))
         for i in 1:size(Jac)[1]
             for j in 1:size(Jac)[2]
@@ -407,10 +435,10 @@ function assess_local_identifiability(
         for i in trbasis_indices_states
             push!(trbasis, ode.x_vars[i])
         end
-        debug_si("Transcendence basis $trbasis")
+        @debug "Transcendence basis $trbasis"
     end
 
-    debug_si("Computing the result")
+    @debug "Computing the result"
     base_rank = LinearAlgebra.rank(Jac)
     result = Dict{Any, Bool}()
     for i in 1:length(funcs_to_check)

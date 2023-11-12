@@ -95,7 +95,20 @@ function assess_identifiability(
 ) where {P <: MPolyElem{fmpq}}
     restart_logging(loglevel = loglevel)
     reset_timings()
+    with_logger(_si_logger[]) do
+        return _assess_identifiability(ode,
+            funcs_to_check = funcs_to_check,
+            p = p
+        )
+    end
+end
 
+function _assess_identifiability(
+    ode::ODE{P};
+    funcs_to_check = Vector(),
+    p::Float64 = 0.99,
+) where {P <: MPolyElem{fmpq}}
+ 
     p_glob = 1 - (1 - p) * 0.9
     p_loc = 1 - (1 - p) * 0.1
 
@@ -103,18 +116,17 @@ function assess_identifiability(
         funcs_to_check = vcat(ode.parameters, ode.x_vars)
     end
 
-    info_si("Assessing local identifiability")
+    @info "Assessing local identifiability"
     trbasis = Array{fmpq_mpoly, 1}()
-    runtime = @elapsed local_result = assess_local_identifiability(
+    runtime = @elapsed local_result = _assess_local_identifiability(
         ode,
         funcs_to_check = funcs_to_check,
         p = p_loc,
         type = :SE,
         trbasis = trbasis,
-        loglevel = loglevel,
     )
-    # info_si("Local identifiability assessed in $runtime seconds")
-    debug_si("Trasncendence basis to be specialized is $trbasis")
+    @debug "Local identifiability assessed in $runtime seconds"
+    @debug "Trasncendence basis to be specialized is $trbasis"
     # _runtime_logger[:loc_time] = runtime
 
     loc_id = [local_result[each] for each in funcs_to_check]
@@ -125,10 +137,10 @@ function assess_identifiability(
         end
     end
 
-    info_si("Assessing global identifiability")
+    @info "Assessing global identifiability"
     runtime = @elapsed global_result =
         assess_global_identifiability(ode, locally_identifiable, trbasis, p_glob)
-    info_si("Global identifiability assessed in $runtime seconds")
+    @info "Global identifiability assessed in $runtime seconds"
     _runtime_logger[:glob_time] = runtime
 
     result = Dict{Any, Symbol}()
@@ -168,6 +180,22 @@ function assess_identifiability(
     p = 0.99,
     loglevel = Logging.Info,
 )
+    restart_logging(loglevel = loglevel)
+    with_logger(_si_logger[]) do
+        return _assess_identifiability(ode,
+            measured_quantities = measured_quantities,
+            funcs_to_check = funcs_to_check,
+            p = p,
+        )
+    end
+end
+
+function _assess_identifiability(
+    ode::ModelingToolkit.ODESystem;
+    measured_quantities = Array{ModelingToolkit.Equation}[],
+    funcs_to_check = [],
+    p = 0.99,
+)
     if isempty(measured_quantities)
         measured_quantities = get_measured_quantities(ode)
     end
@@ -179,11 +207,10 @@ function assess_identifiability(
     end
     funcs_to_check_ = [eval_at_nemo(each, conversion) for each in funcs_to_check]
 
-    result = assess_identifiability(
+    result = _assess_identifiability(
         ode,
         funcs_to_check = funcs_to_check_,
         p = p,
-        loglevel = loglevel,
     )
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)

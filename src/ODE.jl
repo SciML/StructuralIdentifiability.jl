@@ -25,7 +25,7 @@ struct ODE{P} # P is the type of polynomials in the rhs of the ODE system
         # x_eqs is a dictionary x_i => f_i(x, u, params)
         # y_eqs is a dictionary y_i => g_i(x, u, params)
         if isempty(y_eqs)
-            info_si("Could not find output variables in the model.")
+            @info "Could not find output variables in the model."
         end
         poly_ring = parent(first(vcat(y_vars, x_vars)))
         u_vars = inputs
@@ -460,19 +460,13 @@ macro ODEmodel(ex::Expr...)
     end
 
     logging_exprs = [
-        :(StructuralIdentifiability.info_si("Summary of the model:")),
-        :(StructuralIdentifiability.info_si(
-            "State variables: " * $(join(map(string, collect(x_vars)), ", ")),
-        )),
-        :(StructuralIdentifiability.info_si(
-            "Parameters: " * $(join(map(string, collect(params)), ", ")),
-        )),
-        :(StructuralIdentifiability.info_si(
-            "Inputs: " * $(join(map(string, collect(u_vars)), ", ")),
-        )),
-        :(StructuralIdentifiability.info_si(
-            "Outputs: " * $(join(map(string, collect(y_vars)), ", ")),
-        )),
+       # :(with_logger(StructuralIdentifiability._si_logger[]) do),
+        :(@info "Summary of the model:"),
+        :(@info "State variables: " * $(join(map(string, collect(x_vars)), ", "))),
+        :(@info "Parameters: " * $(join(map(string, collect(params)), ", "))),
+        :(@info "Inputs: " * $(join(map(string, collect(u_vars)), ", "))),
+        :(@info "Outputs: " * $(join(map(string, collect(y_vars)), ", "))),
+       # :(end),
     ]
     # creating the ode object
     ode_expr = :(StructuralIdentifiability.ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(

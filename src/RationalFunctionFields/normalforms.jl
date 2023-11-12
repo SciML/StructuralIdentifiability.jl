@@ -63,27 +63,27 @@ function local_normal_forms(
     monoms_ff = Vector{elem_type(ring_ff)}(undef, 0)
     xs_ff = cut_at_index(xs_ff, mqs.sat_var_index)
     pivot_vectors = map(f -> exponent_vector(f, 1), xs_ff)
-    debug_si("""
+    @debug """
     variables in the finite field: $(xs_ff)
     gb parent: $(ring_ff)
     specialized gb: $(gb_ff_spec)
-    Evaluation point: $point_ff_ext""")
+    Evaluation point: $point_ff_ext"""
     # Compute the normal forms of all monomials of degrees up to `up_to_degree`
     for deg in 1:up_to_degree
         for combination in Combinatorics.with_replacement_combinations(pivot_vectors, deg)
             exp_vect = sum(combination)
             if in(stop_vectors, exp_vect)
-                debug_si("Skipping exponent vector $exp_vect")
+                @debug "Skipping exponent vector $exp_vect"
                 continue
             end
             monom_ff = ring_ff([one(finite_field)], [exp_vect])
             monom_ff_spec = evaluate(monom_ff, point_ff_ext)
             monom_mqs_ff_spec = monom_ff - monom_ff_spec
             divisors_ff, nf_ff = divrem(monom_mqs_ff_spec, gb_ff_spec)
-            debug_si("""
+            @debug """
             The normal form of $monom_mqs_ff_spec is:
             normalform = $nf_ff
-            divisors = $divisors_ff""")
+            divisors = $divisors_ff"""
             push!(monoms_ff, monom_ff)
             push!(normal_forms_ff, nf_ff)
         end
@@ -161,7 +161,7 @@ function linear_relations_over_a_field(polys, preimages)
     for ind in zero_inds
         push!(relations, preimages[ind])
     end
-    debug_si("Zeroed polynomials are $(preimages[zero_inds])")
+    @debug "Zeroed polynomials are $(preimages[zero_inds])"
     permutation = setdiff(permutation, zero_inds)
     # Sort, the first monom is the smallest
     lead_monoms = map(f -> iszero(f) ? one(f) : leading_monomial(f), polys)
@@ -303,9 +303,9 @@ is not specified but is assumed to be close to 1.
     nparams = nvars(ring_param)
     finite_field = Nemo.GF(2^30 + 3)
     ParamPunPam.reduce_mod_p!(mqs, finite_field)
-    info_si("Computing normal forms of degree $up_to_degree in $nparams variables")
-    debug_si("""Variables ($nparams in total): $xs_param
-    Modulo: $finite_field""")
+    @info "Computing normal forms of degree $up_to_degree in $nparams variables"
+    @debug """Variables ($nparams in total): $xs_param
+    Modulo: $finite_field"""
     # We first compute relations between the normal forms of linear monomials.
     # Then, we use this knowledge to drop out some monomials of higher degrees.
     tref = TinyRowEchelonForm{Int}()
@@ -315,7 +315,7 @@ is not specified but is assumed to be close to 1.
     for i in 1:length(normal_forms_ff_1)
         !iszero(normal_forms_ff_1[i]) && continue
         !(length(monoms_ff_1[i]) == 1) && continue
-        debug_si("Registering existing monomial $(monoms_ff_1[i])")
+        @debug "Registering existing monomial $(monoms_ff_1[i])"
         push!(relations_ff_1, monoms_ff_1[i])
         push!(tref, exponent_vector(monoms_ff_1[i], 1))
     end
@@ -325,17 +325,17 @@ is not specified but is assumed to be close to 1.
     while true
         iters += 1
         point = ParamPunPam.distinct_nonzero_points(finite_field, nvars(ring_param))
-        debug_si("Used specialization points: $iters")
-        debug_si("Computing normal forms to to degree $up_to_degree")
+        @debug "Used specialization points: $iters"
+        @debug "Computing normal forms to to degree $up_to_degree"
         gb_ff, normal_forms_ff, monoms_ff =
             local_normal_forms(mqs, finite_field, up_to_degree, point, stop_vectors = tref)
         if isempty(normal_forms_ff)
             break
         end
-        debug_si("Computing relations of $(length(normal_forms_ff)) normal forms")
+        @debug "Computing relations of $(length(normal_forms_ff)) normal forms"
         relations_ff, normal_forms_ff, monoms_ff =
             linear_relations_over_a_field(normal_forms_ff, monoms_ff)
-        debug_si("Obtained $(length(relations_ff)) local relations")
+        @debug "Obtained $(length(relations_ff)) local relations"
         if iters == 1
             # first point in the sequence, take all relations
             complete_intersection_relations_ff = relations_ff
@@ -365,11 +365,9 @@ is not specified but is assumed to be close to 1.
                 push!(zeroed_relations_inds, i)
             end
         end
-        debug_si(
-            """
+        @debug """
    Relations in the previous intersection: $(length(complete_intersection_relations_ff))
-   Vanished at the current point: $(length(zeroed_relations_inds))""",
-        )
+   Vanished at the current point: $(length(zeroed_relations_inds))"""
         non_zeroed_relations_inds =
             setdiff(collect(1:n_relations_ff), zeroed_relations_inds)
         zeroed_relations_from_complete_intersection =
@@ -385,16 +383,14 @@ is not specified but is assumed to be close to 1.
             non_zeroed_relations_from_complete_intersection,
             zeroed_relations_from_complete_intersection,
         )
-        debug_si(
-            "There are $(length(complete_intersection_relations_ff)) relations in the intersection",
-        )
+        @debug "There are $(length(complete_intersection_relations_ff)) relations in the intersection"
         m_relations_ff = length(complete_intersection_relations_ff)
         if n_relations_ff == m_relations_ff || isempty(complete_intersection_relations_ff)
             break
         end
     end
     union!(complete_intersection_relations_ff, relations_ff_1)
-    debug_si("Reconstructing relations to rationals")
+    @debug "Reconstructing relations to rationals"
     relations_qq = Vector{Generic.Frac{elem_type(ring_param)}}(
         undef,
         length(complete_intersection_relations_ff),
@@ -404,10 +400,10 @@ is not specified but is assumed to be close to 1.
         success, relation_qq =
             ParamPunPam.rational_reconstruct_polynomial(ring, relation_ff)
         if !success
-            warn_si("""
+            @warn """
             Failed to reconstruct the $i-th relation. Error will follow.
             relation: $relation_ff
-            modulo: $finite_field""")
+            modulo: $finite_field"""
             throw(ErrorException("Rational reconstruction failed."))
         end
         relation_qq_param = evaluate(
@@ -416,8 +412,6 @@ is not specified but is assumed to be close to 1.
         )
         relations_qq[i] = relation_qq_param // one(relation_qq_param)
     end
-    info_si(
-        "Used $iters specializations in $((time_ns() - time_start) / 1e9) seconds, found $(length(complete_intersection_relations_ff)) relations",
-    )
+    @info "Used $iters specializations in $((time_ns() - time_start) / 1e9) seconds, found $(length(complete_intersection_relations_ff)) relations"
     relations_qq
 end

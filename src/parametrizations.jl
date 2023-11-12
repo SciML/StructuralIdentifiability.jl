@@ -53,35 +53,35 @@ function check_constructive_field_membership(
     end
     # Compute the remainders module the MQS.
     # These belong to K(T)[x].
-    debug_si("""
-    Reducing $tagged_num, $tagged_den""")
+    @debug """
+    Reducing $tagged_num, $tagged_den"""
     _, num_rem = divrem(tagged_num, tagged_mqs)
     _, den_rem = divrem(tagged_den, tagged_mqs)
-    debug_si("""
+    @debug """
     Normal forms modulo MQS: 
     Num: $(num_rem)
-    Den: $(den_rem)""")
+    Den: $(den_rem)"""
     common_factor = gcd(num_rem, den_rem)
     num_rem = divexact(num_rem, common_factor)
     den_rem = divexact(den_rem, common_factor)
     # If norm_form(Num) // norm_form(Den) does not belongs to K(T), then
     # the fraction does not belong to the field
     if iszero(den_rem)
-        warn_si("""
+        @warn """
         The element $tagged_num // $tagged_den is not in the sub-field
         Normal form, numerator: $num_rem
         Normal form, denominator: $den_rem
         Common factor: $(common_factor)
-        """)
+        """
         return false, zero(ring_of_tags) // one(ring_of_tags)
     end
     if total_degree(num_rem) > 0 || total_degree(den_rem) > 0
-        warn_si("""
+        @warn """
         The element $tagged_num // $tagged_den is not in the sub-field
         Normal form, numerator: $num_rem
         Normal form, denominator: $den_rem
         Common factor: $(common_factor)
-        """)
+        """
         return false, zero(ring_of_tags) // one(ring_of_tags)
     end
     # Now we know that the remainders belong to K(T). 
@@ -95,11 +95,11 @@ function check_constructive_field_membership(
     _, num_den_factored = divrem(num_den, tag_relations)
     num_factored = num_num_factored // denominator(num)
     den_factored = num_den_factored // denominator(den)
-    debug_si("""
+    @debug """
     After factoring out relations:
     Num: $(num_factored)
     Den: $(den_factored)
-    """)
+    """
     if iszero(den_factored)
         return false, zero(ring_of_tags) // one(ring_of_tags)
     end
@@ -168,14 +168,12 @@ function check_constructive_field_membership(
         gen_tag_names(length(fracs_gen), "Tag")
     end
     sat_string = gen_tag_name("Sat")
-    debug_si(
-        """
+    @debug """
 Tags:
 $(join(map(x -> string(x[1]) * " -> " * string(x[2]),  zip(fracs_gen, tag_strings)), "\t\n"))
 Saturation tag:
 $sat_string
-""",
-    )
+"""
     poly_ring_tag, vars_tag = PolynomialRing(K, vcat(sat_string, orig_strings, tag_strings))
     sat_var = vars_tag[1]
     orig_vars = vars_tag[2:(nvars(poly_ring) + 1)]
@@ -200,11 +198,11 @@ $sat_string
     # - the GB of the MQS in K(T)[x][t].
     # ord = Lex()
     ord = DegRevLex([sat_var]) * DegRevLex(orig_vars) * DegRevLex(tag_vars)
-    debug_si("""
+    @debug """
     Tagged MQS ideal:
     $tagged_mqs
     Monom ordering:
-    $(ord)""")
+    $(ord)"""
     tagged_mqs_gb = groebner(tagged_mqs, ordering = ord, homogenize = :no)
     # Relations between tags in K[T]
     relations_between_tags = filter(
@@ -214,12 +212,12 @@ $sat_string
     # The basis in K[T][x]
     tagged_mqs_gb = setdiff(tagged_mqs_gb, relations_between_tags)
     tagged_mqs_gb = filter(poly -> isempty(intersect(vars(poly), [sat_var])), tagged_mqs_gb)
-    debug_si("""
+    @debug """
     Tagged MQS GB:
     $tagged_mqs_gb
     Relations between tags:
     $relations_between_tags
-    """)
+    """
     # Reduce the fractions with respect to the MQS ideal.
     #
     # NOTE: reduction actually happens in K(T)[x]. So we map polynomials to the
@@ -227,12 +225,10 @@ $sat_string
     ring_of_tags, tags = PolynomialRing(K, tag_strings)
     tag_to_gen = Dict(tags[i] => fracs_gen[i] for i in 1:length(fracs_gen))
     if !isempty(intersect(tag_strings, orig_strings))
-        warn_si(
-            """
+        @warn """
     There is an intersection between the names of the tag variables and the original variables.
     Tags: $tag_strings
-    Original vars: $orig_strings""",
-        )
+    Original vars: $orig_strings"""
     end
     parametric_ring, _ =
         PolynomialRing(FractionField(ring_of_tags), orig_strings, ordering = :degrevlex)
@@ -242,18 +238,18 @@ $sat_string
         Dict(gens(poly_ring_tag)[2:(nvars(poly_ring) + 1)] .=> gens(parametric_ring)),
         Dict(gens(poly_ring_tag)[(nvars(poly_ring) + 2):end] .=> gens(ring_of_tags)),
     )
-    debug_si("""
+    @debug """
     Variable mapping:
     $param_var_mapping
     Parametric ring:
     $parametric_ring
-    """)
+    """
     tagged_mqs_gb_param = map(
         poly -> crude_parent_ring_change(poly, parametric_ring, param_var_mapping),
         tagged_mqs_gb,
     )
     tagged_mqs_gb_param = map(f -> divexact(f, leading_coefficient(f)), tagged_mqs_gb_param)
-    debug_si("Tagged parametric mqs: $tagged_mqs_gb_param")
+    @debug "Tagged parametric mqs: $tagged_mqs_gb_param"
     # Reduce each fraction
     var_mapping = Dict(gens(poly_ring) .=> gens(parametric_ring))
     memberships = Vector{Bool}(undef, length(to_be_reduced))
@@ -307,7 +303,7 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     # Compute the new dynamics in terms of the original variables.
     # Paying attenton to the order..
     new_vector_field = vector_field_along(ode.x_equations, new_states)
-    debug_si("New vector field:\n$new_vector_field")
+    @debug "New vector field:\n$new_vector_field"
     new_states = collect(keys(new_vector_field))
     new_dynamics = [new_vector_field[new_state] for new_state in new_states]
     # Express the new dynamics in terms of new states and new parameters.
@@ -326,14 +322,14 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
         gen_tag_names(length(ode.u_vars), "Input"),
         gen_tag_names(length(ode.y_vars), "Output"),
     )
-    info_si("""
+    @info """
     Tag names: 
     $tag_names
     Generating functions:
     $generating_funcs
     Functions to be reduced:
     $to_be_reduced_funcs
-    """)
+    """
     membership, new_dynamics_all, implicit_relations, new_vars =
         check_constructive_field_membership(
             RationalFunctionField(generating_funcs),
@@ -355,20 +351,20 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     if !isempty(ode.u_vars)
         new_inputs = tag_inputs
     end
-    info_si("""
+    @info """
     New state dynamics:
     $new_dynamics_states
     New output dynamics:
     $new_dynamics_outputs
     New inputs:
-    $new_inputs""")
+    $new_inputs"""
     # Construct the new vector field.
     new_vars_vector_field = empty(ode.x_equations)
     for i in 1:length(new_states)
         state = tags[i]
         new_vars_vector_field[state] = new_dynamics_states[i]
     end
-    info_si("Converting variable names to human-readable ones")
+    @info "Converting variable names to human-readable ones"
     internal_variable_names = map(i -> "X$i", 1:length(new_states))
     parameter_variable_names = map(i -> "a$i", 1:length(new_params))
     input_variable_names = map(i -> "u$i", 1:length(tag_inputs))
@@ -475,26 +471,39 @@ function reparametrize_global(
     loglevel = Logging.Info,
 ) where {P}
     restart_logging(loglevel = loglevel)
+    with_logger(_si_logger[]) do
+        return _reparametrize_global(ode,
+            p = p, seed = seed,
+        )
+    end
+end
+
+
+function _reparametrize_global(
+    ode::ODE{P};
+    p = 0.99,
+    seed = 42,
+) where {P}
     Random.seed!(seed)
     id_funcs =
         find_identifiable_functions(ode, with_states = true, simplify = :strong, p = p)
     ode_ring = parent(ode)
     @assert base_ring(parent(first(id_funcs))) == ode_ring
-    info_si("Constructing a new parametrization")
+    @info "Constructing a new parametrization"
     contains_states(poly::MPolyElem) = any(x -> degree(poly, x) > 0, ode.x_vars)
     contains_states(func) =
         contains_states(numerator(func)) || contains_states(denominator(func))
     id_funcs_contains_states = filter(contains_states, id_funcs)
-    info_si("""
+    @info """
     Original states: $(ode.x_vars)
     Original params: $(ode.parameters)
-    Identifiable and contain states: $(id_funcs_contains_states)""")
+    Identifiable and contain states: $(id_funcs_contains_states)"""
     new_states = id_funcs_contains_states
     new_params = setdiff(id_funcs, id_funcs_contains_states)
-    info_si("""
+    @info """
     Reparametrizing with respect to:
     New states: $new_states
-    New params: $new_params""")
+    New params: $new_params"""
     new_vector_field, new_inputs, new_outputs, new_vars, implicit_relations =
         reparametrize_with_respect_to(ode, new_states, new_params)
     new_ring = parent(first(keys(new_vector_field)))

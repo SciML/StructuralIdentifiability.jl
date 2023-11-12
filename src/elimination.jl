@@ -32,7 +32,8 @@ function det_minor_expansion_inner(
         cache[discarded] = result
     end
     if length(discarded[1]) < 3
-        debug_si("Discarded: $discarded")
+        @debug "Discarded: $discarded"
+        flush(_si_logger[].stream)
     end
     return result
 end
@@ -201,11 +202,11 @@ function Base.iterate(
     i::Int = 1,
 ) where {P <: MPolyElem{<:FieldElem}}
     if i > length(gpg.cached_points)
-        debug_si("Generating new point on the variety")
+        @debug "Generating new point on the variety"
         sample_max = i * 50
         result = undef
         while true
-            debug_si("Preparing initial condition")
+            @debug "Preparing initial condition"
             base_field = base_ring(gpg.big_ring)
             param_values = Dict{P, Int}(p => rand(1:sample_max) for p in gpg.ode.parameters)
             initial_conditions =
@@ -214,7 +215,7 @@ function Base.iterate(
                 u => [rand(1:sample_max) for _ in 1:(gpg.precision)] for
                 u in gpg.ode.u_vars
             )
-            debug_si("Computing a power series solution")
+            @debug "Computing a power series solution"
             ps_solution = undef
             try
                 ps_solution = power_series_solution(
@@ -225,11 +226,11 @@ function Base.iterate(
                     gpg.precision,
                 )
             catch e
-                debug_si("$e")
+                @debug "$e"
                 continue
             end
 
-            debug_si("Constructing the point")
+            @debug "Constructing the point"
             result = Dict{P, gpg.number_type}(
                 switch_ring(p, gpg.big_ring) => base_field(c) for (p, c) in param_values
             )
@@ -316,12 +317,12 @@ Output:
         lg = coeff(g, [var_elim], [Nemo.degree(g, var_elim)])
         (flag, q) = divides(lg, lf)
         if flag
-            debug_si("\t Decreasing degree with linear combination")
+            @debug "\t Decreasing degree with linear combination"
             g = g - q * f * var_elim^(Nemo.degree(g, var_elim) - Nemo.degree(f, var_elim))
         elseif (Nemo.degree(g, var_elim) == Nemo.degree(f, var_elim))
             (flag, q) = divides(lf, lg)
             if flag
-                debug_si("\t Decreasing degree with linear combination")
+                @debug "\t Decreasing degree with linear combination"
                 f = f - q * g
             else
                 break
@@ -368,28 +369,33 @@ Output:
         resultant = f
     else
         if Nemo.degree(f, var_elim) > 1
-            debug_si("Calculating the Bezout Matrix")
+            @debug "Calculating the Bezout Matrix"
+            flush(_si_logger[].stream)
             M = Bezout_matrix(f, g, var_elim)
         else
-            debug_si("Calculating the Sylvester matrix")
+            @debug "Calculating the Sylvester matrix"
+            flush(_si_logger[].stream)
             M = Sylvester_matrix(f, g, var_elim)
         end
-        debug_si("Simplifying the matrix")
+        @debug "Simplifying the matrix"
+        flush(_si_logger[].stream)
         M_simp, matrix_factors = simplify_matrix(M)
-        debug_si("Removed factors $(map(length, matrix_factors))")
+        @debug "Removed factors $(map(length, matrix_factors))"
         M_size = zero(Nemo.MatrixSpace(Nemo.ZZ, ncols(M_simp), ncols(M_simp)))
         for i in 1:ncols(M_simp)
             for j in 1:ncols(M_simp)
                 M_size[i, j] = length(M_simp[i, j])
             end
         end
-        debug_si("\t Matrix size: \n $M_size")
-        debug_si("\t Computing determinant")
+        @debug "\t Matrix size: \n $M_size"
+        @debug "\t Computing determinant"
+        flush(_si_logger[].stream)
         resultant = det_minor_expansion(M_simp)
     end
-    debug_si("Degrees are $([(v, Nemo.degree(resultant, v)) for v in vars(resultant)])")
+    @debug "Degrees are $([(v, Nemo.degree(resultant, v)) for v in vars(resultant)])"
     # Step 4: Eliminate extra factors
-    debug_si("Eliminating extra factors")
+    @debug "Eliminating extra factors"
+    flush(_si_logger[].stream)
     factors = fast_factor(resultant)
     for mfac in matrix_factors
         for fac in fast_factor(mfac)
@@ -401,8 +407,8 @@ Output:
     res = choose(factors, generic_point_generator)
     for f in factors
         if f != res
-            debug_si("\t \t Size of extra factor: $(length(f))")
-            debug_si("\t \t It is $f")
+            @debug "\t \t Size of extra factor: $(length(f))"
+            @debug "\t \t It is $f"
         end
     end
     return res
