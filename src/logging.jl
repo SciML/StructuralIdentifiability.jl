@@ -23,8 +23,12 @@ const _runtime_logger = Dict(
     :id_beautifulization => 0,
 )
 
-const _si_logger =
+const _si_logger = @static if VERSION >= v"1.7.0"
     Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(Logging.Info, show_limited = false))
+else
+    Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(Logging.Info))
+end
+
 const _groebner_loglevel = Ref{Int}(0)
 
 function restart_logging(; loglevel = Logging.Info)
