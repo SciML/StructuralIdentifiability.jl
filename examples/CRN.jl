@@ -1,12 +1,7 @@
 # Conradi, C., Shiu, A.,
 # Dynamics of post-translational modification systems: recent progress and future directions
 # Eq. 3.4
-using Logging
-
 using StructuralIdentifiability
-
-logger = Logging.SimpleLogger(stdout, Logging.Info)
-global_logger(logger)
 
 ode = @ODEmodel(
     x1'(t) = -k1 * x1(t) * x2(t) + k2 * x4(t) + k4 * x6(t),
@@ -19,4 +14,4 @@ ode = @ODEmodel(
     y2(t) = x2(t)
 )
 
-@time println(assess_identifiability(ode))
+println(assess_identifiability(ode))

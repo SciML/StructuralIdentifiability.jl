@@ -1,29 +1,29 @@
 # ------------------------------------------------------------------------------
 
 function check_primality_zerodim(J::Array{fmpq_mpoly, 1})
-    J = Groebner.groebner(J)
-    basis = Groebner.kbase(J)
+    J = Groebner.groebner(J, loglevel = _groebner_loglevel[])
+    basis = Groebner.kbase(J, loglevel = _groebner_loglevel[])
     dim = length(basis)
     S = Nemo.MatrixSpace(Nemo.QQ, dim, dim)
     matrices = []
-    @debug "" J basis
+    @debug "$J $basis"
     @debug "Dim is $dim"
     for v in gens(parent(first(J)))
         M = zero(S)
         for (i, vec) in enumerate(basis)
-            image = Groebner.normalform(J, v * vec)
+            image = Groebner.normalform(J, v * vec, loglevel = _groebner_loglevel[])
             for (j, base_vec) in enumerate(basis)
                 M[i, j] = Nemo.QQ(coeff(image, base_vec))
             end
         end
         push!(matrices, M)
-        @debug "Multiplication by $v" M
+        @debug "Multiplication by $v: $M"
     end
     generic_multiplication = sum(Nemo.QQ(rand(1:100)) * M for M in matrices)
-    @debug "" generic_multiplication
+    @debug generic_multiplication
 
     R, t = Nemo.PolynomialRing(Nemo.QQ, "t")
-    @debug "" Nemo.charpoly(R, generic_multiplication)
+    @debug "$(Nemo.charpoly(R, generic_multiplication))"
 
     return Nemo.isirreducible(Nemo.charpoly(R, generic_multiplication))
 end

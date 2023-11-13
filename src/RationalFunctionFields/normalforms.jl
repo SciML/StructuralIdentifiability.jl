@@ -56,7 +56,7 @@ function local_normal_forms(
     @assert parent(first(point)) == finite_field
     point_ff_ext = append_at_index(point, mqs.sat_var_index, one(finite_field))
     gens_ff_spec = specialize_mod_p(mqs, point)
-    gb_ff_spec = Groebner.groebner(gens_ff_spec)
+    gb_ff_spec = Groebner.groebner(gens_ff_spec, loglevel = _groebner_loglevel[])
     ring_ff = parent(gb_ff_spec[1])
     xs_ff = gens(ring_ff)
     normal_forms_ff = Vector{elem_type(ring_ff)}(undef, 0)
@@ -161,7 +161,7 @@ function linear_relations_over_a_field(polys, preimages)
     for ind in zero_inds
         push!(relations, preimages[ind])
     end
-    @debug "Zeroed polynomials are" preimages[zero_inds]
+    @debug "Zeroed polynomials are $(preimages[zero_inds])"
     permutation = setdiff(permutation, zero_inds)
     # Sort, the first monom is the smallest
     lead_monoms = map(f -> iszero(f) ? one(f) : leading_monomial(f), polys)
@@ -290,7 +290,7 @@ Relations may include monomials up to the total degree `up_to_degree`.
 Note: uses Monte-Carlo probabilistic algorithm. The probability of correctness
 is not specified but is assumed to be close to 1.
 """
-function linear_relations_between_normal_forms(
+@timeit _to function linear_relations_between_normal_forms(
     fracs::Vector{Generic.Frac{T}},
     up_to_degree::Integer;
     seed = 42,
@@ -366,8 +366,8 @@ function linear_relations_between_normal_forms(
             end
         end
         @debug """
-        Relations in the previous intersection: $(length(complete_intersection_relations_ff))
-        Vanished at the current point: $(length(zeroed_relations_inds))"""
+   Relations in the previous intersection: $(length(complete_intersection_relations_ff))
+   Vanished at the current point: $(length(zeroed_relations_inds))"""
         non_zeroed_relations_inds =
             setdiff(collect(1:n_relations_ff), zeroed_relations_inds)
         zeroed_relations_from_complete_intersection =

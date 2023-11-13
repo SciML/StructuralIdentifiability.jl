@@ -21,6 +21,7 @@ This functions takes the following optional arguments:
 - `p`: A float in the range from 0 to 1, the probability of correctness. Default
   is `0.99`.
 - `seed`: The rng seed. Default value is `42`.
+- `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
 ## Example
 
@@ -49,12 +50,32 @@ function find_identifiable_functions(
     with_states = false,
     simplify = :standard,
     rational_interpolator = :VanDerHoevenLecerf,
+    loglevel = Logging.Info,
+) where {T <: MPolyElem{fmpq}}
+    restart_logging(loglevel = loglevel)
+    reset_timings()
+    with_logger(_si_logger[]) do
+        return _find_identifiable_functions(
+            ode,
+            p = p,
+            seed = seed,
+            with_states = with_states,
+            simplify = simplify,
+            rational_interpolator = rational_interpolator,
+        )
+    end
+end
+
+function _find_identifiable_functions(
+    ode::ODE{T};
+    p::Float64 = 0.99,
+    seed = 42,
+    with_states = false,
+    simplify = :standard,
+    rational_interpolator = :VanDerHoevenLecerf,
 ) where {T <: MPolyElem{fmpq}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
-    _runtime_logger[:id_npoints_degree] = 0
-    _runtime_logger[:id_npoints_interpolation] = 0
-    _runtime_logger[:id_beautifulization] = 0.0
     runtime_start = time_ns()
     if isempty(ode.parameters) && !with_states
         @warn """
@@ -93,6 +114,7 @@ function find_identifiable_functions(
     _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1e9
     _runtime_logger[:are_id_funcs_polynomial] = all(isone ∘ denominator, id_funcs_fracs)
     @info "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds"
+
     return id_funcs_fracs
 end
 
@@ -106,6 +128,8 @@ system.
 
 This functions takes the following optional arguments:
 - `measured_quantities` - the output functions of the model.
+- `loglevel` - the verbosity of the logging 
+  (can be Logging.Error, Logging.Warn, Logging.Info, Logging.Debug)
 
 ## Example
 
@@ -139,13 +163,38 @@ function find_identifiable_functions(
     with_states = false,
     simplify = :standard,
     rational_interpolator = :VanDerHoevenLecerf,
+    loglevel = Logging.Info,
+)
+    restart_logging(loglevel = loglevel)
+    reset_timings()
+    with_logger(_si_logger[]) do
+        return _find_identifiable_functions(
+            ode,
+            measured_quantities = measured_quantities,
+            p = p,
+            seed = seed,
+            with_states = with_states,
+            simplify = simplify,
+            rational_interpolator = rational_interpolator,
+        )
+    end
+end
+
+function _find_identifiable_functions(
+    ode::ModelingToolkit.ODESystem;
+    measured_quantities = Array{ModelingToolkit.Equation}[],
+    p::Float64 = 0.99,
+    seed = 42,
+    with_states = false,
+    simplify = :standard,
+    rational_interpolator = :VanDerHoevenLecerf,
 )
     Random.seed!(seed)
     if isempty(measured_quantities)
         measured_quantities = get_measured_quantities(ode)
     end
     ode, conversion = preprocess_ode(ode, measured_quantities)
-    result = find_identifiable_functions(
+    result = _find_identifiable_functions(
         ode,
         simplify = simplify,
         p = p,

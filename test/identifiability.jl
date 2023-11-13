@@ -130,8 +130,8 @@
         y1(t) = 2 * x1(t) // (b * (1 + x1(t)^2)),
         y2(t) = x2(t)
     )
-    funcs_to_test = [b]
-    correct = [:globally]
+    funcs_to_test = [b, x1, x2]
+    correct = [:globally, :globally, :globally]
     push!(
         test_cases,
         Dict(

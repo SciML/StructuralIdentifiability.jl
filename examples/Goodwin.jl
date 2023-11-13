@@ -2,12 +2,7 @@
 # Oscillatory behavior in enzymatic control processes
 # https://doi.org/10.1016/0065-2571(65)90067-1
 
-using Logging
-
 using StructuralIdentifiability
-
-logger = Logging.SimpleLogger(stdout, Logging.Info)
-global_logger(logger)
 
 ode = @ODEmodel(
     x1'(t) = -b * x1(t) + 1 / (c + x4(t)),
@@ -17,4 +12,8 @@ ode = @ODEmodel(
     y(t) = x1(t)
 )
 
-@time println(assess_identifiability(ode))
+println(assess_identifiability(ode))
+
+# Not everything is identifiable, so we may wonder what are the identifiable functions
+
+println(find_identifiable_functions(ode, with_states = true))

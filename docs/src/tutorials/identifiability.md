@@ -64,6 +64,8 @@ Function `assess_local_identifiability` has several optional parameters
     likely to be much higher.
   - `type` (default `:SE`). By default, the algorithm checks the standard single-experiment identifiability. If one sets `type = :ME`, then the algorithm
     checks multi-experiment identifiability, that is, identifiability from several experiments with independent initial conditions (the algorithm from [^2] is used).
+  - `loglevel` (default `Logging.Info`). The minimal level of logging messages to be displayed. Available options: `Logging.Debug`,
+    `Logging.Info`, `Logging.Warn`, and `Logging.Error`.
 
 Note that the scaling symmetry given above suggests that $b x_2(t)$ may in fact be identifiable. This can be checked using `funcs_to_check` parameter:
 
@@ -107,6 +109,8 @@ Similarly to `assess_local_identifiability`, this function has optional paramete
     error probability is much lower than 1%.
     Also, currently, the probability of correctness does not include the probability of correctness of the modular reconstruction for Groebner bases.
     This probability is ensured by an additional check modulo a large prime, and can be neglected for practical purposes.
+  - `loglevel` (default `Logging.Info`). The minimal level of logging messages to be displayed. Available options: `Logging.Debug`,
+    `Logging.Info`, `Logging.Warn`, and `Logging.Error`.
 
 Using `funcs_to_check` parameter, one can further inverstigate the nature of the lack of identifiability in the model at hand.
 For example, for the Goodwin oscillator, we can check if `beta + delta` and `beta * delta` are identifiable:

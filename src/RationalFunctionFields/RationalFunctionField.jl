@@ -92,7 +92,7 @@ Output:
 - a list `L[i]` of bools of length `length(rat_funcs)` such that `L[i]` is true iff
    the i-th function belongs to `field`
 """
-function field_contains(
+@timeit _to function field_contains(
     field::RationalFunctionField{T},
     ratfuncs::Vector{Vector{T}},
     p,
@@ -101,10 +101,8 @@ function field_contains(
         return Bool[]
     end
     @debug "Finding pivot polynomials"
-    flush(stdout)
     pivots = map(plist -> plist[findmin(map(total_degree, plist))[2]], ratfuncs)
     @debug "\tDegrees are $(map(total_degree, pivots))"
-    flush(stdout)
 
     @debug "Estimating the sampling bound"
     # uses Theorem 3.3 from https://arxiv.org/pdf/2111.00991.pdf
@@ -124,7 +122,6 @@ function field_contains(
         degree = max(degree, extra_degree + maximum(total_degree, plist))
     end
     @debug "\tBound for the degrees is $degree"
-    flush(stdout)
 
     total_vars = foldl(
         union,
@@ -139,20 +136,17 @@ function field_contains(
         ceil(1 / (1 - p)),
     )
     @debug "\tSampling from $(-sampling_bound) to $(sampling_bound)"
-    flush(stdout)
 
     mqs = field.mqs
     param_ring = ParamPunPam.parent_params(mqs)
     point = map(v -> Nemo.QQ(rand((-sampling_bound):sampling_bound)), gens(param_ring))
     mqs_specialized = specialize(mqs, point)
     @debug "Computing Groebner basis ($(length(mqs_specialized)) equations)"
-    flush(stdout)
     mqs_ratfuncs = specialize(IdealMQS(ratfuncs), point; saturated = false)
     @assert parent(first(mqs_specialized)) == parent(first(mqs_ratfuncs))
     @debug "Starting the groebner basis computation"
-    flush(stdout)
-    gb = groebner(mqs_specialized)
-    result = map(iszero, normalform(gb, mqs_ratfuncs))
+    gb = groebner(mqs_specialized, loglevel = _groebner_loglevel[])
+    result = map(iszero, normalform(gb, mqs_ratfuncs, loglevel = _groebner_loglevel[]))
     return result
 end
 
@@ -182,7 +176,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-function check_field_membership_mod_p!(
+@timeit _to function check_field_membership_mod_p!(
     generators::RationalFunctionField{T},
     tobereduced::RationalFunctionField{T},
 ) where {T}
@@ -197,8 +191,8 @@ function check_field_membership_mod_p!(
     polys_specialized =
         ParamPunPam.specialize_mod_p(mqs_tobereduced, point, saturated = false)
     @assert parent(first(gens_specialized)) == parent(first(polys_specialized))
-    gb = groebner(gens_specialized)
-    nf = normalform(gb, polys_specialized)
+    gb = groebner(gens_specialized, loglevel = _groebner_loglevel[])
+    nf = normalform(gb, polys_specialized, loglevel = _groebner_loglevel[])
     result = map(iszero, nf)
     return result
 end
@@ -215,7 +209,7 @@ Applies the following passes:
 1. Filter constants,
 2. Remove redundant generators.
 """
-function beautifuly_generators(
+@timeit _to function beautifuly_generators(
     rff::RationalFunctionField;
     discard_redundant = true,
     reversed_order = false,
@@ -242,7 +236,7 @@ function beautifuly_generators(
                 end
                 result =
                     check_field_membership_mod_p(fracs[setdiff(non_redundant, i)], [func])
-                @debug "Simplification: inclusion check" func result
+                @debug "Simplification: inclusion check $func $result"
                 if result[1]
                     @debug "The function $func is discarded"
                     setdiff!(non_redundant, i)
@@ -254,7 +248,7 @@ function beautifuly_generators(
             for i in 2:length(fracs)
                 func = fracs[i]
                 result = check_field_membership_mod_p(fracs[non_redundant], [func])
-                @debug "Simplification: inclusion check" func result
+                @debug "Simplification: inclusion check $func $result"
                 if !result[1]
                     @debug "The function $func is included in the set of generators"
                     push!(non_redundant, i)
@@ -307,7 +301,7 @@ end
 - `up_to_degree`: a tuple of integers, the degrees of numerator and denominator.
     The result is correct up to the requested degrees.
 """
-function groebner_basis_coeffs(
+@timeit _to function groebner_basis_coeffs(
     rff::RationalFunctionField;
     seed = 42,
     ordering = Groebner.InputOrdering(),
@@ -347,7 +341,7 @@ function groebner_basis_coeffs(
         basis_coeffs = map(collect ∘ coefficients, gb)
         basis_coeffs_set = mapreduce(Set, union!, basis_coeffs)
         fracs = collect(basis_coeffs_set)
-        @debug "Generators up to degrees $(current_degrees) are" fracs
+        @debug "Generators up to degrees $(current_degrees) are $fracs"
         @debug "Checking two-sided inclusion modulo a prime"
         time_start = time_ns()
         # Check inclusion: <simplified generators> in <original generators> 
@@ -379,7 +373,7 @@ Returns a set of Groebner bases for multiple different rankings of variables.
 - Keyword `up_to_degree`: a tuple of integers, max. degrees of numerators and
   denominators. Result is correct up to the requested degrees.
 """
-function generating_sets_fan(
+@timeit _to function generating_sets_fan(
     rff::RationalFunctionField{T},
     code::Integer;
     seed = 42,
@@ -414,7 +408,7 @@ function generating_sets_fan(
             # n1, n2 = div(n, 2), n - div(n, 2)
             n1, n2 = n - 1, 1
             ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
-            @debug "Computing GB for ordering" ord
+            @debug "Computing GB for ordering $ord"
             new_rff = groebner_basis_coeffs(
                 gb_rff,
                 seed = seed,
@@ -431,7 +425,7 @@ function generating_sets_fan(
             n = length(vars_shuffled)
             n1, n2 = max(n - 2, 1), min(2, length(vars) - 1)
             ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
-            @debug "Computing GB for ordering" ord
+            @debug "Computing GB for ordering $ord"
             new_rff = groebner_basis_coeffs(
                 gb_rff,
                 seed = seed,
@@ -449,7 +443,7 @@ function generating_sets_fan(
             n1 = div(n, 2)
             n2 = n - n1
             ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
-            @debug "Computing GB for ordering" ord
+            @debug "Computing GB for ordering $ord"
             new_rff = groebner_basis_coeffs(
                 gb_rff,
                 seed = seed,
@@ -486,7 +480,7 @@ end
 Returns a simplified set of generators for `rff`. 
 Result is correct (in Monte-Carlo sense) with probability at least `p`.
 """
-function simplified_generating_set(
+@timeit _to function simplified_generating_set(
     rff::RationalFunctionField;
     p = 0.99,
     seed = 42,
@@ -559,8 +553,8 @@ function simplified_generating_set(
     end
     new_fracs_unique = unique(new_fracs)
     @debug """
-    Final cleaning and simplification of generators. 
-    Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique."""
+Final cleaning and simplification of generators. 
+Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique."""
     runtime =
         @elapsed new_fracs = beautifuly_generators(RationalFunctionField(new_fracs_unique))
     @debug "Checking inclusion with probability $p"

@@ -100,7 +100,6 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         end
         varnames = append_at_index(ystrs, sat_var_index, sat_varname)
         @debug "Saturating variable is $sat_varname, index is $sat_var_index"
-        flush(stdout)
         R_sat, v_sat = Nemo.PolynomialRing(K, varnames, ordering = ordering)
         # Saturation
         t_sat = v_sat[sat_var_index]
@@ -147,7 +146,6 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         end
         parent_ring_param, _ = PolynomialRing(ring, varnames, ordering = ordering)
         @debug "Constructed MQS ideal in $R_sat with $(length(nums_qq) + 1) elements"
-        flush(stdout)
         @assert length(pivots_indices) == length(dens_indices) == length(dens_qq)
         @assert length(pivots_indices) == length(funcs_den_nums)
 
@@ -200,12 +198,12 @@ function fractionfree_generators_raw(mqs::IdealMQS)
     old_varnames = map(i -> "y$i", 1:length(varnames))
     new_varnames = map(i -> "라$i", 1:(length(varnames) + 1))
     if !isempty(intersect(old_varnames, new_varnames))
-        @warn "Intersection in two sets of variables!" varnames new_varnames
+        @warn "Intersection in two sets of variables! $varnames $new_varnames"
     end
     # NOTE: new variables go first!
     big_ring, big_vars =
         PolynomialRing(K, vcat(new_varnames, old_varnames), ordering = :lex)
-    @info "" mqs.sat_var_index varnames ring_params parent(mqs.sat_qq)
+    @info "$(mqs.sat_var_index) $(varnames) $ring_params $(parent(mqs.sat_qq))"
     nums_qq, dens_qq, sat_qq = mqs.nums_qq, mqs.dens_qq, mqs.sat_qq
     nums_y = map(num -> parent_ring_change(num, big_ring, matching = :byindex), nums_qq)
     dens_y = map(den -> parent_ring_change(den, big_ring, matching = :byindex), dens_qq)

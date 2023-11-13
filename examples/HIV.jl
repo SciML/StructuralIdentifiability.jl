@@ -2,12 +2,7 @@
 # Specific therapy regimes could lead to long-term immunological control of HIV
 # https://doi.org/10.1073/pnas.96.25.14464
 # Page 1
-using Logging
-
 using StructuralIdentifiability
-
-logger = Logging.SimpleLogger(stdout, Logging.Info)
-global_logger(logger)
 
 ode = @ODEmodel(
     x'(t) = lm - d * x(t) - beta * x(t) * v(t),
@@ -19,4 +14,8 @@ ode = @ODEmodel(
     y2(t) = z(t)
 )
 
-@time println(assess_identifiability(ode))
+println(assess_identifiability(ode))
+
+# Not everything is identifiable, so we may wonder what are the identifiable functions
+
+println(find_identifiable_functions(ode, with_states = true))

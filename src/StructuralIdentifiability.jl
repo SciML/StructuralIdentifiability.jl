@@ -10,6 +10,7 @@ using Logging
 using MacroTools
 using Primes
 using Random
+using TimerOutputs
 
 # Algebra packages
 using AbstractAlgebra
@@ -25,7 +26,7 @@ using ModelingToolkit
 export ODE, @ODEmodel, preprocess_ode
 
 # assessing identifiability
-export assess_local_identifiability, assess_global_identifiability, assess_identifiability
+export assess_local_identifiability, assess_identifiability
 
 # auxuliary function
 export set_parameter_values
@@ -48,16 +49,7 @@ export find_submodels
 # finding identifiabile reparametrizations
 export reparametrize_global
 
-# would be great to merge with the Julia logger
-const _runtime_logger = Dict(
-    :id_calls_to_gb => 0,
-    :id_groebner_time => 0.0,
-    :id_inclusion_check_mod_p => 0,
-    :id_npoints_degree => 0,
-    :id_npoints_interpolation => 0,
-    :id_beautifulization => 0,
-)
-
+include("logging.jl")
 include("util.jl")
 include("power_series_utils.jl")
 include("ODE.jl")
@@ -81,21 +73,43 @@ include("pb_representation.jl")
 include("submodels.jl")
 include("discrete.jl")
 
+function __init__()
+    _si_logger[] = @static if VERSION >= v"1.7.0"
+        Logging.ConsoleLogger(Logging.Info, show_limited = false)
+    else
+        Logging.ConsoleLogger(stderr, Logging.Info)
+    end
+end
+
 """
-    assess_identifiability(ode; funcs_to_check = [], p=0.99)
+    assess_identifiability(ode; funcs_to_check = [], p=0.99, loglevel=Logging.Info)
 
 Input:
 - `ode` - the ODE model
 - `funcs_to_check` - list of functions to check identifiability for; if empty, all parameters
    and states are taken
 - `p` - probability of correctness.
-    
+- `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
+
 Assesses identifiability of a given ODE model. The result is guaranteed to be correct with the probability
 at least `p`.
 The function returns a dictionary from the functions to check to their identifiability properties 
 (one of `:nonidentifiable`, `:locally`, `:globally`).
 """
 function assess_identifiability(
+    ode::ODE{P};
+    funcs_to_check = Vector(),
+    p::Float64 = 0.99,
+    loglevel = Logging.Info,
+) where {P <: MPolyElem{fmpq}}
+    restart_logging(loglevel = loglevel)
+    reset_timings()
+    with_logger(_si_logger[]) do
+        return _assess_identifiability(ode, funcs_to_check = funcs_to_check, p = p)
+    end
+end
+
+function _assess_identifiability(
     ode::ODE{P};
     funcs_to_check = Vector(),
     p::Float64 = 0.99,
@@ -109,16 +123,16 @@ function assess_identifiability(
 
     @info "Assessing local identifiability"
     trbasis = Array{fmpq_mpoly, 1}()
-    runtime = @elapsed local_result = assess_local_identifiability(
+    runtime = @elapsed local_result = _assess_local_identifiability(
         ode,
         funcs_to_check = funcs_to_check,
         p = p_loc,
         type = :SE,
         trbasis = trbasis,
     )
-    @info "Local identifiability assessed in $runtime seconds"
+    @debug "Local identifiability assessed in $runtime seconds"
     @debug "Trasncendence basis to be specialized is $trbasis"
-    _runtime_logger[:loc_time] = runtime
+    # _runtime_logger[:loc_time] = runtime
 
     loc_id = [local_result[each] for each in funcs_to_check]
     locally_identifiable = Array{Any, 1}()
@@ -153,18 +167,37 @@ function assess_identifiability(
 end
 
 """
-    assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], p = 0.99)
+    assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], p = 0.99, loglevel=Logging.Info)
 
 Input:
 - `ode` - the ModelingToolkit.ODESystem object that defines the model
 - `measured_quantities` - the output functions of the model
 - `funcs_to_check` - functions of parameters for which to check the identifiability
 - `p` - probability of correctness.
+- `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
 Assesses identifiability (both local and global) of a given ODE model (parameters detected automatically). The result is guaranteed to be correct with the probability
 at least `p`.
 """
 function assess_identifiability(
+    ode::ModelingToolkit.ODESystem;
+    measured_quantities = Array{ModelingToolkit.Equation}[],
+    funcs_to_check = [],
+    p = 0.99,
+    loglevel = Logging.Info,
+)
+    restart_logging(loglevel = loglevel)
+    with_logger(_si_logger[]) do
+        return _assess_identifiability(
+            ode,
+            measured_quantities = measured_quantities,
+            funcs_to_check = funcs_to_check,
+            p = p,
+        )
+    end
+end
+
+function _assess_identifiability(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = [],
@@ -181,7 +214,7 @@ function assess_identifiability(
     end
     funcs_to_check_ = [eval_at_nemo(each, conversion) for each in funcs_to_check]
 
-    result = assess_identifiability(ode, funcs_to_check = funcs_to_check_, p = p)
+    result = _assess_identifiability(ode, funcs_to_check = funcs_to_check_, p = p)
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     return out_dict

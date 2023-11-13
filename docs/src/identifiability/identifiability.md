@@ -12,12 +12,6 @@ assess_identifiability
 assess_local_identifiability
 ```
 
-## Assessing Global Identifiability
-
-```@docs
-assess_global_identifiability
-```
-
 ## Finding Identifiable Functions
 
 ```@docs

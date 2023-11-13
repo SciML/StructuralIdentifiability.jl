@@ -169,11 +169,11 @@ function check_constructive_field_membership(
     end
     sat_string = gen_tag_name("Sat")
     @debug """
-    Tags:
-    $(join(map(x -> string(x[1]) * " -> " * string(x[2]),  zip(fracs_gen, tag_strings)), "\t\n"))
-    Saturation tag:
-    $sat_string
-    """
+Tags:
+$(join(map(x -> string(x[1]) * " -> " * string(x[2]),  zip(fracs_gen, tag_strings)), "\t\n"))
+Saturation tag:
+$sat_string
+"""
     poly_ring_tag, vars_tag = PolynomialRing(K, vcat(sat_string, orig_strings, tag_strings))
     sat_var = vars_tag[1]
     orig_vars = vars_tag[2:(nvars(poly_ring) + 1)]
@@ -203,7 +203,12 @@ function check_constructive_field_membership(
     $tagged_mqs
     Monom ordering:
     $(ord)"""
-    tagged_mqs_gb = groebner(tagged_mqs, ordering = ord, homogenize = :no)
+    tagged_mqs_gb = groebner(
+        tagged_mqs,
+        ordering = ord,
+        homogenize = :no,
+        loglevel = _groebner_loglevel[],
+    )
     # Relations between tags in K[T]
     relations_between_tags = filter(
         poly -> isempty(intersect(vars(poly), vcat(sat_var, orig_vars))),
@@ -226,9 +231,9 @@ function check_constructive_field_membership(
     tag_to_gen = Dict(tags[i] => fracs_gen[i] for i in 1:length(fracs_gen))
     if !isempty(intersect(tag_strings, orig_strings))
         @warn """
-        There is an intersection between the names of the tag variables and the original variables.
-        Tags: $tag_strings
-        Original vars: $orig_strings"""
+    There is an intersection between the names of the tag variables and the original variables.
+    Tags: $tag_strings
+    Original vars: $orig_strings"""
     end
     parametric_ring, _ =
         PolynomialRing(FractionField(ring_of_tags), orig_strings, ordering = :degrevlex)
@@ -464,7 +469,19 @@ Dict{Nemo.QQMPolyRingElem, AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}} w
 Notice that the `new_ode` is fully identifiabile, and has `1` less parameter
 compared to the original one.
 """
-function reparametrize_global(ode::ODE{P}; p = 0.99, seed = 42) where {P}
+function reparametrize_global(
+    ode::ODE{P};
+    p = 0.99,
+    seed = 42,
+    loglevel = Logging.Info,
+) where {P}
+    restart_logging(loglevel = loglevel)
+    with_logger(_si_logger[]) do
+        return _reparametrize_global(ode, p = p, seed = seed)
+    end
+end
+
+function _reparametrize_global(ode::ODE{P}; p = 0.99, seed = 42) where {P}
     Random.seed!(seed)
     id_funcs =
         find_identifiable_functions(ode, with_states = true, simplify = :strong, p = p)

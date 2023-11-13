@@ -143,7 +143,7 @@ end
 
 # ------------------------------------------------------------------------------
 """
-    function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], p::Float64=0.99, type=:SE)
+    function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], p::Float64=0.99, type=:SE, loglevel=Logging.Info)
 
 Input:
 - `ode` - the ODESystem object from ModelingToolkit
@@ -151,6 +151,7 @@ Input:
 - `funcs_to_check` - functions of parameters for which to check identifiability
 - `p` - probability of correctness
 - `type` - identifiability type (`:SE` for single-experiment, `:ME` for multi-experiment)
+- `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
 Output:
 - for `type=:SE`, the result is a dictionary from each parameter to boolean;
@@ -164,6 +165,26 @@ The result is correct with probability at least `p`.
 The return value is a tuple consisting of the array of bools and the number of experiments to be performed.
 """
 function assess_local_identifiability(
+    ode::ModelingToolkit.ODESystem;
+    measured_quantities = Array{ModelingToolkit.Equation}[],
+    funcs_to_check = Array{}[],
+    p::Float64 = 0.99,
+    type = :SE,
+    loglevel = Logging.Info,
+)
+    restart_logging(loglevel = loglevel)
+    with_logger(_si_logger[]) do
+        return _assess_local_identifiability(
+            ode,
+            measured_quantities = measured_quantities,
+            funcs_to_check = funcs_to_check,
+            p = p,
+            type = type,
+        )
+    end
+end
+
+@timeit _to function _assess_local_identifiability(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = Array{}[],
@@ -195,7 +216,7 @@ function assess_local_identifiability(
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
 
     if isequal(type, :SE)
-        result = assess_local_identifiability(
+        result = _assess_local_identifiability(
             ode,
             funcs_to_check = funcs_to_check_,
             p = p,
@@ -205,7 +226,7 @@ function assess_local_identifiability(
         out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
         return out_dict
     elseif isequal(type, :ME)
-        result, bd = assess_local_identifiability(
+        result, bd = _assess_local_identifiability(
             ode,
             funcs_to_check = funcs_to_check_,
             p = p,
@@ -219,7 +240,7 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    assess_local_identifiability(ode::ODE{P}; funcs_to_check::Array{<: Any, 1}, p::Float64=0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
+    assess_local_identifiability(ode::ODE{P}; funcs_to_check::Array{<: Any, 1}, p::Float64=0.99, type=:SE, loglevel=Logging.Info) where P <: MPolyElem{Nemo.fmpq}
 
 Checks the local identifiability/observability of the functions in `funcs_to_check`. The result is correct with probability at least `p`.
 
@@ -229,6 +250,27 @@ Call this function if you have a specific collection of parameters of which you 
 If the type is `:ME`, states are not allowed to appear in the `funcs_to_check`.
 """
 function assess_local_identifiability(
+    ode::ODE{P};
+    funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
+    p::Float64 = 0.99,
+    type = :SE,
+    trbasis = nothing,
+    loglevel = Logging.Info,
+) where {P <: MPolyElem{Nemo.fmpq}}
+    restart_logging(loglevel = loglevel)
+    reset_timings()
+    with_logger(_si_logger[]) do
+        return _assess_local_identifiability(
+            ode,
+            funcs_to_check = funcs_to_check,
+            p = p,
+            type = type,
+            trbasis = trbasis,
+        )
+    end
+end
+
+function _assess_local_identifiability(
     ode::ODE{P};
     funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
     p::Float64 = 0.99,

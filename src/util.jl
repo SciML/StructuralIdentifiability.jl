@@ -168,10 +168,8 @@ function make_substitution(
 
     result = 0
     @debug "Substitution in a polynomial of degree $d"
-    flush(stdout)
     for i in 0:d
         @debug "\t Degree $i"
-        flush(stdout)
         result += coeff(f, [var_sub], [i]) * (val_numer^i) * (val_denom^(d - i))
         @debug "\t Intermediate result of size $(length(result))"
     end
@@ -313,9 +311,7 @@ function uncertain_factorization(f::MPolyElem{fmpq})
     mainvar_coeffs = [coeff(f, [main_var], [i]) for i in 0:d]
     gcd_coef = mainvar_coeffs[end]
     for i in d:-1:1
-        #@info "Degrees $(total_degree(gcd_coef)) and $(total_degree(mainvar_coeffs[i]))"
         gcd_coef = gcd(gcd_coef, mainvar_coeffs[i])
-        #@info "Time $tm and new degree $(total_degree(gcd_coef))"
     end
     f = divexact(f, gcd_coef)
 
@@ -334,7 +330,6 @@ function uncertain_factorization(f::MPolyElem{fmpq})
                 f = divexact(f, factor_out)
                 f_uni = divexact(f_uni, gcd(f_uni, derivative(f_uni)))
             end
-            # end
             is_irr = Nemo.isirreducible(f_uni)
             break
         end

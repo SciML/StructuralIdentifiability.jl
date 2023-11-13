@@ -1,10 +1,5 @@
 # Lotka-Volterra model
-using Logging
-
 using StructuralIdentifiability
-
-logger = Logging.SimpleLogger(stdout, Logging.Debug)
-global_logger(logger)
 
 ode = @ODEmodel(
     x1'(t) = a * x1(t) - b * x1(t) * x2(t) + u(t),
@@ -12,4 +7,8 @@ ode = @ODEmodel(
     y(t) = x1(t)
 )
 
-@time println(assess_identifiability(ode))
+println(assess_identifiability(ode))
+
+# Not everything is identifiable, so we may wonder what are the identifiable functions
+
+println(find_identifiable_functions(ode, with_states = true))

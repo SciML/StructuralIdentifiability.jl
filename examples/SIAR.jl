@@ -1,11 +1,9 @@
 # SIAR model
-# https://arxiv.org/pdf/2012.00443.pdf
-using Logging
-
+# L. Gallo, M.Frasca, V. Latora, G. Russo
+# Lack of practical identifiability may hamper reliable predictions in COVID-19 epidemic models
+# Science Advances, DOI: 10.1126/sciadv.abg5234
+# Equation (21)
 using StructuralIdentifiability
-
-logger = Logging.SimpleLogger(stdout, Logging.Info)
-global_logger(logger)
 
 ode = @ODEmodel(
     S'(t) =
@@ -28,4 +26,4 @@ ode = @ODEmodel(
     y5(t) = Ninv
 )
 
-@time println(assess_identifiability(ode))
+println(find_identifiable_functions(ode, funcs_to_check = ode.parameters))

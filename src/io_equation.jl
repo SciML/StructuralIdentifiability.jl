@@ -101,7 +101,7 @@ Output:
 - generic point generator for the model (including the derivatives; mostly for testing)
 - an extra projection (if `extra_projection` was provided)
 """
-function find_ioprojections(
+@timeit _to function find_ioprojections(
     ode::ODE{P},
     auto_var_change::Bool,
     extra_projection = nothing,
@@ -160,6 +160,7 @@ function find_ioprojections(
         @debug "Current degrees of io-equations $var_degs"
         @debug "Orders: $y_orders"
         @debug "Sizes: $(Dict(y => length(eq) for (y, eq) in y_equations))"
+        flush(_si_logger[].stream)
 
         # choosing the output to prolong
         outputs_with_scores = [
@@ -175,22 +176,18 @@ function find_ioprojections(
         y_prolong = sort(outputs_with_scores)[1][end]
         y_orders[y_prolong] += 1
         @debug "Prolonging output $y_prolong"
-        flush(stdout)
 
         # Calculate the Lie derivative of the io_relation
         @debug "Prolonging"
-        flush(stdout)
         next_y_equation = diff_poly(y_equations[y_prolong], derivation)
         for (x, eq) in x_equations
             @debug "Eliminating the derivative of $x"
-            flush(stdout)
             next_y_equation =
                 eliminate_var(eq, next_y_equation, derivation[x], point_generator)
         end
         for (y, eq) in y_equations
             if y != y_prolong
                 @debug "Eliminating the leader of the equation for $y"
-                flush(stdout)
                 # an ugly way of gettin the leader, to replace
                 next_y_equation = eliminate_var(
                     next_y_equation,
@@ -209,7 +206,6 @@ function find_ioprojections(
         var_elim_deg, var_elim = our_choice[1], our_choice[3]
 
         @debug "Elimination of $var_elim, $(length(x_equations)) left"
-        flush(stdout)
 
         # Possible variable change for Axy + Bx + p(y) (x = var_elim)
         if auto_var_change && (var_elim_deg == 1)
@@ -221,7 +217,6 @@ function find_ioprojections(
                     if isempty(filter!(v -> (v in keys(x_equations)), vars(A))) && (B != 0) # && (length(coeffs(A))==1)
                         # variable change x_i' --> x_i' - (B/A)', x_i --> x_i - B/A
                         @debug "\t Applying variable change: $(x) --> $(x) - ( $B )/( $A )"
-                        flush(stdout)
                         dB = diff_poly(B, derivation)
                         dA = diff_poly(A, derivation)
                         numer_d, denom_d = simplify_frac(A * dB - dA * B, A * A)
@@ -237,7 +232,6 @@ function find_ioprojections(
 
                         # Change current system
                         @debug "Change in the system"
-                        flush(stdout)
                         x_equations[x] = make_substitution(
                             x_equations[x],
                             derivation[x],
@@ -246,28 +240,22 @@ function find_ioprojections(
                         )
                         for xx in keys(x_equations)
                             @debug "\t Change in the equation for $xx"
-                            flush(stdout)
                             x_equations[xx] =
                                 make_substitution(x_equations[xx], x, A * x - B, A)
                         end
                         @debug "Change in the outputs"
-                        flush(stdout)
                         for y in keys(y_equations)
                             @debug "\t Change in the output $y"
-                            flush(stdout)
                             y_equations[y] =
                                 make_substitution(y_equations[y], x, A * x - B, A)
                         end
                         @debug "\t Change in the prolonged equation"
-                        flush(stdout)
                         next_y_equation =
                             make_substitution(next_y_equation, x, A * x - B, A)
                         # recalibrate system
                         @debug "Unmixing the derivatives"
-                        flush(stdout)
                         for xx in setdiff(keys(x_equations), [x])
                             @debug "\t Unmixing $xx"
-                            flush(stdout)
                             x_equations[x] = eliminate_var(
                                 x_equations[x],
                                 x_equations[xx],
@@ -280,7 +268,6 @@ function find_ioprojections(
                         projection_equation =
                             make_substitution(projection_equation, x, A * x - B, A)
                         @debug "Change of variables performed"
-                        flush(stdout)
                         break
                     end
                 end
@@ -290,19 +277,15 @@ function find_ioprojections(
         # Eliminate var_elim from the system
         delete!(x_equations, var_elim)
         @debug "Elimination in states"
-        flush(stdout)
         for (x, eq) in x_equations
             @debug "\t Elimination in the equation for $x"
-            flush(stdout)
             x_equations[x] =
                 eliminate_var(eq, y_equations[y_prolong], var_elim, point_generator)
         end
         @debug "Elimination in y_equations"
-        flush(stdout)
         for y in keys(y_equations)
             if y != y_prolong
                 @debug "Elimination in the output $y"
-                flush(stdout)
                 y_equations[y] = eliminate_var(
                     y_equations[y],
                     y_equations[y_prolong],
@@ -319,14 +302,12 @@ function find_ioprojections(
             point_generator,
         )
         @debug "\t Elimination in the prolonged equation"
-        flush(stdout)
         y_equations[y_prolong] = eliminate_var(
             y_equations[y_prolong],
             next_y_equation,
             var_elim,
             point_generator,
         )
-        flush(stdout)
     end
 
     io_projections = Dict(
@@ -350,14 +331,16 @@ Finds the input-output equations of an ODE system
 Input:
 - `ode` - the ODE system
 - `var_change_policy` - whether to perform automatic variable change, can be one of `:default`, `:yes`, `:no`
+- `loglevel` - logging level (default: Logging.Info)
 
 Output:
 - a dictionary from “leaders” to the corresponding input-output equations; if an extra projection is needed,
   it will be the value corresponding to `rand_proj_var`
 """
-function find_ioequations(
+@timeit _to function find_ioequations(
     ode::ODE{P};
     var_change_policy = :default,
+    loglevel = Logging.Info,
 ) where {P <: MPolyElem{<:FieldElem}}
     # Setting the var_change policy
     if (var_change_policy == :yes) ||

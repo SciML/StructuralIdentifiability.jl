@@ -458,14 +458,20 @@ macro ODEmodel(ex::Expr...)
             )
         end
     end
-    logging_exprs = [
-        :(@info "Summary of the model:"),
-        :(@info "State variables: " * $(join(map(string, collect(x_vars)), ", "))),
-        :(@info "Parameters: " * $(join(map(string, collect(params)), ", "))),
-        :(@info "Inputs: " * $(join(map(string, collect(u_vars)), ", "))),
-        :(@info "Outputs: " * $(join(map(string, collect(y_vars)), ", "))),
-    ]
 
+    logging_exprs = [
+        :(
+            StructuralIdentifiability.Logging.with_logger(
+                StructuralIdentifiability._si_logger[],
+            ) do
+                @info "Summary of the model:"
+                @info "State variables: " * $(join(map(string, collect(x_vars)), ", "))
+                @info "Parameters: " * $(join(map(string, collect(params)), ", "))
+                @info "Inputs: " * $(join(map(string, collect(u_vars)), ", "))
+                @info "Outputs: " * $(join(map(string, collect(y_vars)), ", "))
+            end
+        ),
+    ]
     # creating the ode object
     ode_expr = :(StructuralIdentifiability.ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(
         $vx,
@@ -570,7 +576,6 @@ function __preprocess_ode(
     de::ModelingToolkit.AbstractTimeDependentSystem,
     measured_quantities::Array{<:Tuple{String, <:SymbolicUtils.BasicSymbolic}},
 )
-    @info "Preproccessing `ModelingToolkit.AbstractTimeDependentSystem` object"
     polytype = StructuralIdentifiability.Nemo.fmpq_mpoly
     fractype = StructuralIdentifiability.Nemo.Generic.Frac{polytype}
     diff_eqs =

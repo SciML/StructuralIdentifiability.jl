@@ -40,4 +40,7 @@ By default, `find_identifiable_functions` tries to simplify the output functions
 the degree of simplification. The default value is `:standard` but one could use `:strong` to try to simplify further
 (at the expense of heavier computation) or use `:weak` to simplify less (but compute faster).
 
+As `assess_identifiability` and `assess_local_identifiability`, `find_identifiable_functions` accepts an optional parameter `loglevel` (default: `Logging.Info`)
+to adjust the verbosity of logging.
+
 [^1]: > Y. Lecourtier, F. Lamnabhi-Lagarrigue, and E. Walter, [*A method to prove that nonlinear models can be unidentifiable*](https://doi.org/10.1109/CDC.1987.272467), Proceedings of the 26th Conference on Decision and Control, December 1987, 2144-2145;
