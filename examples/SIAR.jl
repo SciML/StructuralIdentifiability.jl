@@ -26,4 +26,4 @@ ode = @ODEmodel(
     y5(t) = Ninv
 )
 
-@time println(assess_identifiability(ode))
+println(find_identifiable_functions(ode, funcs_to_check = ode.parameters))
