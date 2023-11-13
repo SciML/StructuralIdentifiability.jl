@@ -42,7 +42,7 @@ function restart_logging(; loglevel = Logging.Info)
         _runtime_logger[r] = 0
     end
     if loglevel < Logging.Info
-        _groebner_loglevel[] = -2
+        _groebner_loglevel[] = 0
     elseif loglevel < Logging.Warn
         _groebner_loglevel[] = 0
     else
