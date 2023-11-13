@@ -2,12 +2,7 @@
 # An iterative identification procedure for dynamic modeling of biochemical networks
 # https://doi.org/10.1186/1752-0509-4-11
 # The model is out of reach at the moment but can be analyzed by SIAN (https://github.com/pogudingleb/SIAN)
-using Logging
-
 using StructuralIdentifiability
-
-logger = Logging.SimpleLogger(stdout, Logging.Info)
-global_logger(logger)
 
 ode = @ODEmodel(
     x1'(t) = k_prod - k_deg * x1(t) - k1 * x1(t) * u(t),

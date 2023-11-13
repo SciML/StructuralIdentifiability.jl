@@ -1,10 +1,4 @@
-using Logging
-
 using StructuralIdentifiability
-
-#QWWC
-logger = Logging.SimpleLogger(stdout, Logging.Debug)
-global_logger(logger)
 
 ode = @ODEmodel(
     x'(t) = a * (y(t) - x(t)) + y(t) * z(t),

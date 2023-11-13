@@ -2,12 +2,7 @@
 # Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models
 # https://doi.org/10.1186/s12976-018-0097-6
 # Model 2
-using Logging
-
 using StructuralIdentifiability
-
-logger = Logging.SimpleLogger(stdout, Logging.Debug)
-global_logger(logger)
 
 ode = @ODEmodel(
     S'(t) = -b * S(t) * (I(t) + J(t) + q * A(t)) * Ninv,
@@ -20,4 +15,8 @@ ode = @ODEmodel(
     y2(t) = Ninv
 )
 
-@time println(assess_global_identifiability(ode))
+println(assess_identifiability(ode))
+
+# Not everything is identifiable, so we may wonder what are the identifiable functions
+
+println(find_identifiable_functions(ode, with_states = true))

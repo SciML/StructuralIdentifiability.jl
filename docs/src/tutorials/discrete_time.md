@@ -74,8 +74,6 @@ assess_local_identifiability(sir; measured_quantities = [I], funcs_to_check = [Î
 As other main functions in the package, `assess_local_identifiability` accepts an optional parameter `loglevel` (default: `Logging.Info`)
 to adjust the verbosity of logging.
 
-
-
 The implementation is based on a version of the observability rank criterion and will be described in a forthcoming paper.
 
 [^1]: > S. NÃµmm, C. Moog, [*Identifiability of discrete-time nonlinear systems*](https://doi.org/10.1016/S1474-6670(17)31245-4), IFAC Proceedings Volumes, 2004.
