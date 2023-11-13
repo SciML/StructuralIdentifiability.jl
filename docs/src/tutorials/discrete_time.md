@@ -71,6 +71,11 @@ assess_local_identifiability(sir; measured_quantities = [I], funcs_to_check = [Î
     principle it may produce incorrect result but the probability of correctness of the returned result is guaranteed to be at least `p`
     (in fact, the employed bounds are quite conservative, so in practice incorrect result is almost never produced).
 
+As other main functions in the package, `assess_local_identifiability` accepts an optional parameter `loglevel` (default: `Logging.Info`)
+to adjust the verbosity of logging.
+
+
+
 The implementation is based on a version of the observability rank criterion and will be described in a forthcoming paper.
 
 [^1]: > S. NÃµmm, C. Moog, [*Identifiability of discrete-time nonlinear systems*](https://doi.org/10.1016/S1474-6670(17)31245-4), IFAC Proceedings Volumes, 2004.

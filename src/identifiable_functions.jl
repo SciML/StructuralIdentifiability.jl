@@ -21,6 +21,7 @@ This functions takes the following optional arguments:
 - `p`: A float in the range from 0 to 1, the probability of correctness. Default
   is `0.99`.
 - `seed`: The rng seed. Default value is `42`.
+- `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
 ## Example
 

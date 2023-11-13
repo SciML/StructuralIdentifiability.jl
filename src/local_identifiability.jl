@@ -143,7 +143,7 @@ end
 
 # ------------------------------------------------------------------------------
 """
-    function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], p::Float64=0.99, type=:SE)
+    function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], p::Float64=0.99, type=:SE, loglevel=Logging.Info)
 
 Input:
 - `ode` - the ODESystem object from ModelingToolkit
@@ -151,6 +151,7 @@ Input:
 - `funcs_to_check` - functions of parameters for which to check identifiability
 - `p` - probability of correctness
 - `type` - identifiability type (`:SE` for single-experiment, `:ME` for multi-experiment)
+- `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
 Output:
 - for `type=:SE`, the result is a dictionary from each parameter to boolean;
@@ -239,7 +240,7 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    assess_local_identifiability(ode::ODE{P}; funcs_to_check::Array{<: Any, 1}, p::Float64=0.99, type=:SE) where P <: MPolyElem{Nemo.fmpq}
+    assess_local_identifiability(ode::ODE{P}; funcs_to_check::Array{<: Any, 1}, p::Float64=0.99, type=:SE, loglevel=Logging.Info) where P <: MPolyElem{Nemo.fmpq}
 
 Checks the local identifiability/observability of the functions in `funcs_to_check`. The result is correct with probability at least `p`.
 

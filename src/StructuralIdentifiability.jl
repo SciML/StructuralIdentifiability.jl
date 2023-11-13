@@ -82,14 +82,15 @@ function __init__()
 end
 
 """
-    assess_identifiability(ode; funcs_to_check = [], p=0.99)
+    assess_identifiability(ode; funcs_to_check = [], p=0.99, loglevel=Logging.Info)
 
 Input:
 - `ode` - the ODE model
 - `funcs_to_check` - list of functions to check identifiability for; if empty, all parameters
    and states are taken
 - `p` - probability of correctness.
-    
+- `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
+
 Assesses identifiability of a given ODE model. The result is guaranteed to be correct with the probability
 at least `p`.
 The function returns a dictionary from the functions to check to their identifiability properties 
@@ -166,13 +167,14 @@ function _assess_identifiability(
 end
 
 """
-    assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], p = 0.99)
+    assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], p = 0.99, loglevel=Logging.Info)
 
 Input:
 - `ode` - the ModelingToolkit.ODESystem object that defines the model
 - `measured_quantities` - the output functions of the model
 - `funcs_to_check` - functions of parameters for which to check the identifiability
 - `p` - probability of correctness.
+- `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
 Assesses identifiability (both local and global) of a given ODE model (parameters detected automatically). The result is guaranteed to be correct with the probability
 at least `p`.
