@@ -8,4 +8,4 @@ ode = @ODEmodel(
     y2(t) = x2(t)
 )
 
-@time println(assess_identifiability(ode))
+println(assess_identifiability(ode))

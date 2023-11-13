@@ -83,8 +83,12 @@ identifiable functions of parameters only
     y_to_ord = Dict{P, Int}()
     ynames = [var_to_str(y) for y in ode.y_vars]
     for (leader, ioeq) in io_equations
-        (y_str, ord) = decompose_derivative(var_to_str(leader), ynames)
-        y_to_ord[str_to_var(y_str, parent(ode))] = ord
+        decomposition = decompose_derivative(var_to_str(leader), ynames)
+        # decomposition will be `nothing` for extra random projection
+        if !isnothing(decomposition)
+            (y_str, ord) = decomposition
+            y_to_ord[str_to_var(y_str, parent(ode))] = ord
+        end
     end
 
     result = Array{Generic.Frac{P}, 1}()
