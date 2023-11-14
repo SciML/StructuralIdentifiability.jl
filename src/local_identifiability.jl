@@ -212,7 +212,7 @@ end
             [e for e in ModelingToolkit.states(ode) if !ModelingToolkit.isoutput(e)],
         )
     end
-    ode, conversion = preprocess_ode(ode, measured_quantities)
+    ode, conversion = mtk_to_si(ode, measured_quantities)
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
 
     if isequal(type, :SE)

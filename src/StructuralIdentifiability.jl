@@ -23,7 +23,7 @@ ParamPunPam.enable_progressbar(false)
 using ModelingToolkit
 
 # defining a model
-export ODE, @ODEmodel, preprocess_ode
+export ODE, @ODEmodel, mtk_to_si
 
 # assessing identifiability
 export assess_local_identifiability, assess_identifiability
@@ -207,7 +207,7 @@ function _assess_identifiability(
         measured_quantities = get_measured_quantities(ode)
     end
 
-    ode, conversion = preprocess_ode(ode, measured_quantities)
+    ode, conversion = mtk_to_si(ode, measured_quantities)
     conversion_back = Dict(v => k for (k, v) in conversion)
     if isempty(funcs_to_check)
         funcs_to_check = [conversion_back[x] for x in [ode.parameters..., ode.x_vars...]]
