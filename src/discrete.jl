@@ -331,8 +331,8 @@ function assess_local_identifiability(
     dds_aux, conversion = mtk_to_si(dds, measured_quantities)
     if length(funcs_to_check) == 0
         funcs_to_check = vcat(
-            parameters(dds),
             [x for x in states(dds) if conversion[x] in dds_aux.x_vars],
+            parameters(dds),
         )
     end
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
