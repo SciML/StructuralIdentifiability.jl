@@ -7,7 +7,7 @@
         cases,
         Dict(
             :dds => dds,
-            :res => Dict(a => true, b => false, c => false, b + c => true),
+            :res => OrderedDict(a => true, b => false, c => false, b + c => true),
             :known => :none,
         ),
     )
@@ -16,7 +16,7 @@
         cases,
         Dict(
             :dds => dds,
-            :res => Dict(a => true, b => false, c => false, b + c => true),
+            :res => OrderedDict(a => true, b => false, c => false, b + c => true),
             :known => :all,
         ),
     )
@@ -29,7 +29,7 @@
         cases,
         Dict(
             :dds => dds,
-            :res => Dict(
+            :res => OrderedDict(
                 b => true,
                 a => false,
                 c => false,
@@ -45,7 +45,7 @@
         cases,
         Dict(
             :dds => dds,
-            :res => Dict(b => true, a => true, c => true, d => true),
+            :res => OrderedDict(b => true, a => true, c => true, d => true),
             :known => [a],
         ),
     )
@@ -54,7 +54,7 @@
         cases,
         Dict(
             :dds => dds,
-            :res => Dict(b => true, a => true, c => true, d => true),
+            :res => OrderedDict(b => true, a => true, c => true, d => true),
             :known => :all,
         ),
     )
@@ -64,7 +64,10 @@
     # Example 4 from https://doi.org/10.1016/j.automatica.2016.01.054
     dds = @ODEmodel(x'(t) = theta^3 * x(t), y(t) = x(t))
 
-    push!(cases, Dict(:dds => dds, :res => Dict(theta => true, x => true), :known => :none))
+    push!(
+        cases,
+        OrderedDict(:dds => dds, :res => Dict(theta => true, x => true), :known => :none),
+    )
 
     # -------------------
 

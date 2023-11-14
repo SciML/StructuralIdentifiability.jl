@@ -164,7 +164,7 @@ end
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => (Dict(funcs_to_test .=> correct), 1),
+            :correct => (OrderedDict(funcs_to_test .=> correct), 1),
         ),
     )
 
@@ -179,7 +179,7 @@ end
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => (Dict(funcs_to_test .=> correct), 2),
+            :correct => (OrderedDict(funcs_to_test .=> correct), 2),
         ),
     )
 
@@ -196,7 +196,7 @@ end
         y3(t) = N
     )
     funcs_to_test = [b, nu, d, a]
-    correct = Dict([b => true, nu => true, d => true, a => true])
+    correct = OrderedDict([b => true, nu => true, d => true, a => true])
     push!(test_cases, Dict(:ode => ode, :funcs => funcs_to_test, :correct => (correct, 1)))
 
     #--------------------------------------------------------------------------
@@ -204,7 +204,7 @@ end
     # example with 0 replicas required
     ode = @ODEmodel(x'(t) = a * z(t), z'(t) = a * z(t)^2, y(t) = x(t))
     funcs_to_test = [a]
-    correct = Dict([a => false])
+    correct = OrderedDict([a => false])
     push!(test_cases, Dict(:ode => ode, :funcs => funcs_to_test, :correct => (correct, 0)))
 
     #--------------------------------------------------------------------------

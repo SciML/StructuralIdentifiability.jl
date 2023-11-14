@@ -267,7 +267,7 @@ function _assess_local_identifiability_discrete(
 
     @debug "Computing the result"
     base_rank = LinearAlgebra.rank(Jac)
-    result = Dict{Any, Bool}()
+    result = OrderedDict{Any, Bool}()
     for i in 1:length(funcs_to_check)
         for (k, p) in enumerate(dds_ext.parameters)
             Jac[k, 1] =
@@ -280,7 +280,7 @@ function _assess_local_identifiability_discrete(
         result[funcs_to_check[i]] = LinearAlgebra.rank(Jac) == base_rank
     end
 
-    return Dict(result)
+    return result
 end
 
 # ------------------------------------------------------------------------------
@@ -301,7 +301,7 @@ Input:
 - `p` - probability of correctness
 
 Output:
-- the result is a dictionary from each function to to boolean;
+- the result is an (ordered) dictionary from each function to to boolean;
 
 The result is correct with probability at least `p`.
 """
@@ -331,8 +331,8 @@ function assess_local_identifiability(
     dds_aux, conversion = mtk_to_si(dds, measured_quantities)
     if length(funcs_to_check) == 0
         funcs_to_check = vcat(
-            parameters(dds),
             [x for x in states(dds) if conversion[x] in dds_aux.x_vars],
+            parameters(dds),
         )
     end
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
@@ -340,7 +340,7 @@ function assess_local_identifiability(
 
     result = _assess_local_identifiability_discrete(dds_aux, funcs_to_check_, known_ic_, p)
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
-    out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
+    out_dict = OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     if length(known_ic) > 0
         @warn "Since known initial conditions were provided, identifiability of states (e.g., `x(t)`) is at t = 0 only !"
     end
