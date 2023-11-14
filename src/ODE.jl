@@ -574,7 +574,7 @@ function preprocess_ode(
     de::ModelingToolkit.AbstractTimeDependentSystem,
     measured_quantities::Array{<:Symbolics.Num},
 )
-    @warn "Function `preprocess_ode` has been renamed to `mtk_to_si`. The old name can be still used but will disappear in the future releases." 
+    @warn "Function `preprocess_ode` has been renamed to `mtk_to_si`. The old name can be still used but will disappear in the future releases."
     return mtk_to_si(de, measured_quantities)
 end
 
@@ -582,7 +582,7 @@ function preprocess_ode(
     de::ModelingToolkit.AbstractTimeDependentSystem,
     measured_quantities::Array{<:SymbolicUtils.BasicSymbolic},
 )
-    @warn "Function `preprocess_ode` has been renamed to `mtk_to_si`. The old name can be still used but will disappear in the future releases." 
+    @warn "Function `preprocess_ode` has been renamed to `mtk_to_si`. The old name can be still used but will disappear in the future releases."
     return mtk_to_si(de, measured_quantities)
 end
 
