@@ -16,17 +16,17 @@ Pkg.add(&quot;StructuralIdentifiability&quot;)</code></pre><h2 id="Citation"><a 
 }</code></pre><h2 id="Feature-Summary"><a class="docs-heading-anchor" href="#Feature-Summary">Feature Summary</a><a id="Feature-Summary-1"></a><a class="docs-heading-anchor-permalink" href="#Feature-Summary" title="Permalink"></a></h2><p><code>StructuralIdentifiability.jl</code> can assess local and global identifiability of ODE models. In addition to these straightforward identifiability queries on individual parameters, the package can distinguish between single- and multi-experiment identifiability.</p><h2 id="Feature-List"><a class="docs-heading-anchor" href="#Feature-List">Feature List</a><a id="Feature-List-1"></a><a class="docs-heading-anchor-permalink" href="#Feature-List" title="Permalink"></a></h2><ul><li>Local identifiability checks</li><li>Global identifiability checks</li><li>Assessment of identifiable functions of parameters and states</li><li>Model reparametrization (experimental)</li></ul><h2 id="Contributing"><a class="docs-heading-anchor" href="#Contributing">Contributing</a><a id="Contributing-1"></a><a class="docs-heading-anchor-permalink" href="#Contributing" title="Permalink"></a></h2><ul><li><p>Please refer to the <a href="https://github.com/SciML/ColPrac/blob/master/README.md">SciML ColPrac: Contributor&#39;s Guide on Collaborative Practices for Community Packages</a> for guidance on PRs, issues, and other matters relating to contributing to StructuralIdentifiability.</p></li><li><p>There are a few community forums:</p><ul><li>The #diffeq-bridged channel in the <a href="https://julialang.org/slack/">Julia Slack</a></li><li><a href="https://gitter.im/JuliaDiffEq/Lobby">JuliaDiffEq</a> on Gitter</li><li>On the Julia Discourse forums</li><li>See also <a href="https://sciml.ai/community/">SciML Community page</a></li></ul></li></ul><h2 id="Reproducibility"><a class="docs-heading-anchor" href="#Reproducibility">Reproducibility</a><a id="Reproducibility-1"></a><a class="docs-heading-anchor-permalink" href="#Reproducibility" title="Permalink"></a></h2><details><summary>The documentation of this SciML package was built using these direct dependencies,</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl/docs/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.2
   [e30172f5] Documenter v1.1.2
-  [961ee093] ModelingToolkit v8.72.2
+  [961ee093] ModelingToolkit v8.73.0
   [220ca800] StructuralIdentifiability v0.4.15 `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.9.3
 Commit bed2cd540a1 (2023-08-24 14:43 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
-  CPU: 2 × Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz
+  CPU: 2 × Intel(R) Xeon(R) Platinum 8171M CPU @ 2.60GHz
   WORD_SIZE: 64
   LIBM: libopenlibm
-  LLVM: libLLVM-14.0.6 (ORCJIT, icelake-server)
+  LLVM: libLLVM-14.0.6 (ORCJIT, skylake-avx512)
   Threads: 1 on 2 virtual cores</code></pre></details><details><summary>A more complete overview of all dependencies and their versions is also provided.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl/docs/Manifest.toml`
   [47edcb42] ADTypes v0.2.4
   [a4c015fc] ANSIColoredPrinters v0.0.1
@@ -124,7 +124,7 @@ Platform Info:
   [d125e4d3] ManualMemory v0.1.8
   [d0879d2d] MarkdownAST v0.1.2
   [e1d29d7a] Missings v1.1.0
-  [961ee093] ModelingToolkit v8.72.2
+  [961ee093] ModelingToolkit v8.73.0
   [46d2c3a1] MuladdMacro v0.2.4
   [102ac46a] MultivariatePolynomials v0.5.2
   [d8a4904e] MutableArithmetics v1.3.3
@@ -135,7 +135,7 @@ Platform Info:
   [8913a72c] NonlinearSolve v2.8.0
   [6fe1bfb0] OffsetArrays v1.12.10
   [bac558e1] OrderedCollections v1.6.2
-  [1dea7af3] OrdinaryDiffEq v6.59.0
+  [1dea7af3] OrdinaryDiffEq v6.59.1
   [90014a1f] PDMats v0.11.29
   [65ce6f38] PackageExtensionCompat v1.0.2
   [3e851597] ParamPunPam v0.2.3
@@ -264,4 +264,4 @@ Platform Info:
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`</code></pre></details>You can also download the 
 <a href="">manifest</a> file and the
-<a href="">project</a> file.</article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/creating_ode/">Creating ODE System »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.2 on <span class="colophon-date" title="Tuesday 14 November 2023 08:44">Tuesday 14 November 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+<a href="">project</a> file.</article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/creating_ode/">Creating ODE System »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.2 on <span class="colophon-date" title="Tuesday 14 November 2023 14:14">Tuesday 14 November 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
