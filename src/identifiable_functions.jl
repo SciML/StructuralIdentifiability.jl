@@ -193,7 +193,7 @@ function _find_identifiable_functions(
     if isempty(measured_quantities)
         measured_quantities = get_measured_quantities(ode)
     end
-    ode, conversion = preprocess_ode(ode, measured_quantities)
+    ode, conversion = mtk_to_si(ode, measured_quantities)
     result = _find_identifiable_functions(
         ode,
         simplify = simplify,

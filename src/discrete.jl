@@ -328,7 +328,7 @@ function assess_local_identifiability(
         end
     end
 
-    dds_aux, conversion = preprocess_ode(dds, measured_quantities)
+    dds_aux, conversion = mtk_to_si(dds, measured_quantities)
     if length(funcs_to_check) == 0
         funcs_to_check = vcat(
             parameters(dds),

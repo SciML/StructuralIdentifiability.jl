@@ -520,8 +520,8 @@ end
 
 #------------------------------------------------------------------------------
 """
-    function preprocess_ode(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{ModelingToolkit.Equation})
-    function preprocess_ode(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{SymbolicUtils.BasicSymbolic})
+    function mtk_to_si(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{ModelingToolkit.Equation})
+    function mtk_to_si(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{SymbolicUtils.BasicSymbolic})
 
 Input:
 - `de` - ModelingToolkit.AbstractTimeDependentSystem, a system for identifiability query
@@ -532,36 +532,63 @@ Output:
 - `conversion` dictionary from the symbols in the input MTK model to the variable
   involved in the produced `ODE` object
 """
+function mtk_to_si(
+    de::ModelingToolkit.AbstractTimeDependentSystem,
+    measured_quantities::Array{ModelingToolkit.Equation},
+)
+    return __mtk_to_si(
+        de,
+        [(replace(string(e.lhs), "(t)" => ""), e.rhs) for e in measured_quantities],
+    )
+end
+
+function mtk_to_si(
+    de::ModelingToolkit.AbstractTimeDependentSystem,
+    measured_quantities::Array{<:Symbolics.Num},
+)
+    return __mtk_to_si(
+        de,
+        [("y$i", Symbolics.value(e)) for (i, e) in enumerate(measured_quantities)],
+    )
+end
+
+function mtk_to_si(
+    de::ModelingToolkit.AbstractTimeDependentSystem,
+    measured_quantities::Array{<:SymbolicUtils.BasicSymbolic},
+)
+    return __mtk_to_si(de, [("y$i", e) for (i, e) in enumerate(measured_quantities)])
+end
+
+#------------------------------------------------------------------------------
+# old name kept for compatibility purposes
+
 function preprocess_ode(
     de::ModelingToolkit.AbstractTimeDependentSystem,
     measured_quantities::Array{ModelingToolkit.Equation},
 )
-    return __preprocess_ode(
-        de,
-        [(replace(string(e.lhs), "(t)" => ""), e.rhs) for e in measured_quantities],
-    )
+    @warn "Function `preprocess_ode` has been renamed to `mtk_to_si`. The old name can be still used but will disappear in the future releases."
+    return mtk_to_si(de, measured_quantities)
 end
 
 function preprocess_ode(
     de::ModelingToolkit.AbstractTimeDependentSystem,
     measured_quantities::Array{<:Symbolics.Num},
 )
-    return __preprocess_ode(
-        de,
-        [("y$i", Symbolics.value(e)) for (i, e) in enumerate(measured_quantities)],
-    )
+    @warn "Function `preprocess_ode` has been renamed to `mtk_to_si`. The old name can be still used but will disappear in the future releases."
+    return mtk_to_si(de, measured_quantities)
 end
 
 function preprocess_ode(
     de::ModelingToolkit.AbstractTimeDependentSystem,
     measured_quantities::Array{<:SymbolicUtils.BasicSymbolic},
 )
-    return __preprocess_ode(de, [("y$i", e) for (i, e) in enumerate(measured_quantities)])
+    @warn "Function `preprocess_ode` has been renamed to `mtk_to_si`. The old name can be still used but will disappear in the future releases."
+    return mtk_to_si(de, measured_quantities)
 end
 
 #------------------------------------------------------------------------------
 """
-    function __preprocess_ode(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{Tuple{String, SymbolicUtils.BasicSymbolic}})
+    function __mtk_to_si(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{Tuple{String, SymbolicUtils.BasicSymbolic}})
 
 Input:
 - `de` - ModelingToolkit.AbstractTimeDependentSystem, a system for identifiability query
@@ -572,7 +599,7 @@ Output:
 - `conversion` dictionary from the symbols in the input MTK model to the variable
   involved in the produced `ODE` object
 """
-function __preprocess_ode(
+function __mtk_to_si(
     de::ModelingToolkit.AbstractTimeDependentSystem,
     measured_quantities::Array{<:Tuple{String, <:SymbolicUtils.BasicSymbolic}},
 )
