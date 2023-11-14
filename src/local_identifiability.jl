@@ -154,7 +154,7 @@ Input:
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
 Output:
-- for `type=:SE`, the result is a dictionary from each parameter to boolean;
+- for `type=:SE`, the result is an (ordered) dictionary from each parameter to boolean;
 - for `type=:ME`, the result is a tuple with the dictionary as in `:SE` case and array of number of experiments.
 
 The function determines local identifiability of parameters in `funcs_to_check` or all possible parameters if `funcs_to_check` is empty
@@ -208,8 +208,8 @@ end
     end
     if length(funcs_to_check) == 0
         funcs_to_check = vcat(
-            ModelingToolkit.parameters(ode),
             [e for e in ModelingToolkit.states(ode) if !ModelingToolkit.isoutput(e)],
+            ModelingToolkit.parameters(ode),
         )
     end
     ode, conversion = mtk_to_si(ode, measured_quantities)
@@ -223,7 +223,8 @@ end
             type = type,
         )
         nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
-        out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
+        out_dict =
+            OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
         return out_dict
     elseif isequal(type, :ME)
         result, bd = _assess_local_identifiability(
@@ -233,7 +234,8 @@ end
             type = type,
         )
         nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
-        out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
+        out_dict =
+            OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
         return (out_dict, bd)
     end
 end
@@ -280,7 +282,7 @@ function _assess_local_identifiability(
     if isempty(funcs_to_check)
         funcs_to_check = ode.parameters
         if type == :SE
-            funcs_to_check = vcat(funcs_to_check, ode.x_vars)
+            funcs_to_check = vcat(ode.x_vars, ode.parameters)
         end
     end
 
@@ -440,7 +442,7 @@ function _assess_local_identifiability(
 
     @debug "Computing the result"
     base_rank = LinearAlgebra.rank(Jac)
-    result = Dict{Any, Bool}()
+    result = OrderedDict{Any, Bool}()
     for i in 1:length(funcs_to_check)
         for (k, p) in enumerate(ode_red.parameters)
             Jac[k, 1] =
@@ -459,9 +461,9 @@ function _assess_local_identifiability(
     # NB: the Jac contains now the derivatives of the last from `funcs_to_check`
 
     if type == :SE
-        return Dict(result)
+        return result
     end
-    return (Dict(result), num_exp)
+    return (result, num_exp)
 end
 
 # ------------------------------------------------------------------------------

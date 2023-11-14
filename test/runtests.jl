@@ -3,6 +3,7 @@ using StructuralIdentifiability
 using Test
 using TestSetExtensions
 
+using StructuralIdentifiability.OrderedCollections
 using StructuralIdentifiability.Nemo
 using StructuralIdentifiability.ModelingToolkit
 using StructuralIdentifiability:

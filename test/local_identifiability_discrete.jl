@@ -11,7 +11,7 @@
         cases,
         Dict(
             :dds => sir,
-            :res => Dict(S => true, I => true, R => false, α => true, β => true),
+            :res => OrderedDict(S => true, I => true, R => false, α => true, β => true),
             :y => [y ~ I],
             :y2 => [I],
             :known_ic => Array{}[],
@@ -30,7 +30,7 @@
         cases,
         Dict(
             :dds => eqs,
-            :res => Dict(x => true, θ => true),
+            :res => OrderedDict(x => true, θ => true),
             :y => [y ~ x],
             :y2 => [x],
             :known_ic => Array{}[],
@@ -49,7 +49,7 @@
         cases,
         Dict(
             :dds => eqs,
-            :res => Dict(x1 => true, x2 => true, θ => false, β => false),
+            :res => OrderedDict(x1 => true, x2 => true, θ => false, β => false),
             :y => [y ~ x1],
             :y2 => [x1],
             :known_ic => Array{}[],
@@ -68,8 +68,14 @@
         cases,
         Dict(
             :dds => lv,
-            :res =>
-                Dict(a => true, b => false, c => true, d => true, x1 => true, x2 => false),
+            :res => OrderedDict(
+                x1 => true,
+                x2 => false,
+                a => true,
+                b => false,
+                c => true,
+                d => true,
+            ),
             :y => [y ~ x1],
             :y2 => [x1],
             :known_ic => Array{}[],
@@ -81,7 +87,7 @@
         cases,
         Dict(
             :dds => lv,
-            :res => Dict(b * x2 => true),
+            :res => OrderedDict(b * x2 => true),
             :y => [y ~ x1],
             :y2 => [x1],
             :known_ic => Array{}[],
@@ -93,8 +99,14 @@
         cases,
         Dict(
             :dds => lv,
-            :res =>
-                Dict(a => true, b => true, c => true, d => true, x1 => true, x2 => true),
+            :res => OrderedDict(
+                x1 => true,
+                x2 => true,
+                a => true,
+                b => true,
+                c => true,
+                d => true,
+            ),
             :y => [y ~ x1, y2 ~ x1 / x2],
             :y2 => [x1, x1 / x2],
             :known_ic => Array{}[],
@@ -106,8 +118,14 @@
         cases,
         Dict(
             :dds => lv,
-            :res =>
-                Dict(a => true, b => true, c => true, d => true, x1 => true, x2 => true),
+            :res => OrderedDict(
+                x1 => true,
+                x2 => true,
+                a => true,
+                b => true,
+                c => true,
+                d => true,
+            ),
             :y => [y ~ x1],
             :y2 => [x1],
             :known_ic => [x2],
@@ -127,7 +145,7 @@
         cases,
         Dict(
             :dds => abmd1,
-            :res => Dict(x1 => true, x2 => true, theta1 => true, theta2 => true),
+            :res => OrderedDict(x1 => true, x2 => true, theta1 => true, theta2 => true),
             :y => [y ~ x1],
             :y2 => [x1],
             :known_ic => Array{}[],
@@ -147,12 +165,12 @@
         cases,
         Dict(
             :dds => abmd2,
-            :res => Dict(
+            :res => OrderedDict(
+                x1 => true,
+                x2 => false,
                 theta1 => true,
                 theta2 => false,
                 theta3 => false,
-                x1 => true,
-                x2 => false,
             ),
             :y => [y ~ x1],
             :y2 => [x1],
@@ -165,11 +183,11 @@
         Dict(
             :dds => abmd2,
             :res => Dict(
+                x1 => true,
+                x2 => true,
                 theta1 => true,
                 theta2 => true,
                 theta3 => true,
-                x1 => true,
-                x2 => true,
             ),
             :y => [y ~ x1, y2 ~ x2],
             :y2 => [x1, x2],

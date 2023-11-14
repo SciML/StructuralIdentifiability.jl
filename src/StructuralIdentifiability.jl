@@ -8,6 +8,7 @@ using IterTools
 using LinearAlgebra
 using Logging
 using MacroTools
+using OrderedCollections
 using Primes
 using Random
 using TimerOutputs
@@ -93,7 +94,7 @@ Input:
 
 Assesses identifiability of a given ODE model. The result is guaranteed to be correct with the probability
 at least `p`.
-The function returns a dictionary from the functions to check to their identifiability properties 
+The function returns an (ordered) dictionary from the functions to check to their identifiability properties 
 (one of `:nonidentifiable`, `:locally`, `:globally`).
 """
 function assess_identifiability(
@@ -118,7 +119,7 @@ function _assess_identifiability(
     p_loc = 1 - (1 - p) * 0.1
 
     if isempty(funcs_to_check)
-        funcs_to_check = vcat(ode.parameters, ode.x_vars)
+        funcs_to_check = vcat(ode.x_vars, ode.parameters)
     end
 
     @info "Assessing local identifiability"
@@ -148,7 +149,7 @@ function _assess_identifiability(
     @info "Global identifiability assessed in $runtime seconds"
     _runtime_logger[:glob_time] = runtime
 
-    result = Dict{Any, Symbol}()
+    result = OrderedDict{Any, Symbol}()
     glob_ind = 1
     for i in 1:length(funcs_to_check)
         if !local_result[funcs_to_check[i]]
@@ -210,13 +211,13 @@ function _assess_identifiability(
     ode, conversion = mtk_to_si(ode, measured_quantities)
     conversion_back = Dict(v => k for (k, v) in conversion)
     if isempty(funcs_to_check)
-        funcs_to_check = [conversion_back[x] for x in [ode.parameters..., ode.x_vars...]]
+        funcs_to_check = [conversion_back[x] for x in [ode.x_vars..., ode.parameters...]]
     end
     funcs_to_check_ = [eval_at_nemo(each, conversion) for each in funcs_to_check]
 
     result = _assess_identifiability(ode, funcs_to_check = funcs_to_check_, p = p)
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
-    out_dict = Dict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
+    out_dict = OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     return out_dict
 end
 

@@ -365,6 +365,8 @@ Here,
 macro ODEmodel(ex::Expr...)
     equations = [ex...]
     x_vars, y_vars, u_vars, all_symb = macrohelper_extract_vars(equations)
+    # ensures that the parameters will be ordered
+    all_symb = sort(all_symb)
 
     # creating the polynomial ring
     vars_list = :([$(all_symb...)])

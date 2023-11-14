@@ -6,7 +6,7 @@
     eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
     de = ODESystem(eqs, t, name = :Test)
 
-    correct = Dict(
+    correct = OrderedDict(
         a01 => :nonidentifiable,
         a21 => :nonidentifiable,
         a12 => :nonidentifiable,
@@ -52,7 +52,7 @@
     eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
     de = ODESystem(eqs, t, name = :Test)
 
-    correct = Dict(
+    correct = OrderedDict(
         a01 => :nonidentifiable,
         a21 => :nonidentifiable,
         a12 => :nonidentifiable,
@@ -71,12 +71,12 @@
     eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
     de = ODESystem(eqs, t, name = :Test)
     funcs_to_check = [a01, a21, a12, a01 * a12, a01 + a12 + a21]
-    correct = Dict(
-        a12 => :nonidentifiable,
-        a01 + a12 + a21 => :globally,
-        a01 * a12 => :globally,
-        a21 => :nonidentifiable,
+    correct = OrderedDict(
         a01 => :nonidentifiable,
+        a21 => :nonidentifiable,
+        a12 => :nonidentifiable,
+        a01 * a12 => :globally,
+        a01 + a12 + a21 => :globally,
     )
     @test isequal(correct, assess_identifiability(de; funcs_to_check = funcs_to_check))
 
@@ -90,12 +90,12 @@
     measured_quantities = [y1 ~ x0]
     de = ODESystem(eqs, t, name = :Test)
     funcs_to_check = [a01, a21, a12, a01 * a12, a01 + a12 + a21]
-    correct = Dict(
-        a12 => :nonidentifiable,
-        a01 + a12 + a21 => :globally,
-        a01 * a12 => :globally,
-        a21 => :nonidentifiable,
+    correct = OrderedDict(
         a01 => :nonidentifiable,
+        a21 => :nonidentifiable,
+        a12 => :nonidentifiable,
+        a01 * a12 => :globally,
+        a01 + a12 + a21 => :globally,
     )
     @test isequal(
         correct,
@@ -130,7 +130,7 @@
 
     # check specific parameters
     funcs_to_check = [μ, bi, bw, a, χ, γ, γ + μ, k, S, I, W, R]
-    correct = Dict(f => true for f in funcs_to_check)
+    correct = OrderedDict(f => true for f in funcs_to_check)
     @test isequal(
         correct,
         assess_local_identifiability(
@@ -142,7 +142,7 @@
 
     # checking ME identifiability
     funcs_to_check = [μ, bi, bw, a, χ, γ, γ + μ, k]
-    correct = Dict(f => true for f in funcs_to_check)
+    correct = OrderedDict(f => true for f in funcs_to_check)
     @test isequal(
         (correct, 1),
         assess_local_identifiability(
@@ -181,7 +181,7 @@
 
     # check specific parameters
     funcs_to_check = [mu, bi, bw, a, xi, gm, gm + mu, k, S, I, W, R]
-    correct = Dict(f => true for f in funcs_to_check)
+    correct = OrderedDict(f => true for f in funcs_to_check)
     @test isequal(
         correct,
         assess_local_identifiability(de; funcs_to_check = funcs_to_check),
@@ -189,7 +189,7 @@
 
     # checking ME identifiability
     funcs_to_check = [mu, bi, bw, a, xi, gm, gm + mu, k]
-    correct = Dict(f => true for f in funcs_to_check)
+    correct = OrderedDict(f => true for f in funcs_to_check)
     @test isequal(
         (correct, 1),
         assess_local_identifiability(
@@ -213,7 +213,7 @@
     de = ODESystem(eqs, t, name = :TestSIWR)
     measured_quantities = [y ~ 1.57 * I * k]
     funcs_to_check = [mu, bi, bw, a, xi, gm, mu, gm + mu, k, S, I, W, R]
-    correct = Dict(f => true for f in funcs_to_check)
+    correct = OrderedDict(f => true for f in funcs_to_check)
     @test isequal(
         correct,
         assess_local_identifiability(
@@ -225,7 +225,7 @@
 
     # checking ME identifiability
     funcs_to_check = [bi, bw, a, xi, gm, mu, gm + mu, k]
-    correct = Dict(f => true for f in funcs_to_check)
+    correct = OrderedDict(f => true for f in funcs_to_check)
     @test isequal(
         (correct, 1),
         assess_local_identifiability(
@@ -297,7 +297,7 @@
         [D(x1) ~ -a * x1 + x2 * b / (x1 + b / (c^2 - x2)), D(x2) ~ x2 * c^2 + x1, D(c) ~ 0]
     de = ODESystem(eqs, t, name = :Test)
     measured_quantities = [y1 ~ x2, y2 ~ c]
-    correct = Dict(a => :globally, b => :globally)
+    correct = OrderedDict(a => :globally, b => :globally)
     to_check = [a, b]
     @test isequal(
         correct,
@@ -368,7 +368,7 @@
         rabbits₊x => :nonidentifiable,
         wolves₊y => :globally,
     )
-    @test result == correct
+    @test Dict(result) == correct
 
     #----------------------------------
 
@@ -392,6 +392,6 @@
     eqs = [D(x[1]) ~ -k1 * x[2], D(x[2]) ~ -k2 * x[1]]
 
     sys = ODESystem(eqs, t, name = :example_vector)
-    correct = Dict(k1 => true, k2 => true, x[1] => true, x[2] => true)
+    correct = OrderedDict(x[1] => true, x[2] => true, k1 => true, k2 => true)
     @test assess_local_identifiability(sys, measured_quantities = [x[1], x[2]]) == correct
 end

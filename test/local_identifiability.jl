@@ -24,7 +24,7 @@
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => Dict(funcs_to_test .=> correct),
+            :correct => OrderedDict(funcs_to_test .=> correct),
         ),
     )
 
@@ -42,7 +42,7 @@
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => Dict(funcs_to_test .=> correct),
+            :correct => OrderedDict(funcs_to_test .=> correct),
         ),
     )
 
@@ -62,7 +62,7 @@
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => Dict(funcs_to_test .=> correct),
+            :correct => OrderedDict(funcs_to_test .=> correct),
         ),
     )
 
@@ -76,7 +76,7 @@
         y(t) = x1(t)
     )
     funcs_to_test = [b, c, alpha, beta, delta, gama, beta + delta, beta * delta]
-    correct = Dict([
+    correct = OrderedDict([
         b => true,
         c => true,
         alpha => false,
@@ -96,7 +96,7 @@
         y(t) = x1(t) * x2(t)
     )
     funcs_to_test = [a1, a2, a3, a4, a5, a6, a7, a8]
-    correct = Dict(a => false for a in funcs_to_test)
+    correct = OrderedDict(a => false for a in funcs_to_test)
     push!(test_cases, Dict(:ode => ode, :funcs => funcs_to_test, :correct => correct))
 
     #--------------------------------------------------------------------------
@@ -109,7 +109,7 @@
         y2(t) = x3(t)
     )
     funcs_to_test = [x1, x2, x1 + x2]
-    correct = Dict(x1 => false, x2 => false, x1 + x2 => true)
+    correct = OrderedDict(x1 => false, x2 => false, x1 + x2 => true)
     push!(test_cases, Dict(:ode => ode, :funcs => funcs_to_test, :correct => correct))
 
     #--------------------------------------------------------------------------

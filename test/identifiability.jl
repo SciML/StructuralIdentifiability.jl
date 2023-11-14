@@ -23,7 +23,7 @@
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => Dict(funcs_to_test .=> correct),
+            :correct => OrderedDict(funcs_to_test .=> correct),
         ),
     )
 
@@ -38,13 +38,13 @@
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => Dict(funcs_to_test .=> correct),
+            :correct => OrderedDict(funcs_to_test .=> correct),
         ),
     )
 
     # Also test when `funcs_to_test` is empty!
     funcs_to_test = Vector{typeof(x1)}()
-    correct = Dict(x1 => :nonidentifiable, x2 => :nonidentifiable)
+    correct = OrderedDict(x1 => :nonidentifiable, x2 => :nonidentifiable)
     push!(test_cases, Dict(:ode => ode, :funcs => funcs_to_test, :correct => correct))
 
     #--------------------------------------------------------------------------
@@ -69,7 +69,7 @@
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => Dict(funcs_to_test .=> correct),
+            :correct => OrderedDict(funcs_to_test .=> correct),
         ),
     )
 
@@ -89,7 +89,7 @@
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => Dict(funcs_to_test .=> correct),
+            :correct => OrderedDict(funcs_to_test .=> correct),
         ),
     )
 
@@ -118,7 +118,7 @@
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => Dict(funcs_to_test .=> correct),
+            :correct => OrderedDict(funcs_to_test .=> correct),
         ),
     )
 
@@ -137,7 +137,7 @@
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => Dict(funcs_to_test .=> correct),
+            :correct => OrderedDict(funcs_to_test .=> correct),
         ),
     )
 
@@ -155,7 +155,7 @@
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => Dict(funcs_to_test .=> correct),
+            :correct => OrderedDict(funcs_to_test .=> correct),
         ),
     )
 
@@ -173,7 +173,7 @@
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => Dict(funcs_to_test .=> correct),
+            :correct => OrderedDict(funcs_to_test .=> correct),
         ),
     )
 
@@ -192,7 +192,7 @@
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => Dict(funcs_to_test .=> correct),
+            :correct => OrderedDict(funcs_to_test .=> correct),
         ),
     )
 
@@ -222,7 +222,7 @@
         Dict(
             :ode => ode,
             :funcs => funcs_to_test,
-            :correct => Dict(funcs_to_test .=> correct),
+            :correct => OrderedDict(funcs_to_test .=> correct),
         ),
     )
 
