@@ -8,7 +8,6 @@ using IterTools
 using LinearAlgebra
 using Logging
 using MacroTools
-using OrderedCollections
 using Primes
 using Random
 using TimerOutputs
