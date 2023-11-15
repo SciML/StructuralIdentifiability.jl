@@ -1,21 +1,21 @@
 @testset "Differential reduction" begin
     ode = @ODEmodel(x'(t) = a * x(t), y(t) = x(t))
     pbr = PBRepresentation(ode, find_ioequations(ode))
-    R, (y_5, y_4) = Nemo.PolynomialRing(Nemo.QQ, ["y_5", "y_4"])
+    R, (y_5, y_4) = Nemo.PolynomialRing(Nemo.QQ, ["y(t)_5", "y(t)_4"])
     res = diffreduce(y_5, pbr)
-    @test res == str_to_var("a", parent(res))^5 * str_to_var("y_0", parent(res))
+    @test res == str_to_var("a", parent(res))^5 * str_to_var("y(t)_0", parent(res))
     res = diffreduce(y_4, pbr)
-    @test res == str_to_var("a", parent(res))^4 * str_to_var("y_0", parent(res))
+    @test res == str_to_var("a", parent(res))^4 * str_to_var("y(t)_0", parent(res))
     res = diffreduce(y_4^2, pbr)
-    @test res == str_to_var("a", parent(res))^8 * str_to_var("y_0", parent(res))^2
+    @test res == str_to_var("a", parent(res))^8 * str_to_var("y(t)_0", parent(res))^2
 
     ode = @ODEmodel(x1'(t) = x2(t), x2'(t) = -x1(t), y(t) = x1(t) + u(t))
     pbr = PBRepresentation(ode, find_ioequations(ode))
-    R, (y_5, y_4, u_10) = Nemo.PolynomialRing(Nemo.QQ, ["y_5", "y_4", "u_10"])
+    R, (y_5, y_4, u_10) = Nemo.PolynomialRing(Nemo.QQ, ["y(t)_5", "y(t)_4", "u(t)_10"])
     res = diffreduce(y_4 + u_10, pbr)
     @test res ==
-          str_to_var("u_10", parent(res)) + str_to_var("y_0", parent(res)) -
-          str_to_var("u_0", parent(res)) + str_to_var("u_4", parent(res))
+          str_to_var("u(t)_10", parent(res)) + str_to_var("y(t)_0", parent(res)) -
+          str_to_var("u(t)_0", parent(res)) + str_to_var("u(t)_4", parent(res))
 
     # Next two verified with Maple
     # Mizuka's example
@@ -127,8 +127,10 @@
         y(t) = x1(t)
     )
     pbr = PBRepresentation(ode, find_ioequations(ode))
-    R, (y_0, y_1, y_2, y_3, y_4, u_0, u_3) =
-        Nemo.PolynomialRing(Nemo.QQ, ["y_0", "y_1", "y_2", "y_3", "y_4", "u_0", "u_3"])
+    R, (y_0, y_1, y_2, y_3, y_4, u_0, u_3) = Nemo.PolynomialRing(
+        Nemo.QQ,
+        ["y(t)_0", "y(t)_1", "y(t)_2", "y(t)_3", "y(t)_4", "u(t)_0", "u(t)_3"],
+    )
     io_switch!(pbr)
     @time res = diffreduce(u_3, pbr)
     expected = parent_ring_change(
