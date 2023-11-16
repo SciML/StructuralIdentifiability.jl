@@ -208,6 +208,7 @@ function _assess_local_identifiability_discrete(
 
     @debug "Computing the observability matrix"
     prec = length(dds.x_vars) + length(dds.parameters)
+    @debug "The truncation order is $prec"
 
     # Computing the bound from the Schwartz-Zippel-DeMilo-Lipton lemma
     deg_x = _degree_with_common_denom(values(dds.x_equations))
@@ -265,6 +266,8 @@ function _assess_local_identifiability_discrete(
         end
     end
 
+    @debug "Hit the road Jac: $Jac"
+
     @debug "Computing the result"
     base_rank = LinearAlgebra.rank(Jac)
     result = OrderedDict{Any, Bool}()
@@ -277,6 +280,8 @@ function _assess_local_identifiability_discrete(
             Jac[end - k + 1, 1] =
                 output_derivatives[(str_to_var("loc_aux_$i", dds_ext.poly_ring), x)][1]
         end
+        @debug "And Jac for $(funcs_to_check[i]) is $Jac"
+        @debug "$(LinearAlgebra.rank(Jac))"
         result[funcs_to_check[i]] = LinearAlgebra.rank(Jac) == base_rank
     end
 
@@ -311,6 +316,26 @@ function assess_local_identifiability(
     funcs_to_check = Array{}[],
     known_ic = Array{}[],
     p::Float64 = 0.99,
+    loglevel = Logging.Info,
+)
+    restart_logging(loglevel = loglevel)
+    with_logger(_si_logger[]) do
+        return _assess_local_identifiability(dds,
+            measured_quantities = measured_quantities,
+            funcs_to_check = funcs_to_check,
+            known_ic = known_ic,
+            p = p,
+        )
+    end
+end
+
+
+function _assess_local_identifiability(
+    dds::ModelingToolkit.DiscreteSystem;
+    measured_quantities = Array{ModelingToolkit.Equation}[],
+    funcs_to_check = Array{}[],
+    known_ic = Array{}[],
+    p::Float64 = 0.99,
 )
     if length(measured_quantities) == 0
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(dds))
@@ -330,9 +355,13 @@ function assess_local_identifiability(
 
     dds_aux, conversion = mtk_to_si(dds, measured_quantities)
     if length(funcs_to_check) == 0
+        params = parameters(dds)
+        params_from_measured_quantities = union(
+            [filter(s -> !istree(s), get_variables(y)) for y in measured_quantities]...,
+        )
         funcs_to_check = vcat(
             [x for x in states(dds) if conversion[x] in dds_aux.x_vars],
-            parameters(dds),
+            union(params, params_from_measured_quantities)
         )
     end
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
@@ -343,6 +372,7 @@ function assess_local_identifiability(
     out_dict = OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     if length(known_ic) > 0
         @warn "Since known initial conditions were provided, identifiability of states (e.g., `x(t)`) is at t = 0 only !"
+        out_dict = OrderedDict(substitute(k, Dict(t => 0)) => v for (k, v) in out_dict)
     end
     return out_dict
 end

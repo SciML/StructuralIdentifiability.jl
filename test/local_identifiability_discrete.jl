@@ -119,8 +119,8 @@
         Dict(
             :dds => lv,
             :res => OrderedDict(
-                x1 => true,
-                x2 => true,
+                substitute(x1, Dict(t => 0)) => true,
+                substitute(x2, Dict(t => 0)) => true,
                 a => true,
                 b => true,
                 c => true,
@@ -196,6 +196,46 @@
         ),
     )
 
+    @parameters a b
+    @variables t x1(t) y(t)
+    D = Difference(t; dt = 1.0)
+
+    eqs = [D(x1) ~ a]
+
+    @named kic = DiscreteSystem(eqs)
+    push!(
+        cases,
+        Dict(
+            :dds => kic,
+            :res => OrderedDict(
+                x1 => false,
+                a => true,
+                b => false,
+            ),
+            :y => [y ~ x1 + b],
+            :y2 => [x1 + b],
+            :known_ic => Array{}[],
+            :to_check => Array{}[],
+        ),
+    )
+    push!(
+        cases,
+        Dict(
+            :dds => kic,
+            :res => OrderedDict(
+                substitute(x1, Dict(t => 0)) => true,
+                a => true,
+                b => true,
+            ),
+            :y => [y ~ x1 + b],
+            :y2 => [x1 + b],
+            :known_ic => [x1],
+            :to_check => Array{}[],
+        ),
+    )
+
+
+ 
     for c in cases
         @test assess_local_identifiability(
             c[:dds];
