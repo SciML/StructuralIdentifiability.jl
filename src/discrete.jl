@@ -178,16 +178,17 @@ function _degree_with_common_denom(polys)
 end
 
 """
-    _assess_local_identifiability_discrete(dds::ODE{P}, funcs_to_check::Array{<: Any, 1}, known_ic, p::Float64=0.99) where P <: MPolyElem{Nemo.fmpq}
+    _assess_local_identifiability_discrete_aux(dds::ODE{P}, funcs_to_check::Array{<: Any, 1}, known_ic, p::Float64=0.99) where P <: MPolyElem{Nemo.fmpq}
 
-Checks the local identifiability/observability of the functions in `funcs_to_check` treating `dds` as a discrete-time system. 
+Checks the local identifiability/observability of the functions in `funcs_to_check` treating `dds` as a discrete-time system with **shift**
+instead of derivative in the right-hand side.
 The result is correct with probability at least `p`.
 `known_ic` can take one of the following
  * `:none` - no initial conditions are assumed to be known
  * `:all` - all initial conditions are assumed to be known
  * a list of rational functions in states and parameters assumed to be known at t = 0
 """
-function _assess_local_identifiability_discrete(
+function _assess_local_identifiability_discrete_aux(
     dds::ODE{P},
     funcs_to_check::Array{<:Any, 1},
     known_ic = :none,
@@ -266,8 +267,6 @@ function _assess_local_identifiability_discrete(
         end
     end
 
-    @debug "Hit the road Jac: $Jac"
-
     @debug "Computing the result"
     base_rank = LinearAlgebra.rank(Jac)
     result = OrderedDict{Any, Bool}()
@@ -280,8 +279,6 @@ function _assess_local_identifiability_discrete(
             Jac[end - k + 1, 1] =
                 output_derivatives[(str_to_var("loc_aux_$i", dds_ext.poly_ring), x)][1]
         end
-        @debug "And Jac for $(funcs_to_check[i]) is $Jac"
-        @debug "$(LinearAlgebra.rank(Jac))"
         result[funcs_to_check[i]] = LinearAlgebra.rank(Jac) == base_rank
     end
 
@@ -299,7 +296,7 @@ end
         p::Float64=0.99)
 
 Input:
-- `dds` - the DiscreteSystem object from ModelingToolkit
+- `dds` - the DiscreteSystem object from ModelingToolkit (with **difference** operator in the right-hand side)
 - `measured_quantities` - the measurable outputs of the model
 - `funcs_to_check` - functions of parameters for which to check identifiability (all parameters and states if not specified)
 - `known_ic` - functions (of states and parameter) whose initial conditions are assumed to be known
@@ -353,7 +350,17 @@ function _assess_local_identifiability(
         end
     end
 
-    dds_aux, conversion = mtk_to_si(dds, measured_quantities)
+    # Converting the finite difference operator in the right-hand side to
+    # the corresponding shift operator
+    eqs = filter(eq -> !(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(dds))
+    deltas = [Symbolics.operation(e.lhs).dt for e in eqs]
+    @assert length(Set(deltas)) == 1
+    eqs_shift = [e.lhs ~ e.rhs + first(Symbolics.arguments(e.lhs)) for e in eqs]
+    dds_shift = DiscreteSystem(eqs_shift, name = gensym())
+    @debug "System transformed from difference to shift: $dds_shift"
+
+
+    dds_aux, conversion = mtk_to_si(dds_shift, measured_quantities)
     if length(funcs_to_check) == 0
         params = parameters(dds)
         params_from_measured_quantities = union(
@@ -367,7 +374,7 @@ function _assess_local_identifiability(
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
     known_ic_ = [eval_at_nemo(x, conversion) for x in known_ic]
 
-    result = _assess_local_identifiability_discrete(dds_aux, funcs_to_check_, known_ic_, p)
+    result = _assess_local_identifiability_discrete_aux(dds_aux, funcs_to_check_, known_ic_, p)
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     if length(known_ic) > 0

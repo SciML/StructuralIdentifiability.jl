@@ -53,7 +53,7 @@ using StructuralIdentifiability:
     sequence_solution,
     differentiate_sequence_solution,
     differentiate_sequence_output,
-    _assess_local_identifiability_discrete,
+    _assess_local_identifiability_discrete_aux,
     extract_coefficients,
     extract_coefficients_ratfunc,
     lie_derivative,

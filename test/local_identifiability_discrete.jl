@@ -138,7 +138,7 @@
     @variables t x1(t) x2(t) u(t) y(t)
     D = Difference(t; dt = 1.0)
 
-    eqs = [D(x1) ~ (1 + theta1) * x1 + x2, D(x2) ~ (1 - theta2) * x1 + x2^2 + u]
+    eqs = [D(x1) ~ theta1 * x1 + x2, D(x2) ~ (1 - theta2) * x1 + x2^2 + u - x2]
 
     @named abmd1 = DiscreteSystem(eqs)
     push!(
@@ -158,7 +158,7 @@
     @variables t x1(t) x2(t) u(t) y(t) y2(t)
     D = Difference(t; dt = 1.0)
 
-    eqs = [D(x1) ~ theta1 * x1^2 + theta2 * x2 + u, D(x2) ~ theta3 * x1]
+    eqs = [D(x1) ~ theta1 * x1^2 + theta2 * x2 + u - x1, D(x2) ~ theta3 * x1 - x2]
 
     @named abmd2 = DiscreteSystem(eqs)
     push!(
