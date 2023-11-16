@@ -498,21 +498,18 @@ end
 #------------------------------------------------------------------------------
 
 function Base.show(io::IO, ode::ODE)
-    varstr =
-        Dict(x => var_to_str(x) * "(t)" for x in vcat(ode.x_vars, ode.u_vars, ode.y_vars))
-    merge!(varstr, Dict(p => var_to_str(p) for p in ode.parameters))
-    R_print, vars_print = Nemo.PolynomialRing(
-        base_ring(ode.poly_ring),
-        [varstr[v] for v in gens(ode.poly_ring)],
-    )
     for x in ode.x_vars
-        print(io, var_to_str(x) * "'(t) = ")
-        print(io, evaluate(ode.x_equations[x], vars_print))
+        if endswith(var_to_str(x), "(t)")
+            print(io, var_to_str(x)[1:(end - 3)] * "'(t) = ")
+        else
+            print(io, var_to_str(x) * " = ")
+        end
+        print(io, ode.x_equations[x])
         print(io, "\n")
     end
     for y in ode.y_vars
-        print(io, var_to_str(y) * "(t) = ")
-        print(io, evaluate(ode.y_equations[y], vars_print))
+        print(io, var_to_str(y) * " = ")
+        print(io, ode.y_equations[y])
         print(io, "\n")
     end
 end
