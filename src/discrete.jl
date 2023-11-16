@@ -317,7 +317,8 @@ function assess_local_identifiability(
 )
     restart_logging(loglevel = loglevel)
     with_logger(_si_logger[]) do
-        return _assess_local_identifiability(dds,
+        return _assess_local_identifiability(
+            dds,
             measured_quantities = measured_quantities,
             funcs_to_check = funcs_to_check,
             known_ic = known_ic,
@@ -325,7 +326,6 @@ function assess_local_identifiability(
         )
     end
 end
-
 
 function _assess_local_identifiability(
     dds::ModelingToolkit.DiscreteSystem;
@@ -359,7 +359,6 @@ function _assess_local_identifiability(
     dds_shift = DiscreteSystem(eqs_shift, name = gensym())
     @debug "System transformed from difference to shift: $dds_shift"
 
-
     dds_aux, conversion = mtk_to_si(dds_shift, measured_quantities)
     if length(funcs_to_check) == 0
         params = parameters(dds)
@@ -368,13 +367,14 @@ function _assess_local_identifiability(
         )
         funcs_to_check = vcat(
             [x for x in states(dds) if conversion[x] in dds_aux.x_vars],
-            union(params, params_from_measured_quantities)
+            union(params, params_from_measured_quantities),
         )
     end
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
     known_ic_ = [eval_at_nemo(x, conversion) for x in known_ic]
 
-    result = _assess_local_identifiability_discrete_aux(dds_aux, funcs_to_check_, known_ic_, p)
+    result =
+        _assess_local_identifiability_discrete_aux(dds_aux, funcs_to_check_, known_ic_, p)
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     if length(known_ic) > 0

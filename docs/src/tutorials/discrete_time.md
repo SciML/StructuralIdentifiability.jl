@@ -72,7 +72,7 @@ assess_local_identifiability(sir; measured_quantities = [I], funcs_to_check = [Î
     (in fact, the employed bounds are quite conservative, so in practice incorrect result is almost never produced).
 
   - `known_ic` is a list of the states for which initial conditions are known. In this case, the identifiability results will be valid not
-     at any time point `t` but only at `t = 0`.
+    at any time point `t` but only at `t = 0`.
 
 As other main functions in the package, `assess_local_identifiability` accepts an optional parameter `loglevel` (default: `Logging.Info`)
 to adjust the verbosity of logging.

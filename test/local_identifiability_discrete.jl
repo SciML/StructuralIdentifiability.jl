@@ -207,11 +207,7 @@
         cases,
         Dict(
             :dds => kic,
-            :res => OrderedDict(
-                x1 => false,
-                a => true,
-                b => false,
-            ),
+            :res => OrderedDict(x1 => false, a => true, b => false),
             :y => [y ~ x1 + b],
             :y2 => [x1 + b],
             :known_ic => Array{}[],
@@ -222,11 +218,7 @@
         cases,
         Dict(
             :dds => kic,
-            :res => OrderedDict(
-                substitute(x1, Dict(t => 0)) => true,
-                a => true,
-                b => true,
-            ),
+            :res => OrderedDict(substitute(x1, Dict(t => 0)) => true, a => true, b => true),
             :y => [y ~ x1 + b],
             :y2 => [x1 + b],
             :known_ic => [x1],
@@ -234,8 +226,6 @@
         ),
     )
 
-
- 
     for c in cases
         @test assess_local_identifiability(
             c[:dds];
