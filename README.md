@@ -99,6 +99,44 @@ OrderedDict{Any, Symbol} with 2 entries:
   a01*a12   => :globally
 ```
 
+### Finding identifiable functions
+
+In the example above, we saw that, while some parameters may be not globally identifiable, appropriate functions of them (such as `a01 + a12` and `a01 * a12`)
+can be still identifiable. However, it may be not so easy to guess these functions (even in this example). Good news is that this is not needed! 
+Function `find_identifiable_functions` can find generators of all identifiable functions of a given model. For instance:
+
+```julia
+find_identifiable_functions(ode)
+```
+
+will return 
+
+```
+3-element Vector{AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}}:
+ a21
+ a01*a12
+ a01 + a12
+```
+
+which are exactly the identifiable functions we have found before. Furthermore, by specifying `with_states = true`, one can compute the generating set for
+all identifiable functions of parameters and states (in other words, all observable functions):
+
+```julia
+find_identifiable_functions(ode, with_states = true)
+```
+
+This will return
+
+```
+6-element Vector{AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}}:
+ x2(t)
+ a21
+ a01*a12
+ a01 + a12
+ x3(t)//(a12*b + a21*b + b)
+ (-x1(t)*a21*b + x2(t)*a12*b + x2(t)*a21*b + x2(t)*b + x3(t))//(a21*b)
+```
+
 ### Assessing local identifiability
 
 Local identifiability can be assessed efficiently even for the models for which global identifiability analysis is out of reach.
