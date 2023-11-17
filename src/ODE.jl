@@ -365,20 +365,22 @@ Here,
 macro ODEmodel(ex::Expr...)
     equations = [ex...]
     x_vars, y_vars, u_vars, all_symb = macrohelper_extract_vars(equations)
-    # ensures that the parameters will be ordered
-    all_symb = sort(all_symb)
+    time_dependent = vcat(x_vars, y_vars, u_vars)
+    params = sort([s for s in all_symb if !(s in time_dependent)])
+    all_symb_no_t = vcat(time_dependent, params)
+    all_symb_with_t = vcat([:($s(t)) for s in time_dependent], params)
 
     # creating the polynomial ring
-    vars_list = :([$(all_symb...)])
+    vars_list = :([$(all_symb_with_t...)])
     R = gensym()
     vars_aux = gensym()
     exp_ring = :(
         ($R, $vars_aux) = StructuralIdentifiability.Nemo.PolynomialRing(
             StructuralIdentifiability.Nemo.QQ,
-            map(string, $all_symb),
+            map(string, $all_symb_with_t),
         )
     )
-    assignments = [:($(all_symb[i]) = $vars_aux[$i]) for i in 1:length(all_symb)]
+    assignments = [:($(all_symb_no_t[i]) = $vars_aux[$i]) for i in 1:length(all_symb_no_t)]
 
     # setting x_vars and y_vars in the right order
     vx = gensym()
@@ -446,12 +448,7 @@ macro ODEmodel(ex::Expr...)
         end
     end
 
-    params = setdiff(all_symb, union(x_vars, y_vars, u_vars))
-    allnames = map(
-        string,
-        vcat(collect(x_vars), collect(params), collect(u_vars), collect(y_vars)),
-    )
-    for n in allnames
+    for n in all_symb_no_t
         if !Base.isidentifier(n)
             throw(
                 ArgumentError(
@@ -501,21 +498,18 @@ end
 #------------------------------------------------------------------------------
 
 function Base.show(io::IO, ode::ODE)
-    varstr =
-        Dict(x => var_to_str(x) * "(t)" for x in vcat(ode.x_vars, ode.u_vars, ode.y_vars))
-    merge!(varstr, Dict(p => var_to_str(p) for p in ode.parameters))
-    R_print, vars_print = Nemo.PolynomialRing(
-        base_ring(ode.poly_ring),
-        [varstr[v] for v in gens(ode.poly_ring)],
-    )
     for x in ode.x_vars
-        print(io, var_to_str(x) * "'(t) = ")
-        print(io, evaluate(ode.x_equations[x], vars_print))
+        if endswith(var_to_str(x), "(t)")
+            print(io, var_to_str(x)[1:(end - 3)] * "'(t) = ")
+        else
+            print(io, var_to_str(x) * " = ")
+        end
+        print(io, ode.x_equations[x])
         print(io, "\n")
     end
     for y in ode.y_vars
-        print(io, var_to_str(y) * "(t) = ")
-        print(io, evaluate(ode.y_equations[y], vars_print))
+        print(io, var_to_str(y) * " = ")
+        print(io, ode.y_equations[y])
         print(io, "\n")
     end
 end

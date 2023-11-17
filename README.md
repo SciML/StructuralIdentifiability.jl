@@ -75,14 +75,14 @@ The returned value is a dictionary from the parameter of the model to one of the
 For example, for the `ode` defined above, it will be
 
 ```
-Dict{Any, Symbol} with 7 entries:
-  a12 => :locally
-  a21 => :globally
-  a01 => :locally
-  b   => :nonidentifiable
-  x2  => :globally
-  x1  => :locally
-  x3  => :nonidentifiable
+OrderedDict{Any, Symbol} with 7 entries:
+  x1(t) => :locally
+  x2(t) => :globally
+  x3(t) => :nonidentifiable
+  a01   => :locally
+  a12   => :locally
+  a21   => :globally
+  b     => :nonidentifiable
 ```
 
 If one is interested in the identifiability of particular functions of the parameter, one can pass a list of them as a second argument:
@@ -94,9 +94,47 @@ assess_identifiability(ode, funcs_to_check = [a01 + a12, a01 * a12])
 This will return:
 
 ```
-Dict{Any, Symbol} with 2 entries:
-  a12 + a01 => :globally
-  a12*a01   => :globally
+OrderedDict{Any, Symbol} with 2 entries:
+  a01 + a12 => :globally
+  a01*a12   => :globally
+```
+
+### Finding identifiable functions
+
+In the example above, we saw that, while some parameters may be not globally identifiable, appropriate functions of them (such as `a01 + a12` and `a01 * a12`)
+can be still identifiable. However, it may be not so easy to guess these functions (even in this example). Good news is that this is not needed!
+Function `find_identifiable_functions` can find generators of all identifiable functions of a given model. For instance:
+
+```julia
+find_identifiable_functions(ode)
+```
+
+will return
+
+```
+3-element Vector{AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}}:
+ a21
+ a01*a12
+ a01 + a12
+```
+
+which are exactly the identifiable functions we have found before. Furthermore, by specifying `with_states = true`, one can compute the generating set for
+all identifiable functions of parameters and states (in other words, all observable functions):
+
+```julia
+find_identifiable_functions(ode, with_states = true)
+```
+
+This will return
+
+```
+6-element Vector{AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}}:
+ x2(t)
+ a21
+ a01*a12
+ a01 + a12
+ x3(t)//(a12*b + a21*b + b)
+ (-x1(t)*a21*b + x2(t)*a12*b + x2(t)*a21*b + x2(t)*b + x3(t))//(a21*b)
 ```
 
 ### Assessing local identifiability
@@ -111,14 +149,14 @@ assess_local_identifiability(ode)
 The returned value is a dictionary from parameters and state variables to `1` (is locally identifiable/observable) and `0` (not identifiable/observable) values. In our example:
 
 ```
-Dict{Nemo.fmpq_mpoly, Bool} with 7 entries:
-  a12 => 1
-  a21 => 1
-  x3  => 0
-  a01 => 1
-  x2  => 1
-  x1  => 1
-  b   => 0
+OrderedDict{Any, Bool} with 7 entries:
+  x1(t) => 1
+  x2(t) => 1
+  x3(t) => 0
+  a01   => 1
+  a12   => 1
+  a21   => 1
+  b     => 0
 ```
 
 As for `assess_identifiability`, one can assess local identifiability of arbitrary rational functions in the parameters (and also states) by providing a list of such functions as the second argument.

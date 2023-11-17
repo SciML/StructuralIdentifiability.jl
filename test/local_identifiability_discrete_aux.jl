@@ -72,7 +72,7 @@
     # -------------------
 
     for c in cases
-        @test _assess_local_identifiability_discrete(
+        @test _assess_local_identifiability_discrete_aux(
             c[:dds],
             collect(keys(c[:res])),
             c[:known],

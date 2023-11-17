@@ -119,8 +119,8 @@
         Dict(
             :dds => lv,
             :res => OrderedDict(
-                x1 => true,
-                x2 => true,
+                substitute(x1, Dict(t => 0)) => true,
+                substitute(x2, Dict(t => 0)) => true,
                 a => true,
                 b => true,
                 c => true,
@@ -138,7 +138,7 @@
     @variables t x1(t) x2(t) u(t) y(t)
     D = Difference(t; dt = 1.0)
 
-    eqs = [D(x1) ~ (1 + theta1) * x1 + x2, D(x2) ~ (1 - theta2) * x1 + x2^2 + u]
+    eqs = [D(x1) ~ theta1 * x1 + x2, D(x2) ~ (1 - theta2) * x1 + x2^2 + u - x2]
 
     @named abmd1 = DiscreteSystem(eqs)
     push!(
@@ -158,7 +158,7 @@
     @variables t x1(t) x2(t) u(t) y(t) y2(t)
     D = Difference(t; dt = 1.0)
 
-    eqs = [D(x1) ~ theta1 * x1^2 + theta2 * x2 + u, D(x2) ~ theta3 * x1]
+    eqs = [D(x1) ~ theta1 * x1^2 + theta2 * x2 + u - x1, D(x2) ~ theta3 * x1 - x2]
 
     @named abmd2 = DiscreteSystem(eqs)
     push!(
@@ -192,6 +192,36 @@
             :y => [y ~ x1, y2 ~ x2],
             :y2 => [x1, x2],
             :known_ic => Array{}[],
+            :to_check => Array{}[],
+        ),
+    )
+
+    @parameters a b
+    @variables t x1(t) y(t)
+    D = Difference(t; dt = 1.0)
+
+    eqs = [D(x1) ~ a]
+
+    @named kic = DiscreteSystem(eqs)
+    push!(
+        cases,
+        Dict(
+            :dds => kic,
+            :res => OrderedDict(x1 => false, a => true, b => false),
+            :y => [y ~ x1 + b],
+            :y2 => [x1 + b],
+            :known_ic => Array{}[],
+            :to_check => Array{}[],
+        ),
+    )
+    push!(
+        cases,
+        Dict(
+            :dds => kic,
+            :res => OrderedDict(substitute(x1, Dict(t => 0)) => true, a => true, b => true),
+            :y => [y ~ x1 + b],
+            :y2 => [x1 + b],
+            :known_ic => [x1],
             :to_check => Array{}[],
         ),
     )
