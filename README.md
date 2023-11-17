@@ -102,14 +102,14 @@ OrderedDict{Any, Symbol} with 2 entries:
 ### Finding identifiable functions
 
 In the example above, we saw that, while some parameters may be not globally identifiable, appropriate functions of them (such as `a01 + a12` and `a01 * a12`)
-can be still identifiable. However, it may be not so easy to guess these functions (even in this example). Good news is that this is not needed! 
+can be still identifiable. However, it may be not so easy to guess these functions (even in this example). Good news is that this is not needed!
 Function `find_identifiable_functions` can find generators of all identifiable functions of a given model. For instance:
 
 ```julia
 find_identifiable_functions(ode)
 ```
 
-will return 
+will return
 
 ```
 3-element Vector{AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}}:
