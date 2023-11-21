@@ -72,6 +72,7 @@ include("lincomp.jl")
 include("pb_representation.jl")
 include("submodels.jl")
 include("discrete.jl")
+include("known_ic.jl")
 
 function __init__()
     _si_logger[] = @static if VERSION >= v"1.7.0"

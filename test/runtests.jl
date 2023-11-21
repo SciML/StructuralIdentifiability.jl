@@ -58,7 +58,8 @@ using StructuralIdentifiability:
     extract_coefficients_ratfunc,
     lie_derivative,
     states_generators,
-    RationalFunctionField
+    RationalFunctionField,
+    find_identifiable_functions_kic,
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)
