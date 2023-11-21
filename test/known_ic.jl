@@ -27,8 +27,7 @@ push!(cases, Dict(
 
 
 @testset "Identifiable functions with known generic initial conditions" begin
-    p = 0.99
-    for case in test_cases
+    for case in cases
         ode = case[:ode]
         known = case[:known]
         result = find_identifiable_functions_kic(ode, known)
