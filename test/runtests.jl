@@ -11,6 +11,7 @@ using StructuralIdentifiability:
     check_identifiability,
     check_primality_zerodim,
     check_primality,
+    check_algebraicity,
     det_minor_expansion,
     ExpVectTrie,
     get_max_below,

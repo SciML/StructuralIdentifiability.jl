@@ -278,6 +278,7 @@ function _assess_local_identifiability(
     p::Float64 = 0.99,
     type = :SE,
     trbasis = nothing,
+    known_ic::Array{<:Any, 1} = Array{Any, 1}(),
 ) where {P <: MPolyElem{Nemo.fmpq}}
     if isempty(funcs_to_check)
         funcs_to_check = ode.parameters

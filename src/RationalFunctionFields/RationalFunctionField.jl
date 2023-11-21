@@ -41,6 +41,10 @@ function poly_ring(F::RationalFunctionField)
     return parent(first(first(F.dennums)))
 end
 
+function generators(F::RationalFunctionField)
+    return vcat([[f[i] // f[1] for i in 2:length(f)] for f in F.dennums]...)
+end
+
 # ------------------------------------------------------------------------------
 
 """
@@ -161,6 +165,51 @@ end
 function field_contains(field::RationalFunctionField{T}, polys::Vector{T}, p) where {T}
     id = one(parent(first(polys)))
     return field_contains(field, [[id, p] for p in polys], p)
+end
+
+# ------------------------------------------------------------------------------
+
+"""
+    check_algebraicity(field, ratfuncs, p)
+
+Checks whether given rational function `ratfuncs` are algebraic over the field `field`
+The result is correct with probability at least `p`
+
+Inputs:
+- `field` - a rational function field
+- `ratfuncs` - a list of lists of rational functions.
+- `p` real number from (0, 1)
+
+Output:
+- a list `L[i]` of bools of length `length(rat_funcs)` such that `L[i]` is true iff
+   the i-th function is algebraic over the `field`
+"""
+function check_algebraicity(field, ratfuncs, p)
+    fgens = generators(field)
+    base_vars = gens(poly_ring(field))
+    maxdeg = maximum([max(total_degree(numerator(f)), total_degree(denominator(f))) for f in vcat(ratfuncs, fgens)])
+    # degree of the polynomial whose nonvanishing will be needed for correct result
+    D = Int(ceil(2 * maxdeg * (length(fgens) + 1)^3 * length(ratfuncs) / (1 - p)))
+    eval_point = [Nemo.QQ(rand(1:D)) for x in base_vars]
+
+    # Filling the jacobain for generators
+    S = MatrixSpace(Nemo.QQ, length(base_vars), length(fgens) + 1)
+    J = zero(S)
+    for (i, f) in enumerate(fgens)
+        for (j, x) in enumerate(base_vars)
+            J[j, i] = evaluate(derivative(f, x), eval_point)
+        end
+    end
+    rank = LinearAlgebra.rank(J)
+
+    result = Bool[]
+    for f in ratfuncs
+        for (j, x) in enumerate(base_vars)
+            J[j, end] = evaluate(derivative(f, x), eval_point)
+        end
+        push!(result, LinearAlgebra.rank(J) == rank)
+    end
+    return result
 end
 
 # ------------------------------------------------------------------------------
