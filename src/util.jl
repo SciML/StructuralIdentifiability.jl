@@ -599,6 +599,7 @@ function replace_with_ic(ode, funcs)
         end
     end
     R0, vars0 = PolynomialRing(base_ring(ode.poly_ring), [p[2] for p in varnames])
-    eval_dict = Dict(str_to_var(p[1], ode.poly_ring) => str_to_var(p[2], R0) for p in varnames)
+    eval_dict =
+        Dict(str_to_var(p[1], ode.poly_ring) => str_to_var(p[2], R0) for p in varnames)
     return [eval_at_dict(f, eval_dict) for f in funcs]
 end

@@ -28,7 +28,7 @@ This functions takes the following optional arguments:
 """
 function find_identifiable_functions_kic(
     ode::ODE{T},
-    known_ic::Vector{<: Union{T, Generic.Frac{T}}};
+    known_ic::Vector{<:Union{T, Generic.Frac{T}}};
     p::Float64 = 0.99,
     seed = 42,
     simplify = :standard,
@@ -51,7 +51,7 @@ end
 
 function _find_identifiable_functions_kic(
     ode::ODE{T},
-    known_ic::Vector{<: Union{T, Generic.Frac{T}}};
+    known_ic::Vector{<:Union{T, Generic.Frac{T}}};
     p::Float64 = 0.99,
     seed = 42,
     simplify = :standard,
@@ -71,7 +71,9 @@ function _find_identifiable_functions_kic(
     )
 
     id_funcs = simplified_generating_set(
-        RationalFunctionField(vcat(id_funcs_general, [f // one(parent(ode)) for f in known_ic])),
+        RationalFunctionField(
+            vcat(id_funcs_general, [f // one(parent(ode)) for f in known_ic]),
+        ),
         p = half_p,
         seed = seed,
         simplify = simplify,
@@ -101,7 +103,7 @@ The function returns an (ordered) dictionary from the functions to check to thei
 """
 function assess_identifiability_kic(
     ode::ODE{P},
-    known_ic::Vector{<: Union{P, Generic.Frac{P}}};
+    known_ic::Vector{<:Union{P, Generic.Frac{P}}};
     funcs_to_check = Vector(),
     p::Float64 = 0.99,
     loglevel = Logging.Info,
@@ -120,7 +122,7 @@ end
 
 function _assess_identifiability_kic(
     ode::ODE{P},
-    known_ic::Vector{<: Union{P, Generic.Frac{P}}};
+    known_ic::Vector{<:Union{P, Generic.Frac{P}}};
     funcs_to_check = Vector(),
     p::Float64 = 0.99,
 ) where {P <: MPolyElem{fmpq}}
@@ -154,5 +156,3 @@ function _assess_identifiability_kic(
     @info "Assessing identifiability with known initial conditions concluded in $((time_ns() - runtime_start) / 1e9) seconds"
     return result
 end
-
-

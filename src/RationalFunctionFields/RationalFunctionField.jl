@@ -187,7 +187,10 @@ Output:
 function check_algebraicity(field, ratfuncs, p)
     fgens = generators(field)
     base_vars = gens(poly_ring(field))
-    maxdeg = maximum([max(total_degree(numerator(f)), total_degree(denominator(f))) for f in vcat(ratfuncs, fgens)])
+    maxdeg = maximum([
+        max(total_degree(numerator(f)), total_degree(denominator(f))) for
+        f in vcat(ratfuncs, fgens)
+    ])
     # degree of the polynomial whose nonvanishing will be needed for correct result
     D = Int(ceil(2 * maxdeg * (length(fgens) + 1)^3 * length(ratfuncs) / (1 - p)))
     eval_point = [Nemo.QQ(rand(1:D)) for x in base_vars]
