@@ -61,7 +61,8 @@ using StructuralIdentifiability:
     states_generators,
     RationalFunctionField,
     find_identifiable_functions_kic,
-    assess_identifiability_kic
+    assess_identifiability_kic,
+    replace_with_ic
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)

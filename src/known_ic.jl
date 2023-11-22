@@ -80,7 +80,7 @@ function _find_identifiable_functions_kic(
 
     @info "The search for identifiable functions with known initial conditions concluded in $((time_ns() - runtime_start) / 1e9) seconds"
 
-    return id_funcs
+    return replace_with_ic(ode, id_funcs)
 end
 
 """
@@ -130,6 +130,7 @@ function _assess_identifiability_kic(
     end
     half_p = 0.5 + p / 2
     id_funcs = _find_identifiable_functions_kic(ode, known_ic, p = half_p)
+    funcs_to_check = replace_with_ic(ode, funcs_to_check)
     result = OrderedDict(f => :globally for f in funcs_to_check)
 
     half_p = 0.5 + p / 2
@@ -151,7 +152,7 @@ function _assess_identifiability_kic(
         end
     end
     @info "Assessing identifiability with known initial conditions concluded in $((time_ns() - runtime_start) / 1e9) seconds"
-    return result 
+    return result
 end
 
 

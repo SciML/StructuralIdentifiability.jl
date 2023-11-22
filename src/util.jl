@@ -579,3 +579,26 @@ function get_measured_quantities(ode::ModelingToolkit.ODESystem)
         )
     end
 end
+
+# -----------------------------------------------------------------------------
+
+"""
+    replace_with_ic(ode::ODE, funcs)
+
+Takes an ode and a list of functions in the states and parameters and makes a change of variable
+names `x(t) -> x(0)`. Function is used to prepare the output for the case of known initial conditions
+"""
+function replace_with_ic(ode, funcs)
+    varnames = [(var_to_str(p), var_to_str(p)) for p in ode.parameters]
+    for x in ode.x_vars
+        s = var_to_str(x)
+        if endswith(s, "(t)")
+            push!(varnames, (s, s[1:(end - 3)] * "(0)"))
+        else
+            push!(varnames, (s, s * "(0)"))
+        end
+    end
+    R0, vars0 = PolynomialRing(base_ring(ode.poly_ring), [p[2] for p in varnames])
+    eval_dict = Dict(str_to_var(p[1], ode.poly_ring) => str_to_var(p[2], R0) for p in varnames)
+    return [eval_at_dict(f, eval_dict) for f in funcs]
+end

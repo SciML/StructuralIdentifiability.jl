@@ -204,6 +204,7 @@ function check_algebraicity(field, ratfuncs, p)
 
     result = Bool[]
     for f in ratfuncs
+        f = parent_ring_change(f, poly_ring(field))
         for (j, x) in enumerate(base_vars)
             J[j, end] = evaluate(derivative(f, x), eval_point)
         end

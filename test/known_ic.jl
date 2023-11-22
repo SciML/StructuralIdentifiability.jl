@@ -43,10 +43,10 @@ push!(cases, Dict(
         known = case[:known]
 
         result_funcs = find_identifiable_functions_kic(ode, known)
-        correct_funcs = [f // one(parent(ode)) for f in case[:correct_funcs]]
+        correct_funcs = replace_with_ic(ode, [f // one(parent(ode)) for f in case[:correct_funcs]])
         @test Set(result_funcs) == Set(correct_funcs)
 
         result_ident = assess_identifiability_kic(ode, known, funcs_to_check = case[:to_check])
-        @test case[:correct_ident] == result_ident
+        @test OrderedDict(replace_with_ic(ode, [k])[1] => v for (k, v) in case[:correct_ident]) == result_ident
     end
 end
