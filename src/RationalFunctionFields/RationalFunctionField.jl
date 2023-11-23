@@ -42,7 +42,7 @@ function poly_ring(F::RationalFunctionField)
 end
 
 function generators(F::RationalFunctionField)
-    return vcat([[f[i] // f[1] for i in 2:length(f)] for f in F.dennums]...)
+    return dennums_to_fractions(F.dennums)
 end
 
 # ------------------------------------------------------------------------------
