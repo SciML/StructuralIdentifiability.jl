@@ -9,6 +9,7 @@ $ julia run_benchmarks.jl XYZ
 ```
 
 `XYZ` can be one of the following:
+- `assess_identifiability`
 - `find_identifiable_functions`,
 - `reparametrize_global`.
 
@@ -168,7 +169,7 @@ function run_benchmarks(args, kwargs)
     timeout = args["timeout"]
     @assert timeout > 0
     function_name = args["function"]
-    @assert function_name in ("find_identifiable_functions", "reparametrize_global")
+    @assert function_name in ("assess_identifiability", "find_identifiable_functions", "reparametrize_global")
     nworkers = args["workers"]
     @assert nworkers > 0
 
@@ -239,7 +240,7 @@ function run_benchmarks(args, kwargs)
             # escaping ':' for Windows
             function_kwargs_esc = replace(string(function_kwargs), ":" => "\\:")
             cmd = Cmd([
-                "julia",
+                "/Applications/Julia-1.9.app/Contents/Resources/julia/bin/julia",
                 (@__DIR__) * "/run_single_benchmark.jl",
                 "$function_name",
                 "$problem_name",

@@ -14,6 +14,7 @@ const ID_TIME_CATEGORIES = [
     :id_normalforms_time,
     :id_gbfan_time,
     :id_ranking,
+    :check_time,
 ]
 const ID_DATA_CATEGORIES =
     [:id_npoints_degree, :id_npoints_interpolation, :are_id_funcs_polynomial]
@@ -40,6 +41,7 @@ const HUMAN_READABLE_CATEGORIES = Dict(
     :are_id_funcs_polynomial => "Polynomial?",
     :id_npoints_degree => "# Points, degree",
     :id_npoints_interpolation => "# Points, interpolation",
+    :check_time => "Groebner bases, char 0",
 )
 
 const CATEGORY_FORMAT = Dict()
