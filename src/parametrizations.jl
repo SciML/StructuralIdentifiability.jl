@@ -370,10 +370,10 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
         new_vars_vector_field[state] = new_dynamics_states[i]
     end
     @info "Converting variable names to human-readable ones"
-    internal_variable_names = map(i -> "X$i", 1:length(new_states))
+    internal_variable_names = map(i -> "X$i(t)", 1:length(new_states))
     parameter_variable_names = map(i -> "a$i", 1:length(new_params))
-    input_variable_names = map(i -> "u$i", 1:length(tag_inputs))
-    output_variable_names = map(i -> "y$i", 1:length(tag_outputs))
+    input_variable_names = map(i -> "u$i(t)", 1:length(tag_inputs))
+    output_variable_names = map(i -> "y$i(t)", 1:length(tag_outputs))
     all_variable_names = vcat(
         internal_variable_names,
         parameter_variable_names,
