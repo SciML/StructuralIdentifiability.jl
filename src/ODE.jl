@@ -502,7 +502,7 @@ function Base.show(io::IO, ode::ODE)
         if endswith(var_to_str(x), "(t)")
             print(io, var_to_str(x)[1:(end - 3)] * "'(t) = ")
         else
-            print(io, var_to_str(x) * " = ")
+            print(io, var_to_str(x) * "' = ")
         end
         print(io, ode.x_equations[x])
         print(io, "\n")
