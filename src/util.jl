@@ -373,7 +373,7 @@ Input:
 - `poly` - multivariate polynomial
 - `variables` - a list of variables from the generators of the ring of p
 Output:
-- dictionary with keys being tuples of length `lenght(variables)` and values being polynomials in the variables other than those which are the coefficients at the corresponding monomials (in a smaller polynomial ring)
+- dictionary with keys being tuples of length `length(variables)` and values being polynomials in the variables other than those which are the coefficients at the corresponding monomials (in a smaller polynomial ring)
 """
 function extract_coefficients(poly::P, variables::Array{P, 1}) where {P <: MPolyElem}
     xs = gens(parent(poly))

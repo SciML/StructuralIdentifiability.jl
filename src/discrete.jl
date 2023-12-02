@@ -6,11 +6,11 @@ Input:
 - `param_values` - parameter values, must be a dictionary mapping parameter to a value
 - `initial_conditions` - initial conditions of `ode`, must be a dictionary mapping state variable to a value
 - `input_values` - input sequences in the form input => list of terms; length of the lists must be at least
-                   teh required number of terms in the result
+                   the required number of terms in the result
 - `num_terms` - number of terms to compute
 
 Output:
-- computes a sequence solution with teh required number of terms prec presented as a dictionary state_variable => corresponding sequence
+- computes a sequence solution with the required number of terms prec presented as a dictionary state_variable => corresponding sequence
 """
 function sequence_solution(
     dds::ODE{P},

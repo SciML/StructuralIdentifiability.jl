@@ -56,7 +56,7 @@ In this example:
   - `y(t)` is the **output variable** which is assumed to be observed in the experiments and, thus, known;
   - `a01, a21, a12, b` are unknown scalar **parameters**.
 
-Note that there may be mulitple inputs and outputs.
+Note that there may be multiple inputs and outputs.
 
 ### Assessing identifiability
 

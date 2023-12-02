@@ -1,5 +1,5 @@
 
-# Maintans a row echelon form of a set of vectors over the integrals.
+# Maintains a row echelon form of a set of vectors over the integrals.
 # Works well when the ambient dimension is small.
 mutable struct TinyRowEchelonForm{T}
     rows::Vector{Vector{T}}
