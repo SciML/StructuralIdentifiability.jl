@@ -79,8 +79,7 @@ end
 
 @info "Testing started"
 
-@test isempty(Test.detect_ambiguities(StructuralIdentifiability))
-@test isempty(Test.detect_unbound_args(StructuralIdentifiability))
+@time @testset "Quality Assurance" include("qa.jl")
 
 @time @testset "All the tests" verbose = true begin
     @includetests ARGS
