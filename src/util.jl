@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------------------
 
-function Nemo.total_degree(f::Generic.Frac{<:MPolyElem})
+function total_degree_frac(f::Generic.Frac{<:MPolyElem})
     return sum(map(total_degree, unpack_fraction(f)))
 end
 

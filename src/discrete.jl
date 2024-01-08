@@ -215,7 +215,7 @@ function _assess_local_identifiability_discrete_aux(
     deg_x = _degree_with_common_denom(values(dds.x_equations))
     deg_y = _degree_with_common_denom(values(dds.y_equations))
     deg_known = reduce(+, map(total_degree, known_ic), init = 0)
-    deg_to_check = max(map(total_degree, funcs_to_check)...)
+    deg_to_check = max(map(total_degree_frac, funcs_to_check)...)
     Jac_degree = deg_to_check + deg_known
     if deg_x > 1
         Jac_degree += 2 * deg_y * ((deg_x^prec - 1) ÷ (deg_x - 1))
