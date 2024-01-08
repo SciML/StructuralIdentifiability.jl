@@ -178,11 +178,11 @@ function _degree_with_common_denom(polys)
 end
 
 """
-    _assess_local_identifiability_discrete_aux(dds::ODE{P}, funcs_to_check::Array{<: Any, 1}, known_ic, p::Float64=0.99) where P <: MPolyElem{Nemo.fmpq}
+    _assess_local_identifiability_discrete_aux(dds::ODE{P}, funcs_to_check::Array{<: Any, 1}, known_ic, prob_threshold::Float64=0.99) where P <: MPolyElem{Nemo.fmpq}
 
 Checks the local identifiability/observability of the functions in `funcs_to_check` treating `dds` as a discrete-time system with **shift**
 instead of derivative in the right-hand side.
-The result is correct with probability at least `p`.
+The result is correct with probability at least `prob_threshold`.
 `known_ic` can take one of the following
  * `:none` - no initial conditions are assumed to be known
  * `:all` - all initial conditions are assumed to be known
@@ -192,7 +192,7 @@ function _assess_local_identifiability_discrete_aux(
     dds::ODE{P},
     funcs_to_check::Array{<:Any, 1},
     known_ic = :none,
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
 ) where {P <: MPolyElem{Nemo.fmpq}}
     bring = base_ring(dds.poly_ring)
 
@@ -222,7 +222,7 @@ function _assess_local_identifiability_discrete_aux(
     else
         Jac_degree += 2 * deg_y * prec
     end
-    D = Int(ceil(Jac_degree * length(funcs_to_check) / (1 - p)))
+    D = Int(ceil(Jac_degree * length(funcs_to_check) / (1 - prob_threshold)))
     @debug "Sampling range $D"
 
     # Parameter values are the same across all the replicas
@@ -293,26 +293,26 @@ end
         measured_quantities=Array{ModelingToolkit.Equation}[], 
         funcs_to_check=Array{}[], 
         known_ic=Array{}[],
-        p::Float64=0.99)
+        prob_threshold::Float64=0.99)
 
 Input:
 - `dds` - the DiscreteSystem object from ModelingToolkit (with **difference** operator in the right-hand side)
 - `measured_quantities` - the measurable outputs of the model
 - `funcs_to_check` - functions of parameters for which to check identifiability (all parameters and states if not specified)
 - `known_ic` - functions (of states and parameter) whose initial conditions are assumed to be known
-- `p` - probability of correctness
+- `prob_threshold` - probability of correctness
 
 Output:
 - the result is an (ordered) dictionary from each function to to boolean;
 
-The result is correct with probability at least `p`.
+The result is correct with probability at least `prob_threshold`.
 """
 function assess_local_identifiability(
     dds::ModelingToolkit.DiscreteSystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = Array{}[],
     known_ic = Array{}[],
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     loglevel = Logging.Info,
 )
     restart_logging(loglevel = loglevel)
@@ -322,7 +322,7 @@ function assess_local_identifiability(
             measured_quantities = measured_quantities,
             funcs_to_check = funcs_to_check,
             known_ic = known_ic,
-            p = p,
+            prob_threshold = prob_threshold,
         )
     end
 end
@@ -332,7 +332,7 @@ function _assess_local_identifiability(
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = Array{}[],
     known_ic = Array{}[],
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
 )
     if length(measured_quantities) == 0
         if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(dds))
@@ -373,8 +373,12 @@ function _assess_local_identifiability(
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
     known_ic_ = [eval_at_nemo(x, conversion) for x in known_ic]
 
-    result =
-        _assess_local_identifiability_discrete_aux(dds_aux, funcs_to_check_, known_ic_, p)
+    result = _assess_local_identifiability_discrete_aux(
+        dds_aux,
+        funcs_to_check_,
+        known_ic_,
+        prob_threshold,
+    )
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     if length(known_ic) > 0

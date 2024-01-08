@@ -143,13 +143,13 @@ end
 
 # ------------------------------------------------------------------------------
 """
-    function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], p::Float64=0.99, type=:SE, loglevel=Logging.Info)
+    function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], prob_threshold::Float64=0.99, type=:SE, loglevel=Logging.Info)
 
 Input:
 - `ode` - the ODESystem object from ModelingToolkit
 - `measured_quantities` - the measurable outputs of the model
 - `funcs_to_check` - functions of parameters for which to check identifiability
-- `p` - probability of correctness
+- `prob_threshold` - probability of correctness
 - `type` - identifiability type (`:SE` for single-experiment, `:ME` for multi-experiment)
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
@@ -159,7 +159,7 @@ Output:
 
 The function determines local identifiability of parameters in `funcs_to_check` or all possible parameters if `funcs_to_check` is empty
 
-The result is correct with probability at least `p`.
+The result is correct with probability at least `prob_threshold`.
 
 `type` can be either `:SE` (single-experiment identifiability) or `:ME` (multi-experiment identifiability).
 The return value is a tuple consisting of the array of bools and the number of experiments to be performed.
@@ -168,7 +168,7 @@ function assess_local_identifiability(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = Array{}[],
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     type = :SE,
     loglevel = Logging.Info,
 )
@@ -178,7 +178,7 @@ function assess_local_identifiability(
             ode,
             measured_quantities = measured_quantities,
             funcs_to_check = funcs_to_check,
-            p = p,
+            prob_threshold = prob_threshold,
             type = type,
         )
     end
@@ -188,7 +188,7 @@ end
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = Array{}[],
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     type = :SE,
 )
     if length(measured_quantities) == 0
@@ -219,7 +219,7 @@ end
         result = _assess_local_identifiability(
             ode,
             funcs_to_check = funcs_to_check_,
-            p = p,
+            prob_threshold = prob_threshold,
             type = type,
         )
         nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
@@ -230,7 +230,7 @@ end
         result, bd = _assess_local_identifiability(
             ode,
             funcs_to_check = funcs_to_check_,
-            p = p,
+            prob_threshold = prob_threshold,
             type = type,
         )
         nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
@@ -242,9 +242,9 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    assess_local_identifiability(ode::ODE{P}; funcs_to_check::Array{<: Any, 1}, p::Float64=0.99, type=:SE, loglevel=Logging.Info) where P <: MPolyElem{Nemo.fmpq}
+    assess_local_identifiability(ode::ODE{P}; funcs_to_check::Array{<: Any, 1}, prob_threshold::Float64=0.99, type=:SE, loglevel=Logging.Info) where P <: MPolyElem{Nemo.fmpq}
 
-Checks the local identifiability/observability of the functions in `funcs_to_check`. The result is correct with probability at least `p`.
+Checks the local identifiability/observability of the functions in `funcs_to_check`. The result is correct with probability at least `prob_threshold`.
 
 Call this function if you have a specific collection of parameters of which you would like to check local identifiability.
 
@@ -254,7 +254,7 @@ If the type is `:ME`, states are not allowed to appear in the `funcs_to_check`.
 function assess_local_identifiability(
     ode::ODE{P};
     funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     type = :SE,
     trbasis = nothing,
     loglevel = Logging.Info,
@@ -265,7 +265,7 @@ function assess_local_identifiability(
         return _assess_local_identifiability(
             ode,
             funcs_to_check = funcs_to_check,
-            p = p,
+            prob_threshold = prob_threshold,
             type = type,
             trbasis = trbasis,
         )
@@ -275,7 +275,7 @@ end
 function _assess_local_identifiability(
     ode::ODE{P};
     funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     type = :SE,
     trbasis = nothing,
 ) where {P <: MPolyElem{Nemo.fmpq}}
@@ -307,7 +307,7 @@ function _assess_local_identifiability(
         d = max(d, df)
         h = max(h, hf)
     end
-    p_per_func = 1 - (1 - p) / length(funcs_to_check)
+    p_per_func = 1 - (1 - prob_threshold) / length(funcs_to_check)
     mu = ceil(1 / (1 - sqrt(p_per_func)))
 
     n = length(ode.x_vars)
