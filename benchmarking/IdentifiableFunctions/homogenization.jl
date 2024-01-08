@@ -15,7 +15,7 @@ Bilirubin2_io = @ODEmodel(
 funcs = find_identifiable_functions(Bilirubin2_io, with_states = true, strategy = (:gb,))
 
 rff = StructuralIdentifiability.RationalFunctionField(funcs)
-cfs = StructuralIdentifiability.beautifuly_generators(rff)
+cfs = StructuralIdentifiability.beautiful_generators(rff)
 rff = StructuralIdentifiability.RationalFunctionField(cfs)
 
 K = GF(2^31 - 1)

@@ -200,7 +200,7 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    beautifuly_generators(rff::RationalFunctionField)
+    beautiful_generators(rff::RationalFunctionField)
 
 Given a field of rational functions `rff` returns a set of "simpler" and
 standardized generators for `rff`.
@@ -209,7 +209,7 @@ Applies the following passes:
 1. Filter constants,
 2. Remove redundant generators.
 """
-@timeit _to function beautifuly_generators(
+@timeit _to function beautiful_generators(
     rff::RationalFunctionField;
     discard_redundant = true,
     reversed_order = false,
@@ -390,7 +390,7 @@ Returns a set of Groebner bases for multiple different rankings of variables.
     # The first basis in some ordering
     ord = InputOrdering()
     new_rff = groebner_basis_coeffs(rff, seed = seed, ordering = ord)
-    cfs = beautifuly_generators(new_rff)
+    cfs = beautiful_generators(new_rff)
     ordering_to_generators[ord] = cfs
     if isempty(cfs)
         return ordering_to_generators
@@ -415,7 +415,7 @@ Returns a set of Groebner bases for multiple different rankings of variables.
                 ordering = ord,
                 up_to_degree = up_to_degree,
             )
-            cfs = beautifuly_generators(new_rff, discard_redundant = false)
+            cfs = beautiful_generators(new_rff, discard_redundant = false)
             ordering_to_generators[ord] = cfs
         end
     end
@@ -432,7 +432,7 @@ Returns a set of Groebner bases for multiple different rankings of variables.
                 ordering = ord,
                 up_to_degree = up_to_degree,
             )
-            cfs = beautifuly_generators(new_rff, discard_redundant = false)
+            cfs = beautiful_generators(new_rff, discard_redundant = false)
             ordering_to_generators[ord] = cfs
         end
     end
@@ -450,7 +450,7 @@ Returns a set of Groebner bases for multiple different rankings of variables.
                 ordering = ord,
                 up_to_degree = up_to_degree,
             )
-            cfs = beautifuly_generators(new_rff, discard_redundant = false)
+            cfs = beautiful_generators(new_rff, discard_redundant = false)
             ordering_to_generators[ord] = cfs
         end
     end
@@ -467,7 +467,7 @@ function monomial_generators_up_to_degree(
 ) where {T}
     @assert strategy in (:monte_carlo,)
     relations = linear_relations_between_normal_forms(
-        beautifuly_generators(rff),
+        beautiful_generators(rff),
         up_to_degree,
         seed = seed,
     )
@@ -532,7 +532,7 @@ Result is correct (in Monte-Carlo sense) with probability at least `p`.
         seed = seed,
         rational_interpolator = rational_interpolator,
     )
-    new_fracs = beautifuly_generators(new_rff)
+    new_fracs = beautiful_generators(new_rff)
     if isempty(new_fracs)
         return new_fracs
     end
@@ -556,7 +556,7 @@ Result is correct (in Monte-Carlo sense) with probability at least `p`.
 Final cleaning and simplification of generators. 
 Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique."""
     runtime =
-        @elapsed new_fracs = beautifuly_generators(RationalFunctionField(new_fracs_unique))
+        @elapsed new_fracs = beautiful_generators(RationalFunctionField(new_fracs_unique))
     @debug "Checking inclusion with probability $p"
     runtime = @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), p)
     _runtime_logger[:id_inclusion_check] = runtime
