@@ -67,8 +67,8 @@ The `assess_local_identifiability` function has three important keyword argument
 assess_local_identifiability(sir; measured_quantities = [I], funcs_to_check = [β * S])
 ```
 
-  - `p` is the probability of correctness (default value `0.99`, i.e., 99%). The underlying algorithm is a Monte-Carlo algorithm, so in
-    principle it may produce incorrect result but the probability of correctness of the returned result is guaranteed to be at least `p`
+  - `prob_threshold` is the probability of correctness (default value `0.99`, i.e., 99%). The underlying algorithm is a Monte-Carlo algorithm, so in
+    principle it may produce incorrect result but the probability of correctness of the returned result is guaranteed to be at least `prob_threshold`
     (in fact, the employed bounds are quite conservative, so in practice incorrect result is almost never produced).
 
   - `known_ic` is a list of the states for which initial conditions are known. In this case, the identifiability results will be valid not

@@ -18,7 +18,7 @@ This functions takes the following optional arguments:
   - `:strong`: Strong simplification. This option is the slowest, but the output
   functions are nice and simple.
   - `:absent`: No simplification.
-- `p`: A float in the range from 0 to 1, the probability of correctness. Default
+- `prob_threshold`: A float in the range from 0 to 1, the probability of correctness. Default
   is `0.99`.
 - `seed`: The rng seed. Default value is `42`.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
@@ -45,7 +45,7 @@ find_identifiable_functions(ode)
 """
 function find_identifiable_functions(
     ode::ODE{T};
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     seed = 42,
     with_states = false,
     simplify = :standard,
@@ -57,7 +57,7 @@ function find_identifiable_functions(
     with_logger(_si_logger[]) do
         return _find_identifiable_functions(
             ode,
-            p = p,
+            prob_threshold = prob_threshold,
             seed = seed,
             with_states = with_states,
             simplify = simplify,
@@ -68,7 +68,7 @@ end
 
 function _find_identifiable_functions(
     ode::ODE{T};
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     seed = 42,
     with_states = false,
     simplify = :standard,
@@ -87,10 +87,10 @@ function _find_identifiable_functions(
         id_funcs = [one(bring)]
         return id_funcs
     end
-    half_p = 0.5 + p / 2
+    half_p = 0.5 + prob_threshold / 2
     id_funcs, bring = initial_identifiable_functions(
         ode,
-        p = half_p,
+        prob_threshold = half_p,
         with_states = with_states,
         rational_interpolator = rational_interpolator,
     )
@@ -102,7 +102,7 @@ function _find_identifiable_functions(
         end
         id_funcs_fracs = simplified_generating_set(
             RationalFunctionField(id_funcs),
-            p = half_p,
+            prob_threshold = half_p,
             seed = seed,
             simplify = simplify,
             rational_interpolator = rational_interpolator,
@@ -158,7 +158,7 @@ find_identifiable_functions(de, measured_quantities = [y1 ~ x0])
 function find_identifiable_functions(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     seed = 42,
     with_states = false,
     simplify = :standard,
@@ -171,7 +171,7 @@ function find_identifiable_functions(
         return _find_identifiable_functions(
             ode,
             measured_quantities = measured_quantities,
-            p = p,
+            prob_threshold = prob_threshold,
             seed = seed,
             with_states = with_states,
             simplify = simplify,
@@ -183,7 +183,7 @@ end
 function _find_identifiable_functions(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     seed = 42,
     with_states = false,
     simplify = :standard,
@@ -197,7 +197,7 @@ function _find_identifiable_functions(
     result = _find_identifiable_functions(
         ode,
         simplify = simplify,
-        p = p,
+        prob_threshold = prob_threshold,
         seed = seed,
         with_states = with_states,
         rational_interpolator = rational_interpolator,

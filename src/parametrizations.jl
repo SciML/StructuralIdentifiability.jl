@@ -432,7 +432,7 @@ Returns a tuple (`new_ode`, `new_vars`, `implicit_relations`), such that:
 The function accepts the following optional arguments.
 
 - `seed`: A float in the range from 0 to 1, random seed (default is `seed = 42`). 
-- `p`: The probability of correctness (default is `p = 0.99`).
+- `prob_threshold`: The probability of correctness (default is `prob_threshold = 0.99`).
 
 ## Example
 
@@ -471,20 +471,24 @@ compared to the original one.
 """
 function reparametrize_global(
     ode::ODE{P};
-    p = 0.99,
+    prob_threshold = 0.99,
     seed = 42,
     loglevel = Logging.Info,
 ) where {P}
     restart_logging(loglevel = loglevel)
     with_logger(_si_logger[]) do
-        return _reparametrize_global(ode, p = p, seed = seed)
+        return _reparametrize_global(ode, prob_threshold = prob_threshold, seed = seed)
     end
 end
 
-function _reparametrize_global(ode::ODE{P}; p = 0.99, seed = 42) where {P}
+function _reparametrize_global(ode::ODE{P}; prob_threshold = 0.99, seed = 42) where {P}
     Random.seed!(seed)
-    id_funcs =
-        find_identifiable_functions(ode, with_states = true, simplify = :strong, p = p)
+    id_funcs = find_identifiable_functions(
+        ode,
+        with_states = true,
+        simplify = :strong,
+        prob_threshold = prob_threshold,
+    )
     ode_ring = parent(ode)
     @assert base_ring(parent(first(id_funcs))) == ode_ring
     @info "Constructing a new parametrization"
