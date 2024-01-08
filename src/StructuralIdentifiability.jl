@@ -105,7 +105,11 @@ function assess_identifiability(
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
-        return _assess_identifiability(ode, funcs_to_check = funcs_to_check, prob_threshold = prob_threshold)
+        return _assess_identifiability(
+            ode,
+            funcs_to_check = funcs_to_check,
+            prob_threshold = prob_threshold,
+        )
     end
 end
 
@@ -214,7 +218,11 @@ function _assess_identifiability(
     end
     funcs_to_check_ = [eval_at_nemo(each, conversion) for each in funcs_to_check]
 
-    result = _assess_identifiability(ode, funcs_to_check = funcs_to_check_, prob_threshold = prob_threshold)
+    result = _assess_identifiability(
+        ode,
+        funcs_to_check = funcs_to_check_,
+        prob_threshold = prob_threshold,
+    )
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     return out_dict

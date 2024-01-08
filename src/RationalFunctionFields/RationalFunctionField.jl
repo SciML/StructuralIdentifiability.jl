@@ -158,18 +158,30 @@ function field_contains(
     return field_contains(field, fractions_to_dennums(ratfuncs), prob_threshold)
 end
 
-function field_contains(field::RationalFunctionField{T}, polys::Vector{T}, prob_threshold) where {T}
+function field_contains(
+    field::RationalFunctionField{T},
+    polys::Vector{T},
+    prob_threshold,
+) where {T}
     id = one(parent(first(polys)))
     return field_contains(field, [[id, p] for p in polys], prob_threshold)
 end
 
 # ------------------------------------------------------------------------------
 
-function issubfield(F::RationalFunctionField{T}, E::RationalFunctionField{T}, prob_threshold) where {T}
+function issubfield(
+    F::RationalFunctionField{T},
+    E::RationalFunctionField{T},
+    prob_threshold,
+) where {T}
     return all(field_contains(E, F.dennums, prob_threshold))
 end
 
-function fields_equal(F::RationalFunctionField{T}, E::RationalFunctionField{T}, prob_threshold) where {T}
+function fields_equal(
+    F::RationalFunctionField{T},
+    E::RationalFunctionField{T},
+    prob_threshold,
+) where {T}
     new_p = 1 - (1 - prob_threshold) / 2
     return issubfield(F, E, new_p) && issubfield(E, F, new_p)
 end
@@ -558,7 +570,8 @@ Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactica
     runtime =
         @elapsed new_fracs = beautifuly_generators(RationalFunctionField(new_fracs_unique))
     @debug "Checking inclusion with probability $prob_threshold"
-    runtime = @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), prob_threshold)
+    runtime =
+        @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), prob_threshold)
     _runtime_logger[:id_inclusion_check] = runtime
     if !result
         @warn "Field membership check failed. Error will follow."

@@ -373,8 +373,12 @@ function _assess_local_identifiability(
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
     known_ic_ = [eval_at_nemo(x, conversion) for x in known_ic]
 
-    result =
-        _assess_local_identifiability_discrete_aux(dds_aux, funcs_to_check_, known_ic_, prob_threshold)
+    result = _assess_local_identifiability_discrete_aux(
+        dds_aux,
+        funcs_to_check_,
+        known_ic_,
+        prob_threshold,
+    )
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     if length(known_ic) > 0

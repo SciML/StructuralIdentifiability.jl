@@ -483,8 +483,12 @@ end
 
 function _reparametrize_global(ode::ODE{P}; prob_threshold = 0.99, seed = 42) where {P}
     Random.seed!(seed)
-    id_funcs =
-        find_identifiable_functions(ode, with_states = true, simplify = :strong, prob_threshold = prob_threshold)
+    id_funcs = find_identifiable_functions(
+        ode,
+        with_states = true,
+        simplify = :strong,
+        prob_threshold = prob_threshold,
+    )
     ode_ring = parent(ode)
     @assert base_ring(parent(first(id_funcs))) == ode_ring
     @info "Constructing a new parametrization"
