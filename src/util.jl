@@ -1,4 +1,3 @@
-# ------------------------------------------------------------------------------
 
 function total_degree_frac(f::Generic.Frac{<:MPolyElem})
     return sum(map(total_degree, unpack_fraction(f)))
