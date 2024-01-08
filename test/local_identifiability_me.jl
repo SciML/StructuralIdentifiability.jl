@@ -213,7 +213,7 @@ end
         result = assess_local_identifiability(
             case[:ode],
             funcs_to_check = case[:funcs],
-            p = 0.932,
+            prob_threshold = 0.932,
             type = :ME,
         )
         @test result == case[:correct]

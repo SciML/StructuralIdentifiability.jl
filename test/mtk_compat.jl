@@ -149,7 +149,7 @@
             de;
             measured_quantities = measured_quantities,
             funcs_to_check = funcs_to_check,
-            p = 0.99,
+            prob_threshold = 0.99,
             type = :ME,
         ),
     )
@@ -195,7 +195,7 @@
         assess_local_identifiability(
             de;
             funcs_to_check = funcs_to_check,
-            p = 0.99,
+            prob_threshold = 0.99,
             type = :ME,
         ),
     )
@@ -232,7 +232,7 @@
             de;
             measured_quantities = measured_quantities,
             funcs_to_check = funcs_to_check,
-            p = 0.99,
+            prob_threshold = 0.99,
             type = :ME,
         ),
     )

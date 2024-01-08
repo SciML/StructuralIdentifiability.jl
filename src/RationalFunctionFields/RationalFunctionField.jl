@@ -76,17 +76,17 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    field_contains(field, ratfuncs, p)
+    field_contains(field, ratfuncs, prob_threshold)
 
 Checks whether given rational function field `field` contains given rational
 functions `ratfuncs` (represented as a list of lists). The result is correct with
-probability at least `p`
+probability at least `prob_threshold`
 
 Inputs:
 - `field` - a rational function field
 - `ratfuncs` - a list of lists of polynomials. Each of the lists, say, `[f1, ..., fn]`,
   defines generators `f2/f1, ..., fn/f1`.
-- `p` real number from (0, 1)
+- `prob_threshold` real number from (0, 1)
 
 Output:
 - a list `L[i]` of bools of length `length(rat_funcs)` such that `L[i]` is true iff
@@ -95,7 +95,7 @@ Output:
 @timeit _to function field_contains(
     field::RationalFunctionField{T},
     ratfuncs::Vector{Vector{T}},
-    p,
+    prob_threshold,
 ) where {T}
     if isempty(ratfuncs)
         return Bool[]
@@ -133,7 +133,7 @@ Output:
         3 *
         BigInt(degree)^(length(total_vars) + 3) *
         (length(ratfuncs)) *
-        ceil(1 / (1 - p)),
+        ceil(1 / (1 - prob_threshold)),
     )
     @debug "\tSampling from $(-sampling_bound) to $(sampling_bound)"
 
@@ -153,24 +153,24 @@ end
 function field_contains(
     field::RationalFunctionField{T},
     ratfuncs::Vector{Generic.Frac{T}},
-    p,
+    prob_threshold,
 ) where {T}
-    return field_contains(field, fractions_to_dennums(ratfuncs), p)
+    return field_contains(field, fractions_to_dennums(ratfuncs), prob_threshold)
 end
 
-function field_contains(field::RationalFunctionField{T}, polys::Vector{T}, p) where {T}
+function field_contains(field::RationalFunctionField{T}, polys::Vector{T}, prob_threshold) where {T}
     id = one(parent(first(polys)))
-    return field_contains(field, [[id, p] for p in polys], p)
+    return field_contains(field, [[id, p] for p in polys], prob_threshold)
 end
 
 # ------------------------------------------------------------------------------
 
-function issubfield(F::RationalFunctionField{T}, E::RationalFunctionField{T}, p) where {T}
-    return all(field_contains(E, F.dennums, p))
+function issubfield(F::RationalFunctionField{T}, E::RationalFunctionField{T}, prob_threshold) where {T}
+    return all(field_contains(E, F.dennums, prob_threshold))
 end
 
-function fields_equal(F::RationalFunctionField{T}, E::RationalFunctionField{T}, p) where {T}
-    new_p = 1 - (1 - p) / 2
+function fields_equal(F::RationalFunctionField{T}, E::RationalFunctionField{T}, prob_threshold) where {T}
+    new_p = 1 - (1 - prob_threshold) / 2
     return issubfield(F, E, new_p) && issubfield(E, F, new_p)
 end
 
@@ -475,14 +475,14 @@ function monomial_generators_up_to_degree(
 end
 
 """
-    simplified_generating_set(rff; p = 0.99, seed = 42)
+    simplified_generating_set(rff; prob_threshold = 0.99, seed = 42)
 
 Returns a simplified set of generators for `rff`. 
-Result is correct (in Monte-Carlo sense) with probability at least `p`.
+Result is correct (in the Monte-Carlo sense) with probability at least `prob_threshold`.
 """
 @timeit _to function simplified_generating_set(
     rff::RationalFunctionField;
-    p = 0.99,
+    prob_threshold = 0.99,
     seed = 42,
     simplify = :standard,
     check_variables = false, # almost always slows down and thus turned off
@@ -500,8 +500,8 @@ Result is correct (in Monte-Carlo sense) with probability at least `p`.
     # Checking membership of particular variables and adding them to the field
     if check_variables
         vars = gens(poly_ring(rff))
-        containment = field_contains(rff, vars, (1.0 + p) / 2)
-        p = (1.0 + p) / 2
+        containment = field_contains(rff, vars, (1.0 + prob_threshold) / 2)
+        prob_threshold = (1.0 + prob_threshold) / 2
         if all(containment)
             return [v // one(poly_ring(rff)) for v in vars]
         end
@@ -557,14 +557,14 @@ Final cleaning and simplification of generators.
 Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique."""
     runtime =
         @elapsed new_fracs = beautifuly_generators(RationalFunctionField(new_fracs_unique))
-    @debug "Checking inclusion with probability $p"
-    runtime = @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), p)
+    @debug "Checking inclusion with probability $prob_threshold"
+    runtime = @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), prob_threshold)
     _runtime_logger[:id_inclusion_check] = runtime
     if !result
         @warn "Field membership check failed. Error will follow."
         throw("The new subfield generators are not correct.")
     end
-    @info "Inclusion checked with probability $p in $(_runtime_logger[:id_inclusion_check]) seconds"
+    @info "Inclusion checked with probability $prob_threshold in $(_runtime_logger[:id_inclusion_check]) seconds"
     @debug "Out of $(length(rff.mqs.nums_qq)) initial generators there are $(length(new_fracs)) indepdendent"
     ranking = generating_set_rank(new_fracs)
     _runtime_logger[:id_ranking] = ranking
