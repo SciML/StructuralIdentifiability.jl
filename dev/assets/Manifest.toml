@@ -92,6 +92,12 @@ weakdeps = ["SparseArrays"]
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
+[[deps.Atomix]]
+deps = ["UnsafeAtomics"]
+git-tree-sha1 = "c06a868224ecba914baa6942988e2f2aade419be"
+uuid = "a9b6321e-bd34-4604-b9c9-b65b8de01458"
+version = "0.1.0"
+
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
@@ -522,10 +528,10 @@ uuid = "86223c79-3864-5bf0-83f7-82e725a168b6"
 version = "1.9.0"
 
 [[deps.Groebner]]
-deps = ["AbstractAlgebra", "Combinatorics", "ExprTools", "Logging", "MultivariatePolynomials", "PrecompileTools", "PrettyTables", "Primes", "Printf", "Random", "SIMD", "TimerOutputs"]
-git-tree-sha1 = "6b505ef15e55bdc5bb3ddbcfebdff1c9e67081e8"
+deps = ["AbstractAlgebra", "Atomix", "Combinatorics", "ExprTools", "Logging", "MultivariatePolynomials", "Nemo", "PrecompileTools", "PrettyTables", "Primes", "Printf", "Random", "TimerOutputs"]
+git-tree-sha1 = "27cecf5f19cd34b85bb5efe2976984118dfbb5ec"
 uuid = "0b43b601-686d-58a3-8a1c-6623616c7cd4"
-version = "0.5.1"
+version = "0.6.0"
 
 [[deps.GroupsCore]]
 deps = ["Markdown", "Random"]
@@ -1033,9 +1039,9 @@ weakdeps = ["Requires", "TOML"]
 
 [[deps.ParamPunPam]]
 deps = ["AbstractAlgebra", "Groebner", "Logging", "Nemo", "Primes", "ProgressMeter", "Random"]
-git-tree-sha1 = "b08966f74fae6b68eb3ed3cb2521e0de227b7903"
+git-tree-sha1 = "bc18a670c94077a9388efe26d898b98339f14366"
 uuid = "3e851597-e36f-45a9-af0a-b7781937992f"
-version = "0.2.4"
+version = "0.2.5"
 
 [[deps.Parameters]]
 deps = ["OrderedCollections", "UnPack"]
@@ -1219,12 +1225,6 @@ version = "0.5.12"
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 version = "0.7.0"
 
-[[deps.SIMD]]
-deps = ["PrecompileTools"]
-git-tree-sha1 = "d8911cc125da009051fb35322415641d02d9e37f"
-uuid = "fdea26ae-647d-5447-a871-4b548cad5224"
-version = "3.4.6"
-
 [[deps.SIMDTypes]]
 git-tree-sha1 = "330289636fb8107c5f32088d2741e9fd7a061a5c"
 uuid = "94e857df-77ce-4151-89e5-788b33177be4"
@@ -1238,9 +1238,9 @@ version = "0.6.42"
 
 [[deps.SciMLBase]]
 deps = ["ADTypes", "ArrayInterface", "CommonSolve", "ConstructionBase", "Distributed", "DocStringExtensions", "EnumX", "FillArrays", "FunctionWrappersWrappers", "IteratorInterfaceExtensions", "LinearAlgebra", "Logging", "Markdown", "PrecompileTools", "Preferences", "Printf", "RecipesBase", "RecursiveArrayTools", "Reexport", "RuntimeGeneratedFunctions", "SciMLOperators", "StaticArraysCore", "Statistics", "SymbolicIndexingInterface", "Tables", "TruncatedStacktraces"]
-git-tree-sha1 = "bda8bddc47915ee94bb10a5fc901b112e337e898"
+git-tree-sha1 = "e54bd4dbce5e7081ba429f4800f21d0414d46636"
 uuid = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
-version = "2.17.0"
+version = "2.17.1"
 
     [deps.SciMLBase.extensions]
     SciMLBaseChainRulesCoreExt = "ChainRulesCore"
@@ -1562,6 +1562,11 @@ deps = ["ConstructionBase"]
 git-tree-sha1 = "25008b734a03736c41e2a7dc314ecb95bd6bbdb0"
 uuid = "a7c27f48-0311-42f6-a7f8-2c11e75eb415"
 version = "0.1.6"
+
+[[deps.UnsafeAtomics]]
+git-tree-sha1 = "6331ac3440856ea1988316b46045303bef658278"
+uuid = "013be700-e6cd-48c3-b4a1-df204f14c38f"
+version = "0.2.1"
 
 [[deps.VectorizationBase]]
 deps = ["ArrayInterface", "CPUSummary", "HostCPUFeatures", "IfElse", "LayoutPointers", "Libdl", "LinearAlgebra", "SIMDTypes", "Static", "StaticArrayInterface"]
