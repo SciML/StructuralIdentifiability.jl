@@ -1,5 +1,6 @@
 @testset "Linear differential equations" begin
-    T, t = Nemo.PowerSeriesRing(Nemo.Native.GF(2^31 - 1), 300, "t"; model = :capped_absolute)
+    T, t =
+        Nemo.PowerSeriesRing(Nemo.Native.GF(2^31 - 1), 300, "t"; model = :capped_absolute)
 
     for d in 1:5
         for c in 1:5

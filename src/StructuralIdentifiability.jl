@@ -172,14 +172,13 @@ end
     using Requires
 end
 
-@static if !isdefined(Base,:get_extension)
+@static if !isdefined(Base, :get_extension)
     function __init__()
-        @require ModelingToolkit="961ee093-0014-501f-94e3-6117800e7a78" begin
+        @require ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78" begin
             include("../ext/ModelingToolkitExt.jl")
         end
     end
 end
-
 
 using PrecompileTools
 include("precompile.jl")
