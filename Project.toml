@@ -30,23 +30,23 @@ ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
 SymbolicUtils = "d1185830-fcd6-423d-90d6-eec64667417b"
 Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
 
-[weakdeps]
-ModelingToolkitExt = "ModelingToolkit,SymbolicUtils,Symbolics"
+[extensions]
+ModelingToolkitExt = ["ModelingToolkit", "SymbolicUtils" ,"Symbolics"]
 
 [compat]
-AbstractAlgebra = "0.27, 0.28, 0.29, 0.30, 0.31, 0.32, 0.33, 0.34"
+AbstractAlgebra = "0.34.5, 0.35"
 BenchmarkTools = "1"
 Combinatorics = "1"
 DataStructures = "0.18"
 Dates = "1.6, 1.7"
-Groebner = "0.4, 0.5"
+Groebner = "0.6.3"
 IterTools = "1"
 LinearAlgebra = "1.6, 1.7"
 Logging = "1.6, 1.7"
 MacroTools = "0.5"
 ModelingToolkit = "8.51"
-Nemo = "0.32, 0.33, 0.34, 0.35, 0.36, 0.37, 0.38"
-ParamPunPam = "0.2"
+Nemo = "0.38.3, 0.39"
+ParamPunPam = "0.3.1"
 PrecompileTools = "1.1, 1.2"
 Primes = "0.5"
 Random = "1.6, 1.7"
@@ -66,4 +66,4 @@ SymbolicUtils = "d1185830-fcd6-423d-90d6-eec64667417b"
 Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
 
 [targets]
-test = ["CPUSummary", "Test", "TestSetExtensions"]
+test = ["CPUSummary", "Test", "TestSetExtensions", "ModelingToolkit"]

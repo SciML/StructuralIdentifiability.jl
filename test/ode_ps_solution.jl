@@ -39,7 +39,7 @@ end
     sol = ps_ode_solution(eqs, Dict(x => 0, y => -2), Dict(u => u_coeff), prec)
     @test map(e -> valuation(evaluate(e, [sol[v] for v in gens(R)])), eqs) == [prec - 1, prec - 1]
 
-    F = Nemo.GF(2^31 - 1)
+    F = Nemo.Native.GF(2^31 - 1)
     prec = 100
 
     # Testing the function ps_ode_solution by itself

@@ -207,7 +207,7 @@ Computes the Wronskians of io_equations
 
     # reducing everything modulo prime
     PRIME = 2^31 - 1
-    F = Nemo.GF(PRIME)
+    F = Nemo.Native.GF(PRIME)
     polyring_red, gens_red =
         Nemo.PolynomialRing(F, map(var_to_str, gens(parent(termlists[1][1]))))
     termlists =

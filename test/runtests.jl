@@ -5,7 +5,6 @@ using TestSetExtensions
 
 using StructuralIdentifiability.DataStructures
 using StructuralIdentifiability.Nemo
-using StructuralIdentifiability.ModelingToolkit
 using StructuralIdentifiability:
     field_contains,
     check_identifiability,
@@ -76,6 +75,8 @@ function random_ps_matrix(ps_ring, matrix_space)
     end
     return result
 end
+
+const GROUP = get(ENV, "GROUP", "All")
 
 @info "Testing started"
 

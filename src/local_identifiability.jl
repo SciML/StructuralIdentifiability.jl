@@ -228,7 +228,7 @@ function _assess_local_identifiability(
     Dprime = max(Dprime, 1.0)
     prime = Primes.nextprime(Int(ceil(2 * mu * Dprime)))
     @debug "The prime is $prime"
-    F = Nemo.GF(prime)
+    F = Nemo.Native.GF(prime)
 
     @debug "Extending the model"
     ode_ext =

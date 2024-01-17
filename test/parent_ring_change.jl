@@ -1,5 +1,5 @@
 @testset "Parent ring change" begin
-    for field in [Nemo.QQ, Nemo.GF(2^31 - 1)]
+    for field in [Nemo.QQ, Nemo.Native.GF(2^31 - 1)]
         R, (z, x, y) = PolynomialRing(QQ, ["z", "x", "y"], ordering = :degrevlex)
         R_, (y_, x_) = PolynomialRing(QQ, ["y", "x"], ordering = :lex)
         R__, (x__, t__, y__, z__) =

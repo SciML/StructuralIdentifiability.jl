@@ -301,7 +301,7 @@ is not specified but is assumed to be close to 1.
     ring_param = ParamPunPam.parent_params(mqs)
     xs_param = gens(ring_param)
     nparams = nvars(ring_param)
-    finite_field = Nemo.GF(2^30 + 3)
+    finite_field = Nemo.Native.GF(2^30 + 3)
     ParamPunPam.reduce_mod_p!(mqs, finite_field)
     @info "Computing normal forms of degree $up_to_degree in $nparams variables"
     @debug """Variables ($nparams in total): $xs_param

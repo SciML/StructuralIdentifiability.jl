@@ -161,7 +161,7 @@ end
         ),
     )
 
-    F = Nemo.GF(2^31 - 1)
+    F = Nemo.Native.GF(2^31 - 1)
     P = gfp_mpoly
     DType = Union{P, Generic.Frac{P}}
 
