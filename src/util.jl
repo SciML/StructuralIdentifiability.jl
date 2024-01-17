@@ -478,55 +478,6 @@ end
 
 # ------------------------------------------------------------------------------
 
-function eval_at_nemo(e::Num, vals::Dict)
-    e = Symbolics.value(e)
-    return eval_at_nemo(e, vals)
-end
-
-function eval_at_nemo(e::SymbolicUtils.BasicSymbolic, vals::Dict)
-    if Symbolics.istree(e)
-        # checking if it is a function of the form x(t), a bit dirty
-        if length(Symbolics.arguments(e)) == 1 && "$(first(Symbolics.arguments(e)))" == "t"
-            return vals[e]
-        end
-        # checking if this is a vector entry like x(t)[1]
-        if Symbolics.operation(e) == getindex
-            return vals[e]
-        end
-        # otherwise, this is a term
-        args = map(a -> eval_at_nemo(a, vals), Symbolics.arguments(e))
-        if Symbolics.operation(e) in (+, -, *)
-            return Symbolics.operation(e)(args...)
-        elseif isequal(Symbolics.operation(e), /)
-            return //(args...)
-        elseif isequal(Symbolics.operation(e), ^)
-            if args[2] >= 0
-                return args[1]^args[2]
-            end
-            return 1 // args[1]^(-args[2])
-        end
-        throw(Base.ArgumentError("Function $(Symbolics.operation(e)) is not supported"))
-    elseif e isa Symbolics.Symbolic
-        return get(vals, e, e)
-    end
-end
-
-function eval_at_nemo(e::Union{Integer, Rational}, vals::Dict)
-    return e
-end
-
-function eval_at_nemo(e::Union{Float16, Float32, Float64}, vals::Dict)
-    if isequal(e % 1, 0)
-        out = Int(e)
-    else
-        out = rationalize(e)
-    end
-    @warn "Floating point value $e will be converted to $(out)."
-    return out
-end
-
-# -----------------------------------------------------------------------------
-
 """
     decompose_derivative(varname, prefixes)
 
@@ -562,20 +513,4 @@ function difforder(diffpoly::MPolyElem, prefix::String)
         end
     end
     return max(orders...)
-end
-
-function get_measured_quantities(ode::ModelingToolkit.ODESystem)
-    if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
-        @info "Measured quantities are not provided, trying to find the outputs in input ODE."
-        return filter(
-            eq -> (ModelingToolkit.isoutput(eq.lhs)),
-            ModelingToolkit.equations(ode),
-        )
-    else
-        throw(
-            error(
-                "Measured quantities (output functions) were not provided and no outputs were found.",
-            ),
-        )
-    end
 end

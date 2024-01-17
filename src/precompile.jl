@@ -3,12 +3,12 @@
     # Putting some things in `@setup_workload` instead of `@compile_workload` can reduce the size of the
     # precompile file and potentially make loading faster.
     using Logging
-    using ModelingToolkit
-    @parameters a01 a21 a12
-    @variables t x0(t) x1(t) y(t)
-    D = Differential(t)
-    eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1]
-    de = ODESystem(eqs, t, name = :Test)
+    #using ModelingToolkit
+    #@parameters a01 a21 a12
+    #@variables t x0(t) x1(t) y(t)
+    #D = Differential(t)
+    #eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1]
+    #de = ODESystem(eqs, t, name = :Test)
     @compile_workload begin
         restart_logging(loglevel = Logging.Warn)
         with_logger(_si_logger[]) do
@@ -21,12 +21,12 @@
                 y(t) = x2(t)
             )
             assess_identifiability(ode, loglevel = Logging.Warn)
-            assess_identifiability(de; measured_quantities = [x0], loglevel = Logging.Warn)
-            assess_identifiability(
-                de;
-                measured_quantities = [y ~ x0],
-                loglevel = Logging.Warn,
-            )
+            #assess_identifiability(de; measured_quantities = [x0], loglevel = Logging.Warn)
+            #assess_identifiability(
+            #    de;
+            #    measured_quantities = [y ~ x0],
+            #    loglevel = Logging.Warn,
+            #)
             find_identifiable_functions(ode, with_states = true, loglevel = Logging.Warn)
         end
         restart_logging(loglevel = Logging.Info)

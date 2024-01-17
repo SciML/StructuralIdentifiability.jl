@@ -20,8 +20,6 @@ using ParamPunPam
 using ParamPunPam: reduce_mod_p!, specialize_mod_p, AbstractBlackboxIdeal
 ParamPunPam.enable_progressbar(false)
 
-using ModelingToolkit
-
 # defining a model
 export ODE, @ODEmodel, mtk_to_si
 
@@ -170,63 +168,18 @@ function _assess_identifiability(
     return result
 end
 
-"""
-    assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], prob_threshold = 0.99, loglevel=Logging.Info)
+@static if !isdefined(Base, :get_extension)
+    using Requires
+end
 
-Input:
-- `ode` - the ModelingToolkit.ODESystem object that defines the model
-- `measured_quantities` - the output functions of the model
-- `funcs_to_check` - functions of parameters for which to check the identifiability
-- `prob_threshold` - probability of correctness.
-- `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
-
-Assesses identifiability (both local and global) of a given ODE model (parameters detected automatically). The result is guaranteed to be correct with the probability
-at least `prob_threshold`.
-"""
-function assess_identifiability(
-    ode::ModelingToolkit.ODESystem;
-    measured_quantities = Array{ModelingToolkit.Equation}[],
-    funcs_to_check = [],
-    prob_threshold = 0.99,
-    loglevel = Logging.Info,
-)
-    restart_logging(loglevel = loglevel)
-    with_logger(_si_logger[]) do
-        return _assess_identifiability(
-            ode,
-            measured_quantities = measured_quantities,
-            funcs_to_check = funcs_to_check,
-            prob_threshold = prob_threshold,
-        )
+@static if !isdefined(Base,:get_extension)
+    function __init__()
+        @require ModelingToolkit="961ee093-0014-501f-94e3-6117800e7a78" begin
+            include("../ext/ModelingToolkitExt.jl")
+        end
     end
 end
 
-function _assess_identifiability(
-    ode::ModelingToolkit.ODESystem;
-    measured_quantities = Array{ModelingToolkit.Equation}[],
-    funcs_to_check = [],
-    prob_threshold = 0.99,
-)
-    if isempty(measured_quantities)
-        measured_quantities = get_measured_quantities(ode)
-    end
-
-    ode, conversion = mtk_to_si(ode, measured_quantities)
-    conversion_back = Dict(v => k for (k, v) in conversion)
-    if isempty(funcs_to_check)
-        funcs_to_check = [conversion_back[x] for x in [ode.x_vars..., ode.parameters...]]
-    end
-    funcs_to_check_ = [eval_at_nemo(each, conversion) for each in funcs_to_check]
-
-    result = _assess_identifiability(
-        ode,
-        funcs_to_check = funcs_to_check_,
-        prob_threshold = prob_threshold,
-    )
-    nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
-    out_dict = OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
-    return out_dict
-end
 
 using PrecompileTools
 include("precompile.jl")
