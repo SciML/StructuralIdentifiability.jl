@@ -1,4 +1,4 @@
-if GROUP == "All" || GROUP == "ModelingToolkit"
+if GROUP == "All" || GROUP == "ModelingToolkitExt"
 
 using ModelingToolkit
 
