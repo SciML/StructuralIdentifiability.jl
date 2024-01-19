@@ -23,14 +23,6 @@ Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 TimerOutputs = "a759f4b9-e2f1-59dc-863e-4aeb61b1ea8f"
 
-[weakdeps]
-ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
-SymbolicUtils = "d1185830-fcd6-423d-90d6-eec64667417b"
-Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
-
-[extensions]
-ModelingToolkitExt = ["ModelingToolkit", "SymbolicUtils", "Symbolics"]
-
 [compat]
 AbstractAlgebra = "0.34.5, 0.35"
 BenchmarkTools = "1"
@@ -55,6 +47,9 @@ TestSetExtensions = "2"
 TimerOutputs = "0.5"
 julia = "1.6, 1.7"
 
+[extensions]
+ModelingToolkitExt = ["ModelingToolkit", "SymbolicUtils", "Symbolics"]
+
 [extras]
 CPUSummary = "2a0fbf3d-bb9c-48f3-b0a9-814d99fd7ab9"
 ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
@@ -65,3 +60,8 @@ TestSetExtensions = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"
 
 [targets]
 test = ["CPUSummary", "Test", "TestSetExtensions"]
+
+[weakdeps]
+ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
+SymbolicUtils = "d1185830-fcd6-423d-90d6-eec64667417b"
+Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
