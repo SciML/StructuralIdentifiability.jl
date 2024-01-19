@@ -16,12 +16,21 @@ Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
 MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
 Nemo = "2edaba10-b0f1-5616-af89-8c11ac63239a"
 ParamPunPam = "3e851597-e36f-45a9-af0a-b7781937992f"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
 Primes = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 TimerOutputs = "a759f4b9-e2f1-59dc-863e-4aeb61b1ea8f"
+
+[weakdeps]
+ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
+SymbolicUtils = "d1185830-fcd6-423d-90d6-eec64667417b"
+Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
+
+[extensions]
+ModelingToolkitExt = ["ModelingToolkit", "SymbolicUtils", "Symbolics"]
 
 [compat]
 AbstractAlgebra = "0.34.5, 0.35"
@@ -47,9 +56,6 @@ TestSetExtensions = "2"
 TimerOutputs = "0.5"
 julia = "1.6, 1.7"
 
-[extensions]
-ModelingToolkitExt = ["ModelingToolkit", "SymbolicUtils", "Symbolics"]
-
 [extras]
 CPUSummary = "2a0fbf3d-bb9c-48f3-b0a9-814d99fd7ab9"
 ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
@@ -60,8 +66,3 @@ TestSetExtensions = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"
 
 [targets]
 test = ["CPUSummary", "Pkg", "Test", "TestSetExtensions"]
-
-[weakdeps]
-ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
-SymbolicUtils = "d1185830-fcd6-423d-90d6-eec64667417b"
-Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
