@@ -97,5 +97,9 @@ end
     @includetests ARGS
     include("RationalFunctionFields/RationalFunctionField.jl")
     include("RationalFunctionFields/normalforms.jl")
-    include("extensions//modelingtoolkit.jl")
+    @static if VERSION >= v"1.10.0"
+        if GROUP == "All" || GROUP == "ModelingToolkitExt"
+            include("extensions//modelingtoolkit.jl")
+        end
+    end
 end
