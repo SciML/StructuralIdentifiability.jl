@@ -59,6 +59,18 @@ using StructuralIdentifiability:
     states_generators,
     RationalFunctionField
 
+const GROUP = get(ENV, "GROUP", "All")
+
+@static if VERSION >= v"1.10.0"
+    if GROUP == "All" || GROUP == "ModelingToolkitExt"
+        using Pkg
+        Pkg.add("ModelingToolkit")
+        Pkg.add("Symbolics")
+        using ModelingToolkit
+        using Symbolics
+    end
+end
+
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)
     t = gen(ps_ring)
@@ -75,8 +87,6 @@ function random_ps_matrix(ps_ring, matrix_space)
     end
     return result
 end
-
-const GROUP = get(ENV, "GROUP", "All")
 
 @info "Testing started"
 
