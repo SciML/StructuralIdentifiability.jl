@@ -1,10 +1,21 @@
 module ModelingToolkitExt
 
-if !isdefined(Base, :get_extension)
+using DataStructures
+using Logging
+using Nemo
+using Random
+using StructuralIdentifiability
+using StructuralIdentifiability: str_to_var, parent_ring_change, eval_at_dict
+using StructuralIdentifiability: restart_logging, _si_logger, reset_timings, _to
+using TimerOutputs
+
+if isdefined(Base, :get_extension)
     using ModelingToolkit
 else
     using ..ModelingToolkit
 end
+
+export assess_local_identifiability, assess_identifiability, find_identifiable_functions
 
 # ------------------------------------------------------------------------------
 
@@ -246,7 +257,7 @@ The result is correct with probability at least `prob_threshold`.
 `type` can be either `:SE` (single-experiment identifiability) or `:ME` (multi-experiment identifiability).
 The return value is a tuple consisting of the array of bools and the number of experiments to be performed.
 """
-function assess_local_identifiability(
+function StructuralIdentifiability.assess_local_identifiability(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = Array{}[],
@@ -298,7 +309,7 @@ end
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
 
     if isequal(type, :SE)
-        result = _assess_local_identifiability(
+        result = StructuralIdentifiability._assess_local_identifiability(
             ode,
             funcs_to_check = funcs_to_check_,
             prob_threshold = prob_threshold,
@@ -309,7 +320,7 @@ end
             OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
         return out_dict
     elseif isequal(type, :ME)
-        result, bd = _assess_local_identifiability(
+        result, bd = StructuralIdentifiability._assess_local_identifiability(
             ode,
             funcs_to_check = funcs_to_check_,
             prob_threshold = prob_threshold,
@@ -355,7 +366,7 @@ function StructuralIdentifiability.assess_identifiability(
     end
 end
 
-function StructuralIdentifiability._assess_identifiability(
+function _assess_identifiability(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = [],
@@ -372,7 +383,7 @@ function StructuralIdentifiability._assess_identifiability(
     end
     funcs_to_check_ = [eval_at_nemo(each, conversion) for each in funcs_to_check]
 
-    result = _assess_identifiability(
+    result = StructuralIdentifiability._assess_identifiability(
         ode,
         funcs_to_check = funcs_to_check_,
         prob_threshold = prob_threshold,
@@ -424,7 +435,7 @@ function StructuralIdentifiability.assess_local_identifiability(
     end
 end
 
-function StructuralIdentifiability._assess_local_identifiability(
+function _assess_local_identifiability(
     dds::ModelingToolkit.DiscreteSystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = Array{}[],
@@ -470,7 +481,7 @@ function StructuralIdentifiability._assess_local_identifiability(
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
     known_ic_ = [eval_at_nemo(x, conversion) for x in known_ic]
 
-    result = _assess_local_identifiability_discrete_aux(
+    result = StructuralIdentifiability._assess_local_identifiability_discrete_aux(
         dds_aux,
         funcs_to_check_,
         known_ic_,
@@ -480,6 +491,7 @@ function StructuralIdentifiability._assess_local_identifiability(
     out_dict = OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
     if length(known_ic) > 0
         @warn "Since known initial conditions were provided, identifiability of states (e.g., `x(t)`) is at t = 0 only !"
+        t = SymbolicUtils.Sym{Real}(:t)
         out_dict = OrderedDict(substitute(k, Dict(t => 0)) => v for (k, v) in out_dict)
     end
     return out_dict
@@ -523,7 +535,7 @@ find_identifiable_functions(de, measured_quantities = [y1 ~ x0])
  a01 + a12 + a21
 ```
 """
-function find_identifiable_functions(
+function StructuralIdentifiability.find_identifiable_functions(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     prob_threshold::Float64 = 0.99,
@@ -562,7 +574,7 @@ function _find_identifiable_functions(
         measured_quantities = get_measured_quantities(ode)
     end
     ode, conversion = mtk_to_si(ode, measured_quantities)
-    result = _find_identifiable_functions(
+    result = StructuralIdentifiability._find_identifiable_functions(
         ode,
         simplify = simplify,
         prob_threshold = prob_threshold,
