@@ -85,4 +85,7 @@ const GROUP = get(ENV, "GROUP", "All")
 
 @time @testset "All the tests" verbose = true begin
     @includetests ARGS
+    include("RationalFunctionFields/RationalFunctionField.jl")
+    include("RationalFunctionFields/normalforms.jl")
+    include("extensions//modelingtoolkit.jl")
 end
