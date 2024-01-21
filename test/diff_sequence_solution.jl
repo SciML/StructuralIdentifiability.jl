@@ -7,13 +7,13 @@ if GROUP == "All" || GROUP == "Core"
             ic::Dict{P, T},
             inputs::Dict{P, Array{T, 1}},
             num_terms::Int,
-        ) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
+        ) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
             newvars = [var_to_str(v) for v in gens(dds.poly_ring)]
             append!(
                 newvars,
                 [var_to_str(v) * "$i" for v in dds.u_vars for i in 1:num_terms],
             )
-            R, _ = StructuralIdentifiability.Nemo.PolynomialRing(
+            R, _ = StructuralIdentifiability.Nemo.polynomial_ring(
                 base_ring(dds.poly_ring),
                 newvars,
             )

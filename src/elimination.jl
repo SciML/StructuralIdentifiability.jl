@@ -58,7 +58,7 @@ Inputs:
 Output:
 - `M::MatrixElem` - The Bezout matrix
 """
-function Bezout_matrix(f::P, g::P, var_elim::P) where {P <: MPolyElem}
+function Bezout_matrix(f::P, g::P, var_elim::P) where {P <: MPolyRingElem}
     parent_ring = parent(f)
     deg_f = Nemo.degree(f, var_elim)
     deg_g = Nemo.degree(g, var_elim)
@@ -91,7 +91,7 @@ Inputs:
 Output:
 - `M::MatrixElem` - The Sylvester matrix
 """
-function Sylvester_matrix(f::P, g::P, var_elim::P) where {P <: MPolyElem}
+function Sylvester_matrix(f::P, g::P, var_elim::P) where {P <: MPolyRingElem}
     parent_ring = parent(f)
     deg_f = Nemo.degree(f, var_elim)
     deg_g = Nemo.degree(g, var_elim)
@@ -124,9 +124,9 @@ Input:
 
 Output:
 - `M::MatrixElem` - Simplified matrix
-- `extra_factors::Vector{AbstractAlgebra.MPolyElem}` - array of GCDs eliminated from `M`.
+- `extra_factors::Vector{AbstractAlgebra.MPolyRingElem}` - array of GCDs eliminated from `M`.
 """
-function simplify_matrix(M::MatElem{P}) where {P <: MPolyElem}
+function simplify_matrix(M::MatElem{P}) where {P <: MPolyRingElem}
     """
     An auxiliary function taking a list of coordinates of cells
     and dividing them by their gcd.
@@ -188,7 +188,10 @@ mutable struct ODEPointGenerator{P} <: PointGenerator{P}
     cached_points::Array{Dict{P, <:FieldElem}, 1}
     number_type::Type
 
-    function ODEPointGenerator{P}(ode::ODE{P}, big_ring::MPolyRing) where {P <: MPolyElem}
+    function ODEPointGenerator{P}(
+        ode::ODE{P},
+        big_ring::MPolyRing,
+    ) where {P <: MPolyRingElem}
         prec = length(ode.x_vars) + 1
         number_type = typeof(one(base_ring(big_ring)))
         return new(ode, big_ring, prec, Array{Dict{P, number_type}}[], number_type)
@@ -200,7 +203,7 @@ end
 function Base.iterate(
     gpg::ODEPointGenerator{P},
     i::Int = 1,
-) where {P <: MPolyElem{<:FieldElem}}
+) where {P <: MPolyRingElem{<:FieldElem}}
     if i > length(gpg.cached_points)
         @debug "Generating new point on the variety"
         sample_max = i * 50
@@ -273,7 +276,7 @@ Output:
 function choose(
     polys::Array{P, 1},
     generic_point_generator,
-) where {P <: MPolyElem{<:FieldElem}}
+) where {P <: MPolyRingElem{<:FieldElem}}
     vars = gens(parent(polys[1]))
     for p in generic_point_generator
         # get accounts for the fact that the big ring may contain some auxiliary variables, e.g. rand_proj_var
@@ -307,7 +310,7 @@ Output:
     g::P,
     var_elim::P,
     generic_point_generator,
-) where {P <: MPolyElem{<:FieldElem}}
+) where {P <: MPolyRingElem{<:FieldElem}}
     # Linear comb
     while f != 0 && g != 0
         if Nemo.degree(f, var_elim) > Nemo.degree(g, var_elim)

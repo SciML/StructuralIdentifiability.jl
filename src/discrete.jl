@@ -18,7 +18,7 @@ function sequence_solution(
     initial_conditions::Dict{P, T},
     input_values::Dict{P, Array{T, 1}},
     num_terms::Int,
-) where {T <: FieldElem, P <: MPolyElem{T}}
+) where {T <: FieldElem, P <: MPolyRingElem{T}}
     result = Dict(x => [initial_conditions[x]] for x in dds.x_vars)
     for i in 2:num_terms
         eval_dict = merge(
@@ -41,7 +41,7 @@ function sequence_solution(
     initial_conditions::Dict{P, Int},
     input_values::Dict{P, Array{Int, 1}},
     num_terms::Int,
-) where {P <: MPolyElem{<:FieldElem}}
+) where {P <: MPolyRingElem{<:FieldElem}}
     bring = base_ring(dds.poly_ring)
     return sequence_solution(
         dds,
@@ -71,7 +71,7 @@ function differentiate_sequence_solution(
     ic::Dict{P, T},
     inputs::Dict{P, Array{T, 1}},
     num_terms::Int,
-) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
+) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing the power series solution of the system"
     seq_sol = sequence_solution(dds, params, ic, inputs, num_terms)
     generalized_params = vcat(dds.x_vars, dds.parameters)
@@ -125,7 +125,7 @@ function differentiate_sequence_output(
     ic::Dict{P, T},
     inputs::Dict{P, Array{T, 1}},
     num_terms::Int,
-) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
+) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing partial derivatives of the solution"
     seq_sol, sol_diff = differentiate_sequence_solution(dds, params, ic, inputs, num_terms)
 
@@ -178,7 +178,7 @@ function _degree_with_common_denom(polys)
 end
 
 """
-    _assess_local_identifiability_discrete_aux(dds::ODE{P}, funcs_to_check::Array{<: Any, 1}, known_ic, prob_threshold::Float64=0.99) where P <: MPolyElem{Nemo.fmpq}
+    _assess_local_identifiability_discrete_aux(dds::ODE{P}, funcs_to_check::Array{<: Any, 1}, known_ic, prob_threshold::Float64=0.99) where P <: MPolyRingElem{Nemo.QQFieldElem}
 
 Checks the local identifiability/observability of the functions in `funcs_to_check` treating `dds` as a discrete-time system with **shift**
 instead of derivative in the right-hand side.
@@ -193,7 +193,7 @@ function _assess_local_identifiability_discrete_aux(
     funcs_to_check::Array{<:Any, 1},
     known_ic = :none,
     prob_threshold::Float64 = 0.99,
-) where {P <: MPolyElem{Nemo.fmpq}}
+) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
     bring = base_ring(dds.poly_ring)
 
     @debug "Extending the model"
@@ -228,8 +228,8 @@ function _assess_local_identifiability_discrete_aux(
     # Parameter values are the same across all the replicas
     params_vals = Dict(p => bring(rand(1:D)) for p in dds_ext.parameters)
     ic = Dict(x => bring(rand(1:D)) for x in dds_ext.x_vars)
-    # TODO: parametric type instead of fmpq
-    inputs = Dict{P, Array{fmpq, 1}}(
+    # TODO: parametric type instead of QQFieldElem
+    inputs = Dict{P, Array{QQFieldElem, 1}}(
         u => [bring(rand(1:D)) for i in 1:prec] for u in dds_ext.u_vars
     )
 

@@ -20,7 +20,7 @@ struct ODE{P} # P is the type of polynomials in the rhs of the ODE system
         x_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
         y_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
         inputs::Array{P, 1},
-    ) where {P <: MPolyElem{<:FieldElem}}
+    ) where {P <: MPolyRingElem{<:FieldElem}}
         # Initialize ODE
         # x_eqs is a dictionary x_i => f_i(x, u, params)
         # y_eqs is a dictionary y_i => g_i(x, u, params)
@@ -40,7 +40,7 @@ struct ODE{P} # P is the type of polynomials in the rhs of the ODE system
         x_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
         y_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
         inputs::Array{P, 1},
-    ) where {P <: MPolyElem{<:FieldElem}}
+    ) where {P <: MPolyRingElem{<:FieldElem}}
         x_vars = collect(keys(x_eqs))
         y_vars = collect(keys(y_eqs))
         return ODE{P}(x_vars, y_vars, x_eqs, y_eqs, inputs)
@@ -53,10 +53,13 @@ end
 
 #------------------------------------------------------------------------------
 
-function add_outputs(ode::ODE{P}, extra_y::Dict{String, <:RingElem}) where {P <: MPolyElem}
+function add_outputs(
+    ode::ODE{P},
+    extra_y::Dict{String, <:RingElem},
+) where {P <: MPolyRingElem}
     new_var_names =
         vcat(collect(map(var_to_str, gens(ode.poly_ring))), collect(keys(extra_y)))
-    new_ring, new_vars = Nemo.PolynomialRing(base_ring(ode.poly_ring), new_var_names)
+    new_ring, new_vars = Nemo.polynomial_ring(base_ring(ode.poly_ring), new_var_names)
 
     new_x = Array{P, 1}([parent_ring_change(x, new_ring) for x in ode.x_vars])
     new_x_eqs = Dict{P, Union{P, Generic.Frac{P}}}(
@@ -94,10 +97,10 @@ Output:
 function set_parameter_values(
     ode::ODE{P},
     param_values::Dict{P, T},
-) where {T <: FieldElem, P <: MPolyElem{T}}
+) where {T <: FieldElem, P <: MPolyRingElem{T}}
     new_vars =
         map(var_to_str, [v for v in gens(ode.poly_ring) if !(v in keys(param_values))])
-    small_ring, small_vars = Nemo.PolynomialRing(base_ring(ode.poly_ring), new_vars)
+    small_ring, small_vars = Nemo.polynomial_ring(base_ring(ode.poly_ring), new_vars)
     eval_dict =
         Dict(str_to_var(v, ode.poly_ring) => str_to_var(v, small_ring) for v in new_vars)
     merge!(eval_dict, Dict(p => small_ring(val) for (p, val) in param_values))
@@ -130,8 +133,8 @@ end
 function set_parameter_values(
     ode::ODE{P},
     param_values::Dict{P, <:Number},
-) where {P <: MPolyElem}
-    new_values = Dict{P, fmpq}(x => _to_rational(v) for (x, v) in param_values)
+) where {P <: MPolyRingElem}
+    new_values = Dict{P, QQFieldElem}(x => _to_rational(v) for (x, v) in param_values)
     return set_parameter_values(ode, new_values)
 end
 
@@ -156,11 +159,11 @@ function power_series_solution(
     initial_conditions::Dict{P, T},
     input_values::Dict{P, Array{T, 1}},
     prec::Int,
-) where {T <: FieldElem, P <: MPolyElem{T}}
+) where {T <: FieldElem, P <: MPolyRingElem{T}}
     new_varnames = map(var_to_str, vcat(ode.x_vars, ode.u_vars))
     append!(new_varnames, map(v -> var_to_str(v) * "_dot", ode.x_vars))
 
-    new_ring, new_vars = Nemo.PolynomialRing(base_ring(ode.poly_ring), new_varnames)
+    new_ring, new_vars = Nemo.polynomial_ring(base_ring(ode.poly_ring), new_varnames)
     equations = Array{P, 1}()
     evaluation = Dict(k => new_ring(v) for (k, v) in param_values)
     for v in vcat(ode.x_vars, ode.u_vars)
@@ -196,7 +199,7 @@ function power_series_solution(
     initial_conditions::Dict{P, Int},
     input_values::Dict{P, Array{Int, 1}},
     prec::Int,
-) where {P <: MPolyElem{<:FieldElem}}
+) where {P <: MPolyRingElem{<:FieldElem}}
     bring = base_ring(ode.poly_ring)
     return power_series_solution(
         ode,
@@ -213,7 +216,7 @@ end
 
 Reduces a polynomial/rational function over Q modulo p
 """
-function _reduce_mod_p(poly::fmpq_mpoly, p::Int)
+function _reduce_mod_p(poly::QQMPolyRingElem, p::Int)
     den = denominator(poly)
     num = change_base_ring(Nemo.ZZ, den * poly)
     if Nemo.Native.GF(p)(den) == 0
@@ -222,7 +225,7 @@ function _reduce_mod_p(poly::fmpq_mpoly, p::Int)
     return change_base_ring(Nemo.Native.GF(p), num) * (1 // Nemo.Native.GF(p)(den))
 end
 
-function _reduce_mod_p(rat::Generic.Frac{fmpq_mpoly}, p::Int)
+function _reduce_mod_p(rat::Generic.Frac{QQMPolyRingElem}, p::Int)
     num, den = map(poly -> _reduce_mod_p(poly, p), [numerator(rat), denominator(rat)])
     if den == 0
         throw(Base.ArgumentError("Prime $p divides the denominator of $rat"))
@@ -238,9 +241,9 @@ end
 Input: ode is an ODE over QQ, p is a prime number
 Output: the reduction mod p, throws an exception if p divides one of the denominators
 """
-function reduce_ode_mod_p(ode::ODE{<:MPolyElem{Nemo.fmpq}}, p::Int)
+function reduce_ode_mod_p(ode::ODE{<:MPolyRingElem{Nemo.QQFieldElem}}, p::Int)
     new_ring, new_vars =
-        Nemo.PolynomialRing(Nemo.Native.GF(p), map(var_to_str, gens(ode.poly_ring)))
+        Nemo.polynomial_ring(Nemo.Native.GF(p), map(var_to_str, gens(ode.poly_ring)))
     new_type = typeof(new_vars[1])
     new_inputs = map(u -> switch_ring(u, new_ring), ode.u_vars)
     new_x = map(x -> switch_ring(x, new_ring), ode.x_vars)
@@ -375,7 +378,7 @@ macro ODEmodel(ex::Expr...)
     R = gensym()
     vars_aux = gensym()
     exp_ring = :(
-        ($R, $vars_aux) = StructuralIdentifiability.Nemo.PolynomialRing(
+        ($R, $vars_aux) = StructuralIdentifiability.Nemo.polynomial_ring(
             StructuralIdentifiability.Nemo.QQ,
             map(string, $all_symb_with_t),
         )
@@ -385,8 +388,10 @@ macro ODEmodel(ex::Expr...)
     # setting x_vars and y_vars in the right order
     vx = gensym()
     vy = gensym()
-    x_var_expr = :($vx = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}([$(x_vars...)]))
-    y_var_expr = :($vy = Vector{StructuralIdentifiability.Nemo.fmpq_mpoly}([$(y_vars...)]))
+    x_var_expr =
+        :($vx = Vector{StructuralIdentifiability.Nemo.QQMPolyRingElem}([$(x_vars...)]))
+    y_var_expr =
+        :($vy = Vector{StructuralIdentifiability.Nemo.QQMPolyRingElem}([$(y_vars...)]))
 
     # preparing equations
     equations = map(macrohelper_clean, equations)
@@ -394,22 +399,22 @@ macro ODEmodel(ex::Expr...)
     y_dict = gensym()
     x_dict_create_expr = :(
         $x_dict = Dict{
-            StructuralIdentifiability.Nemo.fmpq_mpoly,
+            StructuralIdentifiability.Nemo.QQMPolyRingElem,
             Union{
-                StructuralIdentifiability.Nemo.fmpq_mpoly,
+                StructuralIdentifiability.Nemo.QQMPolyRingElem,
                 StructuralIdentifiability.AbstractAlgebra.Generic.Frac{
-                    StructuralIdentifiability.Nemo.fmpq_mpoly,
+                    StructuralIdentifiability.Nemo.QQMPolyRingElem,
                 },
             },
         }()
     )
     y_dict_create_expr = :(
         $y_dict = Dict{
-            StructuralIdentifiability.Nemo.fmpq_mpoly,
+            StructuralIdentifiability.Nemo.QQMPolyRingElem,
             Union{
-                StructuralIdentifiability.Nemo.fmpq_mpoly,
+                StructuralIdentifiability.Nemo.QQMPolyRingElem,
                 StructuralIdentifiability.AbstractAlgebra.Generic.Frac{
-                    StructuralIdentifiability.Nemo.fmpq_mpoly,
+                    StructuralIdentifiability.Nemo.QQMPolyRingElem,
                 },
             },
         }()
@@ -472,13 +477,14 @@ macro ODEmodel(ex::Expr...)
         ),
     ]
     # creating the ode object
-    ode_expr = :(StructuralIdentifiability.ODE{StructuralIdentifiability.Nemo.fmpq_mpoly}(
-        $vx,
-        $vy,
-        $x_dict,
-        $y_dict,
-        Array{StructuralIdentifiability.Nemo.fmpq_mpoly}([$(u_vars...)]),
-    ))
+    ode_expr =
+        :(StructuralIdentifiability.ODE{StructuralIdentifiability.Nemo.QQMPolyRingElem}(
+            $vx,
+            $vy,
+            $x_dict,
+            $y_dict,
+            Array{StructuralIdentifiability.Nemo.QQMPolyRingElem}([$(u_vars...)]),
+        ))
 
     result = Expr(
         :block,

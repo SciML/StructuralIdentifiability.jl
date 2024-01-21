@@ -1,6 +1,6 @@
 if GROUP == "All" || GROUP == "Core"
     @testset "Primality check (zerodim subroutine)" begin
-        R, (x, y) = Nemo.PolynomialRing(Nemo.QQ, ["x", "y"])
+        R, (x, y) = Nemo.polynomial_ring(Nemo.QQ, ["x", "y"])
 
         @test check_primality_zerodim([x^2 - 1, y^2 - 4]) == false
 

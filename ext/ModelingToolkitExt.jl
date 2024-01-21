@@ -166,7 +166,7 @@ function __mtk_to_si(
     de::ModelingToolkit.AbstractTimeDependentSystem,
     measured_quantities::Array{<:Tuple{String, <:SymbolicUtils.BasicSymbolic}},
 )
-    polytype = StructuralIdentifiability.Nemo.fmpq_mpoly
+    polytype = StructuralIdentifiability.Nemo.QQMPolyRingElem
     fractype = StructuralIdentifiability.Nemo.Generic.Frac{polytype}
     diff_eqs =
         filter(eq -> !(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
@@ -197,7 +197,7 @@ function __mtk_to_si(
     input_symbols = vcat(state_vars, inputs, params)
     generators = vcat(string.(input_symbols), [e[1] for e in measured_quantities])
     generators = map(g -> replace(g, "(t)" => ""), generators)
-    R, gens_ = Nemo.PolynomialRing(Nemo.QQ, generators)
+    R, gens_ = Nemo.polynomial_ring(Nemo.QQ, generators)
     y_vars = Vector{polytype}([str_to_var(e[1], R) for e in measured_quantities])
     symb2gens = Dict(input_symbols .=> gens_[1:length(input_symbols)])
 

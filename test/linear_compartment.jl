@@ -158,7 +158,7 @@ if GROUP == "All" || GROUP == "Core"
                 case[:leaks],
             )
             bring = ode.poly_ring
-            correct = Dict{fmpq_mpoly, Symbol}()
+            correct = Dict{QQMPolyRingElem, Symbol}()
             for (e, id) in case[:result]
                 correct[str_to_var("a_$(e[2])_$(e[1])", bring)] = id
             end

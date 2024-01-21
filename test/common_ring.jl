@@ -3,7 +3,7 @@ if GROUP == "All" || GROUP == "Core"
         ode = @ODEmodel(x1'(t) = x2(t), x2'(t) = a * x1(t), y(t) = x1(t))
         ioeqs = find_ioequations(ode)
         pbr = PBRepresentation(ode, ioeqs)
-        R, (y_2, y_5, c) = Nemo.PolynomialRing(Nemo.QQ, ["y(t)_2", "y(t)_5", "c"])
+        R, (y_2, y_5, c) = Nemo.polynomial_ring(Nemo.QQ, ["y(t)_2", "y(t)_5", "c"])
         p = y_2^2 + c * y_5
         (r, der) = common_ring(p, pbr)
         @test Set(map(var_to_str, gens(r))) ==
@@ -19,7 +19,7 @@ if GROUP == "All" || GROUP == "Core"
         ioeqs = find_ioequations(ode)
         pbr = PBRepresentation(ode, ioeqs)
         R, (y1_0, y2_3, u_3) =
-            Nemo.PolynomialRing(Nemo.QQ, ["y1(t)_0", "y2(t)_3", "u(t)_3"])
+            Nemo.polynomial_ring(Nemo.QQ, ["y1(t)_0", "y2(t)_3", "u(t)_3"])
         p = y1_0 + y2_3 + u_3
         (r, der) = common_ring(p, pbr)
         @test Set([var_to_str(v) for v in gens(r)]) == Set([

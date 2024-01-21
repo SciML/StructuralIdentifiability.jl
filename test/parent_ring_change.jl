@@ -1,10 +1,10 @@
 if GROUP == "All" || GROUP == "Core"
     @testset "Parent ring change" begin
         for field in [Nemo.QQ, Nemo.Native.GF(2^31 - 1)]
-            R, (z, x, y) = PolynomialRing(QQ, ["z", "x", "y"], ordering = :degrevlex)
-            R_, (y_, x_) = PolynomialRing(QQ, ["y", "x"], ordering = :lex)
+            R, (z, x, y) = polynomial_ring(QQ, ["z", "x", "y"], ordering = :degrevlex)
+            R_, (y_, x_) = polynomial_ring(QQ, ["y", "x"], ordering = :lex)
             R__, (x__, t__, y__, z__) =
-                PolynomialRing(QQ, ["x", "t", "y", "z"], ordering = :deglex)
+                polynomial_ring(QQ, ["x", "t", "y", "z"], ordering = :deglex)
 
             f = 2x + 3y + x^7 * y
             @test f ==
@@ -42,9 +42,9 @@ if GROUP == "All" || GROUP == "Core"
             @test f__ ==
                   StructuralIdentifiability.parent_ring_change(f, R__, matching = :byindex)
 
-            R, (x,) = PolynomialRing(field, ["x"])
-            R2, (x2,) = PolynomialRing(Nemo.FractionField(R), ["x"])
-            R3, (x3,) = PolynomialRing(field, ["x"])
+            R, (x,) = polynomial_ring(field, ["x"])
+            R2, (x2,) = polynomial_ring(Nemo.FractionField(R), ["x"])
+            R3, (x3,) = polynomial_ring(field, ["x"])
             f = x3^2
             f_ = StructuralIdentifiability.parent_ring_change(f, R2)
             @test parent(f) == R3

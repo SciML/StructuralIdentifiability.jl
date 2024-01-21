@@ -30,7 +30,7 @@ function differentiate_solution(
     ic::Dict{P, T},
     inputs::Dict{P, Array{T, 1}},
     prec::Int,
-) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
+) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing the power series solution of the system"
     ps_sol = power_series_solution(ode, params, ic, inputs, prec)
     ps_ring = parent(first(values(ps_sol)))
@@ -86,7 +86,7 @@ function differentiate_output(
     ic::Dict{P, T},
     inputs::Dict{P, Array{T, 1}},
     prec::Int,
-) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
+) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing partial derivatives of the solution"
     ps_sol, sol_diff = differentiate_solution(ode, params, ic, inputs, prec)
     ps_ring = parent(first(values(ps_sol)))
@@ -124,7 +124,7 @@ end
 for `f` being a polynomial/rational function over rationals (`QQ`) returns a tuple
 `(degree, max_coef_size)`
 """
-function get_degree_and_coeffsize(f::MPolyElem{Nemo.fmpq})
+function get_degree_and_coeffsize(f::MPolyRingElem{Nemo.QQFieldElem})
     if length(f) == 0
         return (0, 1)
     end
@@ -135,7 +135,7 @@ function get_degree_and_coeffsize(f::MPolyElem{Nemo.fmpq})
     return (total_degree(f), max_coef)
 end
 
-function get_degree_and_coeffsize(f::Generic.Frac{<:MPolyElem{Nemo.fmpq}})
+function get_degree_and_coeffsize(f::Generic.Frac{<:MPolyRingElem{Nemo.QQFieldElem}})
     num_deg, num_coef = get_degree_and_coeffsize(numerator(f))
     den_deg, den_coef = get_degree_and_coeffsize(denominator(f))
     return (max(num_deg, den_deg), max(num_coef, den_coef))
@@ -144,7 +144,7 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    assess_local_identifiability(ode::ODE{P}; funcs_to_check::Array{<: Any, 1}, prob_threshold::Float64=0.99, type=:SE, loglevel=Logging.Info) where P <: MPolyElem{Nemo.fmpq}
+    assess_local_identifiability(ode::ODE{P}; funcs_to_check::Array{<: Any, 1}, prob_threshold::Float64=0.99, type=:SE, loglevel=Logging.Info) where P <: MPolyRingElem{Nemo.QQFieldElem}
 
 Checks the local identifiability/observability of the functions in `funcs_to_check`. The result is correct with probability at least `prob_threshold`.
 
@@ -160,7 +160,7 @@ function assess_local_identifiability(
     type = :SE,
     trbasis = nothing,
     loglevel = Logging.Info,
-) where {P <: MPolyElem{Nemo.fmpq}}
+) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
@@ -180,7 +180,7 @@ function _assess_local_identifiability(
     prob_threshold::Float64 = 0.99,
     type = :SE,
     trbasis = nothing,
-) where {P <: MPolyElem{Nemo.fmpq}}
+) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
     if isempty(funcs_to_check)
         funcs_to_check = ode.parameters
         if type == :SE
@@ -253,7 +253,7 @@ function _assess_local_identifiability(
     # in the SE case, it will exit right away
     while true
         ic = Dict(x => F(rand(1:prime)) for x in ode_red.x_vars)
-        inputs = Dict{Nemo.gfp_mpoly, Array{Nemo.gfp_elem, 1}}(
+        inputs = Dict{Nemo.gfp_mpoly, Array{Nemo.fpFieldElem, 1}}(
             u => [F(rand(1:prime)) for i in 1:prec] for u in ode_red.u_vars
         )
 

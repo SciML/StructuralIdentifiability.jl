@@ -11,7 +11,7 @@ if GROUP == "All" || GROUP == "Core"
         println("IOEQS: ", ioeqs)
         pbr = PBRepresentation(ode, ioeqs)
 
-        R, (y1_0, y1_1, y1_2, y2_0, y2_1, y2_2) = Nemo.PolynomialRing(
+        R, (y1_0, y1_1, y1_2, y2_0, y2_1, y2_2) = Nemo.polynomial_ring(
             Nemo.QQ,
             ["y1(t)_0", "y1(t)_1", "y1(t)_2", "y2(t)_0", "y2(t)_1", "y2(t)_2"],
         )

@@ -31,7 +31,7 @@ function check_constructive_field_membership(generators::AbstractVector, to_be_r
     $(join(map(x -> string(x[1]) * " -> " * string(x[2]),  zip(fracs_gen, tag_strings)), "\t\n"))
     """
     var_strings = vcat(sat_string, map(string, gens(ring)), tag_strings)
-    ring_tag, xs_tag = PolynomialRing(K, var_strings, ordering = Nemo.ordering(ring))
+    ring_tag, xs_tag = polynomial_ring(K, var_strings, ordering = Nemo.ordering(ring))
     orig_vars = xs_tag[2:(nvars(ring) + 1)]
     tag_vars = xs_tag[(nvars(ring) + 2):end]
     sat_var = xs_tag[1]
@@ -121,12 +121,12 @@ rem_tags, tag_to_gen = check_constructive_field_membership(fracs_generators, to_
 #=
 ┌ Info: 
 │   rem_tags =
-│    3-element Vector{AbstractAlgebra.Generic.Frac{fmpq_mpoly}}:
+│    3-element Vector{AbstractAlgebra.Generic.Frac{QQMPolyRingElem}}:
 │     T1^2
 │     -5*T1 + T2
 │     T2//T1^10
 │   tag_to_gen =
-│    Dict{fmpq_mpoly, AbstractAlgebra.Generic.Frac{fmpq_mpoly}} with 2 entries:
+│    Dict{QQMPolyRingElem, AbstractAlgebra.Generic.Frac{QQMPolyRingElem}} with 2 entries:
 │      T1 => a^2
 └      T2 => (a + b)//b
 =#
@@ -205,10 +205,10 @@ new_vector_field, new_outputs, new_vars =
 │    Dict{Any, Any} with 1 entry:
 │      T1 => 2*T1 + T2
 │   new_outputs =
-│    Dict{fmpq_mpoly, AbstractAlgebra.Generic.Frac{fmpq_mpoly}} with 1 entry:
+│    Dict{QQMPolyRingElem, AbstractAlgebra.Generic.Frac{QQMPolyRingElem}} with 1 entry:
 │      y => T1
 │   new_vars =
-│    Dict{fmpq_mpoly, AbstractAlgebra.Generic.Frac{fmpq_mpoly}} with 2 entries:
+│    Dict{QQMPolyRingElem, AbstractAlgebra.Generic.Frac{QQMPolyRingElem}} with 2 entries:
 │      T2 => a + b
 └      T1 => x2 + x1
 =#
@@ -230,7 +230,7 @@ id_funcs = StructuralIdentifiability.find_identifiable_functions(
 #=
 ┌ Info: 
 │   id_funcs =
-│    2-element Vector{AbstractAlgebra.Generic.Frac{fmpq_mpoly}}:
+│    2-element Vector{AbstractAlgebra.Generic.Frac{QQMPolyRingElem}}:
 │     x2*x1
 └     a + b
 =#
@@ -246,10 +246,10 @@ new_vector_field, new_outputs, new_vars = reparametrize_with_respect_to(ode, new
 │    Dict{Any, Any} with 1 entry:
 │      T1 => T1*T2
 │   new_outputs =
-│    Dict{fmpq_mpoly, AbstractAlgebra.Generic.Frac{fmpq_mpoly}} with 1 entry:
+│    Dict{QQMPolyRingElem, AbstractAlgebra.Generic.Frac{QQMPolyRingElem}} with 1 entry:
 │      y => T1
 │   new_vars =
-│    Dict{fmpq_mpoly, AbstractAlgebra.Generic.Frac{fmpq_mpoly}} with 2 entries:
+│    Dict{QQMPolyRingElem, AbstractAlgebra.Generic.Frac{QQMPolyRingElem}} with 2 entries:
 │      T2 => a + b
 └      T1 => x2*x1
 =#
@@ -271,7 +271,7 @@ id_funcs = StructuralIdentifiability.find_identifiable_functions(
 #=
 ┌ Info: 
 │   id_funcs =
-│    5-element Vector{AbstractAlgebra.Generic.Frac{fmpq_mpoly}}:
+│    5-element Vector{AbstractAlgebra.Generic.Frac{QQMPolyRingElem}}:
 │     x2*x1
 │     a*b
 │     x2 + x1
@@ -292,10 +292,10 @@ new_vector_field, new_iutputs, new_vars = reparametrize_with_respect_to(ode, new
 │      T2 => T2*T4
 │      T3 => -1//2*T1*T4^2 + 2*T1*T5 + 1//2*T3*T4
 │   new_outputs =
-│    Dict{fmpq_mpoly, AbstractAlgebra.Generic.Frac{fmpq_mpoly}} with 1 entry:
+│    Dict{QQMPolyRingElem, AbstractAlgebra.Generic.Frac{QQMPolyRingElem}} with 1 entry:
 │      y => T1
 │   new_vars =
-│    Dict{fmpq_mpoly, AbstractAlgebra.Generic.Frac{fmpq_mpoly}} with 5 entries:
+│    Dict{QQMPolyRingElem, AbstractAlgebra.Generic.Frac{QQMPolyRingElem}} with 5 entries:
 │      T1 => x2 + x1
 │      T2 => x2*x1
 │      T3 => a*x2 - a*x1 - b*x2 + b*x1

@@ -1,6 +1,6 @@
 if GROUP == "All" || GROUP == "Core"
     @testset "Constructive field membership" begin
-        R, (x,) = PolynomialRing(Nemo.QQ, ["x"])
+        R, (x,) = polynomial_ring(Nemo.QQ, ["x"])
 
         generators = [x^2, x^3]
         to_be_reduced = [x^2, x, 3one(R), zero(R)]
@@ -22,13 +22,13 @@ if GROUP == "All" || GROUP == "Core"
 
         cases = []
 
-        R, (T1,) = PolynomialRing(Nemo.QQ, ["T1"])
+        R, (T1,) = polynomial_ring(Nemo.QQ, ["T1"])
         append!(
             cases,
             [(generators = [T1^2], to_be_reduced = [T1, T1^2], memberships = Bool[0, 1])],
         )
 
-        R, (T1, t, _t) = PolynomialRing(Nemo.QQ, ["T1", "t", "_t"])
+        R, (T1, t, _t) = polynomial_ring(Nemo.QQ, ["T1", "t", "_t"])
         append!(
             cases,
             [(
@@ -38,7 +38,7 @@ if GROUP == "All" || GROUP == "Core"
             )],
         )
 
-        R, (x,) = PolynomialRing(Nemo.QQ, ["x"])
+        R, (x,) = polynomial_ring(Nemo.QQ, ["x"])
         append!(
             cases,
             [
@@ -60,7 +60,7 @@ if GROUP == "All" || GROUP == "Core"
             ],
         )
 
-        R, (x, y, z) = PolynomialRing(Nemo.QQ, ["x", "y", "z"])
+        R, (x, y, z) = polynomial_ring(Nemo.QQ, ["x", "y", "z"])
         append!(
             cases,
             [
@@ -84,7 +84,7 @@ if GROUP == "All" || GROUP == "Core"
 
         # NOTE: in this case it actually matter to cancel out the gcd after
         # computing the normal forms
-        R, (a, b, y, x2, c, x1) = PolynomialRing(Nemo.QQ, ["a", "b", "y", "x2", "c", "x1"])
+        R, (a, b, y, x2, c, x1) = polynomial_ring(Nemo.QQ, ["a", "b", "y", "x2", "c", "x1"])
         append!(
             cases,
             [

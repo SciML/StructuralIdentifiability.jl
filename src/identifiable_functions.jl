@@ -37,7 +37,7 @@ ode = @ODEmodel(
 find_identifiable_functions(ode)
 
 # prints
-3-element Vector{AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}}:
+3-element Vector{AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}}:
  a12 + a01 + a21
  a12*a01
 ```
@@ -51,7 +51,7 @@ function find_identifiable_functions(
     simplify = :standard,
     rational_interpolator = :VanDerHoevenLecerf,
     loglevel = Logging.Info,
-) where {T <: MPolyElem{fmpq}}
+) where {T <: MPolyRingElem{QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
@@ -73,7 +73,7 @@ function _find_identifiable_functions(
     with_states = false,
     simplify = :standard,
     rational_interpolator = :VanDerHoevenLecerf,
-) where {T <: MPolyElem{fmpq}}
+) where {T <: MPolyRingElem{QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
     runtime_start = time_ns()

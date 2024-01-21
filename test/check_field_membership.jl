@@ -1,6 +1,6 @@
 if GROUP == "All" || GROUP == "Core"
     @testset "Check field membership" begin
-        R, (x, y, z) = Nemo.PolynomialRing(Nemo.QQ, ["x", "y", "z"])
+        R, (x, y, z) = Nemo.polynomial_ring(Nemo.QQ, ["x", "y", "z"])
 
         @test field_contains(
             RationalFunctionField([[R(1), x + y], [R(1), x * y], [z, (x + y)^2]]),

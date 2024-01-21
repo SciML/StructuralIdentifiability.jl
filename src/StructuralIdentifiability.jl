@@ -99,7 +99,7 @@ function assess_identifiability(
     funcs_to_check = Vector(),
     prob_threshold::Float64 = 0.99,
     loglevel = Logging.Info,
-) where {P <: MPolyElem{fmpq}}
+) where {P <: MPolyRingElem{QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
@@ -115,7 +115,7 @@ function _assess_identifiability(
     ode::ODE{P};
     funcs_to_check = Vector(),
     prob_threshold::Float64 = 0.99,
-) where {P <: MPolyElem{fmpq}}
+) where {P <: MPolyRingElem{QQFieldElem}}
     p_glob = 1 - (1 - prob_threshold) * 0.9
     p_loc = 1 - (1 - prob_threshold) * 0.1
 
@@ -124,7 +124,7 @@ function _assess_identifiability(
     end
 
     @info "Assessing local identifiability"
-    trbasis = Array{fmpq_mpoly, 1}()
+    trbasis = Array{QQMPolyRingElem, 1}()
     runtime = @elapsed local_result = _assess_local_identifiability(
         ode,
         funcs_to_check = funcs_to_check,

@@ -10,7 +10,7 @@ if GROUP == "All" || GROUP == "Core"
                 [var_to_str(u) * "_$i" for u in ode.u_vars for i in 0:(prec - 1)],
             )
         end
-        new_ring, vars = Nemo.PolynomialRing(base_ring(ode.poly_ring), new_varnames)
+        new_ring, vars = Nemo.polynomial_ring(base_ring(ode.poly_ring), new_varnames)
 
         # mapping everything to the new ring
         eval_point = Dict(v => switch_ring(v, new_ring) for v in gens(ode.poly_ring))
@@ -108,7 +108,7 @@ if GROUP == "All" || GROUP == "Core"
 
     @testset "Partial derivatives of an output w.r.t. to initial conditions and parameters" begin
         test_cases = []
-        P = fmpq_mpoly
+        P = QQMPolyRingElem
         DType = Union{P, Generic.Frac{P}}
 
         ode = @ODEmodel(x'(t) = x(t) + a, y(t) = x(t)^2)
@@ -118,7 +118,7 @@ if GROUP == "All" || GROUP == "Core"
                 :ODE => ode,
                 :ic => Dict(x => Nemo.QQ(rand(1:10))),
                 :param_vals => Dict(a => Nemo.QQ(rand(1:10))),
-                :inputs => Dict{P, Array{fmpq, 1}}(),
+                :inputs => Dict{P, Array{QQFieldElem, 1}}(),
                 :prec => 20,
             ),
         )
@@ -130,7 +130,7 @@ if GROUP == "All" || GROUP == "Core"
                 :ODE => ode,
                 :ic => Dict(x => Nemo.QQ(rand(1:10))),
                 :param_vals => Dict(a => Nemo.QQ(rand(1:10))),
-                :inputs => Dict{P, Array{fmpq, 1}}(),
+                :inputs => Dict{P, Array{QQFieldElem, 1}}(),
                 :prec => 20,
             ),
         )
@@ -147,7 +147,7 @@ if GROUP == "All" || GROUP == "Core"
                 :ODE => ode,
                 :ic => Dict(x => Nemo.QQ(rand(1:10)), y => Nemo.QQ(rand(1:10))),
                 :param_vals => Dict(a => Nemo.QQ(rand(1:10)), b => Nemo.QQ(rand(1:10))),
-                :inputs => Dict{P, Array{fmpq, 1}}(),
+                :inputs => Dict{P, Array{QQFieldElem, 1}}(),
                 :prec => 8,
             ),
         )
@@ -174,7 +174,7 @@ if GROUP == "All" || GROUP == "Core"
             ["u_$i" for i in 1:2],
             ["y_$i" for i in 1:3],
         )
-        R, vars = Nemo.PolynomialRing(F, varnames)
+        R, vars = Nemo.polynomial_ring(F, varnames)
         push!(
             test_cases,
             Dict(
@@ -196,7 +196,7 @@ if GROUP == "All" || GROUP == "Core"
             ["u_$i" for i in 1:2],
             ["y_$i" for i in 1:3],
         )
-        R, vars = Nemo.PolynomialRing(F, varnames)
+        R, vars = Nemo.polynomial_ring(F, varnames)
         push!(
             test_cases,
             Dict(
@@ -213,7 +213,7 @@ if GROUP == "All" || GROUP == "Core"
         )
 
         varnames = vcat(["x_$i" for i in 1:2], ["p_$i" for i in 1:2], "u", ["y_1", "y_2"])
-        R, vars = Nemo.PolynomialRing(F, varnames)
+        R, vars = Nemo.polynomial_ring(F, varnames)
         push!(
             test_cases,
             Dict(

@@ -10,7 +10,7 @@ function print_for_maple(ode::ODE, package = :SIAN)
     varstr =
         Dict(x => var_to_str(x) * "(t)" for x in vcat(ode.x_vars, ode.u_vars, ode.y_vars))
     merge!(varstr, Dict(p => var_to_str(p) for p in ode.parameters))
-    R_print, vars_print = Nemo.PolynomialRing(
+    R_print, vars_print = Nemo.polynomial_ring(
         base_ring(ode.poly_ring),
         [varstr[v] for v in gens(ode.poly_ring)],
     )
@@ -189,7 +189,7 @@ function print_for_COMBOS(ode::ODE)
     merge!(varstr, Dict(u => "u" * string(ind) for (ind, u) in enumerate(ode.u_vars)))
     merge!(varstr, Dict(y => "y" * string(ind) for (ind, y) in enumerate(ode.y_vars)))
     merge!(varstr, Dict(p => var_to_str(p) for p in ode.parameters))
-    R_print, vars_print = Nemo.PolynomialRing(
+    R_print, vars_print = Nemo.polynomial_ring(
         base_ring(ode.poly_ring),
         [varstr[v] for v in gens(ode.poly_ring)],
     )

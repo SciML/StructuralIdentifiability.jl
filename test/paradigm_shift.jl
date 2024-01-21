@@ -23,7 +23,8 @@ if GROUP == "All" || GROUP == "Core"
         ic_point = map(Nemo.QQ, rand(1:bound, length(old_vars)))
         old_var_ic = Dict(old_vars .=> ic_point)
         input_ts = map(_ -> [Nemo.QQ(rand(1:bound))], 1:length(old_inputs))
-        old_input_ts = Dict{eltype(old_vars), Vector{Nemo.fmpq}}(old_inputs .=> input_ts)
+        old_input_ts =
+            Dict{eltype(old_vars), Vector{Nemo.QQFieldElem}}(old_inputs .=> input_ts)
 
         old_solutions = StructuralIdentifiability.power_series_solution(
             old_ode,
@@ -48,7 +49,7 @@ if GROUP == "All" || GROUP == "Core"
                 merge(old_param_spec, old_var_ic),
             ) for new_var in new_vars
         )
-        new_input_ts = Dict{eltype(new_vars), Vector{Nemo.fmpq}}(
+        new_input_ts = Dict{eltype(new_vars), Vector{Nemo.QQFieldElem}}(
             new_input => old_input_ts[numerator(var_mapping[new_input])] for
             new_input in new_inputs
         )

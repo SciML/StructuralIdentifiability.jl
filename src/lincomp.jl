@@ -45,14 +45,15 @@ function linear_compartment_model(
         push!(edges_vars_names, "a_0_$(s)")
     end
 
-    R, vars = StructuralIdentifiability.Nemo.PolynomialRing(
+    R, vars = StructuralIdentifiability.Nemo.polynomial_ring(
         StructuralIdentifiability.Nemo.QQ,
         vcat(x_vars_names, y_vars_names, u_vars_names, edges_vars_names),
     )
     x_vars = @view vars[1:n]
-    x_equations = Dict{fmpq_mpoly, Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}}(
-        x => R(0) for x in x_vars
-    )
+    x_equations =
+        Dict{QQMPolyRingElem, Union{QQMPolyRingElem, Generic.Frac{QQMPolyRingElem}}}(
+            x => R(0) for x in x_vars
+        )
     for i in 1:n
         for j in graph[i]
             rate = str_to_var("a_$(j)_$(i)", R)
@@ -68,14 +69,15 @@ function linear_compartment_model(
         end
     end
 
-    y_equations = Dict{fmpq_mpoly, Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}}(
-        str_to_var("y$i", R) => str_to_var("x$i", R) for i in outputs
-    )
+    y_equations =
+        Dict{QQMPolyRingElem, Union{QQMPolyRingElem, Generic.Frac{QQMPolyRingElem}}}(
+            str_to_var("y$i", R) => str_to_var("x$i", R) for i in outputs
+        )
 
-    return ODE{fmpq_mpoly}(
+    return ODE{QQMPolyRingElem}(
         x_equations,
         y_equations,
-        Array{fmpq_mpoly}([str_to_var("u$i", R) for i in inputs]),
+        Array{QQMPolyRingElem}([str_to_var("u$i", R) for i in inputs]),
     )
 end
 

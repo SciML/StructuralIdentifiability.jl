@@ -21,17 +21,17 @@ if GROUP == "All" || GROUP == "Core"
     end
 
     @testset "Power series solution for an ODE system" begin
-        R, (x, x_dot) = Nemo.PolynomialRing(Nemo.QQ, ["x", "x_dot"])
+        R, (x, x_dot) = Nemo.polynomial_ring(Nemo.QQ, ["x", "x_dot"])
         exp_t = ps_ode_solution(
             [x_dot - x],
-            Dict{fmpq_mpoly, fmpq}(x => 1),
-            Dict{fmpq_mpoly, Array{fmpq, 1}}(),
+            Dict{QQMPolyRingElem, QQFieldElem}(x => 1),
+            Dict{QQMPolyRingElem, Array{QQFieldElem, 1}}(),
             20,
         )[x]
         @test valuation(ps_diff(exp_t) - exp_t) == 19
 
         R, (x, y, x_dot, y_dot, u) =
-            Nemo.PolynomialRing(Nemo.QQ, ["x", "y", "x_dot", "y_dot", "u"])
+            Nemo.polynomial_ring(Nemo.QQ, ["x", "y", "x_dot", "y_dot", "u"])
         prec = 100
         eqs = [x_dot - x + 3 * x * y - u, y_dot + 2 * y - 4 * x * y]
         u_coeff = [rand(1:5) for i in 1:prec]
@@ -51,7 +51,7 @@ if GROUP == "All" || GROUP == "Core"
                 ["x_$i" for i in 1:NUMX],
                 ["u_$i" for i in 1:NUMU],
             )
-            R, vars = Nemo.PolynomialRing(F, varnames)
+            R, vars = Nemo.polynomial_ring(F, varnames)
 
             # Generating the initial conditions and inputs
             ic = Dict(vars[i + NUMX] => F(rand(-5:5)) for i in 1:NUMX)
@@ -88,7 +88,7 @@ if GROUP == "All" || GROUP == "Core"
                 ["p_$i" for i in 1:NUMP],
                 ["u_$i" for i in 1:NUMU],
             )
-            R, vars = Nemo.PolynomialRing(F, varnames)
+            R, vars = Nemo.polynomial_ring(F, varnames)
             PType = gfp_mpoly
             TDict = Dict{PType, Union{PType, Generic.Frac{PType}}}
 

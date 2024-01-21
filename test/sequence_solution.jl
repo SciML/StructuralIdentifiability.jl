@@ -5,9 +5,9 @@ if GROUP == "All" || GROUP == "Core"
 
         sol = sequence_solution(
             ode,
-            Dict{fmpq_mpoly, Int}(),
+            Dict{QQMPolyRingElem, Int}(),
             Dict(f0 => 1, f1 => 1),
-            Dict{fmpq_mpoly, Array{Int, 1}}(),
+            Dict{QQMPolyRingElem, Array{Int, 1}}(),
             10,
         )
         @test sol[f1] == [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
