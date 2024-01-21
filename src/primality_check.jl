@@ -4,7 +4,7 @@ function check_primality_zerodim(J::Array{QQMPolyRingElem, 1})
     J = Groebner.groebner(J, loglevel = _groebner_loglevel[])
     basis = Groebner.kbase(J, loglevel = _groebner_loglevel[])
     dim = length(basis)
-    S = Nemo.MatrixSpace(Nemo.QQ, dim, dim)
+    S = Nemo.matrix_space(Nemo.QQ, dim, dim)
     matrices = []
     @debug "$J $basis"
     @debug "Dim is $dim"
@@ -25,7 +25,7 @@ function check_primality_zerodim(J::Array{QQMPolyRingElem, 1})
     R, t = Nemo.polynomial_ring(Nemo.QQ, "t")
     @debug "$(Nemo.charpoly(R, generic_multiplication))"
 
-    return Nemo.isirreducible(Nemo.charpoly(R, generic_multiplication))
+    return Nemo.is_irreducible(Nemo.charpoly(R, generic_multiplication))
 end
 
 #------------------------------------------------------------------------------

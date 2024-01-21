@@ -229,7 +229,7 @@ end
 function ParamPunPam.reduce_mod_p!(
     mqs::IdealMQS,
     ff::Field,
-) where {Field <: Union{Nemo.GaloisField, Nemo.FpField}}
+) where {Field <: Union{Nemo.fpField, Nemo.FpField}}
     @debug "Reducing MQS ideal modulo $(ff)"
     # If there is a reduction modulo this field already,
     if haskey(mqs.cached_nums_gf, ff)
@@ -251,7 +251,7 @@ function ParamPunPam.specialize_mod_p(
     mqs::IdealMQS,
     point::Vector{T};
     saturated = true,
-) where {T <: Union{fpFieldElem, gfp_fmpz_elem}}
+) where {T <: Union{fpFieldElem, FpFieldElem}}
     K_1 = parent(first(point))
     @debug "Evaluating MQS ideal over $K_1 at $point"
     @assert haskey(mqs.cached_nums_gf, K_1)

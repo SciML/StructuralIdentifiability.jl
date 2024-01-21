@@ -41,12 +41,12 @@ function differentiate_solution(
     @debug "Building the variational system at the solution"
     # Y' = AY + B
     vars = vcat(ode.x_vars, ode.parameters)
-    SA = AbstractAlgebra.MatrixSpace(ps_ring, length(ode.x_vars), length(ode.x_vars))
+    SA = AbstractAlgebra.matrix_space(ps_ring, length(ode.x_vars), length(ode.x_vars))
     A = SA([
         eval_at_dict(derivative(ode.x_equations[vars[i]], vars[j]), ps_sol) for
         i in 1:length(ode.x_vars), j in 1:length(ode.x_vars)
     ])
-    SB = AbstractAlgebra.MatrixSpace(ps_ring, length(ode.x_vars), length(vars))
+    SB = AbstractAlgebra.matrix_space(ps_ring, length(ode.x_vars), length(vars))
     B = zero(SB)
     for i in 1:length(ode.x_vars)
         for j in (length(ode.x_vars) + 1):length(vars)
@@ -55,7 +55,7 @@ function differentiate_solution(
     end
     # TODO: make use of one() function (problems modulo prime)
     initial_condition =
-        zero(Nemo.MatrixSpace(base_ring(ode.poly_ring), length(ode.x_vars), length(vars)))
+        zero(Nemo.matrix_space(base_ring(ode.poly_ring), length(ode.x_vars), length(vars)))
     for i in 1:length(ode.x_vars)
         initial_condition[i, i] = 1
     end
@@ -247,7 +247,7 @@ function _assess_local_identifiability(
     num_exp = 0
     # rows are the "parameters": parameters and initial conditions
     # columns are "observations": derivatives of the outputs
-    Jac = zero(Nemo.MatrixSpace(F, length(ode.parameters), 1))
+    Jac = zero(Nemo.matrix_space(F, length(ode.parameters), 1))
     output_derivatives = undef
     # the while loop is primarily for ME-deintifiability, it is adding replicas until the rank stabilizes
     # in the SE case, it will exit right away
@@ -261,10 +261,10 @@ function _assess_local_identifiability(
         output_derivatives = differentiate_output(ode_red, params_vals, ic, inputs, prec)
 
         @debug "Building the matrices"
-        newJac = vcat(Jac, zero(Nemo.MatrixSpace(F, length(ode.x_vars), ncols(Jac))))
+        newJac = vcat(Jac, zero(Nemo.matrix_space(F, length(ode.x_vars), ncols(Jac))))
         newJac = hcat(
             newJac,
-            zero(Nemo.MatrixSpace(F, nrows(newJac), prec * length(ode.y_vars))),
+            zero(Nemo.matrix_space(F, nrows(newJac), prec * length(ode.y_vars))),
         )
         xs_params = vcat(ode_red.x_vars, ode_red.parameters)
         for (i, y) in enumerate(ode.y_vars)
@@ -300,7 +300,7 @@ function _assess_local_identifiability(
 
     if !isnothing(trbasis)
         @debug "Transcendence basis computation requested"
-        reverted_Jac = zero(Nemo.MatrixSpace(F, size(Jac)[2], size(Jac)[1]))
+        reverted_Jac = zero(Nemo.matrix_space(F, size(Jac)[2], size(Jac)[1]))
         for i in 1:size(Jac)[1]
             for j in 1:size(Jac)[2]
                 reverted_Jac[j, i] = Jac[size(Jac)[1] - i + 1, j]

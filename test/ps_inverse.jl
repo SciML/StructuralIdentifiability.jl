@@ -1,6 +1,6 @@
 if GROUP == "All" || GROUP == "Core"
     @testset "Power series matrix inverse" begin
-        T, t = Nemo.PowerSeriesRing(
+        T, t = Nemo.power_series_ring(
             Nemo.Native.GF(2^31 - 1),
             50,
             "t";
@@ -8,7 +8,7 @@ if GROUP == "All" || GROUP == "Core"
         )
 
         for d in 1:5
-            S = Nemo.MatrixSpace(T, d, d)
+            S = Nemo.matrix_space(T, d, d)
             for case in 1:20
                 M = S([random_ps(T) for i in 1:d, j in 1:d])
                 while isequal(

@@ -205,7 +205,7 @@ function ps_matrix_linear_de(
 ) where {T <: Generic.FieldElem}
     prec = (prec == -1) ? precision(A[1, 1]) : prec
     n = nrows(A)
-    identity = one(AbstractAlgebra.MatrixSpace(base_ring(parent(Y0)), n, n))
+    identity = one(AbstractAlgebra.matrix_space(base_ring(parent(Y0)), n, n))
     Yh, Zh = ps_matrix_homlinear_de(A, identity, prec)
     matrix_set_precision!(Zh, prec)
     return _variation_of_constants(A, B, Yh, Zh, Y0, prec)
@@ -234,9 +234,9 @@ function ps_ode_solution(
 ) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
     n = length(equations)
     ring = parent(equations[1])
-    S = AbstractAlgebra.MatrixSpace(ring, n, n)
-    Sv = AbstractAlgebra.MatrixSpace(ring, n, 1)
-    Svconst = AbstractAlgebra.MatrixSpace(base_ring(ring), n, 1)
+    S = AbstractAlgebra.matrix_space(ring, n, n)
+    Sv = AbstractAlgebra.matrix_space(ring, n, 1)
+    Svconst = AbstractAlgebra.matrix_space(base_ring(ring), n, 1)
     eqs = Sv(equations)
 
     x_vars = filter(v -> ("$(v)_dot" in map(string, gens(ring))), gens(ring))
@@ -246,7 +246,7 @@ function ps_ode_solution(
     Jac_dots = S([derivative(p, xd) for p in equations, xd in x_dot_vars])
     Jac_xs = S([derivative(p, x) for p in equations, x in x_vars])
 
-    ps_ring, t = PowerSeriesRing(base_ring(ring), prec, "t"; model = :capped_absolute)
+    ps_ring, t = power_series_ring(base_ring(ring), prec, "t"; model = :capped_absolute)
     solution = Dict()
     for (u, coeffs) in inputs
         solution[u] = sum(coeffs[i] * t^(i - 1) for i in 1:length(coeffs))

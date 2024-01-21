@@ -65,7 +65,7 @@ function Bezout_matrix(f::P, g::P, var_elim::P) where {P <: MPolyRingElem}
     n = max(deg_f, deg_g)
     coeffs_f = [coeff(f, [var_elim], [i]) for i in 0:n]
     coeffs_g = [coeff(g, [var_elim], [i]) for i in 0:n]
-    GL = AbstractAlgebra.MatrixSpace(parent_ring, n, n)
+    GL = AbstractAlgebra.matrix_space(parent_ring, n, n)
     M = zero(GL)
     for i in 1:n
         for j in 1:n
@@ -96,7 +96,7 @@ function Sylvester_matrix(f::P, g::P, var_elim::P) where {P <: MPolyRingElem}
     deg_f = Nemo.degree(f, var_elim)
     deg_g = Nemo.degree(g, var_elim)
     n = deg_f + deg_g
-    GL = AbstractAlgebra.MatrixSpace(parent_ring, n, n)
+    GL = AbstractAlgebra.matrix_space(parent_ring, n, n)
     M = zero(GL)
     for i in 1:deg_f
         for j in 0:deg_g
@@ -384,7 +384,7 @@ Output:
         flush(_si_logger[].stream)
         M_simp, matrix_factors = simplify_matrix(M)
         @debug "Removed factors $(map(length, matrix_factors))"
-        M_size = zero(Nemo.MatrixSpace(Nemo.ZZ, ncols(M_simp), ncols(M_simp)))
+        M_size = zero(Nemo.matrix_space(Nemo.ZZ, ncols(M_simp), ncols(M_simp)))
         for i in 1:ncols(M_simp)
             for j in 1:ncols(M_simp)
                 M_size[i, j] = length(M_simp[i, j])

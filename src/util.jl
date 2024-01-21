@@ -333,7 +333,7 @@ function uncertain_factorization(f::MPolyRingElem{QQFieldElem})
                 f = divexact(f, factor_out)
                 f_uni = divexact(f_uni, gcd(f_uni, derivative(f_uni)))
             end
-            is_irr = Nemo.isirreducible(f_uni)
+            is_irr = Nemo.is_irreducible(f_uni)
             break
         end
     end

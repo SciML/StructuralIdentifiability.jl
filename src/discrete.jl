@@ -239,7 +239,7 @@ function _assess_local_identifiability_discrete_aux(
 
     @debug "Building the matrices"
     Jac = zero(
-        Nemo.MatrixSpace(
+        Nemo.matrix_space(
             bring,
             length(dds.x_vars) + length(dds.parameters),
             1 + prec * length(dds.y_vars) + length(known_ic),
