@@ -319,7 +319,7 @@ is not specified but is assumed to be close to 1.
         push!(relations_ff_1, monoms_ff_1[i])
         push!(tref, exponent_vector(monoms_ff_1[i], 1))
     end
-    complete_intersection_relations_ff = Vector{Nemo.gfp_mpoly}(undef, 0)
+    complete_intersection_relations_ff = Vector{Nemo.fpMPolyRingElem}(undef, 0)
     iters = 0
     # Compute relations at several random points until a consensus is reached
     while true

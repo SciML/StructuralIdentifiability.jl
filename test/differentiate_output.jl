@@ -80,32 +80,6 @@ if GROUP == "All" || GROUP == "Core"
 
     #------------------------------------------------------------------------------
 
-    function rand_poly(deg, vars)
-        if deg == 0
-            return parent(vars[1])(1)
-        end
-        result = 0
-        indices = collect(1:length(vars))
-        monomials = []
-        for d in 0:deg
-            for subs in StructuralIdentifiability.IterTools.subsets(indices, d)
-                push!(monomials, subs)
-            end
-        end
-
-        for subs in monomials
-            monom = rand(-50:50)
-            for v_ind in subs
-                monom *= vars[v_ind]
-            end
-            result += monom
-        end
-
-        return result
-    end
-
-    #------------------------------------------------------------------------------
-
     @testset "Partial derivatives of an output w.r.t. to initial conditions and parameters" begin
         test_cases = []
         P = QQMPolyRingElem
@@ -165,7 +139,7 @@ if GROUP == "All" || GROUP == "Core"
         )
 
         F = Nemo.Native.GF(2^31 - 1)
-        P = gfp_mpoly
+        P = fpMPolyRingElem
         DType = Union{P, Generic.Frac{P}}
 
         varnames = vcat(

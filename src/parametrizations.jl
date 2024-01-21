@@ -237,7 +237,7 @@ $sat_string
     Original vars: $orig_strings"""
     end
     parametric_ring, _ =
-        polynomial_ring(FractionField(ring_of_tags), orig_strings, ordering = :degrevlex)
+        polynomial_ring(fraction_field(ring_of_tags), orig_strings, ordering = :degrevlex)
     relations_between_tags =
         map(poly -> parent_ring_change(poly, ring_of_tags), relations_between_tags)
     param_var_mapping = merge(

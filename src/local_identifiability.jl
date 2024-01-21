@@ -253,7 +253,7 @@ function _assess_local_identifiability(
     # in the SE case, it will exit right away
     while true
         ic = Dict(x => F(rand(1:prime)) for x in ode_red.x_vars)
-        inputs = Dict{Nemo.gfp_mpoly, Array{Nemo.fpFieldElem, 1}}(
+        inputs = Dict{Nemo.fpMPolyRingElem, Array{Nemo.fpFieldElem, 1}}(
             u => [F(rand(1:prime)) for i in 1:prec] for u in ode_red.u_vars
         )
 

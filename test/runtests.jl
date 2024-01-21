@@ -88,6 +88,27 @@ function random_ps_matrix(ps_ring, matrix_space)
     return result
 end
 
+function rand_poly(deg, vars)
+    result = 0
+    indices = vcat(collect(1:length(vars)), collect(1:length(vars)))
+    monomials = []
+    for d in 0:deg
+        for subs in StructuralIdentifiability.IterTools.subsets(indices, d)
+            push!(monomials, subs)
+        end
+    end
+
+    for subs in monomials
+        monom = rand(-50:50)
+        for v_ind in subs
+            monom *= vars[v_ind]
+        end
+        result += monom
+    end
+
+    return result
+end
+
 @info "Testing started"
 
 @test isempty(Test.detect_ambiguities(StructuralIdentifiability))

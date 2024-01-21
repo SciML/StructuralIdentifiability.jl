@@ -1,25 +1,4 @@
 if GROUP == "All" || GROUP == "Core"
-    function rand_poly(deg, vars)
-        result = 0
-        indices = vcat(collect(1:length(vars)), collect(1:length(vars)))
-        monomials = []
-        for d in 0:deg
-            for subs in StructuralIdentifiability.IterTools.subsets(indices, d)
-                push!(monomials, subs)
-            end
-        end
-
-        for subs in monomials
-            monom = rand(-50:50)
-            for v_ind in subs
-                monom *= vars[v_ind]
-            end
-            result += monom
-        end
-
-        return result
-    end
-
     @testset "Power series solution for an ODE system" begin
         R, (x, x_dot) = Nemo.polynomial_ring(Nemo.QQ, ["x", "x_dot"])
         exp_t = ps_ode_solution(
@@ -89,7 +68,7 @@ if GROUP == "All" || GROUP == "Core"
                 ["u_$i" for i in 1:NUMU],
             )
             R, vars = Nemo.polynomial_ring(F, varnames)
-            PType = gfp_mpoly
+            PType = fpMPolyRingElem
             TDict = Dict{PType, Union{PType, Generic.Frac{PType}}}
 
             # Generating the intial conditions etc

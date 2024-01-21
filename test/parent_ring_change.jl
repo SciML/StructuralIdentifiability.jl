@@ -43,7 +43,7 @@ if GROUP == "All" || GROUP == "Core"
                   StructuralIdentifiability.parent_ring_change(f, R__, matching = :byindex)
 
             R, (x,) = polynomial_ring(field, ["x"])
-            R2, (x2,) = polynomial_ring(Nemo.FractionField(R), ["x"])
+            R2, (x2,) = polynomial_ring(Nemo.fraction_field(R), ["x"])
             R3, (x3,) = polynomial_ring(field, ["x"])
             f = x3^2
             f_ = StructuralIdentifiability.parent_ring_change(f, R2)
