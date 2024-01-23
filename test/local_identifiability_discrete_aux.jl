@@ -2,7 +2,7 @@ if GROUP == "All" || GROUP == "Core"
     @testset "Discrete local identifiability, internal function" begin
         cases = []
 
-        dds = @ODEmodel(a'(t) = (b + c) * a(t) + 1, y(t) = a(t))
+        dds = @DDSmodel(a(t + 1) = (b + c) * a(t) + 1, y(t) = a(t))
 
         push!(
             cases,
@@ -24,7 +24,7 @@ if GROUP == "All" || GROUP == "Core"
 
         #---------------------
 
-        dds = @ODEmodel(a'(t) = b(t) * a(t) + c, b'(t) = d * a(t), y(t) = b(t))
+        dds = @DDSmodel(a(t + 1) = b(t) * a(t) + c, b(t + 1) = d * a(t), y(t) = b(t))
 
         push!(
             cases,
@@ -63,7 +63,7 @@ if GROUP == "All" || GROUP == "Core"
         # -------------------
 
         # Example 4 from https://doi.org/10.1016/j.automatica.2016.01.054
-        dds = @ODEmodel(x'(t) = theta^3 * x(t), y(t) = x(t))
+        dds = @DDSmodel(x(t + 1) = theta^3 * x(t), y(t) = x(t))
 
         push!(
             cases,

@@ -21,7 +21,7 @@ using ParamPunPam: reduce_mod_p!, specialize_mod_p, AbstractBlackboxIdeal
 ParamPunPam.enable_progressbar(false)
 
 # defining a model
-export ODE, @ODEmodel, mtk_to_si
+export ODE, @ODEmodel, @DDSmodel, mtk_to_si
 
 # assessing identifiability
 export assess_local_identifiability, assess_identifiability
@@ -70,6 +70,7 @@ include("lincomp.jl")
 include("pb_representation.jl")
 include("submodels.jl")
 include("discrete.jl")
+include("input_macro.jl")
 
 function __init__()
     _si_logger[] = @static if VERSION >= v"1.7.0"

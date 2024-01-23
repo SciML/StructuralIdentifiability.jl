@@ -404,7 +404,7 @@ end
         prob_threshold::Float64=0.99)
 
 Input:
-- `dds` - the DiscreteSystem object from ModelingToolkit (with **difference** operator in the right-hand side)
+- `dds` - the DiscreteSystem object from ModelingToolkit (with **difference** operator in the left-hand side)
 - `measured_quantities` - the measurable outputs of the model
 - `funcs_to_check` - functions of parameters for which to check identifiability (all parameters and states if not specified)
 - `known_ic` - functions (of states and parameter) whose initial conditions are assumed to be known
@@ -467,14 +467,18 @@ function _assess_local_identifiability(
     dds_shift = DiscreteSystem(eqs_shift, name = gensym())
     @debug "System transformed from difference to shift: $dds_shift"
 
-    dds_aux, conversion = mtk_to_si(dds_shift, measured_quantities)
+    dds_aux_ode, conversion = mtk_to_si(dds_shift, measured_quantities)
+    dds_aux = StructuralIdentifiability.DDS{QQMPolyRingElem}(dds_aux_ode)
     if length(funcs_to_check) == 0
         params = parameters(dds)
         params_from_measured_quantities = union(
             [filter(s -> !istree(s), get_variables(y)) for y in measured_quantities]...,
         )
         funcs_to_check = vcat(
-            [x for x in states(dds) if conversion[x] in dds_aux.x_vars],
+            [
+                x for x in states(dds) if
+                conversion[x] in StructuralIdentifiability.x_vars(dds_aux)
+            ],
             union(params, params_from_measured_quantities),
         )
     end

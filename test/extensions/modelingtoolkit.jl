@@ -437,14 +437,14 @@
                   correct
         end
 
-        @testset "Discrete local identifiability, internal function" begin
+        @testset "Discrete local identifiability, ModelingToolkit interface" begin
             cases = []
 
             @parameters α β
             @variables t S(t) I(t) R(t) y(t)
             D = Difference(t; dt = 1.0)
 
-            eqs = [D(S) ~ S - β * S * I, D(I) ~ I + β * S * I - α * I, D(R) ~ R + α * I]
+            eqs = [D(S) ~ -β * S * I, D(I) ~ β * S * I - α * I, D(R) ~ α * I]
             @named sir = DiscreteSystem(eqs)
             push!(
                 cases,
@@ -463,7 +463,7 @@
             @variables t x(t) y(t)
             D = Difference(t; dt = 1.0)
 
-            eqs = [D(x) ~ θ * x^3]
+            eqs = [D(x) ~ θ * x^3 - x]
 
             @named eqs = DiscreteSystem(eqs)
             push!(
