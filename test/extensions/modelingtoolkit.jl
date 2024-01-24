@@ -1,10 +1,8 @@
 @static if VERSION >= v"1.10.0"
     if GROUP == "All" || GROUP == "ModelingToolkitExt"
         @testset "Check identifiability of `ODESystem` object" begin
-            #using Pkg
-            #Pkg.add("ModelingToolkit")
-            #Pkg.add("Symbolics")
             using ModelingToolkit
+            using ModelingToolkit: parameters
             using Symbolics
 
             @parameters a01 a21 a12

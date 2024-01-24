@@ -57,7 +57,12 @@ using StructuralIdentifiability:
     extract_coefficients_ratfunc,
     lie_derivative,
     states_generators,
-    RationalFunctionField
+    RationalFunctionField,
+    x_vars,
+    y_vars,
+    x_equations,
+    y_equations,
+    inputs
 
 const GROUP = get(ENV, "GROUP", "All")
 

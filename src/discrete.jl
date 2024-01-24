@@ -12,9 +12,9 @@ struct DDS{P} # P is the type of polynomials in the rhs of the DDS system
         y_vars::Array{P, 1},
         x_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
         y_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
-        inputs::Array{P, 1},
+        u_vars::Array{P, 1},
     ) where {P <: MPolyRingElem{<:FieldElem}}
-        new{P}(ODE{P}(x_vars, y_vars, x_eqs, y_eqs, inputs))
+        new{P}(ODE{P}(x_vars, y_vars, x_eqs, y_eqs, u_vars))
     end
 
     function DDS{P}(ode::ODE{P}) where {P <: MPolyRingElem{<:FieldElem}}
@@ -142,7 +142,7 @@ end
 #-----------------------------------------------------------------------------
 
 """
-    differentiate_sequence_solution(dds, params, ic, inputs, num_terms)
+    differentiate_sequence_solution(dds, params, ic, input_values, num_terms)
 
 Input:
 - the same as for `sequence_solutions`
@@ -156,11 +156,11 @@ function differentiate_sequence_solution(
     dds::DDS{P},
     params::Dict{P, T},
     ic::Dict{P, T},
-    inputs::Dict{P, Array{T, 1}},
+    input_values::Dict{P, Array{T, 1}},
     num_terms::Int,
 ) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing the power series solution of the system"
-    seq_sol = sequence_solution(dds, params, ic, inputs, num_terms)
+    seq_sol = sequence_solution(dds, params, ic, input_values, num_terms)
     generalized_params = vcat(x_vars(dds), parameters(dds))
     bring = base_ring(parent(dds))
 
@@ -177,7 +177,7 @@ function differentiate_sequence_solution(
         eval_dict = merge(
             params,
             Dict(k => v[i - 1] for (k, v) in seq_sol),
-            Dict(u => val[i - 1] for (u, val) in inputs),
+            Dict(u => val[i - 1] for (u, val) in input_values),
         )
         for p in generalized_params
             local_eval = Dict(x => result[(x, p)][end] for x in x_vars(dds))
@@ -200,7 +200,7 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    differentiate_sequence_output(dds, params, ic, inputs, num_terms)
+    differentiate_sequence_output(dds, params, ic, input_values, num_terms)
 
 Similar to `differentiate_sequence_solution` but computes partial derivatives of prescribed outputs
 returns a dictionary of the form `y_function => Dict(var => dy/dvar)` where `dy/dvar` is the derivative
@@ -210,11 +210,12 @@ function differentiate_sequence_output(
     dds::DDS{P},
     params::Dict{P, T},
     ic::Dict{P, T},
-    inputs::Dict{P, Array{T, 1}},
+    input_values::Dict{P, Array{T, 1}},
     num_terms::Int,
 ) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing partial derivatives of the solution"
-    seq_sol, sol_diff = differentiate_sequence_solution(dds, params, ic, inputs, num_terms)
+    seq_sol, sol_diff =
+        differentiate_sequence_solution(dds, params, ic, input_values, num_terms)
 
     @debug "Evaluating the partial derivatives of the outputs"
     generalized_params = vcat(x_vars(dds), parameters(dds))
@@ -228,7 +229,7 @@ function differentiate_sequence_output(
         eval_dict = merge(
             params,
             Dict(k => v[i] for (k, v) in seq_sol),
-            Dict(u => val[i] for (u, val) in inputs),
+            Dict(u => val[i] for (u, val) in input_values),
         )
 
         for p in generalized_params
@@ -294,7 +295,7 @@ function _assess_local_identifiability_discrete_aux(
     end
 
     @debug "Computing the observability matrix"
-    prec = length(x_vars(dds)) + length(x_vars(dds))
+    prec = length(x_vars(dds)) + length(parameters(dds))
     @debug "The truncation order is $prec"
 
     # Computing the bound from the Schwartz-Zippel-DeMilo-Lipton lemma
@@ -315,14 +316,14 @@ function _assess_local_identifiability_discrete_aux(
     params_vals = Dict(p => bring(rand(1:D)) for p in parameters(dds_ext))
     ic = Dict(x => bring(rand(1:D)) for x in x_vars(dds_ext))
     # TODO: parametric type instead of QQFieldElem
-    inputs = Dict{P, Array{QQFieldElem, 1}}(
+    input_values = Dict{P, Array{QQFieldElem, 1}}(
         u => [bring(rand(1:D)) for i in 1:prec] for
         u in StructuralIdentifiability.inputs(dds_ext)
     )
 
     @debug "Computing the output derivatives"
     output_derivatives =
-        differentiate_sequence_output(dds_ext, params_vals, ic, inputs, prec)
+        differentiate_sequence_output(dds_ext, params_vals, ic, input_values, prec)
 
     @debug "Building the matrices"
     Jac = zero(
