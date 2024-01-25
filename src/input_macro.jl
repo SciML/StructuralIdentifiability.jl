@@ -62,7 +62,6 @@ end
 function macrohelper_extract_vars(equations::Array{Expr, 1}, type = :ode)
     funcs, all_symb = Set(), Set()
     x_vars, y_vars = Vector(), Vector()
-    aux_symb = Set([:(+), :(-), :(=), :(*), :(^), :t, :(/), :(//)])
     for eq in equations
         if eq.head != :(=)
             _extract_aux!(funcs, all_symb, eq, type = type)
@@ -110,7 +109,6 @@ function generate_model_code(type, ex::Expr...)
     all_symb_with_t = vcat([:($s(t)) for s in time_dependent], params)
 
     # creating the polynomial ring
-    vars_list = :([$(all_symb_with_t...)])
     R = gensym()
     vars_aux = gensym()
     exp_ring = :(
@@ -288,7 +286,7 @@ Creating a simple `DDS`:
 ```jldoctest
 using StructuralIdentifiability
 
-ode = @ODEmodel(
+dds = @DDSmodel(
     x1(t + 1) = a * x1(t) + u(t),
     x2(t + 1) = b * x2(t) + c*x1(t)*x2(t),
     y(t) = x1(t)
