@@ -67,7 +67,7 @@ function check_constructive_field_membership(
     # If norm_form(Num) // norm_form(Den) does not belongs to K(T), then
     # the fraction does not belong to the field
     if iszero(den_rem)
-        @warn """
+        @debug """
         The element $tagged_num // $tagged_den is not in the sub-field
         Normal form, numerator: $num_rem
         Normal form, denominator: $den_rem
@@ -76,7 +76,7 @@ function check_constructive_field_membership(
         return false, zero(ring_of_tags) // one(ring_of_tags)
     end
     if total_degree(num_rem) > 0 || total_degree(den_rem) > 0
-        @warn """
+        @debug """
         The element $tagged_num // $tagged_den is not in the sub-field
         Normal form, numerator: $num_rem
         Normal form, denominator: $den_rem
