@@ -391,6 +391,9 @@ function assess_local_identifiability(
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
+        if isempty(funcs_to_check)
+            funcs_to_check = vcat(parameters(dds), x_vars(dds))
+        end
         return _assess_local_identifiability_discrete_aux(
             dds,
             funcs_to_check,
