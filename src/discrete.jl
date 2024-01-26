@@ -1,6 +1,6 @@
 """
-The structue to represent a discrete dynamical system
-with respect to *shift*. Internally just stores an ODE structur
+The structure to represent a discrete dynamical system
+with respect to *shift*. Internally just stores an ODE structure
 
 Can be constructed with @DDSmodel macro
 """
