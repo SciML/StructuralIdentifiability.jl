@@ -62,7 +62,7 @@ eq_up_to_the_order(a, b) = issubset(a, b) && issubset(b, a)
     ###
     # Some arbitrary generators for the SLIQR model
     R, (b, e, In, S, Ninv, s, Q, g, u, a, y, L) =
-        PolynomialRing(QQ, [:b, :e, :In, :S, :Ninv, :s, :Q, :g, :u, :a, :y, :L])
+        polynomial_ring(QQ, [:b, :e, :In, :S, :Ninv, :s, :Q, :g, :u, :a, :y, :L])
     f = [
         In // one(R),
         s // one(R),

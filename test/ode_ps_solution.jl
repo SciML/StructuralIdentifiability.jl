@@ -1,45 +1,22 @@
-# using Profile
-
-function rand_poly(deg, vars)
-    result = 0
-    indices = vcat(collect(1:length(vars)), collect(1:length(vars)))
-    monomials = []
-    for d in 0:deg
-        for subs in StructuralIdentifiability.IterTools.subsets(indices, d)
-            push!(monomials, subs)
-        end
-    end
-
-    for subs in monomials
-        monom = rand(-50:50)
-        for v_ind in subs
-            monom *= vars[v_ind]
-        end
-        result += monom
-    end
-
-    return result
-end
-
 @testset "Power series solution for an ODE system" begin
-    R, (x, x_dot) = Nemo.PolynomialRing(Nemo.QQ, ["x", "x_dot"])
+    R, (x, x_dot) = Nemo.polynomial_ring(Nemo.QQ, ["x", "x_dot"])
     exp_t = ps_ode_solution(
         [x_dot - x],
-        Dict{fmpq_mpoly, fmpq}(x => 1),
-        Dict{fmpq_mpoly, Array{fmpq, 1}}(),
+        Dict{QQMPolyRingElem, QQFieldElem}(x => 1),
+        Dict{QQMPolyRingElem, Array{QQFieldElem, 1}}(),
         20,
     )[x]
     @test valuation(ps_diff(exp_t) - exp_t) == 19
 
     R, (x, y, x_dot, y_dot, u) =
-        Nemo.PolynomialRing(Nemo.QQ, ["x", "y", "x_dot", "y_dot", "u"])
+        Nemo.polynomial_ring(Nemo.QQ, ["x", "y", "x_dot", "y_dot", "u"])
     prec = 100
     eqs = [x_dot - x + 3 * x * y - u, y_dot + 2 * y - 4 * x * y]
     u_coeff = [rand(1:5) for i in 1:prec]
     sol = ps_ode_solution(eqs, Dict(x => 0, y => -2), Dict(u => u_coeff), prec)
     @test map(e -> valuation(evaluate(e, [sol[v] for v in gens(R)])), eqs) == [prec - 1, prec - 1]
 
-    F = Nemo.GF(2^31 - 1)
+    F = Nemo.Native.GF(2^31 - 1)
     prec = 100
 
     # Testing the function ps_ode_solution by itself
@@ -52,7 +29,7 @@ end
             ["x_$i" for i in 1:NUMX],
             ["u_$i" for i in 1:NUMU],
         )
-        R, vars = Nemo.PolynomialRing(F, varnames)
+        R, vars = Nemo.polynomial_ring(F, varnames)
 
         # Generating the initial conditions and inputs
         ic = Dict(vars[i + NUMX] => F(rand(-5:5)) for i in 1:NUMX)
@@ -87,8 +64,8 @@ end
             ["p_$i" for i in 1:NUMP],
             ["u_$i" for i in 1:NUMU],
         )
-        R, vars = Nemo.PolynomialRing(F, varnames)
-        PType = gfp_mpoly
+        R, vars = Nemo.polynomial_ring(F, varnames)
+        PType = fpMPolyRingElem
         TDict = Dict{PType, Union{PType, Generic.Frac{PType}}}
 
         # Generating the intial conditions etc

@@ -301,7 +301,7 @@ is not specified but is assumed to be close to 1.
     ring_param = ParamPunPam.parent_params(mqs)
     xs_param = gens(ring_param)
     nparams = nvars(ring_param)
-    finite_field = Nemo.GF(2^30 + 3)
+    finite_field = Nemo.Native.GF(2^30 + 3)
     ParamPunPam.reduce_mod_p!(mqs, finite_field)
     @info "Computing normal forms of degree $up_to_degree in $nparams variables"
     @debug """Variables ($nparams in total): $xs_param
@@ -319,7 +319,7 @@ is not specified but is assumed to be close to 1.
         push!(relations_ff_1, monoms_ff_1[i])
         push!(tref, exponent_vector(monoms_ff_1[i], 1))
     end
-    complete_intersection_relations_ff = Vector{Nemo.gfp_mpoly}(undef, 0)
+    complete_intersection_relations_ff = Vector{Nemo.fpMPolyRingElem}(undef, 0)
     iters = 0
     # Compute relations at several random points until a consensus is reached
     while true

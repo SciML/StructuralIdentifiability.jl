@@ -5,7 +5,6 @@ using TestSetExtensions
 
 using StructuralIdentifiability.DataStructures
 using StructuralIdentifiability.Nemo
-using StructuralIdentifiability.ModelingToolkit
 using StructuralIdentifiability:
     field_contains,
     check_identifiability,
@@ -58,7 +57,24 @@ using StructuralIdentifiability:
     extract_coefficients_ratfunc,
     lie_derivative,
     states_generators,
-    RationalFunctionField
+    RationalFunctionField,
+    x_vars,
+    y_vars,
+    x_equations,
+    y_equations,
+    inputs
+
+const GROUP = get(ENV, "GROUP", "All")
+
+@static if VERSION >= v"1.10.0"
+    if GROUP == "All" || GROUP == "ModelingToolkitExt"
+        using Pkg
+        Pkg.add("ModelingToolkit")
+        Pkg.add("Symbolics")
+        using ModelingToolkit
+        using Symbolics
+    end
+end
 
 function random_ps(ps_ring, range = 1000)
     result = zero(ps_ring)
@@ -77,11 +93,59 @@ function random_ps_matrix(ps_ring, matrix_space)
     return result
 end
 
+function rand_poly(deg, vars)
+    result = 0
+    indices = vcat(collect(1:length(vars)), collect(1:length(vars)))
+    monomials = []
+    for d in 0:deg
+        for subs in StructuralIdentifiability.IterTools.subsets(indices, d)
+            push!(monomials, subs)
+        end
+    end
+
+    for subs in monomials
+        monom = rand(-50:50)
+        for v_ind in subs
+            monom *= vars[v_ind]
+        end
+        result += monom
+    end
+
+    return result
+end
+
+function get_test_files(group)
+    result = Vector{String}()
+    for (dir, _, files) in walkdir("./")
+        for fname in files
+            if fname != "runtests.jl" && endswith(fname, ".jl")
+                if group == "All" ||
+                   (group == "Core" && dir != "./extensions") ||
+                   (
+                       group == "ModelingToolkitExt" &&
+                       dir == "./extensions" &&
+                       VERSION >= v"1.10.0"
+                   )
+                    push!(result, dir * "/" * fname)
+                end
+            end
+        end
+    end
+    return result
+end
+
 @info "Testing started"
 
 @test isempty(Test.detect_ambiguities(StructuralIdentifiability))
 @test isempty(Test.detect_unbound_args(StructuralIdentifiability))
 
+all_tests = get_test_files(GROUP)
+if !isempty(ARGS)
+    all_tests = ARGS
+end
+
 @time @testset "All the tests" verbose = true begin
-    @includetests ARGS
+    for test_file in all_tests
+        include(test_file)
+    end
 end

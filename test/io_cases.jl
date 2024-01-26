@@ -2,7 +2,7 @@
     test_cases = []
 
     # 2-compartiment model
-    R, (y_0, y_1, y_2, u_0, u_1, a01, a12, a21) = PolynomialRing(
+    R, (y_0, y_1, y_2, u_0, u_1, a01, a12, a21) = polynomial_ring(
         QQ,
         ["y(t)_0", "y(t)_1", "y(t)_2", "u(t)_0", "u(t)_1", "a01", "a12", "a21"],
     )
@@ -22,7 +22,7 @@
     #---------------------------------------
     # Chen-Lee model
     R, (y1_0, y1_1, y1_2, y1_3, a, b, c) =
-        PolynomialRing(QQ, ["y1(t)_0", "y1(t)_1", "y1(t)_2", "y1(t)_3", "a", "b", "c"])
+        polynomial_ring(QQ, ["y1(t)_0", "y1(t)_1", "y1(t)_2", "y1(t)_3", "a", "b", "c"])
     correct =
         9 * y1_3^2 * y1_0^2 - 18 * y1_3 * y1_2 * y1_1 * y1_0 -
         18 * y1_3 * y1_2 * y1_0^2 * a - 36 * y1_3 * y1_2 * y1_0^2 * b -
@@ -121,7 +121,7 @@
 
     # predator-prey model
     R, (y1_0, y1_1, y1_2, a, b, c, d) =
-        PolynomialRing(QQ, ["y1(t)_0", "y1(t)_1", "y1(t)_2", "a", "b", "c", "d"])
+        polynomial_ring(QQ, ["y1(t)_0", "y1(t)_1", "y1(t)_2", "a", "b", "c", "d"])
     correct =
         y1_2 * y1_0 - y1_1^2 - y1_1 * y1_0^2 * d + y1_1 * y1_0 * c + y1_0^3 * a * d -
         y1_0^2 * a * c

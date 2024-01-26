@@ -1,6 +1,3 @@
-using Test
-using TestSetExtensions
-
 @testset "Lie derivative" begin
     ode = @ODEmodel(
         x1'(t) = a * x1(t) + b * u(t),

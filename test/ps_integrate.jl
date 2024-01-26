@@ -1,5 +1,5 @@
 @testset "Power series integration" begin
-    T, t = Nemo.PowerSeriesRing(Nemo.QQ, 300, "t"; model = :capped_absolute)
+    T, t = Nemo.power_series_ring(Nemo.QQ, 300, "t"; model = :capped_absolute)
 
     @test ps_integrate(zero(T)) == zero(T)
 
