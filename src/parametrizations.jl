@@ -67,7 +67,7 @@ function check_constructive_field_membership(
     # If norm_form(Num) // norm_form(Den) does not belongs to K(T), then
     # the fraction does not belong to the field
     if iszero(den_rem)
-        @warn """
+        @debug """
         The element $tagged_num // $tagged_den is not in the sub-field
         Normal form, numerator: $num_rem
         Normal form, denominator: $den_rem
@@ -76,7 +76,7 @@ function check_constructive_field_membership(
         return false, zero(ring_of_tags) // one(ring_of_tags)
     end
     if total_degree(num_rem) > 0 || total_degree(den_rem) > 0
-        @warn """
+        @debug """
         The element $tagged_num // $tagged_den is not in the sub-field
         Normal form, numerator: $num_rem
         Normal form, denominator: $den_rem
@@ -174,7 +174,8 @@ $(join(map(x -> string(x[1]) * " -> " * string(x[2]),  zip(fracs_gen, tag_string
 Saturation tag:
 $sat_string
 """
-    poly_ring_tag, vars_tag = PolynomialRing(K, vcat(sat_string, orig_strings, tag_strings))
+    poly_ring_tag, vars_tag =
+        polynomial_ring(K, vcat(sat_string, orig_strings, tag_strings))
     sat_var = vars_tag[1]
     orig_vars = vars_tag[2:(nvars(poly_ring) + 1)]
     tag_vars = vars_tag[(nvars(poly_ring) + 2):end]
@@ -227,7 +228,7 @@ $sat_string
     #
     # NOTE: reduction actually happens in K(T)[x]. So we map polynomials to the
     # parametric ring K(T)[x].
-    ring_of_tags, tags = PolynomialRing(K, tag_strings)
+    ring_of_tags, tags = polynomial_ring(K, tag_strings)
     tag_to_gen = Dict(tags[i] => fracs_gen[i] for i in 1:length(fracs_gen))
     if !isempty(intersect(tag_strings, orig_strings))
         @warn """
@@ -236,7 +237,7 @@ $sat_string
     Original vars: $orig_strings"""
     end
     parametric_ring, _ =
-        PolynomialRing(FractionField(ring_of_tags), orig_strings, ordering = :degrevlex)
+        polynomial_ring(fraction_field(ring_of_tags), orig_strings, ordering = :degrevlex)
     relations_between_tags =
         map(poly -> parent_ring_change(poly, ring_of_tags), relations_between_tags)
     param_var_mapping = merge(
@@ -380,7 +381,7 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
         input_variable_names,
         output_variable_names,
     )
-    ring_output, _ = PolynomialRing(
+    ring_output, _ = polynomial_ring(
         base_ring(ring_of_tags),
         all_variable_names,
         ordering = Nemo.ordering(ring_of_tags),
@@ -492,7 +493,7 @@ function _reparametrize_global(ode::ODE{P}; prob_threshold = 0.99, seed = 42) wh
     ode_ring = parent(ode)
     @assert base_ring(parent(first(id_funcs))) == ode_ring
     @info "Constructing a new parametrization"
-    contains_states(poly::MPolyElem) = any(x -> degree(poly, x) > 0, ode.x_vars)
+    contains_states(poly::MPolyRingElem) = any(x -> degree(poly, x) > 0, ode.x_vars)
     contains_states(func) =
         contains_states(numerator(func)) || contains_states(denominator(func))
     id_funcs_contains_states = filter(contains_states, id_funcs)

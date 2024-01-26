@@ -2,7 +2,12 @@ const PROJECTION_VARNAME = "rand_proj_var"
 
 # ------------------------------------------------------------------------------
 
-function generator_var_change(generator, var::P, numer::P, denom::P) where {P <: MPolyElem}
+function generator_var_change(
+    generator,
+    var::P,
+    numer::P,
+    denom::P,
+) where {P <: MPolyRingElem}
     return IterTools.imap(
         point -> begin
             result = copy(point)
@@ -15,7 +20,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-function diff_poly(poly::P, derivation::Dict{P, T}) where {P <: MPolyElem, T}
+function diff_poly(poly::P, derivation::Dict{P, T}) where {P <: MPolyRingElem, T}
     return sum(derivative(poly, x) * xd for (x, xd) in derivation)
 end
 
@@ -28,7 +33,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-function generate_io_equation_problem(ode::ODE{P}) where {P <: MPolyElem{<:FieldElem}}
+function generate_io_equation_problem(ode::ODE{P}) where {P <: MPolyRingElem{<:FieldElem}}
     dim_x = length(ode.x_vars)
 
     # Creating a ring
@@ -40,7 +45,7 @@ function generate_io_equation_problem(ode::ODE{P}) where {P <: MPolyElem{<:Field
         [var_to_str(u) * "_$i" for i in 0:dim_x for u in ode.u_vars],
         [PROJECTION_VARNAME],
     )
-    ring, ring_vars = Nemo.PolynomialRing(base_ring(ode.poly_ring), var_names)
+    ring, ring_vars = Nemo.polynomial_ring(base_ring(ode.poly_ring), var_names)
 
     # Definiting a (partial) derivation on it
     derivation = Dict{P, P}()
@@ -105,7 +110,7 @@ Output:
     ode::ODE{P},
     auto_var_change::Bool,
     extra_projection = nothing,
-) where {P <: MPolyElem{<:FieldElem}}
+) where {P <: MPolyRingElem{<:FieldElem}}
     # Initialization
     ring, derivation, x_equations, y_equations, point_generator =
         generate_io_equation_problem(ode)
@@ -341,7 +346,7 @@ Output:
     ode::ODE{P};
     var_change_policy = :default,
     loglevel = Logging.Info,
-) where {P <: MPolyElem{<:FieldElem}}
+) where {P <: MPolyRingElem{<:FieldElem}}
     # Setting the var_change policy
     if (var_change_policy == :yes) ||
        (var_change_policy == :default && length(ode.y_vars) < 3)

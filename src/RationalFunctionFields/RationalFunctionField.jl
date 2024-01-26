@@ -194,7 +194,7 @@ end
 ) where {T}
     mqs_generators = generators.mqs
     mqs_tobereduced = tobereduced.mqs
-    ff = Nemo.GF(2^31 - 1)
+    ff = Nemo.Native.GF(2^31 - 1)
     reduce_mod_p!(mqs_generators, ff)
     reduce_mod_p!(mqs_tobereduced, ff)
     param_ring = ParamPunPam.parent_params(mqs_generators)

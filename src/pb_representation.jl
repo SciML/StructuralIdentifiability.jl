@@ -13,7 +13,7 @@ struct PBRepresentation
     u_names::Array{String} # variables with infinite orders in the profile
     param_names::Array{String} # scalar parameters
     profile::Dict{String, Int} # the profile restricted on the y-variables
-    projections::Dict{String, <:MPolyElem}
+    projections::Dict{String, <:MPolyRingElem}
 
     function PBRepresentation(ode::ODE, io_equations)
         if length(keys(io_equations)) > length(ode.y_vars)
@@ -33,10 +33,10 @@ struct PBRepresentation
                     decompose_derivative(v, vcat(y_names, u_names)) != nothing,
             map(var_to_str, gens(old_ring)),
         )
-        newring, _ = Nemo.PolynomialRing(base_ring(old_ring), new_varnames)
+        newring, _ = Nemo.polynomial_ring(base_ring(old_ring), new_varnames)
 
         profile = Dict{String, Int}()
-        projections = Dict{String, MPolyElem}()
+        projections = Dict{String, MPolyRingElem}()
         for (y, eq) in io_equations
             (name, ord) = decompose_derivative(var_to_str(y), y_names)
             profile[name] = ord
@@ -60,7 +60,7 @@ Among the variables `vars`, determines the leading derivative if the y-variable
 (if exists) with respect to the ordering defined by the PB-representation
 (see Remark 2.20 in https://arxiv.org/abs/2111.00991)
 """
-function find_leader(vars::Array{<:MPolyElem}, pbr::PBRepresentation)
+function find_leader(vars::Array{<:MPolyRingElem}, pbr::PBRepresentation)
     y_ders = filter(v -> decompose_derivative(var_to_str(v), pbr.y_names) != nothing, vars)
     if length(y_ders) == 0
         return nothing
@@ -83,7 +83,7 @@ For a polynomial `poly` in the same differential variables as `pbr`, finds
 a polynomial ring sufficient for carrying out the reduction and the
 corresponding differentiation mapping on the variables
 """
-function common_ring(poly::MPolyElem, pbr::PBRepresentation)
+function common_ring(poly::MPolyRingElem, pbr::PBRepresentation)
     max_ords = Dict{String, Int}(v => 0 for v in vcat(pbr.y_names, pbr.u_names))
     new_params = Array{String, 1}()
     for v in vars(poly)
@@ -118,8 +118,8 @@ function common_ring(poly::MPolyElem, pbr::PBRepresentation)
     append!(varnames, new_params)
 
     newring, _ =
-        StructuralIdentifiability.Nemo.PolynomialRing(base_ring(parent(poly)), varnames)
-    derivation = Dict{MPolyElem, MPolyElem}()
+        StructuralIdentifiability.Nemo.polynomial_ring(base_ring(parent(poly)), varnames)
+    derivation = Dict{MPolyRingElem, MPolyRingElem}()
     for v in varnames
         d = decompose_derivative(v, vcat(pbr.y_names, pbr.u_names))
         if d == nothing
@@ -143,7 +143,7 @@ end
 
 Computes the leading coefficient of `f` viewed as a univariate polynomiall in variable `x`
 """
-function lc_univariate(f::MPolyElem, x::MPolyElem)
+function lc_univariate(f::MPolyRingElem, x::MPolyRingElem)
     FieldType = typeof(one(base_ring(parent(f))))
     dict_result = Dict{Array{Int, 1}, FieldType}()
     x_ind = findfirst(v -> v == x, gens(parent(f)))
@@ -174,7 +174,7 @@ Input:
 
 Output: the pseudoremainder of `f` divided by `g` w.r.t. `x`
 """
-function pseudodivision(f::MPolyElem, g::MPolyElem, x::MPolyElem)
+function pseudodivision(f::MPolyRingElem, g::MPolyRingElem, x::MPolyRingElem)
     result = f
     lcg = lc_univariate(g, x)
     while Nemo.degree(result, x) >= Nemo.degree(g, x)
@@ -190,7 +190,7 @@ end
 
 # -----------------------------------------------------------------------------
 
-function diff(p::MPolyElem, derivation::Dict{<:MPolyElem, <:MPolyElem}, i::Int)
+function diff(p::MPolyRingElem, derivation::Dict{<:MPolyRingElem, <:MPolyRingElem}, i::Int)
     if i == 0
         return p
     end
@@ -213,7 +213,7 @@ Input:
 
 Output: the result of differential reduction of `diffpoly` by `pbr` considered as a characteristic set (see Remark 2.20 in the paper)
 """
-function diffreduce(diffpoly::MPolyElem, pbr::PBRepresentation)
+function diffreduce(diffpoly::MPolyRingElem, pbr::PBRepresentation)
     (ring, der) = common_ring(diffpoly, pbr)
 
     result = parent_ring_change(diffpoly, ring)
