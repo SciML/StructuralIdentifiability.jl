@@ -8,8 +8,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
         @variables t x0(t) x1(t) y1(t) [output = true]
         D = Differential(t)
 
-        eqs =
-            [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
+        eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
         de = ODESystem(eqs, t, name = :Test)
 
         correct = OrderedDict(
@@ -20,10 +19,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
             x1 => :nonidentifiable,
         )
 
-        @test isequal(
-            correct,
-            assess_identifiability(de; measured_quantities = [y1 ~ x0]),
-        )
+        @test isequal(correct, assess_identifiability(de; measured_quantities = [y1 ~ x0]))
         @test isequal(correct, assess_identifiability(de; measured_quantities = [x0]))
         @test isequal(
             correct,
@@ -58,8 +54,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
         @variables t x0(t) x1(t) y1(t) [output = true]
         D = Differential(t)
 
-        eqs =
-            [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
+        eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
         de = ODESystem(eqs, t, name = :Test)
 
         correct = OrderedDict(
@@ -78,8 +73,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
         @variables t x0(t) x1(t) y1(t) [output = true]
         D = Differential(t)
 
-        eqs =
-            [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
+        eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
         de = ODESystem(eqs, t, name = :Test)
         funcs_to_check = [a01, a21, a12, a01 * a12, a01 + a12 + a21]
         correct = OrderedDict(
@@ -89,10 +83,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
             a01 * a12 => :globally,
             a01 + a12 + a21 => :globally,
         )
-        @test isequal(
-            correct,
-            assess_identifiability(de; funcs_to_check = funcs_to_check),
-        )
+        @test isequal(correct, assess_identifiability(de; funcs_to_check = funcs_to_check))
 
         # --------------------------------------------------------------------------
 
@@ -173,8 +164,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
 
         # checking identifiabile functions
         correct = [a, bw, χ, bi, k, γ, μ]
-        result =
-            find_identifiable_functions(de, measured_quantities = measured_quantities)
+        result = find_identifiable_functions(de, measured_quantities = measured_quantities)
         @test isequal(Set(correct), Set(result))
 
         # --------------------------------------------------------------------------
@@ -195,9 +185,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
         @test isequal(
             true,
             all(
-                values(
-                    assess_local_identifiability(de; measured_quantities = [y ~ k * I]),
-                ),
+                values(assess_local_identifiability(de; measured_quantities = [y ~ k * I])),
             ),
         )
 
@@ -306,8 +294,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
         )
 
         # check identifiabile functions
-        result =
-            find_identifiable_functions(de, measured_quantities = measured_quantities)
+        result = find_identifiable_functions(de, measured_quantities = measured_quantities)
         correct = [b, a, c^2]
         @test isequal(Set(result), Set(correct))
 
@@ -362,16 +349,10 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
             ps = @parameters β = 1.0 γ = 1.0
             D = Differential(t)
 
-            eqs = [
-                rabbits.z ~ -β * wolves.y * rabbits.x,
-                wolves.q ~ γ * wolves.y * rabbits.x,
-            ]
+            eqs =
+                [rabbits.z ~ -β * wolves.y * rabbits.x, wolves.q ~ γ * wolves.y * rabbits.x]
 
-            ModelingToolkit.compose(
-                ODESystem(eqs, t, [], ps; name = name),
-                wolves,
-                rabbits,
-            )
+            ModelingToolkit.compose(ODESystem(eqs, t, [], ps; name = name), wolves, rabbits)
         end
 
         function getbyname(sys, name)
@@ -392,10 +373,8 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
         rabbits₊x = getbyname(simp_ltk_mtk, "rabbits₊x")
         @variables y(t)
         measured_quantities = [y ~ wolves₊y]
-        result = assess_identifiability(
-            simp_ltk_mtk,
-            measured_quantities = measured_quantities,
-        )
+        result =
+            assess_identifiability(simp_ltk_mtk, measured_quantities = measured_quantities)
         correct = Dict(
             rabbits₊α => :locally,
             γ => :nonidentifiable,
@@ -415,8 +394,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
         result = assess_identifiability(sys, measured_quantities = measured_quantities)
         @test result[a] == :globally
 
-        result =
-            find_identifiable_functions(sys, measured_quantities = measured_quantities)
+        result = find_identifiable_functions(sys, measured_quantities = measured_quantities)
         @test isequal(result, [a])
 
         #----------------------------------
@@ -447,8 +425,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
             cases,
             Dict(
                 :dds => sir,
-                :res =>
-                    OrderedDict(S => true, I => true, R => false, α => true, β => true),
+                :res => OrderedDict(S => true, I => true, R => false, α => true, β => true),
                 :y => [y ~ I],
                 :y2 => [I],
                 :known_ic => Array{}[],
@@ -582,8 +559,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
             cases,
             Dict(
                 :dds => abmd1,
-                :res =>
-                    OrderedDict(x1 => true, x2 => true, theta1 => true, theta2 => true),
+                :res => OrderedDict(x1 => true, x2 => true, theta1 => true, theta2 => true),
                 :y => [y ~ x1],
                 :y2 => [x1],
                 :known_ic => Array{}[],
@@ -656,11 +632,8 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
             cases,
             Dict(
                 :dds => kic,
-                :res => OrderedDict(
-                    substitute(x1, Dict(t => 0)) => true,
-                    a => true,
-                    b => true,
-                ),
+                :res =>
+                    OrderedDict(substitute(x1, Dict(t => 0)) => true, a => true, b => true),
                 :y => [y ~ x1 + b],
                 :y2 => [x1 + b],
                 :known_ic => [x1],

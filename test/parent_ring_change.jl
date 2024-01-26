@@ -6,19 +6,15 @@
             polynomial_ring(QQ, ["x", "t", "y", "z"], ordering = :deglex)
 
         f = 2x + 3y + x^7 * y
-        @test f ==
-              StructuralIdentifiability.parent_ring_change(f, R, matching = :byname)
-        @test f ==
-              StructuralIdentifiability.parent_ring_change(f, R, matching = :byindex)
+        @test f == StructuralIdentifiability.parent_ring_change(f, R, matching = :byname)
+        @test f == StructuralIdentifiability.parent_ring_change(f, R, matching = :byindex)
 
         f_ = StructuralIdentifiability.parent_ring_change(f, R_, matching = :byname)
         f__ = StructuralIdentifiability.parent_ring_change(f, R__, matching = :byname)
         @test f_ == 2x_ + 3y_ + x_^7 * y_
         @test f__ == 2x__ + 3y__ + x__^7 * y__
-        @test f ==
-              StructuralIdentifiability.parent_ring_change(f_, R, matching = :byname)
-        @test f ==
-              StructuralIdentifiability.parent_ring_change(f__, R, matching = :byname)
+        @test f == StructuralIdentifiability.parent_ring_change(f_, R, matching = :byname)
+        @test f == StructuralIdentifiability.parent_ring_change(f__, R, matching = :byname)
 
         @test_throws ArgumentError StructuralIdentifiability.parent_ring_change(
             x + z,

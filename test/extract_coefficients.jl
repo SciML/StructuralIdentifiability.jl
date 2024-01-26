@@ -54,6 +54,5 @@ end
     R_coef = parent(first(values(C)))
     y = gens(R_coef)[1]
     @test symbols(R_coef) == [:y]
-    @test C ==
-          Dict([1, 3] => R_coef(3), [2, 0] => R_coef(1), [0, 3] => -y^2, [0, 1] => y)
+    @test C == Dict([1, 3] => R_coef(3), [2, 0] => R_coef(1), [0, 3] => -y^2, [0, 1] => y)
 end

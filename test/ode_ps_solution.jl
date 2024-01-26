@@ -44,10 +44,8 @@
             denominators = [rand_poly(1, vars[(NUMX + 1):end]) for i in 1:NUMX]
         end
 
-        eqs = [
-            denominators[i] * vars[i] - rand_poly(2, vars[(NUMX + 1):end]) for
-            i in 1:NUMX
-        ]
+        eqs =
+            [denominators[i] * vars[i] - rand_poly(2, vars[(NUMX + 1):end]) for i in 1:NUMX]
         @time sol = ps_ode_solution(eqs, ic, inputs, prec)
         evals = map(e -> valuation(evaluate(e, [sol[v] for v in gens(R)])), eqs)
         for e in evals
@@ -73,9 +71,8 @@
         # Generating the intial conditions etc
         ic = Dict(vars[i] => F(rand(-5:5)) for i in 1:NUMX)
         param_vals = Dict(vars[i + NUMX] => F(rand(-5:5)) for i in 1:NUMP)
-        inputs = Dict(
-            u => [F(rand(-3:3)) for i in 1:prec] for u in vars[(NUMX + NUMP + 1):end]
-        )
+        inputs =
+            Dict(u => [F(rand(-3:3)) for i in 1:prec] for u in vars[(NUMX + NUMP + 1):end])
         eval_at_zero = merge(ic, param_vals, Dict(u => val[1] for (u, val) in inputs))
 
         # Generating denominators not vanishing at t = 0

@@ -114,18 +114,38 @@ function rand_poly(deg, vars)
     return result
 end
 
+function get_test_files(group)
+    result = Vector{String}()
+    for (dir, _, files) in walkdir("./")
+        for fname in files
+            if fname != "runtests.jl" && endswith(fname, ".jl")
+                if group == "All" ||
+                   (group == "Core" && dir != "./extensions") ||
+                   (
+                       group == "ModelingToolkitExt" &&
+                       dir == "./extensions" &&
+                       VERSION >= v"1.10.0"
+                   )
+                    push!(result, dir * "/" * fname)
+                end
+            end
+        end
+    end
+    return result
+end
+
 @info "Testing started"
 
 @test isempty(Test.detect_ambiguities(StructuralIdentifiability))
 @test isempty(Test.detect_unbound_args(StructuralIdentifiability))
 
+all_tests = get_test_files(GROUP)
+if !isempty(ARGS)
+    all_tests = ARGS
+end
+
 @time @testset "All the tests" verbose = true begin
-    @includetests ARGS
-    include("RationalFunctionFields/RationalFunctionField.jl")
-    include("RationalFunctionFields/normalforms.jl")
-    @static if VERSION >= v"1.10.0"
-        if GROUP == "All" || GROUP == "ModelingToolkitExt"
-            include("extensions//modelingtoolkit.jl")
-        end
+    for test_file in all_tests
+        include(test_file)
     end
 end

@@ -22,8 +22,7 @@ function test_reparametrization(old_ode, new_ode, var_mapping, implicit_relation
     ic_point = map(Nemo.QQ, rand(1:bound, length(old_vars)))
     old_var_ic = Dict(old_vars .=> ic_point)
     input_ts = map(_ -> [Nemo.QQ(rand(1:bound))], 1:length(old_inputs))
-    old_input_ts =
-        Dict{eltype(old_vars), Vector{Nemo.QQFieldElem}}(old_inputs .=> input_ts)
+    old_input_ts = Dict{eltype(old_vars), Vector{Nemo.QQFieldElem}}(old_inputs .=> input_ts)
 
     old_solutions = StructuralIdentifiability.power_series_solution(
         old_ode,
@@ -73,8 +72,7 @@ function test_reparametrization(old_ode, new_ode, var_mapping, implicit_relation
 
     # Test state dynamics
     projected_solutions = Dict(
-        var =>
-            StructuralIdentifiability.eval_at_dict(var_mapping[var], old_solutions)
+        var => StructuralIdentifiability.eval_at_dict(var_mapping[var], old_solutions)
         for var in new_ode.x_vars
     )
     for var in vcat(new_ode.x_vars)
@@ -189,8 +187,7 @@ cases = [
         # Reparametrizes into a 4-dimensional nonlinear model with no algebraic
         # relations -- how is this even legal?? 
         ode = StructuralIdentifiability.@ODEmodel(
-            x1'(t) =
-                k3 * x3(t) - r3 * x1(t) - k1 * x1(t) * (T0 - x2(t)) + r1 * x2(t),
+            x1'(t) = k3 * x3(t) - r3 * x1(t) - k1 * x1(t) * (T0 - x2(t)) + r1 * x2(t),
             x2'(t) = k1 * x1(t) * (T0 - x2(t)) - (r1 + k2) * x2(t),
             x3'(t) = r3 * x1(t) - (k3 + k4) * x3(t) + k2 * x2(t),
             y1(t) = k * (x2(t) + x3(t))

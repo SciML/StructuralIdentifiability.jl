@@ -31,13 +31,8 @@
         cases,
         Dict(
             :dds => dds,
-            :res => OrderedDict(
-                a => true,
-                b => false,
-                x1 => false,
-                x2 => true,
-                b * x1 => true,
-            ),
+            :res =>
+                OrderedDict(a => true, b => false, x1 => false, x2 => true, b * x1 => true),
             :known => :none,
         ),
     )

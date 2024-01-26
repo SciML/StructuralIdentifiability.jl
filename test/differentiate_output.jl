@@ -21,10 +21,8 @@ function diff_sol_Lie_derivatives(ode::ODE, params, ic, inputs, prec::Int)
     for (x, f) in ode.x_equations
         new_eqs[str_to_var(var_to_str(x), new_ring)] = eval_at_dict(f, eval_point)
     end
-    params, ic = map(
-        d -> Dict(str_to_var(string(k), new_ring) => v for (k, v) in d),
-        [params, ic],
-    )
+    params, ic =
+        map(d -> Dict(str_to_var(string(k), new_ring) => v for (k, v) in d), [params, ic])
 
     # computing Lie derivatives
     derivation = copy(new_eqs)
@@ -192,8 +190,7 @@ end
         Dict(
             :ODE => ODE{P}(
                 Dict{P, DType}(
-                    vars[i] => rand_poly(1, vars[1:5]) // (vars[1] + vars[3]) for
-                    i in 1:2
+                    vars[i] => rand_poly(1, vars[1:5]) // (vars[1] + vars[3]) for i in 1:2
                 ),
                 Dict{P, DType}(vars[i] => rand_poly(1, vars[1:5]) for i in 6:7),
                 [vars[5]],
@@ -209,13 +206,8 @@ end
         ode, prec = case[:ODE], case[:prec]
         @time sol1 =
             differentiate_output(ode, case[:param_vals], case[:ic], case[:inputs], prec)
-        sol2 = diff_sol_Lie_derivatives(
-            ode,
-            case[:param_vals],
-            case[:ic],
-            case[:inputs],
-            prec,
-        )
+        sol2 =
+            diff_sol_Lie_derivatives(ode, case[:param_vals], case[:ic], case[:inputs], prec)
         for y in ode.y_vars
             for v in vcat(ode.x_vars, ode.parameters)
                 @test sol2[y][v] == [

@@ -66,11 +66,7 @@
 
     push!(
         cases,
-        OrderedDict(
-            :dds => dds,
-            :res => Dict(theta => true, x => true),
-            :known => :none,
-        ),
+        OrderedDict(:dds => dds, :res => Dict(theta => true, x => true), :known => :none),
     )
 
     # -------------------

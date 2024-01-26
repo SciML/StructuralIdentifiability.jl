@@ -19,19 +19,14 @@ ode = StructuralIdentifiability.@ODEmodel(
     x2'(t) = x1(t) + a,
     y(t) = x1(t) + x2(t)
 )
-ident_funcs =
-    Vector{StructuralIdentifiability.AbstractAlgebra.Generic.Frac{typeof(x1)}}()
+ident_funcs = Vector{StructuralIdentifiability.AbstractAlgebra.Generic.Frac{typeof(x1)}}()
 
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # Example 2 from 
 # "On Global Identifiability for Arbitrary Model Parametrizations",
 # DOI: 10.1016/0005-1098(94)90029-9
-ode = StructuralIdentifiability.@ODEmodel(
-    x1'(t) = Θ * x2(t)^2,
-    x2'(t) = u(t),
-    y(t) = x1(t)
-)
+ode = StructuralIdentifiability.@ODEmodel(x1'(t) = Θ * x2(t)^2, x2'(t) = u(t), y(t) = x1(t))
 ident_funcs = [Θ]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
@@ -171,11 +166,7 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 # incorrectly in the interpolation
 ode = StructuralIdentifiability.@ODEmodel(
     x1'(t) =
-        -(k21 + k31 + k41 + k01) * x1(t) +
-        k12 * x2(t) +
-        k13 * x3(t) +
-        k14 * x4(t) +
-        u(t),
+        -(k21 + k31 + k41 + k01) * x1(t) + k12 * x2(t) + k13 * x3(t) + k14 * x4(t) + u(t),
     x2'(t) = k21 * x1(t) - k12 * x2(t),
     x3'(t) = k31 * x1(t) - k13 * x3(t),
     x4'(t) = k41 * x1(t) - k14 * x4(t),
@@ -202,15 +193,9 @@ ident_funcs = [
 ode = StructuralIdentifiability.@ODEmodel(
     x5'(t) =
         (
-            k5 * k8 * x4(t) + k5 * x6(t) * x4(t) + k5 * x5(t) * x4(t) -
-            k6 * x5(t) * k7 - x5(t) * k7 * x4(t)
+            k5 * k8 * x4(t) + k5 * x6(t) * x4(t) + k5 * x5(t) * x4(t) - k6 * x5(t) * k7 - x5(t) * k7 * x4(t)
         ) // (
-            k8 * k6 +
-            k8 * x4(t) +
-            k6 * x6(t) +
-            k6 * x5(t) +
-            x6(t) * x4(t) +
-            x5(t) * x4(t)
+            k8 * k6 + k8 * x4(t) + k6 * x6(t) + k6 * x5(t) + x6(t) * x4(t) + x5(t) * x4(t)
         ),
     x7'(t) = (k9 * k10 * x6(t) - k9 * x6(t)^2) // k10,
     x4'(t) = (-k5 * x4(t)) // (k6 + x4(t)),
@@ -280,9 +265,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     P0'(t) = P1(t),
     P5'(t) =
         (
-            -P0(t) * beta_SI * phi * Mar * Ks * siga2 +
-            P0(t) * beta_SI * Mar * Ks * siga2 -
-            P0(t) * phi * M * Mar * Ks * beta_SA +
+            -P0(t) * beta_SI * phi * Mar * Ks * siga2 + P0(t) * beta_SI * Mar * Ks * siga2 - P0(t) * phi * M * Mar * Ks * beta_SA +
             P0(t) * phi * M * Ks * siga2 * beta_SA +
             P0(t) * M * Mar * Ks * beta_SA - P1(t) * beta_SI * phi * Mar * siga2 -
             P1(t) * beta_SI * phi * Ks * siga2 +
@@ -294,8 +277,8 @@ ode = StructuralIdentifiability.@ODEmodel(
             P1(t) * M * Ks * beta_SA +
             P1(t) * Mar * Ks * beta_SA - beta_SI * phi * P2(t) * siga2 +
             beta_SI * P2(t) * siga2 +
-            P3(t) * beta_SA - phi * M * Mar * P5(t) * siga2 -
-            phi * M * beta * siga2 - phi * P2(t) * Mar * beta_SA +
+            P3(t) * beta_SA - phi * M * Mar * P5(t) * siga2 - phi * M * beta * siga2 -
+            phi * P2(t) * Mar * beta_SA +
             phi * P2(t) * siga2 * beta_SA +
             M * P2(t) * beta_SA +
             M * Mar * P5(t) * siga2 +
@@ -459,8 +442,7 @@ ode = StructuralIdentifiability.@ODEmodel(
             siga1 * P3(t)^2 * beta_SA - siga1 * P3(t) * phi * M^2 * siga2 -
             siga1 * P3(t) * phi * M * Mar * P5(t) * siga2 -
             siga1 * P3(t) * phi * M * Ks * siga2 -
-            siga1 * P3(t) * phi * M * beta * siga2 -
-            siga1 * P3(t) * phi * M * siga2^2 -
+            siga1 * P3(t) * phi * M * beta * siga2 - siga1 * P3(t) * phi * M * siga2^2 -
             siga1 * P3(t) * phi * P2(t) * Mar * beta_SA +
             siga1 * P3(t) * phi * P2(t) * siga2 * beta_SA +
             siga1 * P3(t) * M^2 * siga2 +
@@ -652,8 +634,7 @@ ode = StructuralIdentifiability.@ODEmodel(
             beta_SI * P3(t) * phi * P2(t) * siga2^2 +
             beta_SI * P3(t) * M * P2(t) * siga2 +
             beta_SI * P3(t) * P2(t) * Ks * siga2 +
-            beta_SI * P3(t) * P2(t) * siga2^2 -
-            beta_SI * phi * alpa * P2(t) * siga2 -
+            beta_SI * P3(t) * P2(t) * siga2^2 - beta_SI * phi * alpa * P2(t) * siga2 -
             beta_SI * phi * M * P2(t)^2 * Ks * siga2 -
             beta_SI * phi * M * P2(t)^2 * siga2^2 -
             beta_SI * phi * P4(t) * P2(t) * siga2 -
@@ -697,15 +678,13 @@ ode = StructuralIdentifiability.@ODEmodel(
             P3(t) * P2(t) * Ks^2 * beta_SA +
             2 * P3(t) * P2(t) * Ks * siga2 * beta_SA -
             phi * alpa * M * Mar * P5(t) * siga2 - phi * alpa * M * beta * siga2 -
-            phi * alpa * P2(t) * Mar * beta_SA +
-            phi * alpa * P2(t) * siga2 * beta_SA - phi * M^2 * P4(t) * siga2 -
-            phi * M^2 * P2(t) * Mar * P5(t) * Ks * siga2 -
+            phi * alpa * P2(t) * Mar * beta_SA + phi * alpa * P2(t) * siga2 * beta_SA -
+            phi * M^2 * P4(t) * siga2 - phi * M^2 * P2(t) * Mar * P5(t) * Ks * siga2 -
             phi * M^2 * P2(t) * Mar * P5(t) * siga2^2 -
-            phi * M^2 * P2(t) * Ks * beta * siga2 -
-            phi * M^2 * P2(t) * Ks * siga2^2 - phi * M^2 * P2(t) * beta * siga2^2 -
-            phi * M * P4(t) * Mar * P5(t) * siga2 - phi * M * P4(t) * Ks * siga2 -
-            phi * M * P4(t) * beta * siga2 - phi * M * P4(t) * siga2^2 -
-            phi * M * P2(t)^2 * Mar * Ks * beta_SA -
+            phi * M^2 * P2(t) * Ks * beta * siga2 - phi * M^2 * P2(t) * Ks * siga2^2 -
+            phi * M^2 * P2(t) * beta * siga2^2 - phi * M * P4(t) * Mar * P5(t) * siga2 -
+            phi * M * P4(t) * Ks * siga2 - phi * M * P4(t) * beta * siga2 -
+            phi * M * P4(t) * siga2^2 - phi * M * P2(t)^2 * Mar * Ks * beta_SA -
             phi * M * P2(t)^2 * Mar * siga2 * beta_SA +
             phi * M * P2(t)^2 * Ks * siga2 * beta_SA +
             phi * M * P2(t)^2 * siga2^2 * beta_SA -
@@ -765,18 +744,18 @@ ident_funcs = [
     (
         siga1 * beta_SI * phi * siga2 - siga1 * beta_SI * siga2 -
         siga1 * phi * siga2 * beta_SA - siga1 * M * beta_SA -
-        beta_SI * phi * Mar * siga2 + beta_SI * Mar * siga2 -
-        phi * M * Mar * beta_SA + M * Mar * beta_SA
+        beta_SI * phi * Mar * siga2 + beta_SI * Mar * siga2 - phi * M * Mar * beta_SA +
+        M * Mar * beta_SA
     ) // (siga1 * beta_SA + phi * Mar * beta_SA - Mar * beta_SA),
     (
-        siga1^2 * beta_SA + siga1 * beta_SI * phi * siga2 - siga1 * beta_SI * siga2 + siga1 * phi * Mar * beta_SA -
-        siga1 * phi * siga2 * beta_SA - siga1 * Mar * beta_SA +
+        siga1^2 * beta_SA + siga1 * beta_SI * phi * siga2 - siga1 * beta_SI * siga2 +
+        siga1 * phi * Mar * beta_SA - siga1 * phi * siga2 * beta_SA -
+        siga1 * Mar * beta_SA +
         siga1 * siga2 * beta_SA +
         beta_SI * phi * M * siga2 - beta_SI * phi * Mar * siga2 +
         beta_SI * phi * siga2^2 +
         beta_SI * Mar * siga2 +
-        phi * Mar * siga2 * beta_SA - phi * siga2^2 * beta_SA -
-        Mar * siga2 * beta_SA
+        phi * Mar * siga2 * beta_SA - phi * siga2^2 * beta_SA - Mar * siga2 * beta_SA
     ) // (phi * M * siga2),
 ]
 # Really large and takes a lot of time, so commented

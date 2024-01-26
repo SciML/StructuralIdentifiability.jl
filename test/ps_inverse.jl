@@ -1,10 +1,6 @@
 @testset "Power series matrix inverse" begin
-    T, t = Nemo.power_series_ring(
-        Nemo.Native.GF(2^31 - 1),
-        50,
-        "t";
-        model = :capped_absolute,
-    )
+    T, t =
+        Nemo.power_series_ring(Nemo.Native.GF(2^31 - 1), 50, "t"; model = :capped_absolute)
 
     for d in 1:5
         S = Nemo.matrix_space(T, d, d)

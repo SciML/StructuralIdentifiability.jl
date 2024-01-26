@@ -28,10 +28,8 @@ function _linear_compartment_model(graph, sinks)
         push!(edges_vars_names, "a_$(s)_0")
         push!(edges_vars_names, "b_$(s)_0")
     end
-    R, vars = Nemo.polynomial_ring(
-        Nemo.QQ,
-        vcat(x_vars_names, edges_vars_names, ["y1", "y2"]),
-    )
+    R, vars =
+        Nemo.polynomial_ring(Nemo.QQ, vcat(x_vars_names, edges_vars_names, ["y1", "y2"]))
     x_vars = vars[2:(n + 1)]
     x0 = vars[1]
     equations =
@@ -174,8 +172,7 @@ end
     #--------------------------------------------------------------------------
 
     # Example 7.7 from https://arxiv.org/pdf/2011.10868.pdf
-    ode =
-        @ODEmodel(x0'(t) = 0, x1'(t) = x0(t) * x1(t) + mu1 * x0(t) + mu2, y(t) = x1(t))
+    ode = @ODEmodel(x0'(t) = 0, x1'(t) = x0(t) * x1(t) + mu1 * x0(t) + mu2, y(t) = x1(t))
     funcs_to_test = [mu1, mu2]
     correct = [true, true]
     push!(
@@ -201,10 +198,7 @@ end
     )
     funcs_to_test = [b, nu, d, a]
     correct = OrderedDict([b => true, nu => true, d => true, a => true])
-    push!(
-        test_cases,
-        Dict(:ode => ode, :funcs => funcs_to_test, :correct => (correct, 1)),
-    )
+    push!(test_cases, Dict(:ode => ode, :funcs => funcs_to_test, :correct => (correct, 1)))
 
     #--------------------------------------------------------------------------
 
@@ -212,10 +206,7 @@ end
     ode = @ODEmodel(x'(t) = a * z(t), z'(t) = a * z(t)^2, y(t) = x(t))
     funcs_to_test = [a]
     correct = OrderedDict([a => false])
-    push!(
-        test_cases,
-        Dict(:ode => ode, :funcs => funcs_to_test, :correct => (correct, 0)),
-    )
+    push!(test_cases, Dict(:ode => ode, :funcs => funcs_to_test, :correct => (correct, 0)))
 
     #--------------------------------------------------------------------------
 
