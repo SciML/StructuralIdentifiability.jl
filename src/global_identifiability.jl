@@ -17,14 +17,14 @@ are identifiable functions containing or not the state variables
     ode::ODE{P},
     known::Array{P, 1},
     with_states::Bool,
-) where {P <: MPolyElem{fmpq}}
+) where {P <: MPolyRingElem{QQFieldElem}}
     coeff_lists =
         Dict(:with_states => Array{Array{P, 1}, 1}(), :no_states => Array{Array{P, 1}, 1}())
     varnames = [var_to_str(p) for p in ode.parameters]
     if with_states
         append!(varnames, map(var_to_str, ode.x_vars))
     end
-    bring, _ = Nemo.PolynomialRing(base_ring(ode.poly_ring), varnames)
+    bring, _ = Nemo.polynomial_ring(base_ring(ode.poly_ring), varnames)
 
     if with_states
         @debug "Computing Lie derivatives"
@@ -67,7 +67,7 @@ are identifiable functions containing or not the state variables
     if with_states
         new_vars = vcat(new_vars, ode.x_vars)
     end
-    new_ring, _ = PolynomialRing(Nemo.QQ, map(Symbol, new_vars))
+    new_ring, _ = polynomial_ring(Nemo.QQ, map(Symbol, new_vars))
     new_coeff_lists = empty(coeff_lists)
     for (key, coeff_list) in coeff_lists
         new_coeff_lists[key] =
@@ -145,7 +145,7 @@ The function returns a tuple containing the following:
     if with_states && !isempty(ode.parameters)
         @debug "Generators of identifiable functions involve states, the parameter-only part is getting simplified"
         # NOTE: switching to a ring without states for a moment
-        param_ring, _ = PolynomialRing(
+        param_ring, _ = polynomial_ring(
             base_ring(bring),
             map(string, ode.parameters),
             ordering = Nemo.ordering(bring),
@@ -195,7 +195,7 @@ Output: a list L of booleans with L[i] being the identifiability status of the i
     known::Array{P, 1} = Array{P, 1}(),
     prob_threshold::Float64 = 0.99,
     var_change_policy = :default,
-) where {P <: MPolyElem{fmpq}}
+) where {P <: MPolyRingElem{QQFieldElem}}
     states_needed = false
     for f in funcs_to_check
         num, den = unpack_fraction(f)
@@ -236,7 +236,7 @@ function check_identifiability(
     known::Array{P, 1} = Array{P, 1}(),
     prob_threshold::Float64 = 0.99,
     var_change_policy = :default,
-) where {P <: MPolyElem{fmpq}}
+) where {P <: MPolyRingElem{QQFieldElem}}
     return check_identifiability(
         ode,
         ode.parameters,
@@ -248,7 +248,7 @@ end
 
 #------------------------------------------------------------------------------
 """
-    assess_global_identifiability(ode::ODE{P}, prob_threshold::Float64=0.99; var_change=:default) where P <: MPolyElem{fmpq}
+    assess_global_identifiability(ode::ODE{P}, prob_threshold::Float64=0.99; var_change=:default) where P <: MPolyRingElem{QQFieldElem}
 
 Input:
 - `ode` - the ODE model
@@ -266,7 +266,7 @@ function assess_global_identifiability(
     known::Array{P, 1} = Array{P, 1}(),
     prob_threshold::Float64 = 0.99;
     var_change = :default,
-) where {P <: MPolyElem{fmpq}}
+) where {P <: MPolyRingElem{QQFieldElem}}
     result_list = assess_global_identifiability(
         ode,
         ode.parameters,
@@ -303,7 +303,7 @@ Checks global identifiability of functions of parameters specified in `funcs_to_
     known::Array{P, 1} = Array{P, 1}(),
     prob_threshold::Float64 = 0.99;
     var_change = :default,
-) where {P <: MPolyElem{fmpq}}
+) where {P <: MPolyRingElem{QQFieldElem}}
     submodels = find_submodels(ode)
     if length(submodels) > 0
         @info "Note: the input model has nontrivial submodels. If the computation for the full model will be too heavy, you may want to try to first analyze one of the submodels. They can be produced using function `find_submodels`"
