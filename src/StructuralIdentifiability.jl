@@ -21,7 +21,7 @@ using ParamPunPam: reduce_mod_p!, specialize_mod_p, AbstractBlackboxIdeal
 ParamPunPam.enable_progressbar(false)
 
 # defining a model
-export ODE, @ODEmodel, @DDSmodel, mtk_to_si
+export ODE, @ODEmodel, @DDSmodel
 
 # assessing identifiability
 export assess_local_identifiability, assess_identifiability
