@@ -12,7 +12,7 @@ which involves
 
   - a vector $\mathbf{x}(t)$ of the state variables of the system,
 
-  - a vector $\mathbf{u}(t)$ of extermal inputs,
+  - a vector $\mathbf{u}(t)$ of external inputs,
   - a vector $\mathbf{p}$ of scalar parameters,
   - a vector $\mathbf{y}(t)$ of outputs (i.e., observations),
   - and vectors of rational functions $\mathbf{f}$ and $\mathbf{g}$ (for discussion of the non-rational case, see this [issue](https://github.com/SciML/StructuralIdentifiability.jl/issues/144)).

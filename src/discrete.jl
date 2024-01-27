@@ -93,7 +93,7 @@ Input:
 - `param_values` - parameter values, must be a dictionary mapping parameter to a value
 - `initial_conditions` - initial conditions of `ode`, must be a dictionary mapping state variable to a value
 - `input_values` - input sequences in the form input => list of terms; length of the lists must be at least
-                   teh required number of terms in the result
+                   the required number of terms in the result
 - `num_terms` - number of terms to compute
 
 Output:
@@ -301,8 +301,8 @@ function _assess_local_identifiability_discrete_aux(
     # Computing the bound from the Schwartz-Zippel-DeMilo-Lipton lemma
     deg_x = _degree_with_common_denom(values(x_equations(dds)))
     deg_y = _degree_with_common_denom(values(y_equations(dds)))
-    deg_known = reduce(+, map(total_degree, known_ic), init = 0)
-    deg_to_check = max(map(total_degree, funcs_to_check)...)
+    deg_known = reduce(+, map(total_degree_frac, known_ic), init = 0)
+    deg_to_check = max(map(total_degree_frac, funcs_to_check)...)
     Jac_degree = deg_to_check + deg_known
     if deg_x > 1
         Jac_degree += 2 * deg_y * ((deg_x^prec - 1) ÷ (deg_x - 1))
