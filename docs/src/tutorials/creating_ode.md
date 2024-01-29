@@ -54,7 +54,7 @@ assess_identifiability(ode)
 
 ## Defining using `ModelingToolkit`
 
-`StructuralIdentifiability` has an extension `ModelingToolkitExt` which allows to use `ODESystem` from `ModelingToolkit` to descibe
+`StructuralIdentifiability` has an extension `ModelingToolkitExt` which allows to use `ODESystem` from `ModelingToolkit` to describe
 a model. The extension is loaded automatically once `ModelingToolkit` is loaded via `using ModelingToolkit`.
 In this case, one should encode the equations for the states as `ODESystem` and specify the outputs separately.
 In order to do this, we first introduce all functions and scalars:
