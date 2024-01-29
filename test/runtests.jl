@@ -137,7 +137,7 @@ end
 
 @info "Testing started"
 
-@time @testset "Quality Assurance" include("qa.jl")
+@time include("qa.jl")
 
 all_tests = get_test_files(GROUP)
 if !isempty(ARGS)
