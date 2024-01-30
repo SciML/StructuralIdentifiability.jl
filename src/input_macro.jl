@@ -297,7 +297,7 @@ Here,
 - `x1`, `x2` are state variables
 - `y` is an output variable
 - `u` is an input variable
-- `a`, `b`, `c` are time-indepdendent parameters
+- `a`, `b`, `c` are time-independent parameters
 
 """
 macro DDSmodel(ex::Expr...)

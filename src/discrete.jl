@@ -97,7 +97,7 @@ Input:
 - `num_terms` - number of terms to compute
 
 Output:
-- computes a sequence solution with teh required number of terms prec presented as a dictionary state_variable => corresponding sequence
+- computes a sequence solution with the required number of terms prec presented as a dictionary state_variable => corresponding sequence
 """
 function sequence_solution(
     dds::DDS{P},
