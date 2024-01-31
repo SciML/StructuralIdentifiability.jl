@@ -119,7 +119,7 @@ function get_test_files(group)
     result = Vector{String}()
     for (dir, _, files) in walkdir("./")
         for fname in files
-            if !(fname in ("runtests.jl", "qa.jl")) && endswith(fname, ".jl")
+            if fname != "runtests.jl" && endswith(fname, ".jl")
                 if group == "All" ||
                    (group == "Core" && dir != "./extensions") ||
                    (
@@ -136,8 +136,6 @@ function get_test_files(group)
 end
 
 @info "Testing started"
-
-@time include("qa.jl")
 
 all_tests = get_test_files(GROUP)
 if !isempty(ARGS)
