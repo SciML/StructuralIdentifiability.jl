@@ -53,7 +53,7 @@
         end
     end
 
-    # Testing ps_ode_solution in conjuntion with the ODE class
+    # Testing ps_ode_solution in conjunction with the ODE class
     for i in 1:30
         # Setting up the ring
         NUMX = 3
@@ -68,7 +68,7 @@
         PType = fpMPolyRingElem
         TDict = Dict{PType, Union{PType, Generic.Frac{PType}}}
 
-        # Generating the intial conditions etc
+        # Generating the initial conditions etc
         ic = Dict(vars[i] => F(rand(-5:5)) for i in 1:NUMX)
         param_vals = Dict(vars[i + NUMX] => F(rand(-5:5)) for i in 1:NUMP)
         inputs =

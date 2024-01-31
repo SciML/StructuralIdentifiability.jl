@@ -1,11 +1,11 @@
 # ------------------------------------------------------------------------------
 
-function Nemo.vars(f::Generic.Frac{<:MPolyRingElem})
-    return collect(union(Set(vars(numerator(f))), Set(vars(denominator(f)))))
+function total_degree_frac(f::Generic.Frac{<:MPolyRingElem})
+    return sum(map(total_degree, unpack_fraction(f)))
 end
 
-function Nemo.total_degree(f::Generic.Frac{<:MPolyRingElem})
-    return sum(map(total_degree, unpack_fraction(f)))
+function total_degree_frac(f::MPolyRingElem)
+    return total_degree(f)
 end
 
 # ------------------------------------------------------------------------------
@@ -376,7 +376,7 @@ Input:
 - `poly` - multivariate polynomial
 - `variables` - a list of variables from the generators of the ring of p
 Output:
-- dictionary with keys being tuples of length `lenght(variables)` and values being polynomials in the variables other than those which are the coefficients at the corresponding monomials (in a smaller polynomial ring)
+- dictionary with keys being tuples of length `length(variables)` and values being polynomials in the variables other than those which are the coefficients at the corresponding monomials (in a smaller polynomial ring)
 """
 function extract_coefficients(poly::P, variables::Array{P, 1}) where {P <: MPolyRingElem}
     xs = gens(parent(poly))

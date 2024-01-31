@@ -15,6 +15,7 @@ else
     using ..ModelingToolkit
 end
 
+export mtk_to_si
 export assess_local_identifiability, assess_identifiability, find_identifiable_functions
 
 # ------------------------------------------------------------------------------

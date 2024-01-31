@@ -1,4 +1,4 @@
-@testset "Coefficient extraction for rational fucntions" begin
+@testset "Coefficient extraction for rational functions" begin
     R, (x, y, z) = polynomial_ring(QQ, ["x", "y", "z"])
     C = extract_coefficients_ratfunc(
         (x^2 + y * z - y^2 * z^3 + 3 * x * z^3) // (x + y + z + z^2 * (x^2 + 1)),

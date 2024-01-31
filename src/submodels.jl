@@ -90,7 +90,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-# filters the models containin all states or no states
+# filters the models containing all states or no states
 function filter_max_empty(
     ode::ODE{P},
     submodels::Array{Set{QQMPolyRingElem}, 1},

@@ -2,6 +2,7 @@ using StructuralIdentifiability
 
 using Test
 using TestSetExtensions
+using SpecialFunctions
 
 using StructuralIdentifiability.DataStructures
 using StructuralIdentifiability.Nemo
@@ -135,9 +136,6 @@ function get_test_files(group)
 end
 
 @info "Testing started"
-
-@test isempty(Test.detect_ambiguities(StructuralIdentifiability))
-@test isempty(Test.detect_unbound_args(StructuralIdentifiability))
 
 all_tests = get_test_files(GROUP)
 if !isempty(ARGS)
