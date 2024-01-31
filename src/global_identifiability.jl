@@ -3,7 +3,7 @@
 
 Takes as input input-output equations, the corresponding ode, a list of functions assumed to be known
 and a flag `with_states`.
-Extracts generators of the field of identifiable functions (with or without states) withous
+Extracts generators of the field of identifiable functions (with or without states) without
 any simplifications.
 
 Returns a tuple consisting of

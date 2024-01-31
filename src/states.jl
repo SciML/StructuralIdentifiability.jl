@@ -6,7 +6,7 @@ Input:
 - `vars` - list of variables
 
 The function considers `f` as `A / B`, where `A` and `B` are polynomials in `vars` with
-coefficients in rational fucntion field in the remaining variables such that at least one of the
+coefficients in rational function field in the remaining variables such that at least one of the
 coefficients is equal to one.
 
 Output:
