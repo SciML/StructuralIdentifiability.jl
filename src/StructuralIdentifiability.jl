@@ -172,4 +172,10 @@ end
 using PrecompileTools
 include("precompile.jl")
 
+### Extensions ###
+
+# ModelingToolkit extension.
+function mtk_to_si end
+export mtk_to_si
+
 end
