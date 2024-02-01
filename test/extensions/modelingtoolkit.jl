@@ -1,4 +1,4 @@
-if GROUP == "All" || GROUP == "ModelingToolkitExt"
+if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
     @testset "Check identifiability of `ODESystem` object" begin
         using ModelingToolkit
         using ModelingToolkit: parameters
@@ -655,5 +655,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitExt"
                 funcs_to_check = c[:to_check],
             ) == c[:res]
         end
+    end
+
+    @testset "Exporting ModelingToolkit Model to SI Model" begin
+
     end
 end

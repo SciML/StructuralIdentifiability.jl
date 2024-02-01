@@ -1,4 +1,4 @@
-module ModelingToolkitExt
+module ModelingToolkitSIExt
 
 using DataStructures
 using Logging
@@ -14,9 +14,6 @@ if isdefined(Base, :get_extension)
 else
     using ..ModelingToolkit
 end
-
-export mtk_to_si
-export assess_local_identifiability, assess_identifiability, find_identifiable_functions
 
 # ------------------------------------------------------------------------------
 
@@ -96,7 +93,7 @@ Output:
 - `conversion` dictionary from the symbols in the input MTK model to the variable
   involved in the produced `ODE` object
 """
-function mtk_to_si(
+function StructuralIdentifiability.mtk_to_si(
     de::ModelingToolkit.AbstractTimeDependentSystem,
     measured_quantities::Array{ModelingToolkit.Equation},
 )
@@ -106,7 +103,7 @@ function mtk_to_si(
     )
 end
 
-function mtk_to_si(
+function StructuralIdentifiability.mtk_to_si(
     de::ModelingToolkit.AbstractTimeDependentSystem,
     measured_quantities::Array{<:Symbolics.Num},
 )
@@ -116,7 +113,7 @@ function mtk_to_si(
     )
 end
 
-function mtk_to_si(
+function StructuralIdentifiability.mtk_to_si(
     de::ModelingToolkit.AbstractTimeDependentSystem,
     measured_quantities::Array{<:SymbolicUtils.BasicSymbolic},
 )

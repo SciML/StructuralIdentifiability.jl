@@ -87,7 +87,7 @@ assess_local_identifiability(dds; funcs_to_check = [β * S])
 As other main functions in the package, `assess_local_identifiability` accepts an optional parameter `loglevel` (default: `Logging.Info`)
 to adjust the verbosity of logging.
 
-If one loads `ModelingToolkit` (and thus the `ModelingToolkitExt` extension), one can use `DiscreteSystem` from `ModelingToolkit` to
+If one loads `ModelingToolkit` (and thus the `ModelingToolkitSIExt` extension), one can use `DiscreteSystem` from `ModelingToolkit` to
 describe the input model (now in terms of difference!):
 
 ```@example discrete_mtk

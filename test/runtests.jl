@@ -68,7 +68,7 @@ using StructuralIdentifiability:
 const GROUP = get(ENV, "GROUP", "All")
 
 @static if VERSION >= v"1.10.0"
-    if GROUP == "All" || GROUP == "ModelingToolkitExt"
+    if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         using Pkg
         Pkg.add("ModelingToolkit")
         Pkg.add("Symbolics")
@@ -123,7 +123,7 @@ function get_test_files(group)
                 if group == "All" ||
                    (group == "Core" && dir != "./extensions") ||
                    (
-                       group == "ModelingToolkitExt" &&
+                       group == "ModelingToolkitSIExt" &&
                        dir == "./extensions" &&
                        VERSION >= v"1.10.0"
                    )
