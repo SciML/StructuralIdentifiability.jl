@@ -658,6 +658,6 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
     end
 
     @testset "Exporting ModelingToolkit Model to SI Model" begin
-
+        # Add test of `mtk_to_si` function here, as well as identifiability functions when applied to its output.
     end
 end
