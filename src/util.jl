@@ -518,22 +518,6 @@ function difforder(diffpoly::MPolyRingElem, prefix::String)
     return max(orders...)
 end
 
-function get_measured_quantities(ode::ModelingToolkit.ODESystem)
-    if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
-        @info "Measured quantities are not provided, trying to find the outputs in input ODE."
-        return filter(
-            eq -> (ModelingToolkit.isoutput(eq.lhs)),
-            ModelingToolkit.equations(ode),
-        )
-    else
-        throw(
-            error(
-                "Measured quantities (output functions) were not provided and no outputs were found.",
-            ),
-        )
-    end
-end
-
 # -----------------------------------------------------------------------------
 
 """
@@ -557,4 +541,3 @@ function replace_with_ic(ode, funcs)
         Dict(str_to_var(p[1], ode.poly_ring) => str_to_var(p[2], R0) for p in varnames)
     return [eval_at_dict(f, eval_dict) for f in funcs]
 end
-
