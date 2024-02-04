@@ -80,17 +80,17 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    field_contains(field, ratfuncs, p)
+    field_contains(field, ratfuncs, prob_threshold)
 
 Checks whether given rational function field `field` contains given rational
 functions `ratfuncs` (represented as a list of lists). The result is correct with
-probability at least `p`
+probability at least `prob_threshold`
 
 Inputs:
 - `field` - a rational function field
 - `ratfuncs` - a list of lists of polynomials. Each of the lists, say, `[f1, ..., fn]`,
   defines generators `f2/f1, ..., fn/f1`.
-- `p` real number from (0, 1)
+- `prob_threshold` real number from (0, 1)
 
 Output:
 - a list `L[i]` of bools of length `length(rat_funcs)` such that `L[i]` is true iff
@@ -99,7 +99,7 @@ Output:
 @timeit _to function field_contains(
     field::RationalFunctionField{T},
     ratfuncs::Vector{Vector{T}},
-    p,
+    prob_threshold,
 ) where {T}
     if isempty(ratfuncs)
         return Bool[]
@@ -137,7 +137,7 @@ Output:
         3 *
         BigInt(degree)^(length(total_vars) + 3) *
         (length(ratfuncs)) *
-        ceil(1 / (1 - p)),
+        ceil(1 / (1 - prob_threshold)),
     )
     @debug "\tSampling from $(-sampling_bound) to $(sampling_bound)"
 
@@ -157,14 +157,18 @@ end
 function field_contains(
     field::RationalFunctionField{T},
     ratfuncs::Vector{Generic.Frac{T}},
-    p,
+    prob_threshold,
 ) where {T}
-    return field_contains(field, fractions_to_dennums(ratfuncs), p)
+    return field_contains(field, fractions_to_dennums(ratfuncs), prob_threshold)
 end
 
-function field_contains(field::RationalFunctionField{T}, polys::Vector{T}, p) where {T}
+function field_contains(
+    field::RationalFunctionField{T},
+    polys::Vector{T},
+    prob_threshold,
+) where {T}
     id = one(parent(first(polys)))
-    return field_contains(field, [[id, p] for p in polys], p)
+    return field_contains(field, [[id, p] for p in polys], prob_threshold)
 end
 
 # ------------------------------------------------------------------------------
@@ -218,12 +222,20 @@ end
 
 # ------------------------------------------------------------------------------
 
-function issubfield(F::RationalFunctionField{T}, E::RationalFunctionField{T}, p) where {T}
-    return all(field_contains(E, F.dennums, p))
+function issubfield(
+    F::RationalFunctionField{T},
+    E::RationalFunctionField{T},
+    prob_threshold,
+) where {T}
+    return all(field_contains(E, F.dennums, prob_threshold))
 end
 
-function fields_equal(F::RationalFunctionField{T}, E::RationalFunctionField{T}, p) where {T}
-    new_p = 1 - (1 - p) / 2
+function fields_equal(
+    F::RationalFunctionField{T},
+    E::RationalFunctionField{T},
+    prob_threshold,
+) where {T}
+    new_p = 1 - (1 - prob_threshold) / 2
     return issubfield(F, E, new_p) && issubfield(E, F, new_p)
 end
 
@@ -235,7 +247,7 @@ end
 ) where {T}
     mqs_generators = generators.mqs
     mqs_tobereduced = tobereduced.mqs
-    ff = Nemo.GF(2^31 - 1)
+    ff = Nemo.Native.GF(2^31 - 1)
     reduce_mod_p!(mqs_generators, ff)
     reduce_mod_p!(mqs_tobereduced, ff)
     param_ring = ParamPunPam.parent_params(mqs_generators)
@@ -253,7 +265,7 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    beautifuly_generators(rff::RationalFunctionField)
+    beautiful_generators(rff::RationalFunctionField)
 
 Given a field of rational functions `rff` returns a set of "simpler" and
 standardized generators for `rff`.
@@ -262,7 +274,7 @@ Applies the following passes:
 1. Filter constants,
 2. Remove redundant generators.
 """
-@timeit _to function beautifuly_generators(
+@timeit _to function beautiful_generators(
     rff::RationalFunctionField;
     discard_redundant = true,
     reversed_order = false,
@@ -443,7 +455,7 @@ Returns a set of Groebner bases for multiple different rankings of variables.
     # The first basis in some ordering
     ord = InputOrdering()
     new_rff = groebner_basis_coeffs(rff, seed = seed, ordering = ord)
-    cfs = beautifuly_generators(new_rff)
+    cfs = beautiful_generators(new_rff)
     ordering_to_generators[ord] = cfs
     if isempty(cfs)
         return ordering_to_generators
@@ -468,7 +480,7 @@ Returns a set of Groebner bases for multiple different rankings of variables.
                 ordering = ord,
                 up_to_degree = up_to_degree,
             )
-            cfs = beautifuly_generators(new_rff, discard_redundant = false)
+            cfs = beautiful_generators(new_rff, discard_redundant = false)
             ordering_to_generators[ord] = cfs
         end
     end
@@ -485,7 +497,7 @@ Returns a set of Groebner bases for multiple different rankings of variables.
                 ordering = ord,
                 up_to_degree = up_to_degree,
             )
-            cfs = beautifuly_generators(new_rff, discard_redundant = false)
+            cfs = beautiful_generators(new_rff, discard_redundant = false)
             ordering_to_generators[ord] = cfs
         end
     end
@@ -503,7 +515,7 @@ Returns a set of Groebner bases for multiple different rankings of variables.
                 ordering = ord,
                 up_to_degree = up_to_degree,
             )
-            cfs = beautifuly_generators(new_rff, discard_redundant = false)
+            cfs = beautiful_generators(new_rff, discard_redundant = false)
             ordering_to_generators[ord] = cfs
         end
     end
@@ -520,7 +532,7 @@ function monomial_generators_up_to_degree(
 ) where {T}
     @assert strategy in (:monte_carlo,)
     relations = linear_relations_between_normal_forms(
-        beautifuly_generators(rff),
+        beautiful_generators(rff),
         up_to_degree,
         seed = seed,
     )
@@ -528,14 +540,14 @@ function monomial_generators_up_to_degree(
 end
 
 """
-    simplified_generating_set(rff; p = 0.99, seed = 42)
+    simplified_generating_set(rff; prob_threshold = 0.99, seed = 42)
 
 Returns a simplified set of generators for `rff`. 
-Result is correct (in Monte-Carlo sense) with probability at least `p`.
+Result is correct (in the Monte-Carlo sense) with probability at least `prob_threshold`.
 """
 @timeit _to function simplified_generating_set(
     rff::RationalFunctionField;
-    p = 0.99,
+    prob_threshold = 0.99,
     seed = 42,
     simplify = :standard,
     check_variables = false, # almost always slows down and thus turned off
@@ -553,8 +565,8 @@ Result is correct (in Monte-Carlo sense) with probability at least `p`.
     # Checking membership of particular variables and adding them to the field
     if check_variables
         vars = gens(poly_ring(rff))
-        containment = field_contains(rff, vars, (1.0 + p) / 2)
-        p = (1.0 + p) / 2
+        containment = field_contains(rff, vars, (1.0 + prob_threshold) / 2)
+        prob_threshold = (1.0 + prob_threshold) / 2
         if all(containment)
             return [v // one(poly_ring(rff)) for v in vars]
         end
@@ -585,7 +597,7 @@ Result is correct (in Monte-Carlo sense) with probability at least `p`.
         seed = seed,
         rational_interpolator = rational_interpolator,
     )
-    new_fracs = beautifuly_generators(new_rff)
+    new_fracs = beautiful_generators(new_rff)
     if isempty(new_fracs)
         return new_fracs
     end
@@ -609,16 +621,17 @@ Result is correct (in Monte-Carlo sense) with probability at least `p`.
 Final cleaning and simplification of generators. 
 Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique."""
     runtime =
-        @elapsed new_fracs = beautifuly_generators(RationalFunctionField(new_fracs_unique))
-    @debug "Checking inclusion with probability $p"
-    runtime = @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), p)
+        @elapsed new_fracs = beautiful_generators(RationalFunctionField(new_fracs_unique))
+    @debug "Checking inclusion with probability $prob_threshold"
+    runtime =
+        @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), prob_threshold)
     _runtime_logger[:id_inclusion_check] = runtime
     if !result
         @warn "Field membership check failed. Error will follow."
         throw("The new subfield generators are not correct.")
     end
-    @info "Inclusion checked with probability $p in $(_runtime_logger[:id_inclusion_check]) seconds"
-    @debug "Out of $(length(rff.mqs.nums_qq)) initial generators there are $(length(new_fracs)) indepdendent"
+    @info "Inclusion checked with probability $prob_threshold in $(_runtime_logger[:id_inclusion_check]) seconds"
+    @debug "Out of $(length(rff.mqs.nums_qq)) initial generators there are $(length(new_fracs)) independent"
     ranking = generating_set_rank(new_fracs)
     _runtime_logger[:id_ranking] = ranking
     @debug "The ranking of the new set of generators is $ranking"

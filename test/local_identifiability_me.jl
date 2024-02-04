@@ -29,12 +29,13 @@ function _linear_compartment_model(graph, sinks)
         push!(edges_vars_names, "b_$(s)_0")
     end
     R, vars =
-        Nemo.PolynomialRing(Nemo.QQ, vcat(x_vars_names, edges_vars_names, ["y1", "y2"]))
+        Nemo.polynomial_ring(Nemo.QQ, vcat(x_vars_names, edges_vars_names, ["y1", "y2"]))
     x_vars = vars[2:(n + 1)]
     x0 = vars[1]
-    equations = Dict{fmpq_mpoly, Union{fmpq_mpoly, Generic.Frac{fmpq_mpoly}}}(
-        x => R(0) for x in x_vars
-    )
+    equations =
+        Dict{QQMPolyRingElem, Union{QQMPolyRingElem, Generic.Frac{QQMPolyRingElem}}}(
+            x => R(0) for x in x_vars
+        )
     equations[x0] = R(0)
     for i in 1:n
         for j in graph[i]
@@ -52,10 +53,10 @@ function _linear_compartment_model(graph, sinks)
             equations[x_vars[i]] += -x_vars[i] * rate
         end
     end
-    return ODE{fmpq_mpoly}(
+    return ODE{QQMPolyRingElem}(
         equations,
         Dict(vars[end] => x_vars[1], vars[end - 1] => x0),
-        Array{fmpq_mpoly, 1}(),
+        Array{QQMPolyRingElem, 1}(),
     )
 end
 
@@ -213,7 +214,7 @@ end
         result = assess_local_identifiability(
             case[:ode],
             funcs_to_check = case[:funcs],
-            p = 0.932,
+            prob_threshold = 0.932,
             type = :ME,
         )
         @test result == case[:correct]

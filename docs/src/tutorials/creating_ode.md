@@ -12,7 +12,7 @@ which involves
 
   - a vector $\mathbf{x}(t)$ of the state variables of the system,
 
-  - a vector $\mathbf{u}(t)$ of extermal inputs,
+  - a vector $\mathbf{u}(t)$ of external inputs,
   - a vector $\mathbf{p}$ of scalar parameters,
   - a vector $\mathbf{y}(t)$ of outputs (i.e., observations),
   - and vectors of rational functions $\mathbf{f}$ and $\mathbf{g}$ (for discussion of the non-rational case, see this [issue](https://github.com/SciML/StructuralIdentifiability.jl/issues/144)).
@@ -54,7 +54,9 @@ assess_identifiability(ode)
 
 ## Defining using `ModelingToolkit`
 
-Alternatively, one can use `ModelingToolkit`: encode the equations for the states as `ODESystem` and specify the outputs separately.
+`StructuralIdentifiability` has an extension `ModelingToolkitSIExt` which allows to use `ODESystem` from `ModelingToolkit` to describe
+a model. The extension is loaded automatically once `ModelingToolkit` is loaded via `using ModelingToolkit`.
+In this case, one should encode the equations for the states as `ODESystem` and specify the outputs separately.
 In order to do this, we first introduce all functions and scalars:
 
 ```@example 2; continued = true

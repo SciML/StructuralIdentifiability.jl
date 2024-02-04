@@ -1,4 +1,4 @@
-# Parsing input ODE system
+# Parsing input system
 
 ```@docs
 @ODEmodel(ex::Expr...)
@@ -10,4 +10,10 @@ set_parameter_values
 
 ```@docs
 linear_compartment_model
+```
+
+## Discrete-time systems
+
+```@docs
+@DDSmodel
 ```

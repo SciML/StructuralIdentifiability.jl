@@ -1,5 +1,5 @@
 @testset "Monomial compression test" begin
-    R, (v1, v2, v3, v4) = Nemo.PolynomialRing(Nemo.QQ, ["v1", "v2", "v3", "v4"])
+    R, (v1, v2, v3, v4) = Nemo.polynomial_ring(Nemo.QQ, ["v1", "v2", "v3", "v4"])
     tests = [
         v1 + v2 - 2,
         v4 + v4 * v1 - 3 * v2 * v4,

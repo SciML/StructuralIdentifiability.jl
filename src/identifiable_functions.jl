@@ -18,7 +18,7 @@ This functions takes the following optional arguments:
   - `:strong`: Strong simplification. This option is the slowest, but the output
   functions are nice and simple.
   - `:absent`: No simplification.
-- `p`: A float in the range from 0 to 1, the probability of correctness. Default
+- `prob_threshold`: A float in the range from 0 to 1, the probability of correctness. Default
   is `0.99`.
 - `seed`: The rng seed. Default value is `42`.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
@@ -37,7 +37,7 @@ ode = @ODEmodel(
 find_identifiable_functions(ode)
 
 # prints
-3-element Vector{AbstractAlgebra.Generic.Frac{Nemo.fmpq_mpoly}}:
+3-element Vector{AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}}:
  a12 + a01 + a21
  a12*a01
 ```
@@ -45,19 +45,19 @@ find_identifiable_functions(ode)
 """
 function find_identifiable_functions(
     ode::ODE{T};
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     seed = 42,
     with_states = false,
     simplify = :standard,
     rational_interpolator = :VanDerHoevenLecerf,
     loglevel = Logging.Info,
-) where {T <: MPolyElem{fmpq}}
+) where {T <: MPolyRingElem{QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
         return _find_identifiable_functions(
             ode,
-            p = p,
+            prob_threshold = prob_threshold,
             seed = seed,
             with_states = with_states,
             simplify = simplify,
@@ -68,12 +68,12 @@ end
 
 function _find_identifiable_functions(
     ode::ODE{T};
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     seed = 42,
     with_states = false,
     simplify = :standard,
     rational_interpolator = :VanDerHoevenLecerf,
-) where {T <: MPolyElem{fmpq}}
+) where {T <: MPolyRingElem{QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
     runtime_start = time_ns()
@@ -87,10 +87,10 @@ function _find_identifiable_functions(
         id_funcs = [one(bring)]
         return id_funcs
     end
-    half_p = 0.5 + p / 2
+    half_p = 0.5 + prob_threshold / 2
     id_funcs, bring = initial_identifiable_functions(
         ode,
-        p = half_p,
+        prob_threshold = half_p,
         with_states = with_states,
         rational_interpolator = rational_interpolator,
     )
@@ -102,7 +102,7 @@ function _find_identifiable_functions(
         end
         id_funcs_fracs = simplified_generating_set(
             RationalFunctionField(id_funcs),
-            p = half_p,
+            prob_threshold = half_p,
             seed = seed,
             simplify = simplify,
             rational_interpolator = rational_interpolator,
@@ -116,94 +116,4 @@ function _find_identifiable_functions(
     @info "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds"
 
     return id_funcs_fracs
-end
-
-"""
-    find_identifiable_functions(ode::ModelingToolkit.ODESystem; measured_quantities=[], options...)
-
-Finds all functions of parameters/states that are identifiable in the given ODE
-system.
-
-## Options
-
-This functions takes the following optional arguments:
-- `measured_quantities` - the output functions of the model.
-- `loglevel` - the verbosity of the logging 
-  (can be Logging.Error, Logging.Warn, Logging.Info, Logging.Debug)
-
-## Example
-
-```jldoctest
-using StructuralIdentifiability
-using ModelingToolkit
-
-@parameters a01 a21 a12
-@variables t x0(t) x1(t) y1(t) [output = true]
-D = Differential(t)
-
-eqs = [
-    D(x0) ~ -(a01 + a21) * x0 + a12 * x1, 
-    D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0
-]
-de = ODESystem(eqs, t, name = :Test)
-
-find_identifiable_functions(de, measured_quantities = [y1 ~ x0])
-
-# prints
-2-element Vector{Num}:
-         a01*a12
- a01 + a12 + a21
-```
-"""
-function find_identifiable_functions(
-    ode::ModelingToolkit.ODESystem;
-    measured_quantities = Array{ModelingToolkit.Equation}[],
-    p::Float64 = 0.99,
-    seed = 42,
-    with_states = false,
-    simplify = :standard,
-    rational_interpolator = :VanDerHoevenLecerf,
-    loglevel = Logging.Info,
-)
-    restart_logging(loglevel = loglevel)
-    reset_timings()
-    with_logger(_si_logger[]) do
-        return _find_identifiable_functions(
-            ode,
-            measured_quantities = measured_quantities,
-            p = p,
-            seed = seed,
-            with_states = with_states,
-            simplify = simplify,
-            rational_interpolator = rational_interpolator,
-        )
-    end
-end
-
-function _find_identifiable_functions(
-    ode::ModelingToolkit.ODESystem;
-    measured_quantities = Array{ModelingToolkit.Equation}[],
-    p::Float64 = 0.99,
-    seed = 42,
-    with_states = false,
-    simplify = :standard,
-    rational_interpolator = :VanDerHoevenLecerf,
-)
-    Random.seed!(seed)
-    if isempty(measured_quantities)
-        measured_quantities = get_measured_quantities(ode)
-    end
-    ode, conversion = mtk_to_si(ode, measured_quantities)
-    result = _find_identifiable_functions(
-        ode,
-        simplify = simplify,
-        p = p,
-        seed = seed,
-        with_states = with_states,
-        rational_interpolator = rational_interpolator,
-    )
-    result = [parent_ring_change(f, ode.poly_ring) for f in result]
-    nemo2mtk = Dict(v => Num(k) for (k, v) in conversion)
-    out_funcs = [eval_at_dict(func, nemo2mtk) for func in result]
-    return out_funcs
 end

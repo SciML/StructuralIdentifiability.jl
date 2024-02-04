@@ -20,10 +20,8 @@ using ParamPunPam
 using ParamPunPam: reduce_mod_p!, specialize_mod_p, AbstractBlackboxIdeal
 ParamPunPam.enable_progressbar(false)
 
-using ModelingToolkit
-
 # defining a model
-export ODE, @ODEmodel, mtk_to_si
+export ODE, @ODEmodel, @DDSmodel
 
 # assessing identifiability
 export assess_local_identifiability, assess_identifiability
@@ -73,6 +71,7 @@ include("pb_representation.jl")
 include("submodels.jl")
 include("discrete.jl")
 include("known_ic.jl")
+include("input_macro.jl")
 
 function __init__()
     _si_logger[] = @static if VERSION >= v"1.7.0"
@@ -83,51 +82,55 @@ function __init__()
 end
 
 """
-    assess_identifiability(ode; funcs_to_check = [], p=0.99, loglevel=Logging.Info)
+    assess_identifiability(ode; funcs_to_check = [], prob_threshold=0.99, loglevel=Logging.Info)
 
 Input:
 - `ode` - the ODE model
 - `funcs_to_check` - list of functions to check identifiability for; if empty, all parameters
    and states are taken
-- `p` - probability of correctness.
+- `prob_threshold` - probability of correctness.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
 Assesses identifiability of a given ODE model. The result is guaranteed to be correct with the probability
-at least `p`.
+at least `prob_threshold`.
 The function returns an (ordered) dictionary from the functions to check to their identifiability properties 
 (one of `:nonidentifiable`, `:locally`, `:globally`).
 """
 function assess_identifiability(
     ode::ODE{P};
     funcs_to_check = Vector(),
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     loglevel = Logging.Info,
-) where {P <: MPolyElem{fmpq}}
+) where {P <: MPolyRingElem{QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
-        return _assess_identifiability(ode, funcs_to_check = funcs_to_check, p = p)
+        return _assess_identifiability(
+            ode,
+            funcs_to_check = funcs_to_check,
+            prob_threshold = prob_threshold,
+        )
     end
 end
 
 function _assess_identifiability(
     ode::ODE{P};
     funcs_to_check = Vector(),
-    p::Float64 = 0.99,
-) where {P <: MPolyElem{fmpq}}
-    p_glob = 1 - (1 - p) * 0.9
-    p_loc = 1 - (1 - p) * 0.1
+    prob_threshold::Float64 = 0.99,
+) where {P <: MPolyRingElem{QQFieldElem}}
+    p_glob = 1 - (1 - prob_threshold) * 0.9
+    p_loc = 1 - (1 - prob_threshold) * 0.1
 
     if isempty(funcs_to_check)
         funcs_to_check = vcat(ode.x_vars, ode.parameters)
     end
 
     @info "Assessing local identifiability"
-    trbasis = Array{fmpq_mpoly, 1}()
+    trbasis = Array{QQMPolyRingElem, 1}()
     runtime = @elapsed local_result = _assess_local_identifiability(
         ode,
         funcs_to_check = funcs_to_check,
-        p = p_loc,
+        prob_threshold = p_loc,
         type = :SE,
         trbasis = trbasis,
     )
@@ -167,61 +170,13 @@ function _assess_identifiability(
     return result
 end
 
-"""
-    assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], p = 0.99, loglevel=Logging.Info)
-
-Input:
-- `ode` - the ModelingToolkit.ODESystem object that defines the model
-- `measured_quantities` - the output functions of the model
-- `funcs_to_check` - functions of parameters for which to check the identifiability
-- `p` - probability of correctness.
-- `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
-
-Assesses identifiability (both local and global) of a given ODE model (parameters detected automatically). The result is guaranteed to be correct with the probability
-at least `p`.
-"""
-function assess_identifiability(
-    ode::ModelingToolkit.ODESystem;
-    measured_quantities = Array{ModelingToolkit.Equation}[],
-    funcs_to_check = [],
-    p = 0.99,
-    loglevel = Logging.Info,
-)
-    restart_logging(loglevel = loglevel)
-    with_logger(_si_logger[]) do
-        return _assess_identifiability(
-            ode,
-            measured_quantities = measured_quantities,
-            funcs_to_check = funcs_to_check,
-            p = p,
-        )
-    end
-end
-
-function _assess_identifiability(
-    ode::ModelingToolkit.ODESystem;
-    measured_quantities = Array{ModelingToolkit.Equation}[],
-    funcs_to_check = [],
-    p = 0.99,
-)
-    if isempty(measured_quantities)
-        measured_quantities = get_measured_quantities(ode)
-    end
-
-    ode, conversion = mtk_to_si(ode, measured_quantities)
-    conversion_back = Dict(v => k for (k, v) in conversion)
-    if isempty(funcs_to_check)
-        funcs_to_check = [conversion_back[x] for x in [ode.x_vars..., ode.parameters...]]
-    end
-    funcs_to_check_ = [eval_at_nemo(each, conversion) for each in funcs_to_check]
-
-    result = _assess_identifiability(ode, funcs_to_check = funcs_to_check_, p = p)
-    nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
-    out_dict = OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
-    return out_dict
-end
-
 using PrecompileTools
 include("precompile.jl")
+
+### Extensions ###
+
+# ModelingToolkit extension.
+function mtk_to_si end
+export mtk_to_si
 
 end

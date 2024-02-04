@@ -30,7 +30,7 @@ function differentiate_solution(
     ic::Dict{P, T},
     inputs::Dict{P, Array{T, 1}},
     prec::Int,
-) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
+) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing the power series solution of the system"
     ps_sol = power_series_solution(ode, params, ic, inputs, prec)
     ps_ring = parent(first(values(ps_sol)))
@@ -41,12 +41,12 @@ function differentiate_solution(
     @debug "Building the variational system at the solution"
     # Y' = AY + B
     vars = vcat(ode.x_vars, ode.parameters)
-    SA = AbstractAlgebra.MatrixSpace(ps_ring, length(ode.x_vars), length(ode.x_vars))
+    SA = AbstractAlgebra.matrix_space(ps_ring, length(ode.x_vars), length(ode.x_vars))
     A = SA([
         eval_at_dict(derivative(ode.x_equations[vars[i]], vars[j]), ps_sol) for
         i in 1:length(ode.x_vars), j in 1:length(ode.x_vars)
     ])
-    SB = AbstractAlgebra.MatrixSpace(ps_ring, length(ode.x_vars), length(vars))
+    SB = AbstractAlgebra.matrix_space(ps_ring, length(ode.x_vars), length(vars))
     B = zero(SB)
     for i in 1:length(ode.x_vars)
         for j in (length(ode.x_vars) + 1):length(vars)
@@ -55,7 +55,7 @@ function differentiate_solution(
     end
     # TODO: make use of one() function (problems modulo prime)
     initial_condition =
-        zero(Nemo.MatrixSpace(base_ring(ode.poly_ring), length(ode.x_vars), length(vars)))
+        zero(Nemo.matrix_space(base_ring(ode.poly_ring), length(ode.x_vars), length(vars)))
     for i in 1:length(ode.x_vars)
         initial_condition[i, i] = 1
     end
@@ -86,7 +86,7 @@ function differentiate_output(
     ic::Dict{P, T},
     inputs::Dict{P, Array{T, 1}},
     prec::Int,
-) where {T <: Generic.FieldElem, P <: MPolyElem{T}}
+) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing partial derivatives of the solution"
     ps_sol, sol_diff = differentiate_solution(ode, params, ic, inputs, prec)
     ps_ring = parent(first(values(ps_sol)))
@@ -124,7 +124,7 @@ end
 for `f` being a polynomial/rational function over rationals (`QQ`) returns a tuple
 `(degree, max_coef_size)`
 """
-function get_degree_and_coeffsize(f::MPolyElem{Nemo.fmpq})
+function get_degree_and_coeffsize(f::MPolyRingElem{Nemo.QQFieldElem})
     if length(f) == 0
         return (0, 1)
     end
@@ -135,116 +135,18 @@ function get_degree_and_coeffsize(f::MPolyElem{Nemo.fmpq})
     return (total_degree(f), max_coef)
 end
 
-function get_degree_and_coeffsize(f::Generic.Frac{<:MPolyElem{Nemo.fmpq}})
+function get_degree_and_coeffsize(f::Generic.Frac{<:MPolyRingElem{Nemo.QQFieldElem}})
     num_deg, num_coef = get_degree_and_coeffsize(numerator(f))
     den_deg, den_coef = get_degree_and_coeffsize(denominator(f))
     return (max(num_deg, den_deg), max(num_coef, den_coef))
 end
 
 # ------------------------------------------------------------------------------
-"""
-    function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=Array{}[], p::Float64=0.99, type=:SE, loglevel=Logging.Info)
-
-Input:
-- `ode` - the ODESystem object from ModelingToolkit
-- `measured_quantities` - the measurable outputs of the model
-- `funcs_to_check` - functions of parameters for which to check identifiability
-- `p` - probability of correctness
-- `type` - identifiability type (`:SE` for single-experiment, `:ME` for multi-experiment)
-- `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
-
-Output:
-- for `type=:SE`, the result is an (ordered) dictionary from each parameter to boolean;
-- for `type=:ME`, the result is a tuple with the dictionary as in `:SE` case and array of number of experiments.
-
-The function determines local identifiability of parameters in `funcs_to_check` or all possible parameters if `funcs_to_check` is empty
-
-The result is correct with probability at least `p`.
-
-`type` can be either `:SE` (single-experiment identifiability) or `:ME` (multi-experiment identifiability).
-The return value is a tuple consisting of the array of bools and the number of experiments to be performed.
-"""
-function assess_local_identifiability(
-    ode::ModelingToolkit.ODESystem;
-    measured_quantities = Array{ModelingToolkit.Equation}[],
-    funcs_to_check = Array{}[],
-    p::Float64 = 0.99,
-    type = :SE,
-    loglevel = Logging.Info,
-)
-    restart_logging(loglevel = loglevel)
-    with_logger(_si_logger[]) do
-        return _assess_local_identifiability(
-            ode,
-            measured_quantities = measured_quantities,
-            funcs_to_check = funcs_to_check,
-            p = p,
-            type = type,
-        )
-    end
-end
-
-@timeit _to function _assess_local_identifiability(
-    ode::ModelingToolkit.ODESystem;
-    measured_quantities = Array{ModelingToolkit.Equation}[],
-    funcs_to_check = Array{}[],
-    p::Float64 = 0.99,
-    type = :SE,
-)
-    if length(measured_quantities) == 0
-        if any(ModelingToolkit.isoutput(eq.lhs) for eq in ModelingToolkit.equations(ode))
-            @info "Measured quantities are not provided, trying to find the outputs in input ODE."
-            measured_quantities = filter(
-                eq -> (ModelingToolkit.isoutput(eq.lhs)),
-                ModelingToolkit.equations(ode),
-            )
-        else
-            throw(
-                error(
-                    "Measured quantities (output functions) were not provided and no outputs were found.",
-                ),
-            )
-        end
-    end
-    if length(funcs_to_check) == 0
-        funcs_to_check = vcat(
-            [e for e in ModelingToolkit.states(ode) if !ModelingToolkit.isoutput(e)],
-            ModelingToolkit.parameters(ode),
-        )
-    end
-    ode, conversion = mtk_to_si(ode, measured_quantities)
-    funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
-
-    if isequal(type, :SE)
-        result = _assess_local_identifiability(
-            ode,
-            funcs_to_check = funcs_to_check_,
-            p = p,
-            type = type,
-        )
-        nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
-        out_dict =
-            OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
-        return out_dict
-    elseif isequal(type, :ME)
-        result, bd = _assess_local_identifiability(
-            ode,
-            funcs_to_check = funcs_to_check_,
-            p = p,
-            type = type,
-        )
-        nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
-        out_dict =
-            OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
-        return (out_dict, bd)
-    end
-end
-# ------------------------------------------------------------------------------
 
 """
-    assess_local_identifiability(ode::ODE{P}; funcs_to_check::Array{<: Any, 1}, p::Float64=0.99, type=:SE, loglevel=Logging.Info) where P <: MPolyElem{Nemo.fmpq}
+    assess_local_identifiability(ode::ODE{P}; funcs_to_check::Array{<: Any, 1}, prob_threshold::Float64=0.99, type=:SE, loglevel=Logging.Info) where P <: MPolyRingElem{Nemo.QQFieldElem}
 
-Checks the local identifiability/observability of the functions in `funcs_to_check`. The result is correct with probability at least `p`.
+Checks the local identifiability/observability of the functions in `funcs_to_check`. The result is correct with probability at least `prob_threshold`.
 
 Call this function if you have a specific collection of parameters of which you would like to check local identifiability.
 
@@ -254,18 +156,18 @@ If the type is `:ME`, states are not allowed to appear in the `funcs_to_check`.
 function assess_local_identifiability(
     ode::ODE{P};
     funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     type = :SE,
     trbasis = nothing,
     loglevel = Logging.Info,
-) where {P <: MPolyElem{Nemo.fmpq}}
+) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
         return _assess_local_identifiability(
             ode,
             funcs_to_check = funcs_to_check,
-            p = p,
+            prob_threshold = prob_threshold,
             type = type,
             trbasis = trbasis,
         )
@@ -275,11 +177,11 @@ end
 function _assess_local_identifiability(
     ode::ODE{P};
     funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     type = :SE,
     trbasis = nothing,
     known_ic::Array{<:Any, 1} = Array{Any, 1}(),
-) where {P <: MPolyElem{Nemo.fmpq}}
+) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
     if isempty(funcs_to_check)
         funcs_to_check = ode.parameters
         if type == :SE
@@ -308,7 +210,7 @@ function _assess_local_identifiability(
         d = max(d, df)
         h = max(h, hf)
     end
-    p_per_func = 1 - (1 - p) / length(funcs_to_check)
+    p_per_func = 1 - (1 - prob_threshold) / length(funcs_to_check)
     mu = ceil(1 / (1 - sqrt(p_per_func)))
 
     n = length(ode.x_vars)
@@ -327,7 +229,7 @@ function _assess_local_identifiability(
     Dprime = max(Dprime, 1.0)
     prime = Primes.nextprime(Int(ceil(2 * mu * Dprime)))
     @debug "The prime is $prime"
-    F = Nemo.GF(prime)
+    F = Nemo.Native.GF(prime)
 
     @debug "Extending the model"
     ode_ext =
@@ -346,13 +248,13 @@ function _assess_local_identifiability(
     num_exp = 0
     # rows are the "parameters": parameters and initial conditions
     # columns are "observations": derivatives of the outputs
-    Jac = zero(Nemo.MatrixSpace(F, length(ode.parameters), 1))
+    Jac = zero(Nemo.matrix_space(F, length(ode.parameters), 1))
     output_derivatives = undef
     # the while loop is primarily for ME-deintifiability, it is adding replicas until the rank stabilizes
     # in the SE case, it will exit right away
     while true
         ic = Dict(x => F(rand(1:prime)) for x in ode_red.x_vars)
-        inputs = Dict{Nemo.gfp_mpoly, Array{Nemo.gfp_elem, 1}}(
+        inputs = Dict{Nemo.fpMPolyRingElem, Array{Nemo.fpFieldElem, 1}}(
             u => [F(rand(1:prime)) for i in 1:prec] for u in ode_red.u_vars
         )
 
@@ -360,10 +262,10 @@ function _assess_local_identifiability(
         output_derivatives = differentiate_output(ode_red, params_vals, ic, inputs, prec)
 
         @debug "Building the matrices"
-        newJac = vcat(Jac, zero(Nemo.MatrixSpace(F, length(ode.x_vars), ncols(Jac))))
+        newJac = vcat(Jac, zero(Nemo.matrix_space(F, length(ode.x_vars), ncols(Jac))))
         newJac = hcat(
             newJac,
-            zero(Nemo.MatrixSpace(F, nrows(newJac), prec * length(ode.y_vars))),
+            zero(Nemo.matrix_space(F, nrows(newJac), prec * length(ode.y_vars))),
         )
         xs_params = vcat(ode_red.x_vars, ode_red.parameters)
         for (i, y) in enumerate(ode.y_vars)
@@ -399,7 +301,7 @@ function _assess_local_identifiability(
 
     if !isnothing(trbasis)
         @debug "Transcendence basis computation requested"
-        reverted_Jac = zero(Nemo.MatrixSpace(F, size(Jac)[2], size(Jac)[1]))
+        reverted_Jac = zero(Nemo.matrix_space(F, size(Jac)[2], size(Jac)[1]))
         for i in 1:size(Jac)[1]
             for j in 1:size(Jac)[2]
                 reverted_Jac[j, i] = Jac[size(Jac)[1] - i + 1, j]

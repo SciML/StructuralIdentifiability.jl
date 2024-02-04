@@ -20,7 +20,7 @@ function monomial_compress(io_equation, ode::ODE)
     return monomial_compress(io_equation, ode.parameters)
 end
 
-function monomial_compress(io_equation, params::Array{<:MPolyElem, 1})
+function monomial_compress(io_equation, params::Array{<:MPolyRingElem, 1})
     params_xs = isempty(params) ? empty(params) : gens(parent(first(params)))
     other_vars = [
         v for v in gens(parent(io_equation)) if
@@ -197,7 +197,10 @@ Output:
 
 Computes the Wronskians of io_equations
 """
-@timeit _to function wronskian(io_equations::Dict{P, P}, ode::ODE{P}) where {P <: MPolyElem}
+@timeit _to function wronskian(
+    io_equations::Dict{P, P},
+    ode::ODE{P},
+) where {P <: MPolyRingElem}
     @debug "Compressing monomials"
     termlists = [monomial_compress(ioeq, ode)[2] for ioeq in values(io_equations)]
     @debug "Matrix sizes $(map(length, termlists))"
@@ -207,9 +210,9 @@ Computes the Wronskians of io_equations
 
     # reducing everything modulo prime
     PRIME = 2^31 - 1
-    F = Nemo.GF(PRIME)
+    F = Nemo.Native.GF(PRIME)
     polyring_red, gens_red =
-        Nemo.PolynomialRing(F, map(var_to_str, gens(parent(termlists[1][1]))))
+        Nemo.polynomial_ring(F, map(var_to_str, gens(parent(termlists[1][1]))))
     termlists =
         [map(p -> parent_ring_change(p, polyring_red), tlist) for tlist in termlists]
     ode_red = reduce_ode_mod_p(ode, PRIME)
@@ -223,7 +226,7 @@ Computes the Wronskians of io_equations
         ord,
     )
     @debug "Computing the derivatives of the solution"
-    ps_ext = Dict{MPolyElem, Nemo.gfp_abs_series}()# Generic.AbsSeries}()
+    ps_ext = Dict{MPolyRingElem, Nemo.gfp_abs_series}()# Generic.AbsSeries}()
     for v in vcat(ode_red.y_vars, ode_red.u_vars)
         cur_ps = ps[v]
         for i in 0:length(ode_red.x_vars)
@@ -237,7 +240,7 @@ Computes the Wronskians of io_equations
     for (i, tlist) in enumerate(termlists)
         n = length(tlist)
         evaled = massive_eval(tlist, ps_ext)
-        S = Nemo.MatrixSpace(F, n, n)
+        S = Nemo.matrix_space(F, n, n)
         W = zero(S)
         for (i, ps) in enumerate(evaled)
             for j in 1:n

@@ -5,6 +5,7 @@ pages = [
         "tutorials/identifiability.md",
         "tutorials/identifiable_functions.md",
         "tutorials/discrete_time.md",
+        "tutorials/reparametrization.md",
     ],
     "Basics" => Any["input/input.md", "identifiability/identifiability.md"],
     "Library" => Any[

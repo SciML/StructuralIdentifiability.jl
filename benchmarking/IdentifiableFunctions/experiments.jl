@@ -1116,7 +1116,7 @@ end
 #! format: off
 
 new_rff = StructuralIdentifiability.RationalFunctionField(funcs1)
-cfs = StructuralIdentifiability.beautifuly_generators(new_rff)
+cfs = StructuralIdentifiability.beautiful_generators(new_rff)
 gb_rff = StructuralIdentifiability.RationalFunctionField(cfs)
 
 K = GF(2^31 - 1)

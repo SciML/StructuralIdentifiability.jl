@@ -6,7 +6,7 @@ Input:
 - `vars` - list of variables
 
 The function considers `f` as `A / B`, where `A` and `B` are polynomials in `vars` with
-coefficients in rational fucntion field in the remaining variables such that at least one of the
+coefficients in rational function field in the remaining variables such that at least one of the
 coefficients is equal to one.
 
 Output:
@@ -15,7 +15,7 @@ Output:
 function extract_coefficients_ratfunc(
     f::AbstractAlgebra.Generic.Frac{<:P},
     vars::Vector{<:P},
-) where {P <: MPolyElem{<:FieldElem}}
+) where {P <: MPolyRingElem{<:FieldElem}}
     num, denom = unpack_fraction(f)
     total_coeffs = Vector{P}()
     for p in (num, denom)
@@ -32,7 +32,7 @@ end
 function extract_coefficients_ratfunc(
     f::P,
     vars::Vector{<:P},
-) where {P <: MPolyElem{<:FieldElem}}
+) where {P <: MPolyRingElem{<:FieldElem}}
     return extract_coefficients_ratfunc(f // 1, vars)
 end
 
@@ -50,7 +50,7 @@ Output:
 function lie_derivative(
     f::Generic.Frac{<:P},
     ode::ODE{<:P},
-) where {P <: MPolyElem{<:FieldElem}}
+) where {P <: MPolyRingElem{<:FieldElem}}
     @assert all([(x in ode.parameters) || (x in ode.x_vars) for x in vars(f)])
     res = zero(parent(ode)) // 1
     for (x, eq) in ode.x_equations
@@ -59,7 +59,7 @@ function lie_derivative(
     return res
 end
 
-function lie_derivative(f::P, ode::ODE{<:P}) where {P <: MPolyElem{<:FieldElem}}
+function lie_derivative(f::P, ode::ODE{<:P}) where {P <: MPolyRingElem{<:FieldElem}}
     return lie_derivative(f // 1, ode)
 end
 
@@ -79,7 +79,7 @@ identifiable functions of parameters only
 @timeit _to function states_generators(
     ode::ODE{P},
     io_equations::Dict{P, P},
-) where {P <: MPolyElem{<:FieldElem}}
+) where {P <: MPolyRingElem{<:FieldElem}}
     y_to_ord = Dict{P, Int}()
     ynames = [var_to_str(y) for y in ode.y_vars]
     for (leader, ioeq) in io_equations

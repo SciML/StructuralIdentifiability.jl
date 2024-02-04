@@ -3,7 +3,7 @@
 
 Takes as input input-output equations, the corresponding ode, a list of functions assumed to be known
 and a flag `with_states`.
-Extracts generators of the field of identifiable functions (with or without states) withous
+Extracts generators of the field of identifiable functions (with or without states) without
 any simplifications.
 
 Returns a tuple consisting of
@@ -17,14 +17,14 @@ are identifiable functions containing or not the state variables
     ode::ODE{P},
     known::Array{P, 1},
     with_states::Bool,
-) where {P <: MPolyElem{fmpq}}
+) where {P <: MPolyRingElem{QQFieldElem}}
     coeff_lists =
         Dict(:with_states => Array{Array{P, 1}, 1}(), :no_states => Array{Array{P, 1}, 1}())
     varnames = [var_to_str(p) for p in ode.parameters]
     if with_states
         append!(varnames, map(var_to_str, ode.x_vars))
     end
-    bring, _ = Nemo.PolynomialRing(base_ring(ode.poly_ring), varnames)
+    bring, _ = Nemo.polynomial_ring(base_ring(ode.poly_ring), varnames)
 
     if with_states
         @debug "Computing Lie derivatives"
@@ -67,7 +67,7 @@ are identifiable functions containing or not the state variables
     if with_states
         new_vars = vcat(new_vars, ode.x_vars)
     end
-    new_ring, _ = PolynomialRing(Nemo.QQ, map(Symbol, new_vars))
+    new_ring, _ = polynomial_ring(Nemo.QQ, map(Symbol, new_vars))
     new_coeff_lists = empty(coeff_lists)
     for (key, coeff_list) in coeff_lists
         new_coeff_lists[key] =
@@ -88,7 +88,7 @@ These are presented by the coefficients of the IO-equations.
 ## Options
 
 This function takes the following optional arguments:
-- `p`: probability of correctness
+- `prob_threshold`: probability of correctness
 - `with_states`: Also report the identifiabile functions in states. Default is
   `false`. If this is `true`, the identifiable functions involving parameters only
    will be simplified
@@ -99,7 +99,7 @@ The function returns a tuple containing the following:
 """
 @timeit _to function initial_identifiable_functions(
     ode::ODE{T};
-    p::Float64,
+    prob_threshold::Float64,
     known::Array{T, 1} = Array{T, 1}(),
     with_states::Bool = false,
     var_change_policy = :default,
@@ -145,7 +145,7 @@ The function returns a tuple containing the following:
     if with_states && !isempty(ode.parameters)
         @debug "Generators of identifiable functions involve states, the parameter-only part is getting simplified"
         # NOTE: switching to a ring without states for a moment
-        param_ring, _ = PolynomialRing(
+        param_ring, _ = polynomial_ring(
             base_ring(bring),
             map(string, ode.parameters),
             ordering = Nemo.ordering(bring),
@@ -157,7 +157,7 @@ The function returns a tuple containing the following:
         _runtime_logger[:check_time] =
             @elapsed no_states_simplified = simplified_generating_set(
                 RationalFunctionField(id_funcs_no_states_param),
-                p = p,
+                prob_threshold = prob_threshold,
                 seed = 42,
                 simplify = :standard,
                 rational_interpolator = rational_interpolator,
@@ -178,13 +178,13 @@ end
 
 # ------------------------------------------------------------------------------
 """
-    check_identifiability(ode, funcs_to_check; known, p, var_change_policy)
+    check_identifiability(ode, funcs_to_check; known, prob_threshold, var_change_policy)
 
 Input:
 - `ode` - the ODE model
 - `funcs_to_check` - the functions to check identifiability for
 - `known` - a list of functions in states which are assumed to be known and generic
-- `p` - probability of correctness
+- `prob_threshold` - probability of correctness
 - `var_change` - a policy for variable change (`:default`, `:yes`, `:no`), affects only the runtime
 
 Output: a list L of booleans with L[i] being the identifiability status of the i-th function to check
@@ -193,9 +193,9 @@ Output: a list L of booleans with L[i] being the identifiability status of the i
     ode::ODE{P},
     funcs_to_check::Array{<:Any, 1};
     known::Array{P, 1} = Array{P, 1}(),
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     var_change_policy = :default,
-) where {P <: MPolyElem{fmpq}}
+) where {P <: MPolyRingElem{QQFieldElem}}
     states_needed = false
     for f in funcs_to_check
         num, den = unpack_fraction(f)
@@ -209,11 +209,11 @@ Output: a list L of booleans with L[i] being the identifiability status of the i
         return [true for _ in funcs_to_check]
     end
 
-    half_p = 0.5 + p / 2
+    half_p = 0.5 + prob_threshold / 2
     identifiable_functions_raw, bring = initial_identifiable_functions(
         ode,
         known = known,
-        p = p,
+        prob_threshold = half_p,
         var_change_policy = var_change_policy,
         with_states = states_needed,
     )
@@ -234,26 +234,26 @@ end
 function check_identifiability(
     ode::ODE{P};
     known::Array{P, 1} = Array{P, 1}(),
-    p::Float64 = 0.99,
+    prob_threshold::Float64 = 0.99,
     var_change_policy = :default,
-) where {P <: MPolyElem{fmpq}}
+) where {P <: MPolyRingElem{QQFieldElem}}
     return check_identifiability(
         ode,
         ode.parameters,
         known = known,
-        p = p,
+        prob_threshold = prob_threshold,
         var_change_policy = var_change_policy,
     )
 end
 
 #------------------------------------------------------------------------------
 """
-    assess_global_identifiability(ode::ODE{P}, p::Float64=0.99; var_change=:default) where P <: MPolyElem{fmpq}
+    assess_global_identifiability(ode::ODE{P}, prob_threshold::Float64=0.99; var_change=:default) where P <: MPolyRingElem{QQFieldElem}
 
 Input:
 - `ode` - the ODE model
 - `known` - a list of functions in states which are assumed to be known and generic
-- `p` - probability of correctness
+- `prob_threshold` - probability of correctness
 - `var_change` - a policy for variable change (`:default`, `:yes`, `:no`), affects only the runtime
 
 Output:
@@ -264,14 +264,14 @@ Checks global identifiability for parameters of the model provided in `ode`. Cal
 function assess_global_identifiability(
     ode::ODE{P},
     known::Array{P, 1} = Array{P, 1}(),
-    p::Float64 = 0.99;
+    prob_threshold::Float64 = 0.99;
     var_change = :default,
-) where {P <: MPolyElem{fmpq}}
+) where {P <: MPolyRingElem{QQFieldElem}}
     result_list = assess_global_identifiability(
         ode,
         ode.parameters,
         known,
-        p;
+        prob_threshold;
         var_change = var_change,
     )
 
@@ -281,13 +281,13 @@ end
 #------------------------------------------------------------------------------
 
 """
-    assess_global_identifiability(ode, [funcs_to_check, p=0.99, var_change=:default])
+    assess_global_identifiability(ode, [funcs_to_check, prob_threshold=0.99, var_change=:default])
 
 Input:
 - `ode` - the ODE model
 - `funcs_to_check` - rational functions in parameters
 - `known` - function in parameters that are assumed to be known and generic
-- `p` - probability of correctness
+- `prob_threshold` - probability of correctness
 - `var_change` - a policy for variable change (`:default`, `:yes`, `:no`),
                 affects only the runtime
 
@@ -301,9 +301,9 @@ Checks global identifiability of functions of parameters specified in `funcs_to_
     ode::ODE{P},
     funcs_to_check::Array{<:Any, 1},
     known::Array{P, 1} = Array{P, 1}(),
-    p::Float64 = 0.99;
+    prob_threshold::Float64 = 0.99;
     var_change = :default,
-) where {P <: MPolyElem{fmpq}}
+) where {P <: MPolyRingElem{QQFieldElem}}
     submodels = find_submodels(ode)
     if length(submodels) > 0
         @info "Note: the input model has nontrivial submodels. If the computation for the full model will be too heavy, you may want to try to first analyze one of the submodels. They can be produced using function `find_submodels`"
@@ -313,7 +313,7 @@ Checks global identifiability of functions of parameters specified in `funcs_to_
         ode,
         funcs_to_check,
         known = known,
-        p = p,
+        prob_threshold = prob_threshold,
         var_change_policy = var_change,
     )
 
