@@ -48,18 +48,31 @@ push!(
     ),
 )
 
+ode = @ODEmodel(x1'(t) = a * x1(t), x2'(t) = x1(t) + 1 / x1(t), y(t) = x2(t))
+
+push!(
+    cases,
+    Dict(
+        :ode => ode,
+        :known => [x1],
+        :to_check => [],
+        :correct_funcs => [a, x1, x2],
+        :correct_ident => OrderedDict(x1 => :globally, x2 => :globally, a => :globally),
+    ),
+)
+
 @testset "Identifiable functions with known generic initial conditions" begin
     for case in cases
         ode = case[:ode]
         known = case[:known]
 
-        result_funcs = find_identifiable_functions_kic(ode, known)
+        result_funcs = find_identifiable_functions(ode, known_ic = known)
         correct_funcs =
             replace_with_ic(ode, [f // one(parent(ode)) for f in case[:correct_funcs]])
         @test Set(result_funcs) == Set(correct_funcs)
 
         result_ident =
-            assess_identifiability_kic(ode, known, funcs_to_check = case[:to_check])
+            assess_identifiability(ode, known_ic = known, funcs_to_check = case[:to_check])
         @test OrderedDict(
             replace_with_ic(ode, [k])[1] => v for (k, v) in case[:correct_ident]
         ) == result_ident

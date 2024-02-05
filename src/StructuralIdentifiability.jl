@@ -88,6 +88,9 @@ Input:
 - `ode` - the ODE model
 - `funcs_to_check` - list of functions to check identifiability for; if empty, all parameters
    and states are taken
+- `known_ic`: a list of functions whose initial conditions are assumed to be known,
+  then the returned identifiable functions will be functions of parameters and
+  initial conditions, not states (this is an experimental functionality).
 - `prob_threshold` - probability of correctness.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
@@ -99,17 +102,27 @@ The function returns an (ordered) dictionary from the functions to check to thei
 function assess_identifiability(
     ode::ODE{P};
     funcs_to_check = Vector(),
+    known_ic::Vector{<:Union{P, Generic.Frac{P}}} = Vector{Union{P, Generic.Frac{P}}}(),
     prob_threshold::Float64 = 0.99,
     loglevel = Logging.Info,
 ) where {P <: MPolyRingElem{QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
-        return _assess_identifiability(
-            ode,
-            funcs_to_check = funcs_to_check,
-            prob_threshold = prob_threshold,
-        )
+        if isempty(known_ic)
+            return _assess_identifiability(
+                ode,
+                funcs_to_check = funcs_to_check,
+                prob_threshold = prob_threshold,
+            )
+        else
+            return _assess_identifiability_kic(
+                ode,
+                known_ic,
+                funcs_to_check = funcs_to_check,
+                prob_threshold = prob_threshold,
+            )
+        end
     end
 end
 

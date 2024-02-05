@@ -60,8 +60,6 @@ using StructuralIdentifiability:
     lie_derivative,
     states_generators,
     RationalFunctionField,
-    find_identifiable_functions_kic,
-    assess_identifiability_kic,
     replace_with_ic,
     x_vars,
     y_vars,

@@ -1,5 +1,5 @@
 """
-    find_identifiable_functions_kic(ode::ODE, known_ic; options...)
+    _find_identifiable_functions_kic(ode::ODE, known_ic; options...)
 
 Finds all functions of parameters/initial conditions that are identifiable in the given ODE
 system under assumptions that the initial conditions for functions in the list
@@ -26,29 +26,6 @@ This functions takes the following optional arguments:
 ```
 
 """
-function find_identifiable_functions_kic(
-    ode::ODE{T},
-    known_ic::Vector{<:Union{T, Generic.Frac{T}}};
-    prob_threshold::Float64 = 0.99,
-    seed = 42,
-    simplify = :standard,
-    rational_interpolator = :VanDerHoevenLecerf,
-    loglevel = Logging.Info,
-) where {T <: MPolyElem{fmpq}}
-    restart_logging(loglevel = loglevel)
-    reset_timings()
-    with_logger(_si_logger[]) do
-        return _find_identifiable_functions_kic(
-            ode,
-            known_ic,
-            prob_threshold = prob_threshold,
-            seed = seed,
-            simplify = simplify,
-            rational_interpolator = rational_interpolator,
-        )
-    end
-end
-
 function _find_identifiable_functions_kic(
     ode::ODE{T},
     known_ic::Vector{<:Union{T, Generic.Frac{T}}};
@@ -61,7 +38,7 @@ function _find_identifiable_functions_kic(
     @assert simplify in (:standard, :weak, :strong, :absent)
     half_p = 0.5 + prob_threshold / 2
     runtime_start = time_ns()
-    id_funcs_general = find_identifiable_functions(
+    id_funcs_general = _find_identifiable_functions(
         ode,
         prob_threshold = half_p,
         with_states = true,
@@ -86,7 +63,7 @@ function _find_identifiable_functions_kic(
 end
 
 """
-    assess_identifiability_kic(ode, known_ic; funcs_to_check = [], prob_threshold=0.99, loglevel=Logging.Info)
+    _assess_identifiability_kic(ode; known_ic, funcs_to_check = [], prob_threshold=0.99, loglevel=Logging.Info)
 
 Input:
 - `ode` - the ODE model
@@ -101,25 +78,6 @@ The result is guaranteed to be correct with the probability at least `prob_thres
 The function returns an (ordered) dictionary from the functions to check to their identifiability properties 
 (one of `:nonidentifiable`, `:locally`, `:globally`).
 """
-function assess_identifiability_kic(
-    ode::ODE{P},
-    known_ic::Vector{<:Union{P, Generic.Frac{P}}};
-    funcs_to_check = Vector(),
-    prob_threshold::Float64 = 0.99,
-    loglevel = Logging.Info,
-) where {P <: MPolyElem{fmpq}}
-    restart_logging(loglevel = loglevel)
-    reset_timings()
-    with_logger(_si_logger[]) do
-        return _assess_identifiability_kic(
-            ode,
-            known_ic,
-            prob_threshold = prob_threshold,
-            funcs_to_check = funcs_to_check,
-        )
-    end
-end
-
 function _assess_identifiability_kic(
     ode::ODE{P},
     known_ic::Vector{<:Union{P, Generic.Frac{P}}};
