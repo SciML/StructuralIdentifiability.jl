@@ -44,7 +44,7 @@ As `assess_identifiability` and `assess_local_identifiability`, `find_identifiab
 to adjust the verbosity of logging.
 
 Finally, as for `assess_identifiability`, an experimental feature allows to provide an additional keyword argument `known_ic` to inidcate functions of states and parameters for which the
-initial conditions are assumed to be known (while the initial conditions of the system are still assumed to be genric).
+initial conditions are assumed to be known (while the initial conditions of the system are still assumed to be generic).
 In this case, the function will find identifiable functions of parameters and initial conditions rather than of parameters and states.
 Let us add an assumption that the initial condition `x1(0)` is known:
 

@@ -126,7 +126,7 @@ can be exchanged. One may wonder how could we guess these functions `beta + delt
 ## Assuming known initial conditions
 
 An experimental feature allows to provide an additional keyword argument `known_ic` to inidcate functions of states and parameters for which the
-initial conditions are assumed to be known (while the initial conditions of the system are still assumed to be genric). In this case,
+initial conditions are assumed to be known (while the initial conditions of the system are still assumed to be generic). In this case,
 the identifiability will be assessed for parameters and all the initial conditions or for the initial conditions of `funcs_to_check`.
 Let us add an assumption that the initial conditions `x2(0)` and `x3(0)` are known:
 
