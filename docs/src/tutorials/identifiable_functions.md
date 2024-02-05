@@ -43,4 +43,15 @@ the degree of simplification. The default value is `:standard` but one could use
 As `assess_identifiability` and `assess_local_identifiability`, `find_identifiable_functions` accepts an optional parameter `loglevel` (default: `Logging.Info`)
 to adjust the verbosity of logging.
 
+Finally, as for `assess_identifiability`, an experimental feature allows to provide an additional keyword argument `known_ic` to inidcate functions of states and parameters for which the
+initial conditions are assumed to be known (while the initial conditions of the system are still assumed to be generic).
+In this case, the function will find identifiable functions of parameters and initial conditions rather than of parameters and states.
+Let us add an assumption that the initial condition `x1(0)` is known:
+
+```@example funcs
+find_identifiable_functions(LLW1987, known_ic = [x1])
+```
+
+We see that `x2(0)` becomes an identifiable function as well, which is natural since `x1(t) * x2(t)` was an identifiable function before.
+
 [^1]: > Y. Lecourtier, F. Lamnabhi-Lagarrigue, and E. Walter, [*A method to prove that nonlinear models can be unidentifiable*](https://doi.org/10.1109/CDC.1987.272467), Proceedings of the 26th Conference on Decision and Control, December 1987, 2144-2145;

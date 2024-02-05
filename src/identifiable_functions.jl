@@ -18,6 +18,9 @@ This functions takes the following optional arguments:
   - `:strong`: Strong simplification. This option is the slowest, but the output
   functions are nice and simple.
   - `:absent`: No simplification.
+- `known_ic`: a list of functions whose initial conditions are assumed to be known,
+  then the returned identifiable functions will be functions of parameters and
+  initial conditions, not states (this is an experimental functionality).
 - `prob_threshold`: A float in the range from 0 to 1, the probability of correctness. Default
   is `0.99`.
 - `seed`: The rng seed. Default value is `42`.
@@ -45,6 +48,7 @@ find_identifiable_functions(ode)
 """
 function find_identifiable_functions(
     ode::ODE{T};
+    known_ic::Vector{<:Union{T, Generic.Frac{T}}} = Vector{Union{T, Generic.Frac{T}}}(),
     prob_threshold::Float64 = 0.99,
     seed = 42,
     with_states = false,
@@ -55,14 +59,25 @@ function find_identifiable_functions(
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
-        return _find_identifiable_functions(
-            ode,
-            prob_threshold = prob_threshold,
-            seed = seed,
-            with_states = with_states,
-            simplify = simplify,
-            rational_interpolator = rational_interpolator,
-        )
+        if isempty(known_ic)
+            return _find_identifiable_functions(
+                ode,
+                prob_threshold = prob_threshold,
+                seed = seed,
+                with_states = with_states,
+                simplify = simplify,
+                rational_interpolator = rational_interpolator,
+            )
+        else
+            return _find_identifiable_functions_kic(
+                ode,
+                known_ic,
+                prob_threshold = prob_threshold,
+                seed = seed,
+                simplify = simplify,
+                rational_interpolator = rational_interpolator,
+            )
+        end
     end
 end
 

@@ -180,6 +180,7 @@ function _assess_local_identifiability(
     prob_threshold::Float64 = 0.99,
     type = :SE,
     trbasis = nothing,
+    known_ic::Array{<:Any, 1} = Array{Any, 1}(),
 ) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
     if isempty(funcs_to_check)
         funcs_to_check = ode.parameters
