@@ -61,6 +61,37 @@ push!(
     ),
 )
 
+ode = @ODEmodel(
+    x1'(t) = -b * x1(t) + 1 / (c + x4(t)),
+    x2'(t) = alpha * x1(t) - beta * x2(t),
+    x3'(t) = gama * x2(t) - delta * x3(t),
+    x4'(t) = sigma * x4(t) * (gama * x2(t) - delta * x3(t)) / x3(t),
+    y(t) = x1(t)
+)
+
+push!(
+    cases,
+    Dict(
+        :ode => ode,
+        :known => [x2, x3],
+        :to_check => [alpha, alpha * gama],
+        :correct_funcs => [
+            sigma,
+            c,
+            b,
+            x4,
+            x3,
+            x2,
+            x1,
+            beta * delta,
+            alpha * gama,
+            beta + delta,
+            -delta * x3 + gama * x2,
+        ],
+        :correct_ident => OrderedDict(alpha => :locally, alpha * gama => :globally),
+    ),
+)
+
 @testset "Identifiable functions with known generic initial conditions" begin
     for case in cases
         ode = case[:ode]

@@ -123,6 +123,19 @@ And we see that they indeed are. This means, in particular, that the reason why 
 can be exchanged. One may wonder how could we guess these functions `beta + delta, beta * delta`. In fact, they can be just computed using
 `find_identifiable_functions` function as we will explain in the next tutorial. Stay tuned!
 
+## Assuming known initial conditions
+
+An experimental feature allows to provide an additional keyword argument `known_ic` to inidcate functions of states and parameters for which the
+initial conditions are assumed to be known (while the initial conditions of the system are still assumed to be genric). In this case,
+the identifiability will be assessed for parameters and all the initial conditions or for the initial conditions of `funcs_to_check`.
+Let us add an assumption that the initial conditions `x2(0)` and `x3(0)` are known:
+
+```@example global
+assess_identifiability(ode, known_ic = [x2, x3])
+```
+
+And we see that now `alpha` and `gama` become locally identifiable.
+
 [^1]: > A. Sedoglavic, [*A probabilistic algorithm to test local algebraic observability in polynomial time*](https://doi.org/10.1006/jsco.2002.0532), Journal of Symbolic Computation, 2002.
 [^2]: > A. Ovchinnikov, A. Pillay, G. Pogudin, T. Scanlon, [*Multi-experiment Parameter Identifiability of ODEs and Model Theory*](https://doi.org/10.1137/21M1389845), SIAM Journal on Applied Algebra and Geometry, 2022.
 [^3]: > D. Gonze, P. Ruoff, [*The Goodwin Oscillator and its Legacy*](https://doi.org/10.1007/s10441-020-09379-8), Acta Biotheoretica, 2020.
