@@ -126,7 +126,7 @@ function ode_aux(ode::ODE{P}, submodel::Set{QQMPolyRingElem}) where {P <: MPolyR
 
     sub_str = map(var_to_str, collect(submodel))
     S, _ = Nemo.polynomial_ring(Nemo.QQ, sub_str)
-    dict_type = Dict{QQMPolyRingElem, Union{QQMPolyRingElem, Generic.Frac{QQMPolyRingElem}}}
+    dict_type = Dict{QQMPolyRingElem, ExtendedFraction{QQMPolyRingElem}}
     fin_x =
         dict_type(parent_ring_change(x, S) => parent_ring_change(f, S) for (x, f) in new_x)
     fin_y =

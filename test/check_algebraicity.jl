@@ -1,6 +1,6 @@
 cases = []
 
-R, (x, y, z) = PolynomialRing(QQ, ["x", "y", "z"])
+R, (x, y, z) = polynomial_ring(QQ, ["x", "y", "z"])
 push!(
     cases,
     Dict(

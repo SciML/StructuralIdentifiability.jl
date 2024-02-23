@@ -291,7 +291,7 @@ Note: uses Monte-Carlo probabilistic algorithm. The probability of correctness
 is not specified but is assumed to be close to 1.
 """
 @timeit _to function linear_relations_between_normal_forms(
-    fracs::Vector{Generic.Frac{T}},
+    fracs::Vector{Generic.FracFieldElem{T}},
     up_to_degree::Integer;
     seed = 42,
 ) where {T}
@@ -391,7 +391,7 @@ is not specified but is assumed to be close to 1.
     end
     union!(complete_intersection_relations_ff, relations_ff_1)
     @debug "Reconstructing relations to rationals"
-    relations_qq = Vector{Generic.Frac{elem_type(ring_param)}}(
+    relations_qq = Vector{Generic.FracFieldElem{elem_type(ring_param)}}(
         undef,
         length(complete_intersection_relations_ff),
     )

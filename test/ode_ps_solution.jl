@@ -66,7 +66,7 @@
         )
         R, vars = Nemo.polynomial_ring(F, varnames)
         PType = fpMPolyRingElem
-        TDict = Dict{PType, Union{PType, Generic.Frac{PType}}}
+        TDict = Dict{PType, Union{PType, Generic.FracFieldElem{PType}}}
 
         # Generating the initial conditions etc
         ic = Dict(vars[i] => F(rand(-5:5)) for i in 1:NUMX)

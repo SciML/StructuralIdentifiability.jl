@@ -47,6 +47,8 @@ export find_submodels
 # finding identifiabile reparametrizations
 export reparametrize_global
 
+ExtendedFraction{P} = Union{P, Generic.FracFieldElem{P}}
+
 include("logging.jl")
 include("util.jl")
 include("power_series_utils.jl")
@@ -102,7 +104,7 @@ The function returns an (ordered) dictionary from the functions to check to thei
 function assess_identifiability(
     ode::ODE{P};
     funcs_to_check = Vector(),
-    known_ic::Vector{<:Union{P, Generic.Frac{P}}} = Vector{Union{P, Generic.Frac{P}}}(),
+    known_ic::Vector{<:ExtendedFraction{P}} = Vector{ExtendedFraction{P}}(),
     prob_threshold::Float64 = 0.99,
     loglevel = Logging.Info,
 ) where {P <: MPolyRingElem{QQFieldElem}}

@@ -165,7 +165,7 @@ function __mtk_to_si(
     measured_quantities::Array{<:Tuple{String, <:SymbolicUtils.BasicSymbolic}},
 )
     polytype = StructuralIdentifiability.Nemo.QQMPolyRingElem
-    fractype = StructuralIdentifiability.Nemo.Generic.Frac{polytype}
+    fractype = StructuralIdentifiability.Nemo.Generic.FracFieldElem{polytype}
     diff_eqs =
         filter(eq -> !(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(de))
     # performing full structural simplification
