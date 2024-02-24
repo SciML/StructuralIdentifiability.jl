@@ -80,7 +80,7 @@ end
 @testset "Partial derivatives of an output w.r.t. to initial conditions and parameters" begin
     test_cases = []
     P = QQMPolyRingElem
-    DType = Union{P, Generic.Frac{P}}
+    DType = Union{P, Generic.FracFieldElem{P}}
 
     ode = @ODEmodel(x'(t) = x(t) + a, y(t) = x(t)^2)
     push!(
@@ -137,7 +137,7 @@ end
 
     F = Nemo.Native.GF(2^31 - 1)
     P = fpMPolyRingElem
-    DType = Union{P, Generic.Frac{P}}
+    DType = Union{P, Generic.FracFieldElem{P}}
 
     varnames = vcat(
         ["x_$i" for i in 1:3],

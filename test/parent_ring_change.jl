@@ -1,9 +1,9 @@
 @testset "Parent ring change" begin
     for field in [Nemo.QQ, Nemo.Native.GF(2^31 - 1)]
-        R, (z, x, y) = polynomial_ring(QQ, ["z", "x", "y"], ordering = :degrevlex)
-        R_, (y_, x_) = polynomial_ring(QQ, ["y", "x"], ordering = :lex)
+        R, (z, x, y) = polynomial_ring(QQ, ["z", "x", "y"], internal_ordering = :degrevlex)
+        R_, (y_, x_) = polynomial_ring(QQ, ["y", "x"], internal_ordering = :lex)
         R__, (x__, t__, y__, z__) =
-            polynomial_ring(QQ, ["x", "t", "y", "z"], ordering = :deglex)
+            polynomial_ring(QQ, ["x", "t", "y", "z"], internal_ordering = :deglex)
 
         f = 2x + 3y + x^7 * y
         @test f == StructuralIdentifiability.parent_ring_change(f, R, matching = :byname)

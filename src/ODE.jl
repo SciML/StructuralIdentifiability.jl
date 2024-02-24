@@ -11,14 +11,14 @@ struct ODE{P} # P is the type of polynomials in the rhs of the ODE system
     y_vars::Array{P, 1}
     u_vars::Array{P, 1}
     parameters::Array{P, 1}
-    x_equations::Dict{P, <:Union{P, Generic.Frac{P}}}
-    y_equations::Dict{P, <:Union{P, Generic.Frac{P}}}
+    x_equations::Dict{P, <:ExtendedFraction{P}}
+    y_equations::Dict{P, <:ExtendedFraction{P}}
 
     function ODE{P}(
         x_vars::Array{P, 1},
         y_vars::Array{P, 1},
-        x_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
-        y_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
+        x_eqs::Dict{P, <:ExtendedFraction{P}},
+        y_eqs::Dict{P, <:ExtendedFraction{P}},
         inputs::Array{P, 1},
     ) where {P <: MPolyRingElem{<:FieldElem}}
         # Initialize ODE
@@ -37,8 +37,8 @@ struct ODE{P} # P is the type of polynomials in the rhs of the ODE system
     end
 
     function ODE{P}(
-        x_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
-        y_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
+        x_eqs::Dict{P, <:ExtendedFraction{P}},
+        y_eqs::Dict{P, <:ExtendedFraction{P}},
         inputs::Array{P, 1},
     ) where {P <: MPolyRingElem{<:FieldElem}}
         x_vars = collect(keys(x_eqs))
@@ -62,7 +62,7 @@ function add_outputs(
     new_ring, new_vars = Nemo.polynomial_ring(base_ring(ode.poly_ring), new_var_names)
 
     new_x = Array{P, 1}([parent_ring_change(x, new_ring) for x in ode.x_vars])
-    new_x_eqs = Dict{P, Union{P, Generic.Frac{P}}}(
+    new_x_eqs = Dict{P, ExtendedFraction{P}}(
         parent_ring_change(x, new_ring) => parent_ring_change(f, new_ring) for
         (x, f) in ode.x_equations
     )
@@ -70,11 +70,11 @@ function add_outputs(
     for y in keys(extra_y)
         push!(new_y, str_to_var(y, new_ring))
     end
-    new_y_eqs = Dict{P, Union{P, Generic.Frac{P}}}(
+    new_y_eqs = Dict{P, ExtendedFraction{P}}(
         parent_ring_change(y, new_ring) => parent_ring_change(g, new_ring) for
         (y, g) in ode.y_equations
     )
-    extra_y_eqs = Dict{P, Union{P, Generic.Frac{P}}}(
+    extra_y_eqs = Dict{P, ExtendedFraction{P}}(
         str_to_var(y, new_ring) => parent_ring_change(g, new_ring) for (y, g) in extra_y
     )
     merge!(new_y_eqs, extra_y_eqs)
@@ -106,11 +106,11 @@ function set_parameter_values(
     merge!(eval_dict, Dict(p => small_ring(val) for (p, val) in param_values))
 
     return ODE{P}(
-        Dict{P, Union{P, Generic.Frac{P}}}(
+        Dict{P, ExtendedFraction{P}}(
             eval_at_dict(v, eval_dict) => eval_at_dict(f, eval_dict) for
             (v, f) in ode.x_equations
         ),
-        Dict{P, Union{P, Generic.Frac{P}}}(
+        Dict{P, ExtendedFraction{P}}(
             eval_at_dict(v, eval_dict) => eval_at_dict(f, eval_dict) for
             (v, f) in ode.y_equations
         ),
@@ -225,7 +225,7 @@ function _reduce_mod_p(poly::QQMPolyRingElem, p::Int)
     return change_base_ring(Nemo.Native.GF(p), num) * (1 // Nemo.Native.GF(p)(den))
 end
 
-function _reduce_mod_p(rat::Generic.Frac{QQMPolyRingElem}, p::Int)
+function _reduce_mod_p(rat::Generic.FracFieldElem{QQMPolyRingElem}, p::Int)
     num, den = map(poly -> _reduce_mod_p(poly, p), [numerator(rat), denominator(rat)])
     if den == 0
         throw(Base.ArgumentError("Prime $p divides the denominator of $rat"))
@@ -248,8 +248,8 @@ function reduce_ode_mod_p(ode::ODE{<:MPolyRingElem{Nemo.QQFieldElem}}, p::Int)
     new_inputs = map(u -> switch_ring(u, new_ring), ode.u_vars)
     new_x = map(x -> switch_ring(x, new_ring), ode.x_vars)
     new_y = map(y -> switch_ring(y, new_ring), ode.y_vars)
-    new_x_eqs = Dict{new_type, Union{new_type, Generic.Frac{new_type}}}()
-    new_y_eqs = Dict{new_type, Union{new_type, Generic.Frac{new_type}}}()
+    new_x_eqs = Dict{new_type, ExtendedFraction{new_type}}()
+    new_y_eqs = Dict{new_type, ExtendedFraction{new_type}}()
     for (old, new) in Dict(ode.x_equations => new_x_eqs, ode.y_equations => new_y_eqs)
         for (v, f) in old
             new_v = switch_ring(v, new_ring)

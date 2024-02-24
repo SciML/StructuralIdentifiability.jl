@@ -148,7 +148,7 @@ The function returns a tuple containing the following:
         param_ring, _ = polynomial_ring(
             base_ring(bring),
             map(string, ode.parameters),
-            ordering = Nemo.ordering(bring),
+            internal_ordering = Nemo.internal_ordering(bring),
         )
         id_funcs_no_states_param = map(
             polys -> map(poly -> parent_ring_change(poly, param_ring), polys),
@@ -218,7 +218,7 @@ Output: a list L of booleans with L[i] being the identifiability status of the i
         with_states = states_needed,
     )
 
-    funcs_to_check = Vector{Generic.Frac{P}}(
+    funcs_to_check = Vector{Generic.FracFieldElem{P}}(
         map(f -> parent_ring_change(f, bring) // one(bring), funcs_to_check),
     )
 

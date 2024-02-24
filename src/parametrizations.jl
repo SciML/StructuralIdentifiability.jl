@@ -137,7 +137,7 @@ Returns a 4-element tuple
 """
 function check_constructive_field_membership(
     rff::RationalFunctionField{T},
-    to_be_reduced::Vector{Generic.Frac{T}};
+    to_be_reduced::Vector{Generic.FracFieldElem{T}};
     tag_names = Vector{String}(),
 ) where {T}
     @assert !isempty(to_be_reduced)
@@ -236,8 +236,11 @@ $sat_string
     Tags: $tag_strings
     Original vars: $orig_strings"""
     end
-    parametric_ring, _ =
-        polynomial_ring(fraction_field(ring_of_tags), orig_strings, ordering = :degrevlex)
+    parametric_ring, _ = polynomial_ring(
+        fraction_field(ring_of_tags),
+        orig_strings,
+        internal_ordering = :degrevlex,
+    )
     relations_between_tags =
         map(poly -> parent_ring_change(poly, ring_of_tags), relations_between_tags)
     param_var_mapping = merge(
@@ -259,7 +262,7 @@ $sat_string
     # Reduce each fraction
     var_mapping = Dict(gens(poly_ring) .=> gens(parametric_ring))
     memberships = Vector{Bool}(undef, length(to_be_reduced))
-    remainders = Vector{Generic.Frac{T}}(undef, length(to_be_reduced))
+    remainders = Vector{Generic.FracFieldElem{T}}(undef, length(to_be_reduced))
     for i in 1:length(to_be_reduced)
         frac = to_be_reduced[i]
         num = crude_parent_ring_change(numerator(frac), parametric_ring, var_mapping)
@@ -283,8 +286,10 @@ Returns the vector field obtained by applying `derivation` to each element of
 `directions`.
 """
 function vector_field_along(derivation::Dict{T, U}, directions::AbstractVector) where {T, U}
-    new_vector_field =
-        Dict{AbstractAlgebra.Generic.Frac{T}, AbstractAlgebra.Generic.Frac{T}}()
+    new_vector_field = Dict{
+        AbstractAlgebra.Generic.FracFieldElem{T},
+        AbstractAlgebra.Generic.FracFieldElem{T},
+    }()
     for func in directions
         df = diff_frac(func, derivation)
         new_vector_field[func] = df
@@ -384,7 +389,7 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     ring_output, _ = polynomial_ring(
         base_ring(ring_of_tags),
         all_variable_names,
-        ordering = Nemo.ordering(ring_of_tags),
+        internal_ordering = Nemo.internal_ordering(ring_of_tags),
     )
     new_vars_vector_field = Dict(
         parent_ring_change(var_old, ring_output, matching = :byindex) =>
@@ -458,7 +463,7 @@ X1'(t) = -X1(t)*X2(t) + X1(t)*a3
 y1(t) = X1(t)
 
 # new_vars
-Dict{Nemo.QQMPolyRingElem, AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}} with 6 entries:
+Dict{Nemo.QQMPolyRingElem, AbstractAlgebra.Generic.FracFieldElem{Nemo.QQMPolyRingElem}} with 6 entries:
   X2 => b*x2
   y1 => y
   X1 => x1

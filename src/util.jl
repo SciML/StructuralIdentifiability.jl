@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------------------
 
-function total_degree_frac(f::Generic.Frac{<:MPolyRingElem})
+function total_degree_frac(f::Generic.FracFieldElem{<:MPolyRingElem})
     return sum(map(total_degree, unpack_fraction(f)))
 end
 
@@ -60,7 +60,7 @@ function eval_at_dict(poly::P, d::Dict{P, S}) where {P <: MPolyRingElem, S <: Re
 end
 
 function eval_at_dict(
-    rational::Generic.Frac{T},
+    rational::Generic.FracFieldElem{T},
     d::Dict{T, V},
 ) where {T <: MPolyRingElem, V}
     f, g = unpack_fraction(rational)
@@ -68,7 +68,7 @@ function eval_at_dict(
 end
 
 function eval_at_dict(
-    rational::Generic.Frac{<:T},
+    rational::Generic.FracFieldElem{<:T},
     d::Dict{T, <:RingElem},
 ) where {T <: MPolyRingElem}
     f, g = unpack_fraction(rational)
@@ -76,8 +76,8 @@ function eval_at_dict(
 end
 
 function eval_at_dict(
-    rational::Generic.Frac{<:P},
-    d::Dict{<:P, <:Union{<:Generic.Frac, <:P}},
+    rational::Generic.FracFieldElem{<:P},
+    d::Dict{<:P, <:Union{<:Generic.FracFieldElem, <:P}},
 ) where {P <: MPolyRingElem}
     f, g = unpack_fraction(rational)
     return eval_at_dict(f, d) // eval_at_dict(g, d)
@@ -89,7 +89,7 @@ function unpack_fraction(f::MPolyRingElem)
     return (f, one(parent(f)))
 end
 
-function unpack_fraction(f::Generic.Frac{<:MPolyRingElem})
+function unpack_fraction(f::Generic.FracFieldElem{<:MPolyRingElem})
     return (numerator(f), denominator(f))
 end
 
@@ -186,7 +186,7 @@ function homogenize(fs)
     newring, hom_vars = polynomial_ring(
         base_ring(ring),
         vcat("X0", map(string, gens(ring))),
-        ordering = ordering(ring),
+        internal_ordering = internal_ordering(ring),
     )
     Fs = empty(fs)
     for f in fs
@@ -208,7 +208,7 @@ function dehomogenize(Fs)
     newring, dehom_vars = polynomial_ring(
         base_ring(ring),
         map(string, gens(ring)[2:end]),
-        ordering = ordering(ring),
+        internal_ordering = internal_ordering(ring),
     )
     fs = empty(Fs)
     for F in Fs
@@ -282,7 +282,7 @@ function parent_ring_change(
 end
 
 function parent_ring_change(
-    f::Generic.Frac{<:MPolyRingElem},
+    f::Generic.FracFieldElem{<:MPolyRingElem},
     new_ring::MPolyRing;
     matching = :byname,
 )
@@ -536,7 +536,7 @@ function replace_with_ic(ode, funcs)
             push!(varnames, (s, s * "(0)"))
         end
     end
-    R0, vars0 = PolynomialRing(base_ring(ode.poly_ring), [p[2] for p in varnames])
+    R0, vars0 = polynomial_ring(base_ring(ode.poly_ring), [p[2] for p in varnames])
     eval_dict =
         Dict(str_to_var(p[1], ode.poly_ring) => str_to_var(p[2], R0) for p in varnames)
     return [eval_at_dict(f, eval_dict) for f in funcs]
