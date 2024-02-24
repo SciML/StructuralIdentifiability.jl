@@ -87,40 +87,6 @@ assess_local_identifiability(dds; funcs_to_check = [β * S])
 As other main functions in the package, `assess_local_identifiability` accepts an optional parameter `loglevel` (default: `Logging.Info`)
 to adjust the verbosity of logging.
 
-<!--
-If one loads `ModelingToolkit` (and thus the `ModelingToolkitSIExt` extension), one can use `DiscreteSystem` from `ModelingToolkit` to
-describe the input model (now in terms of difference!):
-
-```@example discrete_mtk
-using ModelingToolkit
-using StructuralIdentifiability
-
-@parameters α β
-@variables t S(t) I(t) R(t) y(t)
-D = Difference(t; dt = 1.0)
-
-eqs = [D(S) ~ S - β * S * I, D(I) ~ I + β * S * I - α * I, D(R) ~ R + α * I]
-@named sir = DiscreteSystem(eqs)
-```
-
-Then the same computation can be carried out with the models defined this way:
-
-```@example discrete_mtk
-assess_local_identifiability(sir; measured_quantities = [y ~ I])
-```
-
-In principle, it is not required to give a name to the observable, so one can write this shorter
-
-```@example discrete_mtk
-assess_local_identifiability(sir; measured_quantities = [I])
-```
-
-The same example but with specified functions to check
-
-```@example discrete_mtk
-assess_local_identifiability(sir; measured_quantities = [I], funcs_to_check = [β * S])
-```
--->
 The implementation is based on a version of the observability rank criterion and will be described in a forthcoming paper.
 
 [^1]: > S. Nõmm, C. Moog, [*Identifiability of discrete-time nonlinear systems*](https://doi.org/10.1016/S1474-6670(17)31245-4), IFAC Proceedings Volumes, 2004.
