@@ -13,7 +13,7 @@ Output:
 - list containing coefficients of `A` and `B` in some order (and in the original ring!)
 """
 function extract_coefficients_ratfunc(
-    f::AbstractAlgebra.Generic.Frac{<:P},
+    f::AbstractAlgebra.Generic.FracFieldElem{<:P},
     vars::Vector{<:P},
 ) where {P <: MPolyRingElem{<:FieldElem}}
     num, denom = unpack_fraction(f)
@@ -48,7 +48,7 @@ Output:
 - Lie derivative of `f` with respect to `ode` 
 """
 function lie_derivative(
-    f::Generic.Frac{<:P},
+    f::Generic.FracFieldElem{<:P},
     ode::ODE{<:P},
 ) where {P <: MPolyRingElem{<:FieldElem}}
     @assert all([(x in ode.parameters) || (x in ode.x_vars) for x in vars(f)])
@@ -91,7 +91,7 @@ identifiable functions of parameters only
         end
     end
 
-    result = Array{Generic.Frac{P}, 1}()
+    result = Array{Generic.FracFieldElem{P}, 1}()
     for (y, ord) in y_to_ord
         curr = extract_coefficients_ratfunc(ode.y_equations[y], ode.u_vars)
         for _ in 0:ord

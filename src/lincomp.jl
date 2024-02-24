@@ -51,9 +51,7 @@ function linear_compartment_model(
     )
     x_vars = @view vars[1:n]
     x_equations =
-        Dict{QQMPolyRingElem, Union{QQMPolyRingElem, Generic.Frac{QQMPolyRingElem}}}(
-            x => R(0) for x in x_vars
-        )
+        Dict{QQMPolyRingElem, ExtendedFraction{QQMPolyRingElem}}(x => R(0) for x in x_vars)
     for i in 1:n
         for j in graph[i]
             rate = str_to_var("a_$(j)_$(i)", R)
@@ -69,10 +67,9 @@ function linear_compartment_model(
         end
     end
 
-    y_equations =
-        Dict{QQMPolyRingElem, Union{QQMPolyRingElem, Generic.Frac{QQMPolyRingElem}}}(
-            str_to_var("y$i", R) => str_to_var("x$i", R) for i in outputs
-        )
+    y_equations = Dict{QQMPolyRingElem, ExtendedFraction{QQMPolyRingElem}}(
+        str_to_var("y$i", R) => str_to_var("x$i", R) for i in outputs
+    )
 
     return ODE{QQMPolyRingElem}(
         x_equations,

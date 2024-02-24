@@ -26,7 +26,7 @@ mutable struct RationalFunctionField{T}
     function RationalFunctionField(polys::Vector{T}) where {T}
         RationalFunctionField(polys .// one(parent(first(polys))))
     end
-    function RationalFunctionField(fractions::Vector{Generic.Frac{T}}) where {T}
+    function RationalFunctionField(fractions::Vector{Generic.FracFieldElem{T}}) where {T}
         RationalFunctionField(fractions_to_dennums(fractions))
     end
     function RationalFunctionField(dennums::Vector{Vector{T}}) where {T}
@@ -156,7 +156,7 @@ end
 
 function field_contains(
     field::RationalFunctionField{T},
-    ratfuncs::Vector{Generic.Frac{T}},
+    ratfuncs::Vector{Generic.FracFieldElem{T}},
     prob_threshold,
 ) where {T}
     return field_contains(field, fractions_to_dennums(ratfuncs), prob_threshold)
@@ -200,7 +200,7 @@ function check_algebraicity(field, ratfuncs, p)
     eval_point = [Nemo.QQ(rand(1:D)) for x in base_vars]
 
     # Filling the jacobain for generators
-    S = MatrixSpace(Nemo.QQ, length(base_vars), length(fgens) + 1)
+    S = matrix_space(Nemo.QQ, length(base_vars), length(fgens) + 1)
     J = zero(S)
     for (i, f) in enumerate(fgens)
         for (j, x) in enumerate(base_vars)

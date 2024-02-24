@@ -10,8 +10,8 @@ struct DDS{P} # P is the type of polynomials in the rhs of the DDS system
     function DDS{P}(
         x_vars::Array{P, 1},
         y_vars::Array{P, 1},
-        x_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
-        y_eqs::Dict{P, <:Union{P, Generic.Frac{P}}},
+        x_eqs::Dict{P, <:ExtendedFraction{P}},
+        y_eqs::Dict{P, <:ExtendedFraction{P}},
         u_vars::Array{P, 1},
     ) where {P <: MPolyRingElem{<:FieldElem}}
         new{P}(ODE{P}(x_vars, y_vars, x_eqs, y_eqs, u_vars))

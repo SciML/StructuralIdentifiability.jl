@@ -40,7 +40,7 @@ ode = @ODEmodel(
 find_identifiable_functions(ode)
 
 # prints
-3-element Vector{AbstractAlgebra.Generic.Frac{Nemo.QQMPolyRingElem}}:
+3-element Vector{AbstractAlgebra.Generic.FracFieldElem{Nemo.QQMPolyRingElem}}:
  a12 + a01 + a21
  a12*a01
 ```
@@ -48,7 +48,7 @@ find_identifiable_functions(ode)
 """
 function find_identifiable_functions(
     ode::ODE{T};
-    known_ic::Vector{<:Union{T, Generic.Frac{T}}} = Vector{Union{T, Generic.Frac{T}}}(),
+    known_ic::Vector{<:ExtendedFraction{T}} = Vector{ExtendedFraction{T}}(),
     prob_threshold::Float64 = 0.99,
     seed = 42,
     with_states = false,

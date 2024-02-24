@@ -135,7 +135,9 @@ function get_degree_and_coeffsize(f::MPolyRingElem{Nemo.QQFieldElem})
     return (total_degree(f), max_coef)
 end
 
-function get_degree_and_coeffsize(f::Generic.Frac{<:MPolyRingElem{Nemo.QQFieldElem}})
+function get_degree_and_coeffsize(
+    f::Generic.FracFieldElem{<:MPolyRingElem{Nemo.QQFieldElem}},
+)
     num_deg, num_coef = get_degree_and_coeffsize(numerator(f))
     den_deg, den_coef = get_degree_and_coeffsize(denominator(f))
     return (max(num_deg, den_deg), max(num_coef, den_coef))

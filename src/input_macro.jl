@@ -136,7 +136,7 @@ function generate_model_code(type, ex::Expr...)
             StructuralIdentifiability.Nemo.QQMPolyRingElem,
             Union{
                 StructuralIdentifiability.Nemo.QQMPolyRingElem,
-                StructuralIdentifiability.AbstractAlgebra.Generic.Frac{
+                StructuralIdentifiability.AbstractAlgebra.Generic.FracFieldElem{
                     StructuralIdentifiability.Nemo.QQMPolyRingElem,
                 },
             },
@@ -147,7 +147,7 @@ function generate_model_code(type, ex::Expr...)
             StructuralIdentifiability.Nemo.QQMPolyRingElem,
             Union{
                 StructuralIdentifiability.Nemo.QQMPolyRingElem,
-                StructuralIdentifiability.AbstractAlgebra.Generic.Frac{
+                StructuralIdentifiability.AbstractAlgebra.Generic.FracFieldElem{
                     StructuralIdentifiability.Nemo.QQMPolyRingElem,
                 },
             },
@@ -304,4 +304,4 @@ macro DDSmodel(ex::Expr...)
     return esc(generate_model_code(:dds, ex...))
 end
 
-#------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------i

@@ -11,7 +11,7 @@ Output: an array of fractions
 `[f2/f1, f3/f1, ..., g2/g1, g3/g1, ...]`
 """
 function dennums_to_fractions(dennums::Vector{Vector{T}}) where {T}
-    fractions = Vector{AbstractAlgebra.Generic.Frac{T}}()
+    fractions = Vector{AbstractAlgebra.Generic.FracFieldElem{T}}()
     for dni in dennums
         den, nums = dni[1], dni[2:end]
         isempty(nums) && continue
