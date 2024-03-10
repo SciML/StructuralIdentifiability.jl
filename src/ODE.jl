@@ -265,7 +265,6 @@ function Base.show(io::IO, ode::ODE)
     for x in ode.x_vars
         if endswith(var_to_str(x), "(t)")
             print(io, chopsuffix(var_to_str(x), "(t)") * "'(t) = ")
-            # print(io, var_to_str(x)[1:(end - 3)] * "'(t) = ")
         else
             print(io, var_to_str(x) * "' = ")
         end
