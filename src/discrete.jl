@@ -69,7 +69,7 @@ end
 function Base.show(io::IO, dds::DDS)
     for x in x_vars(dds)
         if endswith(var_to_str(x), "(t)")
-            print(io, var_to_str(x)[1:(end - 3)] * "(t + 1) = ")
+            print(io, chop(var_to_str(x), tail = 3) * "(t + 1) = ")
         else
             print(io, var_to_str(x) * "(t + 1) = ")
         end

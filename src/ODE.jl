@@ -264,7 +264,7 @@ end
 function Base.show(io::IO, ode::ODE)
     for x in ode.x_vars
         if endswith(var_to_str(x), "(t)")
-            print(io, var_to_str(x)[1:(end - 3)] * "'(t) = ")
+            print(io, chop(var_to_str(x), tail = 3) * "'(t) = ")
         else
             print(io, var_to_str(x) * "' = ")
         end
