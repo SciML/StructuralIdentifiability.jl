@@ -17,7 +17,7 @@
     )
 end
 
-@testset "ODE unicode" begin
+@testset "ODE/DDE unicode" begin
     ode = StructuralIdentifiability.@ODEmodel(
         🐁'(t) = a * 🐁 - b * 🐁 * 🦉,
         🦉'(t) = c * 🦉 + d * 🐁 * 🦉,
@@ -44,4 +44,12 @@ end
     StructuralIdentifiability.assess_identifiability(ode)
     StructuralIdentifiability.find_identifiable_functions(ode)
     StructuralIdentifiability.reparametrize_global(ode)
+
+    dde = StructuralIdentifiability.@DDSmodel(
+        🐁(t + 1) = a * 🐁(t) - b * 🐁(t) * 🦉(t),
+        🦉(t + 1) = c * 🦉(t) + d * 🐁(t) * 🦉(t),
+        y(t) = 🐁(t)
+    )
+    println(dde)
+    StructuralIdentifiability.assess_local_identifiability(dde)
 end
