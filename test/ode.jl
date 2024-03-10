@@ -16,3 +16,32 @@
         y(t) = x1
     )
 end
+
+@testset "ODE unicode" begin
+    ode = StructuralIdentifiability.@ODEmodel(
+        🐁'(t) = a * 🐁 - b * 🐁 * 🦉,
+        🦉'(t) = c * 🦉 + d * 🐁 * 🦉,
+        y(t) = 🐁
+    )
+    println(ode)
+    res = StructuralIdentifiability.assess_identifiability(ode)
+    println(res)
+    @test res == Dict(
+        a => :globally,
+        b => :nonidentifiable,
+        c => :globally,
+        d => :globally,
+        🐁 => :globally,
+        🦉 => :nonidentifiable,
+    )
+
+    ode = StructuralIdentifiability.@ODEmodel(
+        ⬜'(t) = a⬜ * ⬜ * 🐁b🦉c,
+        🐁b🦉c'(t) = 🐁b🦉c,
+        🐁y🐁(t) = ⬜
+    )
+    println(ode)
+    StructuralIdentifiability.assess_identifiability(ode)
+    StructuralIdentifiability.find_identifiable_functions(ode)
+    StructuralIdentifiability.reparametrize_global(ode)
+end
