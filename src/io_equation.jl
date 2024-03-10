@@ -347,6 +347,17 @@ Output:
     var_change_policy = :default,
     loglevel = Logging.Info,
 ) where {P <: MPolyRingElem{<:FieldElem}}
+    restart_logging(loglevel = loglevel)
+    reset_timings()
+    with_logger(_si_logger[]) do
+        return _find_ioequations(ode, var_change_policy = var_change_policy)
+    end
+end
+
+@timeit _to function _find_ioequations(
+    ode::ODE{P};
+    var_change_policy = :default,
+) where {P <: MPolyRingElem{<:FieldElem}}
     # Setting the var_change policy
     if (var_change_policy == :yes) ||
        (var_change_policy == :default && length(ode.y_vars) < 3)

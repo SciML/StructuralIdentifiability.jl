@@ -180,10 +180,10 @@ function __mtk_to_si(
     end
 
     y_functions = [each[2] for each in measured_quantities]
-    inputs = filter(v -> ModelingToolkit.isinput(v), ModelingToolkit.states(de))
+    inputs = filter(v -> ModelingToolkit.isinput(v), ModelingToolkit.unknowns(de))
     state_vars = filter(
         s -> !(ModelingToolkit.isinput(s) || ModelingToolkit.isoutput(s)),
-        ModelingToolkit.states(de),
+        ModelingToolkit.unknowns(de),
     )
     params = ModelingToolkit.parameters(de)
     t = ModelingToolkit.arguments(diff_eqs[1].lhs)[1]
@@ -299,7 +299,7 @@ end
     end
     if length(funcs_to_check) == 0
         funcs_to_check = vcat(
-            [e for e in ModelingToolkit.states(ode) if !ModelingToolkit.isoutput(e)],
+            [e for e in ModelingToolkit.unknowns(ode) if !ModelingToolkit.isoutput(e)],
             ModelingToolkit.parameters(ode),
         )
     end
@@ -413,6 +413,7 @@ Output:
 
 The result is correct with probability at least `prob_threshold`.
 """
+#=
 function StructuralIdentifiability.assess_local_identifiability(
     dds::ModelingToolkit.DiscreteSystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
@@ -498,6 +499,8 @@ function _assess_local_identifiability(
     end
     return out_dict
 end
+=#
+
 # ------------------------------------------------------------------------------
 
 """

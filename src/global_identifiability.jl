@@ -106,8 +106,8 @@ The function returns a tuple containing the following:
     rational_interpolator = :VanDerHoevenLecerf,
 ) where {T}
     @info "Computing IO-equations"
-    ioeq_time =
-        @elapsed io_equations = find_ioequations(ode; var_change_policy = var_change_policy)
+    ioeq_time = @elapsed io_equations =
+        _find_ioequations(ode; var_change_policy = var_change_policy)
     @debug "Sizes: $(map(length, values(io_equations)))"
     @info "Computed IO-equations in $ioeq_time seconds"
     _runtime_logger[:ioeq_time] = ioeq_time
