@@ -237,6 +237,12 @@ cases = [
             y(t) = x1
         ),
     ),
+    (
+        ode = StructuralIdentifiability.@ODEmodel(
+            x'(t) = b * (x(t)^2 + 1) / (2 * a),
+            y(t) = 2 * x(t) / (b * (1 + x(t)^2))
+        ),
+    ),
 ]
 
 @testset "Global reparametrizations" begin

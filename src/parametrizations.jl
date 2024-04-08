@@ -17,6 +17,16 @@ function crude_parent_ring_change(poly, new_ring, var_mapping)
     return new_poly
 end
 
+function normalize_coefficients(poly, coeff_relations)
+    res = zero(parent(poly))
+    for (c, m) in zip(coefficients(poly), monomials(poly))
+        c_num = numerator(c)
+        _, c_num = divrem(c_num, coeff_relations)
+        res += c_num // denominator(c) * m
+    end
+    return res
+end
+
 """
     check_constructive_field_membership(tagged_mqs, tag_relations, tagged_num, tagged_den)
 
@@ -51,7 +61,7 @@ function check_constructive_field_membership(
     if !isempty(tag_relations)
         @assert ring_of_tags == parent(first(tag_relations))
     end
-    # Compute the remainders module the MQS.
+    # Compute the remainders modulo the MQS.
     # These belong to K(T)[x].
     @debug """
     Reducing $tagged_num, $tagged_den"""
@@ -61,49 +71,50 @@ function check_constructive_field_membership(
     Normal forms modulo MQS: 
     Num: $(num_rem)
     Den: $(den_rem)"""
-    common_factor = gcd(num_rem, den_rem)
-    num_rem = divexact(num_rem, common_factor)
-    den_rem = divexact(den_rem, common_factor)
-    # If norm_form(Num) // norm_form(Den) does not belongs to K(T), then
-    # the fraction does not belong to the field
+
+    # reducing the coefficients modulo GB
+    num_rem = normalize_coefficients(num_rem, tag_relations)
+    den_rem = normalize_coefficients(den_rem, tag_relations)
     if iszero(den_rem)
         @debug """
         The element $tagged_num // $tagged_den is not in the sub-field
         Normal form, numerator: $num_rem
         Normal form, denominator: $den_rem
-        Common factor: $(common_factor)
         """
         return false, zero(ring_of_tags) // one(ring_of_tags)
     end
-    if total_degree(num_rem) > 0 || total_degree(den_rem) > 0
+
+    m = first(monomials(den_rem))
+    c_den = first(coefficients(den_rem))
+    c_num = coeff(num_rem, m)
+    fraction_candidate = c_num // c_den
+    rem_rem = num_rem - fraction_candidate * den_rem
+    rem_rem = normalize_coefficients(rem_rem, tag_relations)
+
+    # If norm_form(Num) // norm_form(Den) does not belongs to K(T), then
+    # the fraction does not belong to the field
+    if !iszero(rem_rem)
         @debug """
         The element $tagged_num // $tagged_den is not in the sub-field
         Normal form, numerator: $num_rem
         Normal form, denominator: $den_rem
-        Common factor: $(common_factor)
+        Remainder: $rem_rem
         """
         return false, zero(ring_of_tags) // one(ring_of_tags)
     end
     # Now we know that the remainders belong to K(T). 
     # To obtain a canonical representation We need to cancel out the algebraic
     # relations in K[T] between the tags
-    num = !iszero(num_rem) ? coeff(num_rem, 1) : zero(ring_of_tags) // one(ring_of_tags)
-    den = coeff(den_rem, 1)
-    num_num = numerator(num)
-    num_den = numerator(den)
-    _, num_num_factored = divrem(num_num, tag_relations)
-    _, num_den_factored = divrem(num_den, tag_relations)
-    num_factored = num_num_factored // denominator(num)
-    den_factored = num_den_factored // denominator(den)
+    num_tags = numerator(fraction_candidate)
+    den_tags = denominator(fraction_candidate)
+    _, num_tags_factored = divrem(num_tags, tag_relations)
+    _, den_tags_factored = divrem(den_tags, tag_relations)
     @debug """
     After factoring out relations:
-    Num: $(num_factored)
-    Den: $(den_factored)
+    Num: $(num_tags_factored)
+    Den: $(den_tags_factored)
     """
-    if iszero(den_factored)
-        return false, zero(ring_of_tags) // one(ring_of_tags)
-    end
-    rem_canon = num_factored // den_factored
+    rem_canon = num_tags_factored // den_tags_factored
     return true, rem_canon
 end
 
@@ -195,7 +206,7 @@ $sat_string
     #
     # NOTE: we compute the basis in K[T][x][t], not in K(T)[x][t].
     # This way, we obtain two pieces of information at once:
-    # - the kernel of the map from T to x (the algbraic relations of the tags).
+    # - the kernel of the map from T to x (the algebraic relations of the tags).
     # - the GB of the MQS in K(T)[x][t].
     # ord = Lex()
     ord = DegRevLex([sat_var]) * DegRevLex(orig_vars) * DegRevLex(tag_vars)
