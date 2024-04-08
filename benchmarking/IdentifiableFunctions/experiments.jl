@@ -1128,9 +1128,9 @@ ideal_spec = StructuralIdentifiability.specialize_mod_p(mqs, point)
 
 ord = Groebner.Lex()
 
-hom_ideal_spec = StructuralIdentifiability.homogenize(ideal_spec)
+homogeneous_ideal_spec = StructuralIdentifiability.homogenize(ideal_spec)
 
-Groebner.groebner(hom_ideal_spec, ordering=ord)
+Groebner.groebner(homogeneous_ideal_spec, ordering=ord)
 
 # n = length(vars_shuffled)
 # n1, n2 = div(n, 2), n - div(n, 2)

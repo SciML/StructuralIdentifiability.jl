@@ -183,7 +183,7 @@ end
 
 function homogenize(fs)
     ring = parent(fs[1])
-    newring, hom_vars = polynomial_ring(
+    newring, homogeneous_vars = polynomial_ring(
         base_ring(ring),
         vcat("X0", map(string, gens(ring))),
         internal_ordering = internal_ordering(ring),
@@ -196,7 +196,8 @@ function homogenize(fs)
             cf = coeff(term, 1)
             ev = monomial(term, 1)
             d = total_degree(ev)
-            new_f += cf * evaluate(ev, hom_vars[2:end]) * hom_vars[1]^(D - d)
+            new_f +=
+                cf * evaluate(ev, homogeneous_vars[2:end]) * homogeneous_vars[1]^(D - d)
         end
         push!(Fs, new_f)
     end

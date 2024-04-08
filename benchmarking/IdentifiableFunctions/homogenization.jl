@@ -33,6 +33,6 @@ ideal_spec = StructuralIdentifiability.specialize_mod_p(mqs, point)
 # There is an existent possibility that this would not finish in two and a half lifetimes
 # @time gb = groebner(ideal_spec, ordering = Groebner.Lex(), loglevel = -3);
 
-hom_ideal_spec = StructuralIdentifiability.homogenize(ideal_spec);
+homogeneous_ideal_spec = StructuralIdentifiability.homogenize(ideal_spec);
 # 100 ms
-@time Groebner.groebner(hom_ideal_spec, ordering = Groebner.Lex());
+@time Groebner.groebner(homogeneous_ideal_spec, ordering = Groebner.Lex());
