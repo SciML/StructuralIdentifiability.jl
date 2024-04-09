@@ -17,6 +17,9 @@ function crude_parent_ring_change(poly, new_ring, var_mapping)
     return new_poly
 end
 
+# Reduces the parametric coefficients of a polynomial modulo
+# a Groebner basis of an ideal in the parameter ring.
+# Assumes that there is no division by zero
 function normalize_coefficients(poly, coeff_relations)
     res = zero(parent(poly))
     for (c, m) in zip(coefficients(poly), monomials(poly))
