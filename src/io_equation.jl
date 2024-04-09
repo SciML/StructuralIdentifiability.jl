@@ -193,7 +193,7 @@ Output:
         for (y, eq) in y_equations
             if y != y_prolong
                 @debug "Eliminating the leader of the equation for $y"
-                # an ugly way of gettin the leader, to replace
+                # an ugly way of getting the leader, to replace
                 next_y_equation = eliminate_var(
                     next_y_equation,
                     eq,
