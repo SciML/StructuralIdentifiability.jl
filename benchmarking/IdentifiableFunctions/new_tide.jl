@@ -1,4 +1,22 @@
 using StructuralIdentifiability, StatsBase
+using Logging
+
+# macro taken from here
+# https://discourse.julialang.org/t/help-writing-a-timeout-macro/16591/7
+macro timeout(seconds, expr, fail)
+    quote
+        tsk = @task $(esc(expr))
+        schedule(tsk)
+        Timer($(esc(seconds))) do timer
+            istaskdone(tsk) || Base.throwto(tsk, InterruptException())
+        end
+        try
+            fetch(tsk)
+        catch _
+            $(esc(fail))
+        end
+    end
+end
 
 function simplify(genset)
     rff = StructuralIdentifiability.RationalFunctionField(genset)
@@ -10,7 +28,8 @@ function iterative_lie(
         ode::StructuralIdentifiability.ODE{P};
         initial_genset=nothing,
         tides=2,
-        percentile=20) where {P}
+        percentile=20,
+        wait_for=20) where {P}
     genset = Vector()
     if initial_genset === nothing
         for y in ode.y_vars
@@ -70,7 +89,14 @@ function iterative_lie(
         new_elems = new_elems[1:threshold_idx]
 
         new_genset = vcat(genset, new_elems)
-        genset = simplify(new_genset)
+        new_genset = @timeout wait_for begin 
+            simplify(new_genset) 
+        end Set()
+        if isempty(new_genset)
+            @warn "Interrupted by timeout"
+            break
+        end
+        genset = new_genset
         wave += 1
     end
 
@@ -97,9 +123,12 @@ TumorPillis2007 = StructuralIdentifiability.@ODEmodel(
             y2(t) = N(t),
             y3(t) = M(t)
         )
-ode = TumorPillis2007
     
-# StructuralIdentifiability.find_ioequations(ode)
 
-genset = iterative_lie(ode, tides=2, percentile=20)
+ode = TumorPillis2007
+
+#find_ioequations(ode; loglevel=Logging.Debug)
+
+genset = iterative_lie(ode, tides=2, percentile=20, wait_for=2)
 println(genset)
+
