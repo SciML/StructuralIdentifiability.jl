@@ -17,12 +17,12 @@ end
 
 # ------------------------------------------------------------------------------
 
-function eval_at_nemo(e::Num, vals::Dict)
+function StructuralIdentifiability.eval_at_nemo(e::Num, vals::Dict)
     e = Symbolics.value(e)
     return eval_at_nemo(e, vals)
 end
 
-function eval_at_nemo(e::SymbolicUtils.BasicSymbolic, vals::Dict)
+function StructuralIdentifiability.eval_at_nemo(e::SymbolicUtils.BasicSymbolic, vals::Dict)
     if Symbolics.istree(e)
         # checking if it is a function of the form x(t), a bit dirty
         if length(Symbolics.arguments(e)) == 1 && "$(first(Symbolics.arguments(e)))" == "t"
@@ -33,7 +33,7 @@ function eval_at_nemo(e::SymbolicUtils.BasicSymbolic, vals::Dict)
             return vals[e]
         end
         # otherwise, this is a term
-        args = map(a -> eval_at_nemo(a, vals), Symbolics.arguments(e))
+        args = map(a -> StructuralIdentifiability.eval_at_nemo(a, vals), Symbolics.arguments(e))
         if Symbolics.operation(e) in (+, -, *)
             return Symbolics.operation(e)(args...)
         elseif isequal(Symbolics.operation(e), /)
@@ -50,11 +50,11 @@ function eval_at_nemo(e::SymbolicUtils.BasicSymbolic, vals::Dict)
     end
 end
 
-function eval_at_nemo(e::Union{Integer, Rational}, vals::Dict)
+function StructuralIdentifiability.eval_at_nemo(e::Union{Integer, Rational}, vals::Dict)
     return e
 end
 
-function eval_at_nemo(e::Union{Float16, Float32, Float64}, vals::Dict)
+function StructuralIdentifiability.eval_at_nemo(e::Union{Float16, Float32, Float64}, vals::Dict)
     if isequal(e % 1, 0)
         out = Int(e)
     else
