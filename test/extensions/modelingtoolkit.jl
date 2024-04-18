@@ -4,13 +4,13 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         using Nemo
         
         @parameters a01 a21 a12
-        @variables t x0(t) x1(t)
+        @variables t x0 x1
 
         ring, (a, b, c, x, y) = QQ["a","b","c","x","y"]
         
         nemo = StructuralIdentifiability.eval_at_nemo(
-            x0(t) + x1(t)*a01^2 + x1(t)^20*(a21 + a12), 
-            Dict(x0(t) => x, x1(t) => y, a01 => a, a21 => b, a12 => c)
+            x0 + x1*a01^2 + x1^20*(a21 + a12), 
+            Dict(x0 => x, x1 => y, a01 => a, a21 => b, a12 => c)
         )
         @test nemo == x + y*a^2 + y^20*(b + c)
     end
