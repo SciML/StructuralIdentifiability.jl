@@ -1,4 +1,20 @@
 if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
+    @testset "eval_at_nemo" begin
+        using ModelingToolkit, Symbolics
+        using Nemo
+        
+        @parameters a01 a21 a12
+        @variables t x0(t) x1(t)
+
+        ring, (a, b, c, x, y) = QQ["a","b","c","x","y"]
+        
+        nemo = StructuralIdentifiability.eval_at_nemo(
+            x0(t) + x1(t)*a01^2 + x1(t)^20*(a21 + a12), 
+            Dict(x0(t) => x, x1(t) => y, a01 => a, a21 => b, a12 => c)
+        )
+        @test nemo == x + y*a^2 + y^20*(b + c)
+    end
+    
     @testset "Check identifiability of `ODESystem` object" begin
         using ModelingToolkit
         using ModelingToolkit: parameters
