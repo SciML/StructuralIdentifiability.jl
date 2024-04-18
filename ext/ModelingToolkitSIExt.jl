@@ -33,7 +33,10 @@ function StructuralIdentifiability.eval_at_nemo(e::SymbolicUtils.BasicSymbolic, 
             return vals[e]
         end
         # otherwise, this is a term
-        args = map(a -> StructuralIdentifiability.eval_at_nemo(a, vals), Symbolics.arguments(e))
+        args = map(
+            a -> StructuralIdentifiability.eval_at_nemo(a, vals),
+            Symbolics.arguments(e),
+        )
         if Symbolics.operation(e) in (+, -, *)
             return Symbolics.operation(e)(args...)
         elseif isequal(Symbolics.operation(e), /)
@@ -54,7 +57,10 @@ function StructuralIdentifiability.eval_at_nemo(e::Union{Integer, Rational}, val
     return e
 end
 
-function StructuralIdentifiability.eval_at_nemo(e::Union{Float16, Float32, Float64}, vals::Dict)
+function StructuralIdentifiability.eval_at_nemo(
+    e::Union{Float16, Float32, Float64},
+    vals::Dict,
+)
     if isequal(e % 1, 0)
         out = Int(e)
     else
