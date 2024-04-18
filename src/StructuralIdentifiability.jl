@@ -192,6 +192,7 @@ include("precompile.jl")
 
 # ModelingToolkit extension.
 function mtk_to_si end
-export mtk_to_si
+function eval_at_nemo end
+export mtk_to_si, eval_at_nemo
 
 end
