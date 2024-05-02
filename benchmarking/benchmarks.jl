@@ -16,7 +16,7 @@ benchmarks = [
             R'(t) = gam * I(t) - (mu + a) * R(t),
             y(t) = k * I(t)
         ),
-        :skip => false,
+        :skip => true,
     ),
     Dict(
         :name => "SIWR with extra output",
@@ -28,7 +28,7 @@ benchmarks = [
             y(t) = k * I(t),
             y2(t) = S(t) + I(t) + R(t)
         ),
-        :skip => false,
+        :skip => true,
     ),
     Dict(
         :name => "Pharm",
@@ -43,7 +43,7 @@ benchmarks = [
             x3'(t) = b2 * (x2(t) - x3(t)),
             y1(t) = x0(t)
         ),
-        :skip => false,
+        :skip => true,
     ),
     Dict(
         :name => "SEAIJRC Covid model",
@@ -108,6 +108,7 @@ benchmarks = [
             y4(t) = S10(t),
             y5(t) = S11(t)
         ),
+        :skip => true,
     ),
     Dict(
         :name => "MAPK model (5 outputs bis)",
@@ -157,7 +158,7 @@ benchmarks = [
             y3(t) = S01(t) + S10(t),
             y4(t) = S11(t)
         ),
-        :skip => false,
+        :skip => true,
     ),
     Dict(
         :name => "MAPK model (6 outputs)",
@@ -208,6 +209,7 @@ benchmarks = [
             y4(t) = S10(t),
             y5(t) = S11(t)
         ),
+        :skip => false,
     ),
     Dict(
         :name => "Goodwin oscillator",
@@ -308,6 +310,63 @@ benchmarks = [
             y2(t) = x2(t)
         ),
     ),
+    Dict(
+        :name => "Akt pathway",
+        :ode => @ODEmodel(
+        	EGFR'(t) = -reaction_1_k1*EGF_EGFR(t) + reaction_1_k2*EGF_EGFR(t) - EGFR(t)*EGFR_turnover + EGFR_turnover*pro_EGFR(t),
+        	pEGFR'(t) = -reaction_4_k1*pEGFR(t) + reaction_9_k1*EGF_EGFR(t) - pEGFR(t)*Akt(t)*reaction_2_k1 + reaction_3_k1*pEGFR_Akt(t) + pEGFR_Akt(t)*reaction_2_k2,
+        	pEGFR_Akt'(t) = pEGFR(t)*Akt(t)*reaction_2_k1 - reaction_3_k1*pEGFR_Akt(t) - pEGFR_Akt(t)*reaction_2_k2,
+        	Akt'(t) = pAkt(t)*reaction_7_k1 - pEGFR(t)*Akt(t)*reaction_2_k1 + pEGFR_Akt(t)*reaction_2_k2,
+        	pAkt'(t) = -pAkt(t)*reaction_7_k1 - pAkt(t)*reaction_5_k1*S6(t) + reaction_6_k1*pAkt_S6(t) + reaction_3_k1*pEGFR_Akt(t) + pAkt_S6(t)*reaction_5_k2,
+        	S6'(t) = pS6(t)*reaction_8_k1 - pAkt(t)*reaction_5_k1*S6(t) + pAkt_S6(t)*reaction_5_k2,
+        	pAkt_S6'(t) = pAkt(t)*reaction_5_k1*S6(t) - reaction_6_k1*pAkt_S6(t) - pAkt_S6(t)*reaction_5_k2,
+        	pS6'(t) = -pS6(t)*reaction_8_k1 + reaction_6_k1*pAkt_S6(t),
+        	EGF_EGFR'(t) = reaction_1_k1*EGF_EGFR(t) - reaction_9_k1*EGF_EGFR(t) - reaction_1_k2*EGF_EGFR(t),
+        	y1(t) = pEGFR(t)*a1 + a1*pEGFR_Akt(t),
+        	y2(t) = a2*pAkt(t) + a2*pAkt_S6(t),
+        	y3(t) = pS6(t)*a3
+        ),
+    ),
+    Dict(
+        :name => "Bilirubin2_io",
+        :ode => @ODEmodel(
+        	x1'(t) = -k01*x1(t) - k31*x1(t) - k21*x1(t) + k12*x2(t) + x3(t)*k13 + u(t) - x1(t)*k41 + x4(t)*k14,
+        	x2'(t) = k21*x1(t) - k12*x2(t),
+        	x3'(t) = k31*x1(t) - x3(t)*k13,
+        	x4'(t) = x1(t)*k41 - x4(t)*k14,
+        	y1(t) = x1(t)
+        ),
+    ),
+    Dict(
+        :name => "LLW1987",
+        :ode => @ODEmodel(
+        	x1'(t) = p2*u(t) - p1*x1(t),
+        	x2'(t) = -p3*x2(t) + p4*u(t),
+        	x3'(t) = p2*x2(t)*u(t) - p3*x3(t) + p4*u(t)*x1(t) - x3(t)*p1,
+        	y1(t) = x3(t)
+        ),
+    ),
+    Dict(
+        :name => "SLIQR",
+        :ode => @ODEmodel(
+        	S'(t) = -b*In(t)*S(t)*Ninv - S(t)*Ninv*u(t),
+        	L'(t) = b*In(t)*S(t)*Ninv - a*L(t),
+        	In'(t) = -In(t)*g + s*Q(t) + a*L(t),
+        	Q'(t) = -e*In(t)*g + In(t)*g - s*Q(t),
+        	y(t) = In(t)*Ninv
+        ),
+    ),
+    Dict(
+        :name => "Treatment",
+        :ode => @ODEmodel(
+        	S'(t) = (-b*In(t)*S(t) - b*S(t)*d*Tr(t))//N(t),
+        	In'(t) = (b*In(t)*S(t) + b*S(t)*d*Tr(t) - In(t)*N(t)*g - In(t)*N(t)*a)//N(t),
+        	Tr'(t) = In(t)*g - nu*Tr(t),
+        	N'(t) = 0,
+        	y1(t) = Tr(t),
+        	y2(t) = N(t)
+        ),
+    ),
 ]
 
 # the NFkB example
@@ -341,8 +400,6 @@ ode = @ODEmodel(
     y5(t) = x2(t),
     y6(t) = x12(t)
 )
-
-QQ = StructuralIdentifiability.Nemo.QQ
 
 ode = set_parameter_values(
     ode,
