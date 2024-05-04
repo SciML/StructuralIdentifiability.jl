@@ -75,13 +75,11 @@ include("discrete.jl")
 include("known_ic.jl")
 include("input_macro.jl")
 
-using InteractiveUtils
-
 function __init__()
-    # if run in Github CI
-    if parse(Bool, get(ENV, "GITHUB_ACTIONS", "false"))
-        InteractiveUtils.versioninfo(verbose=true)
-    end
+    # # if run in Github CI
+    # if parse(Bool, get(ENV, "GITHUB_ACTIONS", "false"))
+    #     InteractiveUtils.versioninfo(verbose=true)
+    # end
     _si_logger[] = @static if VERSION >= v"1.7.0"
         Logging.ConsoleLogger(Logging.Info, show_limited = false)
     else
