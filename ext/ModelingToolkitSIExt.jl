@@ -23,7 +23,7 @@ function StructuralIdentifiability.eval_at_nemo(e::Num, vals::Dict)
 end
 
 function StructuralIdentifiability.eval_at_nemo(e::SymbolicUtils.BasicSymbolic, vals::Dict)
-    if Symbolics.istree(e)
+    if Symbolics.iscall(e)
         # checking if it is a function of the form x(t), a bit dirty
         if length(Symbolics.arguments(e)) == 1 && "$(first(Symbolics.arguments(e)))" == "t"
             return vals[e]
@@ -194,7 +194,7 @@ function __mtk_to_si(
     params = ModelingToolkit.parameters(de)
     t = ModelingToolkit.arguments(diff_eqs[1].lhs)[1]
     params_from_measured_quantities = union(
-        [filter(s -> !istree(s), get_variables(y[2])) for y in measured_quantities]...,
+        [filter(s -> !iscall(s), get_variables(y[2])) for y in measured_quantities]...,
     )
     params = union(params, params_from_measured_quantities)
 
@@ -401,9 +401,9 @@ end
 
 """
     function assess_local_identifiability(
-        dds::ModelingToolkit.DiscreteSystem; 
-        measured_quantities=Array{ModelingToolkit.Equation}[], 
-        funcs_to_check=Array{}[], 
+        dds::ModelingToolkit.DiscreteSystem;
+        measured_quantities=Array{ModelingToolkit.Equation}[],
+        funcs_to_check=Array{}[],
         known_ic=Array{}[],
         prob_threshold::Float64=0.99)
 
@@ -477,7 +477,7 @@ function _assess_local_identifiability(
     if length(funcs_to_check) == 0
         params = parameters(dds)
         params_from_measured_quantities = union(
-            [filter(s -> !istree(s), get_variables(y)) for y in measured_quantities]...,
+            [filter(s -> !iscall(s), get_variables(y)) for y in measured_quantities]...,
         )
         funcs_to_check = vcat(
             [
@@ -519,7 +519,7 @@ system.
 
 This functions takes the following optional arguments:
 - `measured_quantities` - the output functions of the model.
-- `loglevel` - the verbosity of the logging 
+- `loglevel` - the verbosity of the logging
   (can be Logging.Error, Logging.Warn, Logging.Info, Logging.Debug)
 
 ## Example
@@ -533,7 +533,7 @@ using ModelingToolkit
 D = Differential(t)
 
 eqs = [
-    D(x0) ~ -(a01 + a21) * x0 + a12 * x1, 
+    D(x0) ~ -(a01 + a21) * x0 + a12 * x1,
     D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0
 ]
 de = ODESystem(eqs, t, name = :Test)
