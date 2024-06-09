@@ -603,7 +603,7 @@ end
 function _find_identifiable_functions(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
-    known_ic = [],
+    known_ic = Array{Symbolics.Num}[],
     prob_threshold::Float64 = 0.99,
     seed = 42,
     with_states = false,

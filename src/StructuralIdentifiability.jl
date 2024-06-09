@@ -124,10 +124,9 @@ function assess_identifiability(
                 funcs_to_check = funcs_to_check,
                 prob_threshold = prob_threshold,
             )
-            funcs_to_check_ic = replace_with_ic(ode, funcs_to_check)
-            return OrderedDict(
-                f_ic => res[f] for (f, f_ic) in zip(funcs_to_check, funcs_to_check_ic)
-            )
+            funcs = keys(res)
+            funcs_ic = replace_with_ic(ode, funcs)
+            return OrderedDict(f_ic => res[f] for (f, f_ic) in zip(funcs, funcs_ic))
         end
     end
 end
