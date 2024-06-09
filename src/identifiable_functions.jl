@@ -69,7 +69,7 @@ function find_identifiable_functions(
                 rational_interpolator = rational_interpolator,
             )
         else
-            return _find_identifiable_functions_kic(
+            id_funcs = _find_identifiable_functions_kic(
                 ode,
                 known_ic,
                 prob_threshold = prob_threshold,
@@ -77,6 +77,8 @@ function find_identifiable_functions(
                 simplify = simplify,
                 rational_interpolator = rational_interpolator,
             )
+            # renaming variables from `x(t)` to `x(0)`
+            return replace_with_ic(ode, id_funcs)
         end
     end
 end

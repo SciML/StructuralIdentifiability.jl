@@ -340,22 +340,25 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], prob_threshold = 0.99, loglevel=Logging.Info)
+    assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=Array{ModelingToolkit.Equation}[], funcs_to_check=[], known_ic=[], prob_threshold = 0.99, loglevel=Logging.Info)
 
 Input:
 - `ode` - the ModelingToolkit.ODESystem object that defines the model
 - `measured_quantities` - the output functions of the model
 - `funcs_to_check` - functions of parameters for which to check the identifiability
+- `known_ic` - functions, for which initial conditions are assumed to be known
 - `prob_threshold` - probability of correctness.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
 Assesses identifiability (both local and global) of a given ODE model (parameters detected automatically). The result is guaranteed to be correct with the probability
 at least `prob_threshold`.
+If known initial conditions are provided, the identifiability results for the states will also hold at `t = 0`
 """
 function StructuralIdentifiability.assess_identifiability(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = [],
+    known_ic = [],
     prob_threshold = 0.99,
     loglevel = Logging.Info,
 )
@@ -365,6 +368,7 @@ function StructuralIdentifiability.assess_identifiability(
             ode,
             measured_quantities = measured_quantities,
             funcs_to_check = funcs_to_check,
+            known_ic = known_ic,
             prob_threshold = prob_threshold,
         )
     end
@@ -374,6 +378,7 @@ function _assess_identifiability(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = [],
+    known_ic = [],
     prob_threshold = 0.99,
 )
     if isempty(measured_quantities)
@@ -387,13 +392,32 @@ function _assess_identifiability(
     end
     funcs_to_check_ = [eval_at_nemo(each, conversion) for each in funcs_to_check]
 
-    result = StructuralIdentifiability._assess_identifiability(
-        ode,
-        funcs_to_check = funcs_to_check_,
-        prob_threshold = prob_threshold,
-    )
+    known_ic_ = [eval_at_nemo(each, conversion) for each in known_ic]
+
+    nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
+    result = nothing
+    if isempty(known_ic)
+        result = StructuralIdentifiability._assess_identifiability(
+            ode,
+            funcs_to_check = funcs_to_check_,
+            prob_threshold = prob_threshold,
+        )
+        return OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
+    else
+        result = StructuralIdentifiability._assess_identifiability_kic(
+            ode,
+            known_ic_,
+            funcs_to_check = funcs_to_check_,
+            prob_threshold = prob_threshold,
+        )
+    end
     nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
     out_dict = OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
+    if length(known_ic) > 0
+        @warn "Since known initial conditions were provided, identifiability of states (e.g., `x(t)`) is at t = 0 only !"
+        t = SymbolicUtils.Sym{Real}(:t)
+        out_dict = OrderedDict(substitute(k, Dict(t => 0)) => v for (k, v) in out_dict)
+    end
     return out_dict
 end
 
@@ -510,7 +534,7 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    find_identifiable_functions(ode::ModelingToolkit.ODESystem; measured_quantities=[], options...)
+    find_identifiable_functions(ode::ModelingToolkit.ODESystem; measured_quantities=[], known_ic=[], options...)
 
 Finds all functions of parameters/states that are identifiable in the given ODE
 system.
@@ -519,6 +543,9 @@ system.
 
 This functions takes the following optional arguments:
 - `measured_quantities` - the output functions of the model.
+- `known_ic` - a list of functions whose initial conditions are assumed to be known,
+  then the returned identifiable functions will be functions of parameters and
+  initial conditions, not states (this is an experimental functionality).
 - `loglevel` - the verbosity of the logging
   (can be Logging.Error, Logging.Warn, Logging.Info, Logging.Debug)
 
@@ -549,6 +576,7 @@ find_identifiable_functions(de, measured_quantities = [y1 ~ x0])
 function StructuralIdentifiability.find_identifiable_functions(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
+    known_ic = [],
     prob_threshold::Float64 = 0.99,
     seed = 42,
     with_states = false,
@@ -562,6 +590,7 @@ function StructuralIdentifiability.find_identifiable_functions(
         return _find_identifiable_functions(
             ode,
             measured_quantities = measured_quantities,
+            known_ic = known_ic,
             prob_threshold = prob_threshold,
             seed = seed,
             with_states = with_states,
@@ -574,6 +603,7 @@ end
 function _find_identifiable_functions(
     ode::ModelingToolkit.ODESystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
+    known_ic = [],
     prob_threshold::Float64 = 0.99,
     seed = 42,
     with_states = false,
@@ -585,17 +615,36 @@ function _find_identifiable_functions(
         measured_quantities = get_measured_quantities(ode)
     end
     ode, conversion = mtk_to_si(ode, measured_quantities)
-    result = StructuralIdentifiability._find_identifiable_functions(
-        ode,
-        simplify = simplify,
-        prob_threshold = prob_threshold,
-        seed = seed,
-        with_states = with_states,
-        rational_interpolator = rational_interpolator,
-    )
+    known_ic_ = [eval_at_nemo(each, conversion) for each in known_ic]
+    result = nothing
+    if isempty(known_ic)
+        result = StructuralIdentifiability._find_identifiable_functions(
+            ode,
+            simplify = simplify,
+            prob_threshold = prob_threshold,
+            seed = seed,
+            with_states = with_states,
+            rational_interpolator = rational_interpolator,
+        )
+    else
+        result = StructuralIdentifiability._find_identifiable_functions_kic(
+            ode,
+            known_ic_,
+            simplify = simplify,
+            prob_threshold = prob_threshold,
+            seed = seed,
+            rational_interpolator = rational_interpolator,
+        )
+    end
     result = [parent_ring_change(f, ode.poly_ring) for f in result]
     nemo2mtk = Dict(v => Num(k) for (k, v) in conversion)
     out_funcs = [eval_at_dict(func, nemo2mtk) for func in result]
+    if length(known_ic) > 0
+        @warn "Since known initial conditions were provided, identifiability of states (e.g., `x(t)`) is at t = 0 only !"
+        t = SymbolicUtils.Sym{Real}(:t)
+        out_funcs = [substitute(f, Dict(t => 0)) for f in out_funcs]
+    end
+
     return out_funcs
 end
 

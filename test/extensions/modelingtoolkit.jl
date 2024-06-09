@@ -717,4 +717,132 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         @test issetequal(sym_dict(local_id_1), sym_dict(local_id_2))
         @test length(ifs_1) == length(ifs_2)
     end
+
+    @testset "Identifiability of MTK models with known generic initial conditions" begin
+        cases = []
+
+        @parameters a, b, c, d
+        @variables t, x1(t), x2(t)
+        D = Differential(t)
+        x1_0 = substitute(x1, Dict(t => 0))
+        x2_0 = substitute(x2, Dict(t => 0))
+        eqs = [D(x1) ~ a * x1 - b * x1 * x2, D(x2) ~ -c * x2 + d * x1 * x2]
+        ode_mtk = ODESystem(eqs, t, name = :lv)
+        push!(
+            cases,
+            Dict(
+                :ode => ode_mtk,
+                :measured => [x1],
+                :known => [x2],
+                :to_check => [],
+                :correct_funcs => [a, b, c, d, x1_0, x2_0],
+                :correct_ident =>
+                    OrderedDict(x => :globally for x in [x1_0, x2_0, a, b, c, d]),
+            ),
+        )
+
+        @parameters c
+        @variables x3(t)
+        x3_0 = substitute(x3, Dict(t => 0))
+        eqs = [D(x1) ~ a + x2 + x3, D(x2) ~ b^2 + c, D(x3) ~ -c]
+        ode_mtk = ODESystem(eqs, t, name = :ex2)
+
+        push!(
+            cases,
+            Dict(
+                :ode => ode_mtk,
+                :measured => [x1],
+                :known => [x2, x3],
+                :to_check => [],
+                :correct_funcs => [a, b^2, x1_0, x2_0, x3_0],
+                :correct_ident => OrderedDict(
+                    x1_0 => :globally,
+                    x2_0 => :globally,
+                    x3_0 => :globally,
+                    a => :globally,
+                    b => :locally,
+                    c => :nonidentifiable,
+                ),
+            ),
+        )
+
+        push!(
+            cases,
+            Dict(
+                :ode => ode_mtk,
+                :measured => [x1],
+                :known => [x2, x3],
+                :to_check => [b^2, x2 * c],
+                :correct_funcs => [a, b^2, x1_0, x2_0, x3_0],
+                :correct_ident =>
+                    OrderedDict(b^2 => :globally, x2_0 * c => :nonidentifiable),
+            ),
+        )
+
+        eqs = [D(x1) ~ a * x1, D(x2) ~ x1 + 1 / x1]
+        ode_mtk = ODESystem(eqs, t, name = :ex3)
+        push!(
+            cases,
+            Dict(
+                :ode => ode_mtk,
+                :measured => [x2],
+                :known => [x1],
+                :to_check => [],
+                :correct_funcs => [a, x1_0, x2_0],
+                :correct_ident =>
+                    OrderedDict(x1_0 => :globally, x2_0 => :globally, a => :globally),
+            ),
+        )
+
+        @parameters alpha, beta, gama, delta, sigma
+        @variables x4(t)
+        x4_0 = substitute(x4, Dict(t => 0))
+        eqs = [
+            D(x1) ~ -b * x1 + 1 / (c + x4),
+            D(x2) ~ alpha * x1 - beta * x2,
+            D(x3) ~ gama * x2 - delta * x3,
+            D(x4) ~ sigma * x4 * (gama * x2 - delta * x3) / x3,
+        ]
+        ode_mtk = ODESystem(eqs, t, name = :goodwin)
+        push!(
+            cases,
+            Dict(
+                :ode => ode_mtk,
+                :measured => [x1],
+                :known => [x2, x3],
+                :to_check => [alpha, alpha * gama],
+                :correct_funcs => [
+                    sigma,
+                    c,
+                    b,
+                    x4_0,
+                    x3_0,
+                    x2_0,
+                    x1_0,
+                    beta * delta,
+                    alpha * gama,
+                    beta + delta,
+                    -delta * x3_0 + gama * x2_0,
+                ],
+                :correct_ident => OrderedDict(alpha => :locally, alpha * gama => :globally),
+            ),
+        )
+
+        for case in cases
+            ode = case[:ode]
+            y = case[:measured]
+            known = case[:known]
+            result_funcs =
+                find_identifiable_functions(ode, known_ic = known, measured_quantities = y)
+            correct_funcs = @test Set(result_funcs) == Set(case[:correct_funcs])
+
+            result_ident = assess_identifiability(
+                ode,
+                known_ic = known,
+                measured_quantities = y,
+                funcs_to_check = case[:to_check],
+            )
+            @test case[:correct_ident] == result_ident
+        end
+    end
 end
