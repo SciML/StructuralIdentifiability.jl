@@ -48,7 +48,7 @@
 
     # Example 1 from https://doi.org/10.1016/j.automatica.2008.03.019
     dds = @DDSmodel(
-        x1(t + 1) = theta1 * x1(t) + x2(t), 
+        x1(t + 1) = theta1 * x1(t) + x2(t),
         x2(t + 1) = (1 - theta2) * x1(t) + x2(t)^2 + u(t),
         y(t) = x1(t)
     )
@@ -64,7 +64,7 @@
 
     # Example 2 from https://doi.org/10.1016/j.automatica.2008.03.019
     dds = @DDSmodel(
-        x1(t + 1) = theta1 * x1(t)^2 + theta2 * x2(t) + u(t), 
+        x1(t + 1) = theta1 * x1(t)^2 + theta2 * x2(t) + u(t),
         x2(t + 1) = theta3 * x1(t),
         y(t) = x1(t)
     )
@@ -85,7 +85,7 @@
     )
 
     dds = @DDSmodel(
-        x1(t + 1) = theta1 * x1(t)^2 + theta2 * x2(t) + u(t), 
+        x1(t + 1) = theta1 * x1(t)^2 + theta2 * x2(t) + u(t),
         x2(t + 1) = theta3 * x1(t),
         y(t) = x1(t),
         y2(t) = x2(t)
@@ -104,9 +104,8 @@
             :known => :none,
         ),
     )
- 
-    #---------------------
 
+    #---------------------
 
     for c in cases
         @test assess_local_identifiability(

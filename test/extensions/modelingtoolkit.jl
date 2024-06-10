@@ -435,7 +435,11 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         @variables t S(t) I(t) R(t) y(t)
         k = ShiftIndex(t)
 
-        eqs = [S(k) ~ S(k - 1) - β * S(k - 1) * I(k - 1), I(k) ~ I(k - 1) + β * S(k - 1) * I(k - 1) - α * I(k - 1), R(k) ~ R(k - 1) + α * I(k - 1)]
+        eqs = [
+            S(k) ~ S(k - 1) - β * S(k - 1) * I(k - 1),
+            I(k) ~ I(k - 1) + β * S(k - 1) * I(k - 1) - α * I(k - 1),
+            R(k) ~ R(k - 1) + α * I(k - 1),
+        ]
         @mtkbuild sir = DiscreteSystem(eqs, t)
         push!(
             cases,
@@ -488,7 +492,10 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         @parameters a b c d
         @variables x1(t) x2(t) y2(t)
 
-        eqs = [x1(k) ~ a * x1(k - 1) - b * x1(k - 1) * x2(k - 1), x2(k) ~ -c * x2(k - 1) + d * x1(k - 1) * x2(k - 1)]
+        eqs = [
+            x1(k) ~ a * x1(k - 1) - b * x1(k - 1) * x2(k - 1),
+            x2(k) ~ -c * x2(k - 1) + d * x1(k - 1) * x2(k - 1),
+        ]
 
         @mtkbuild lv = DiscreteSystem(eqs, t)
         push!(
@@ -670,7 +677,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             ) == c[:res]
         end
     end
-    
+
     @testset "Exporting ModelingToolkit Model to SI Model" begin
 
         # Creates MTK model and assesses its identifiability.
