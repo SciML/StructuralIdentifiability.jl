@@ -428,16 +428,15 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
               correct
     end
 
-    #=
     @testset "Discrete local identifiability, ModelingToolkit interface" begin
         cases = []
 
         @parameters α β
         @variables t S(t) I(t) R(t) y(t)
-        D = Difference(t; dt = 1.0)
+        k = ShiftIndex(t)
 
-        eqs = [D(S) ~ -β * S * I, D(I) ~ β * S * I - α * I, D(R) ~ α * I]
-        @named sir = DiscreteSystem(eqs)
+        eqs = [S(k) ~ S(k - 1) - β * S(k - 1) * I(k - 1), I(k) ~ I(k - 1) + β * S(k - 1) * I(k - 1) - α * I(k - 1), R(k) ~ R(k - 1) + α * I(k - 1)]
+        @mtkbuild sir = DiscreteSystem(eqs, t)
         push!(
             cases,
             Dict(
@@ -451,12 +450,11 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         )
 
         @parameters θ
-        @variables t x(t) y(t)
-        D = Difference(t; dt = 1.0)
+        @variables x(t) y(t)
 
-        eqs = [D(x) ~ θ * x^3 - x]
+        eqs = [x(k) ~ θ * x(k - 1)^3]
 
-        @named eqs = DiscreteSystem(eqs)
+        @mtkbuild eqs = DiscreteSystem(eqs, t)
         push!(
             cases,
             Dict(
@@ -470,12 +468,11 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         )
 
         @parameters θ β
-        @variables t x1(t) x2(t) y(t)
-        D = Difference(t; dt = 1.0)
+        @variables x1(t) x2(t) y(t)
 
-        eqs = [D(x1) ~ x1 + x2, D(x2) ~ θ + β]
+        eqs = [x1(k) ~ x1(k - 1) + x2(k - 1), x2(k) ~ x2(k - 1) + θ + β]
 
-        @named eqs = DiscreteSystem(eqs)
+        @mtkbuild eqs = DiscreteSystem(eqs, t)
         push!(
             cases,
             Dict(
@@ -489,12 +486,11 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         )
 
         @parameters a b c d
-        @variables t x1(t) x2(t) u(t) y2(t)
-        D = Difference(t; dt = 1.0)
+        @variables x1(t) x2(t) y2(t)
 
-        eqs = [D(x1) ~ a * x1 - b * x1 * x2 + u, D(x2) ~ -c * x2 + d * x1 * x2]
+        eqs = [x1(k) ~ a * x1(k - 1) - b * x1(k - 1) * x2(k - 1), x2(k) ~ -c * x2(k - 1) + d * x1(k - 1) * x2(k - 1)]
 
-        @named lv = DiscreteSystem(eqs)
+        @mtkbuild lv = DiscreteSystem(eqs, t)
         push!(
             cases,
             Dict(
@@ -565,13 +561,14 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         )
 
         # Example 1 from https://doi.org/10.1016/j.automatica.2008.03.019
+        #=
+        # Commented out because MTK does not seem to support inputs
         @parameters theta1 theta2
-        @variables t x1(t) x2(t) u(t) y(t)
-        D = Difference(t; dt = 1.0)
+        @variables x1(t) x2(t) u(t) y(t)
 
-        eqs = [D(x1) ~ theta1 * x1 + x2, D(x2) ~ (1 - theta2) * x1 + x2^2 + u - x2]
+        eqs = [x1(k) ~ theta1 * x1(k - 1) + x2(k - 1), x2(k) ~ (1 - theta2) * x1(k - 1) + x2(k - 1)^2 + u(k - 1)]
 
-        @named abmd1 = DiscreteSystem(eqs)
+        @mtkbuild abmd1 = DiscreteSystem(eqs, t)
         push!(
             cases,
             Dict(
@@ -583,15 +580,16 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
                 :to_check => Array{}[],
             ),
         )
+        =#
 
         # Example 2 from https://doi.org/10.1016/j.automatica.2008.03.019
+        #=
         @parameters theta1 theta2 theta3
-        @variables t x1(t) x2(t) u(t) y(t) y2(t)
-        D = Difference(t; dt = 1.0)
+        @variables x1(t) x2(t) u(t) y(t) y2(t)
 
-        eqs = [D(x1) ~ theta1 * x1^2 + theta2 * x2 + u - x1, D(x2) ~ theta3 * x1 - x2]
+        eqs = [x1(k) ~ theta1 * x1(k - 1)^2 + theta2 * x2(k - 1) + u(k - 1), x2(k) ~ theta3 * x1(k - 1)]
 
-        @named abmd2 = DiscreteSystem(eqs)
+        @mtkbuild abmd2 = DiscreteSystem(eqs, t)
         push!(
             cases,
             Dict(
@@ -626,14 +624,13 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
                 :to_check => Array{}[],
             ),
         )
-
+        =#
         @parameters a b
-        @variables t x1(t) y(t)
-        D = Difference(t; dt = 1.0)
+        @variables x1(t) y(t)
 
-        eqs = [D(x1) ~ a]
+        eqs = [x1(k) ~ x1(k - 1) + a]
 
-        @named kic = DiscreteSystem(eqs)
+        @mtkbuild kic = DiscreteSystem(eqs, t)
         push!(
             cases,
             Dict(
@@ -673,7 +670,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             ) == c[:res]
         end
     end
-    =#
+    
     @testset "Exporting ModelingToolkit Model to SI Model" begin
 
         # Creates MTK model and assesses its identifiability.
