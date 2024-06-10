@@ -7,14 +7,7 @@ $\begin{cases}
 \mathbf{y}(t) = \mathbf{g}(\mathbf{x}(t), \mathbf{p}, \mathbf{u(t)}),
 \end{cases}$
 
-or in terms of **difference**
-
-$\begin{cases}
-\Delta\mathbf{x}(t) = \mathbf{f}(\mathbf{x}(t), \mathbf{p}, \mathbf{u}(t)),\\
-\mathbf{y}(t) = \mathbf{g}(\mathbf{x}(t), \mathbf{p}, \mathbf{u(t)}),
-\end{cases} \quad \text{where} \quad \Delta \mathbf{x}(t) := \mathbf{x}(t + 1) - \mathbf{x}(t).$
-
-In both cases,$\mathbf{x}(t), \mathbf{y}(t)$, and $\mathbf{u}(t)$ are time-dependent states, outputs, and inputs, respectively,
+where $\mathbf{x}(t), \mathbf{y}(t)$, and $\mathbf{u}(t)$ are time-dependent states, outputs, and inputs, respectively,
 and $\mathbf{p}$ are scalar parameters.
 As in the ODE case, we will call that a parameter or a states (or a function of them) is **identifiable** if its value can be recovered from
 time series for inputs and outputs (in the generic case, see Definition 3 in [^1] for details).
@@ -33,14 +26,6 @@ $
 S(t + 1) = S(t) - \beta S(t) I(t),\\
 I(t + 1) = I(t) + \beta S(t) I(t) - \alpha I(t),\\
 R(t + 1) = R(t) + \alpha I(t),\\
-y(t) = I(t),
-\end{cases}
-\quad \text{or}
-\quad
-\begin{cases}
-\Delta S(t) = -\beta S(t) I(t),\\
-\Delta I(t) = \beta S(t) I(t) - \alpha I(t),\\
-\Delta R(t) = \alpha I(t),\\
 y(t) = I(t),
 \end{cases}$
 

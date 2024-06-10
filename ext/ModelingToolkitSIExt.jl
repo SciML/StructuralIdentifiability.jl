@@ -159,7 +159,7 @@ end
 
 Input:
 - `de` - ModelingToolkit.AbstractTimeDependentSystem, a system for identifiability query
-- `measured_quantities` - array of input function in the form (name, expression)
+- `measured_quantities` - array of output function in the form (name, expression)
 
 Output:
 - `ODE` object containing required data for identifiability assessment
@@ -432,7 +432,7 @@ end
         prob_threshold::Float64=0.99)
 
 Input:
-- `dds` - the DiscreteSystem object from ModelingToolkit (with **difference** operator in the left-hand side)
+- `dds` - the DiscreteSystem object from ModelingToolkit
 - `measured_quantities` - the measurable outputs of the model
 - `funcs_to_check` - functions of parameters for which to check identifiability (all parameters and states if not specified)
 - `known_ic` - functions (of states and parameter) whose initial conditions are assumed to be known
@@ -443,7 +443,6 @@ Output:
 
 The result is correct with probability at least `prob_threshold`.
 """
-#=
 function StructuralIdentifiability.assess_local_identifiability(
     dds::ModelingToolkit.DiscreteSystem;
     measured_quantities = Array{ModelingToolkit.Equation}[],
@@ -490,13 +489,8 @@ function _assess_local_identifiability(
     # Converting the finite difference operator in the right-hand side to
     # the corresponding shift operator
     eqs = filter(eq -> !(ModelingToolkit.isoutput(eq.lhs)), ModelingToolkit.equations(dds))
-    deltas = [Symbolics.operation(e.lhs).dt for e in eqs]
-    @assert length(Set(deltas)) == 1
-    eqs_shift = [e.lhs ~ e.rhs + first(Symbolics.arguments(e.lhs)) for e in eqs]
-    dds_shift = DiscreteSystem(eqs_shift, name = gensym())
-    @debug "System transformed from difference to shift: $dds_shift"
 
-    dds_aux_ode, conversion = mtk_to_si(dds_shift, measured_quantities)
+    dds_aux_ode, conversion = mtk_to_si(dds, measured_quantities)
     dds_aux = StructuralIdentifiability.DDS{QQMPolyRingElem}(dds_aux_ode)
     if length(funcs_to_check) == 0
         params = parameters(dds)
@@ -505,7 +499,7 @@ function _assess_local_identifiability(
         )
         funcs_to_check = vcat(
             [
-                x for x in states(dds) if
+                x for x in unknowns(dds) if
                 conversion[x] in StructuralIdentifiability.x_vars(dds_aux)
             ],
             union(params, params_from_measured_quantities),
@@ -529,7 +523,6 @@ function _assess_local_identifiability(
     end
     return out_dict
 end
-=#
 
 # ------------------------------------------------------------------------------
 
