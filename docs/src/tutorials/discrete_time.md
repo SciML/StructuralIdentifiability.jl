@@ -74,6 +74,7 @@ to adjust the verbosity of logging.
 
 Another way to defined a discrete-time system and its assess identifiability is to use the [`DiscreteSystem`](https://docs.sciml.ai/ModelingToolkit/dev/tutorials/discrete_system/) object from `ModelingToolkit`.
 The following code will perform the same computation as above (note that `ModelingToolkit` requires the shifts to be negative):
+
 ```@example mtk
 using ModelingToolkit
 using StructuralIdentifiability
@@ -85,7 +86,7 @@ k = ShiftIndex(t)
 eqs = [
     S(k) ~ S(k - 1) - β * S(k - 1) * I(k - 1),
     I(k) ~ I(k - 1) + β * S(k - 1) * I(k - 1) - α * I(k - 1),
-    R(k) ~ R(k - 1) + α * I(k - 1), 
+    R(k) ~ R(k - 1) + α * I(k - 1),
 ]
 
 @mtkbuild sys = DiscreteSystem(eqs, t)
