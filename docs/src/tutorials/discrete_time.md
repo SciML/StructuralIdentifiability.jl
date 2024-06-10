@@ -72,6 +72,27 @@ assess_local_identifiability(dds; funcs_to_check = [β * S])
 As other main functions in the package, `assess_local_identifiability` accepts an optional parameter `loglevel` (default: `Logging.Info`)
 to adjust the verbosity of logging.
 
+Another way to defined a discrete-time system and its assess identifiability is to use the [`DiscreteSystem`](https://docs.sciml.ai/ModelingToolkit/dev/tutorials/discrete_system/) object from `ModelingToolkit`.
+The following code will perform the same computation as above (note that `ModelingToolkit` requires the shifts to be negative):
+```@example mtk
+using ModelingToolkit
+using StructuralIdentifiability
+
+@parameters α β
+@variables t S(t) I(t) R(t)
+k = ShiftIndex(t)
+
+eqs = [
+    S(k) ~ S(k - 1) - β * S(k - 1) * I(k - 1),
+    I(k) ~ I(k - 1) + β * S(k - 1) * I(k - 1) - α * I(k - 1),
+    R(k) ~ R(k - 1) + α * I(k - 1), 
+]
+
+@mtkbuild sys = DiscreteSystem(eqs, t)
+
+assess_local_identifiability(sys, measured_quantities = [I])
+```
+
 The implementation is based on a version of the observability rank criterion and will be described in a forthcoming paper.
 
 [^1]: > S. Nõmm, C. Moog, [*Identifiability of discrete-time nonlinear systems*](https://doi.org/10.1016/S1474-6670(17)31245-4), IFAC Proceedings Volumes, 2004.
