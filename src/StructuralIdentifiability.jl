@@ -118,12 +118,15 @@ function assess_identifiability(
                 prob_threshold = prob_threshold,
             )
         else
-            return _assess_identifiability_kic(
+            res = _assess_identifiability_kic(
                 ode,
                 known_ic,
                 funcs_to_check = funcs_to_check,
                 prob_threshold = prob_threshold,
             )
+            funcs = keys(res)
+            funcs_ic = replace_with_ic(ode, funcs)
+            return OrderedDict(f_ic => res[f] for (f, f_ic) in zip(funcs, funcs_ic))
         end
     end
 end
