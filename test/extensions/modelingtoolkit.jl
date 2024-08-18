@@ -677,14 +677,15 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         )
 
         # Example 1 from https://doi.org/10.1016/j.automatica.2008.03.019
-        #=
-        # Commented out because MTK does not seem to support inputs
         @parameters theta1 theta2
         @variables x1(t) x2(t) u(t) y(t)
 
-        eqs = [x1(k) ~ theta1 * x1(k - 1) + x2(k - 1), x2(k) ~ (1 - theta2) * x1(k - 1) + x2(k - 1)^2 + u(k - 1)]
+        eqs = [
+            x1(k) ~ theta1 * x1(k - 1) + x2(k - 1),
+            x2(k) ~ (1 - theta2) * x1(k - 1) + x2(k - 1)^2 + u(k - 1),
+        ]
 
-        @mtkbuild abmd1 = DiscreteSystem(eqs, t)
+        @named abmd1 = DiscreteSystem(eqs, t)
         push!(
             cases,
             Dict(
@@ -696,16 +697,17 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
                 :to_check => Array{}[],
             ),
         )
-        =#
 
         # Example 2 from https://doi.org/10.1016/j.automatica.2008.03.019
-        #=
         @parameters theta1 theta2 theta3
         @variables x1(t) x2(t) u(t) y(t) y2(t)
 
-        eqs = [x1(k) ~ theta1 * x1(k - 1)^2 + theta2 * x2(k - 1) + u(k - 1), x2(k) ~ theta3 * x1(k - 1)]
+        eqs = [
+            x1(k) ~ theta1 * x1(k - 1)^2 + theta2 * x2(k - 1) + u(k - 1),
+            x2(k) ~ theta3 * x1(k - 1),
+        ]
 
-        @mtkbuild abmd2 = DiscreteSystem(eqs, t)
+        @named abmd2 = DiscreteSystem(eqs, t)
         push!(
             cases,
             Dict(
@@ -740,7 +742,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
                 :to_check => Array{}[],
             ),
         )
-        =#
+
         @parameters a b
         @variables x1(t) y(t)
 
@@ -825,9 +827,11 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             return dict_out
         end
 
+        println(sym_dict(local_id_1))
+        println(sym_dict(local_id_2))
         # Checks that the two approaches yields the same result
-        @test issetequal(sym_dict(local_id_1), sym_dict(local_id_2))
-        @test issetequal(sym_dict(local_id_1), sym_dict(local_id_2))
+        @test sym_dict(local_id_1) == sym_dict(local_id_2)
+        @test sym_dict(global_id_1) == sym_dict(global_id_2)
         @test length(ifs_1) == length(ifs_2)
     end
 

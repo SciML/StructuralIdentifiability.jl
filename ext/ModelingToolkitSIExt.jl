@@ -46,6 +46,9 @@ function StructuralIdentifiability.eval_at_nemo(e::SymbolicUtils.BasicSymbolic, 
                 return args[1]^args[2]
             end
             return 1 // args[1]^(-args[2])
+            # dirty way, assumes that all shifts should be just removed
+        elseif startswith(String(Symbol(Symbolics.operation(e))), "Shift")
+            return args[1]
         end
         throw(Base.ArgumentError("Function $(Symbolics.operation(e)) is not supported"))
     elseif e isa Symbolics.Symbolic
@@ -71,20 +74,17 @@ function StructuralIdentifiability.eval_at_nemo(
 end
 
 function get_measured_quantities(ode::ModelingToolkit.ODESystem)
-    if !isempty(ModelingToolkit.observed(ode))
+    outputs = filter(eq -> ModelingToolkit.isoutput(eq.lhs), ModelingToolkit.equations(ode))
+    if !isempty(outputs)
+        return outputs
+    elseif !isempty(ModelingToolkit.observed(ode))
         return ModelingToolkit.observed(ode)
     else
-        outputs =
-            filter(eq -> ModelingToolkit.isoutput(eq.lhs), ModelingToolkit.equations(ode))
-        if !isempty(outputs)
-            return outputs
-        else
-            throw(
-                error(
-                    "Measured quantities (output functions) were not provided and no outputs were found.",
-                ),
-            )
-        end
+        throw(
+            error(
+                "Measured quantities (output functions) were not provided and no outputs were found.",
+            ),
+        )
     end
 end
 
@@ -159,6 +159,20 @@ function preprocess_ode(
 end
 
 #------------------------------------------------------------------------------
+function clean_calls(funcs)
+    res = []
+    for f in funcs
+        if length(Symbolics.arguments(f)) == 1 &&
+           !Symbolics.iscall(first(Symbolics.arguments(f)))
+            push!(res, f)
+        else
+            push!(res, first(Symbolics.arguments(f)))
+        end
+    end
+    return res
+end
+
+#------------------------------------------------------------------------------
 """
     function __mtk_to_si(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{Tuple{String, SymbolicUtils.BasicSymbolic}})
 
@@ -191,11 +205,10 @@ function __mtk_to_si(
     end
 
     y_functions = [each[2] for each in measured_quantities]
-    inputs = filter(v -> ModelingToolkit.isinput(v), ModelingToolkit.unknowns(de))
-    state_vars = filter(
-        s -> !(ModelingToolkit.isinput(s) || ModelingToolkit.isoutput(s)),
-        ModelingToolkit.unknowns(de),
-    )
+    state_vars =
+        filter(s -> !ModelingToolkit.isoutput(s), clean_calls(map(e -> e.lhs, diff_eqs)))
+    all_funcs = collect(Set(clean_calls(ModelingToolkit.unknowns(de))))
+    inputs = filter(s -> !ModelingToolkit.isoutput(s), setdiff(all_funcs, state_vars))
     params = ModelingToolkit.parameters(de)
     t = ModelingToolkit.arguments(diff_eqs[1].lhs)[1]
     params_from_measured_quantities = union(
@@ -293,13 +306,13 @@ end
     prob_threshold::Float64 = 0.99,
     type = :SE,
 )
-    if length(funcs_to_check) == 0
-        funcs_to_check = vcat(
-            [e for e in ModelingToolkit.unknowns(ode) if !ModelingToolkit.isoutput(e)],
-            ModelingToolkit.parameters(ode),
-        )
-    end
     ode, conversion = mtk_to_si(ode, measured_quantities)
+    @info "System parsed into $ode"
+    conversion_back = Dict(v => k for (k, v) in conversion)
+    if isempty(funcs_to_check)
+        funcs_to_check = [conversion_back[x] for x in [ode.x_vars..., ode.parameters...]]
+    end
+
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
 
     if isequal(type, :SE)
@@ -372,6 +385,7 @@ function _assess_identifiability(
     prob_threshold = 0.99,
 )
     ode, conversion = mtk_to_si(ode, measured_quantities)
+    @info "System parsed into $ode"
     conversion_back = Dict(v => k for (k, v) in conversion)
     if isempty(funcs_to_check)
         funcs_to_check = [conversion_back[x] for x in [ode.x_vars..., ode.parameters...]]
@@ -462,6 +476,7 @@ function _assess_local_identifiability(
 
     dds_aux_ode, conversion = mtk_to_si(dds, measured_quantities)
     dds_aux = StructuralIdentifiability.DDS{QQMPolyRingElem}(dds_aux_ode)
+    @info "Parsed into the following model: $dds_aux"
     if length(funcs_to_check) == 0
         params = parameters(dds)
         params_from_measured_quantities = union(
@@ -469,7 +484,7 @@ function _assess_local_identifiability(
         )
         funcs_to_check = vcat(
             [
-                x for x in unknowns(dds) if
+                x for x in clean_calls(unknowns(dds)) if
                 conversion[x] in StructuralIdentifiability.x_vars(dds_aux)
             ],
             union(params, params_from_measured_quantities),
@@ -477,6 +492,7 @@ function _assess_local_identifiability(
     end
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
     known_ic_ = [eval_at_nemo(x, conversion) for x in known_ic]
+    @info "Functions to check are $(["$f" for f in funcs_to_check_]) and initial conditions are known for $(["$f" for f in known_ic_])"
 
     result = StructuralIdentifiability._assess_local_identifiability_discrete_aux(
         dds_aux,
