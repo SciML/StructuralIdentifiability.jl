@@ -89,7 +89,7 @@ eqs = [
     R(k) ~ R(k - 1) + α * I(k - 1),
 ]
 
-@mtkbuild sys = DiscreteSystem(eqs, t)
+@named sys = DiscreteSystem(eqs, t)
 
 assess_local_identifiability(sys, measured_quantities = [I])
 ```

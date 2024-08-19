@@ -426,6 +426,115 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         correct = OrderedDict(x[1] => true, x[2] => true, k1 => true, k2 => true)
         @test assess_local_identifiability(sys, measured_quantities = [x[1], x[2]]) ==
               correct
+
+        #------------------------------------
+        # system from the SciML tutorial
+        # https://docs.sciml.ai/ModelingToolkit/stable/tutorials/parameter_identifiability/
+
+        @mtkmodel Biohydrogenation begin
+            @variables begin
+                x4(t)
+                x5(t)
+                x6(t)
+                x7(t)
+                y1(t), [output = true]
+                y2(t), [output = true]
+            end
+            @parameters begin
+                k5
+                k6
+                k7
+                k8
+                k9
+                k10
+            end
+            # define equations
+            @equations begin
+                D(x4) ~ -k5 * x4 / (k6 + x4)
+                D(x5) ~ k5 * x4 / (k6 + x4) - k7 * x5 / (k8 + x5 + x6)
+                D(x6) ~ k7 * x5 / (k8 + x5 + x6) - k9 * x6 * (k10 - x6) / k10
+                D(x7) ~ k9 * x6 * (k10 - x6) / k10
+                y1 ~ x4
+                y2 ~ x5
+            end
+        end
+
+        # define the system
+        @mtkbuild de = Biohydrogenation()
+
+        local_id_all = assess_local_identifiability(de, prob_threshold = 0.99)
+        @test local_id_all == OrderedDict(
+            de.x4 => true,
+            de.x5 => true,
+            de.x6 => true,
+            de.x7 => false,
+            de.k5 => true,
+            de.k6 => true,
+            de.k7 => true,
+            de.k8 => true,
+            de.k9 => true,
+            de.k10 => true,
+        )
+
+        #------------------------------------
+        # system from the SciML tutorial
+        # https://docs.sciml.ai/ModelingToolkit/stable/tutorials/parameter_identifiability/
+        @mtkmodel GoodwinOsc begin
+            @parameters begin
+                b
+                c
+                α
+                β
+                γ
+                δ
+                σ
+            end
+            @variables begin
+                x1(t)
+                x2(t)
+                x3(t)
+                x4(t)
+                y(t), [output = true]
+                y2(t), [output = true]
+            end
+            @equations begin
+                D(x1) ~ -b * x1 + 1 / (c + x4)
+                D(x2) ~ α * x1 - β * x2
+                D(x3) ~ γ * x2 - δ * x3
+                D(x4) ~ σ * x4 * (γ * x2 - δ * x3) / x3
+                y ~ x1 + x2
+                y2 ~ x2
+            end
+        end
+
+        @mtkbuild ode = GoodwinOsc()
+
+        global_id = assess_identifiability(ode)
+        @test global_id == OrderedDict(
+            ode.x1 => :globally,
+            ode.x2 => :globally,
+            ode.x3 => :nonidentifiable,
+            ode.x4 => :globally,
+            ode.b => :globally,
+            ode.c => :globally,
+            ode.α => :globally,
+            ode.β => :globally,
+            ode.γ => :nonidentifiable,
+            ode.δ => :globally,
+            ode.σ => :globally,
+        )
+        @test Set(find_identifiable_functions(ode, with_states = true)) == Set([
+            ode.x4,
+            ode.x2,
+            ode.x1,
+            ode.σ,
+            ode.δ,
+            ode.β,
+            ode.α,
+            ode.c,
+            ode.b,
+            ode.x3 / ode.γ,
+        ])
     end
 
     @testset "Discrete local identifiability, ModelingToolkit interface" begin
@@ -568,14 +677,15 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         )
 
         # Example 1 from https://doi.org/10.1016/j.automatica.2008.03.019
-        #=
-        # Commented out because MTK does not seem to support inputs
         @parameters theta1 theta2
         @variables x1(t) x2(t) u(t) y(t)
 
-        eqs = [x1(k) ~ theta1 * x1(k - 1) + x2(k - 1), x2(k) ~ (1 - theta2) * x1(k - 1) + x2(k - 1)^2 + u(k - 1)]
+        eqs = [
+            x1(k) ~ theta1 * x1(k - 1) + x2(k - 1),
+            x2(k) ~ (1 - theta2) * x1(k - 1) + x2(k - 1)^2 + u(k - 1),
+        ]
 
-        @mtkbuild abmd1 = DiscreteSystem(eqs, t)
+        @named abmd1 = DiscreteSystem(eqs, t)
         push!(
             cases,
             Dict(
@@ -587,16 +697,17 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
                 :to_check => Array{}[],
             ),
         )
-        =#
 
         # Example 2 from https://doi.org/10.1016/j.automatica.2008.03.019
-        #=
         @parameters theta1 theta2 theta3
         @variables x1(t) x2(t) u(t) y(t) y2(t)
 
-        eqs = [x1(k) ~ theta1 * x1(k - 1)^2 + theta2 * x2(k - 1) + u(k - 1), x2(k) ~ theta3 * x1(k - 1)]
+        eqs = [
+            x1(k) ~ theta1 * x1(k - 1)^2 + theta2 * x2(k - 1) + u(k - 1),
+            x2(k) ~ theta3 * x1(k - 1),
+        ]
 
-        @mtkbuild abmd2 = DiscreteSystem(eqs, t)
+        @named abmd2 = DiscreteSystem(eqs, t)
         push!(
             cases,
             Dict(
@@ -631,7 +742,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
                 :to_check => Array{}[],
             ),
         )
-        =#
+
         @parameters a b
         @variables x1(t) y(t)
 
@@ -716,9 +827,11 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             return dict_out
         end
 
+        println(sym_dict(local_id_1))
+        println(sym_dict(local_id_2))
         # Checks that the two approaches yields the same result
-        @test issetequal(sym_dict(local_id_1), sym_dict(local_id_2))
-        @test issetequal(sym_dict(local_id_1), sym_dict(local_id_2))
+        @test sym_dict(local_id_1) == sym_dict(local_id_2)
+        @test sym_dict(global_id_1) == sym_dict(global_id_2)
         @test length(ifs_1) == length(ifs_2)
     end
 
