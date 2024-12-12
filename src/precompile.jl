@@ -2,6 +2,7 @@
 @setup_workload begin
     # Putting some things in `@setup_workload` instead of `@compile_workload` can reduce the size of the
     # precompile file and potentially make loading faster.
+    """
     using Logging
     @compile_workload begin
         restart_logging(loglevel = Logging.Warn)
@@ -19,4 +20,5 @@
         end
         restart_logging(loglevel = Logging.Info)
     end
+    """
 end
