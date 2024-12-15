@@ -29,8 +29,6 @@ else
     Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(stderr, Logging.Info))
 end
 
-const _groebner_loglevel = Ref{Int}(0)
-
 function restart_logging(; loglevel = Logging.Info)
     @assert loglevel isa Base.CoreLogging.LogLevel
     _si_logger[] = @static if VERSION >= v"1.7.0"
@@ -40,13 +38,6 @@ function restart_logging(; loglevel = Logging.Info)
     end
     for r in _runtime_rubrics
         _runtime_logger[r] = 0
-    end
-    if loglevel < Logging.Info
-        _groebner_loglevel[] = 0
-    elseif loglevel < Logging.Warn
-        _groebner_loglevel[] = 0
-    else
-        _groebner_loglevel[] = 10
     end
     return nothing
 end

@@ -1,8 +1,8 @@
 # ------------------------------------------------------------------------------
 
 function check_primality_zerodim(J::Array{QQMPolyRingElem, 1})
-    J = Groebner.groebner(J, loglevel = _groebner_loglevel[])
-    basis = Groebner.kbase(J, loglevel = _groebner_loglevel[])
+    J = Groebner.groebner(J)
+    basis = Groebner.kbase(J)
     dim = length(basis)
     S = Nemo.matrix_space(Nemo.QQ, dim, dim)
     matrices = []
@@ -11,7 +11,7 @@ function check_primality_zerodim(J::Array{QQMPolyRingElem, 1})
     for v in gens(parent(first(J)))
         M = zero(S)
         for (i, vec) in enumerate(basis)
-            image = Groebner.normalform(J, v * vec, loglevel = _groebner_loglevel[])
+            image = Groebner.normalform(J, v * vec)
             for (j, base_vec) in enumerate(basis)
                 M[i, j] = Nemo.QQ(coeff(image, base_vec))
             end
