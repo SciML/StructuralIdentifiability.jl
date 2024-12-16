@@ -222,7 +222,6 @@ $sat_string
         tagged_mqs,
         ordering = ord,
         homogenize = :no,
-        loglevel = _groebner_loglevel[],
     )
     # Relations between tags in K[T]
     relations_between_tags = filter(

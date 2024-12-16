@@ -52,7 +52,7 @@ function ps_matrix_inv(
     power_series_ring = base_ring(parent(M))
     result = map(a -> power_series_ring(a), Base.inv(const_term))
     cur_prec = 1
-    while cur_prec < prec
+    while cur_prec <= prec
         result = _matrix_inv_newton_iteration(M, result)
         cur_prec *= 2
     end
@@ -161,7 +161,7 @@ function ps_matrix_homlinear_de(
         (one(parent(A)) + gen(ps_ring) * truncate_matrix(A, cur_prec)) *
         map(e -> truncate(ps_ring(e), cur_prec), Y0)
     Z = map(e -> truncate(ps_ring(e), cur_prec), Base.inv(Y0))
-    while cur_prec < prec
+    while cur_prec <= prec
         matrix_set_precision!(Y, 2 * cur_prec)
         matrix_set_precision!(Z, cur_prec)
         Y, Z = _matrix_homlinear_de_newton_iteration(A, Y, Z, cur_prec)
@@ -260,9 +260,9 @@ function ps_ode_solution(
     end
 
     cur_prec = 1
-    while cur_prec < prec
+    while cur_prec <= prec
         @debug "\t Computing power series solution, currently at precision $cur_prec"
-        new_prec = min(prec, 2 * cur_prec)
+        new_prec = min(prec + 1, 2 * cur_prec)
         for i in 1:length(x_vars)
             set_precision!(solution[x_vars[i]], new_prec)
             set_precision!(solution[x_dot_vars[i]], new_prec)

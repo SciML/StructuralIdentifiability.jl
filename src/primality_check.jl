@@ -1,8 +1,44 @@
 # ------------------------------------------------------------------------------
+# adapted from https://gitlab.inria.fr/newrur/code/-/blob/main/Julia/RationalUnivariateRepresentation.jl/src/RationalUnivariateRepresentation.jl?ref_type=heads#L180
+# thanks to Alexander Demin
+"""
+    quotient_basis(J::Array{QQMPolyRingElem, 1})
+
+Takes as input a Groebner basis J of a zero-dimensional ideal and
+returns a monomial basis of the quotient ring
+(more precisely, the list of standard monomials)
+"""
+function quotient_basis(J::Array{QQMPolyRingElem, 1})
+    if !Groebner.isgroebner(J)
+        throw(DomainError("Input is not a Groebner basis"))
+    end
+    n = length(gens(parent(first(J))))
+    leading_exponents = [first(Nemo.exponent_vectors(Nemo.leading_monomial(p))) for p in J]
+    exponents_to_check = [[0 for _ in 1:n]]
+    exponents_checked = []
+    basis_exponents = []
+    while length(exponents_to_check) > 0
+        e = popfirst!(exponents_to_check)
+        push!(exponents_checked, e)
+        if !any(map(le -> all(e .>= le), leading_exponents))
+            push!(basis_exponents, e)
+            for i in 1:n
+                next_e = copy(e)
+                next_e[i] += 1
+                if !(next_e in exponents_checked) && !(next_e in exponents_to_check)
+                    push!(exponents_to_check, next_e)
+                end
+            end
+        end
+    end
+    return [prod(gens(parent(first(J))) .^ e) for e in basis_exponents]
+end
+
+# ------------------------------------------------------------------------------
 
 function check_primality_zerodim(J::Array{QQMPolyRingElem, 1})
     J = Groebner.groebner(J)
-    basis = Groebner.kbase(J)
+    basis = quotient_basis(J)
     dim = length(basis)
     S = Nemo.matrix_space(Nemo.QQ, dim, dim)
     matrices = []
