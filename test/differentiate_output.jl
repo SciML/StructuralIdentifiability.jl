@@ -64,7 +64,7 @@ function diff_sol_Lie_derivatives(ode::ODE, params, ic, inputs, prec::Int)
                 push!(
                     result[y][v],
                     eval_at_dict(
-                        derivative(Lie_derivatives[y][j], str_to_var("$v", new_ring)),
+                        derivative(Lie_derivatives[y][j], switch_ring(v, new_ring)),
                         eval_point,
                     ),
                 )
@@ -212,6 +212,7 @@ end
         ),
     )
 
+    t = copy(test_cases)
     varnames = vcat(
         ["x_$i" for i in 1:3],
         ["p_$i" for i in 1:3],
@@ -280,14 +281,12 @@ end
             ),
             :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:2),
             :param_vals => Dict(vars[i + 2] => F(rand(1:50)) for i in 1:2),
-            :inputs => Dict(vars[5] => [F(rand(-30:30)) for i in 1:4]),
+            :inputs => Dict(vars[5] => [F(rand(-30:30)) for i in 1:5]),
             :prec => 5,
         ),
     )
 
-
-
-    for case in test_cases
+    for case in t
         ode, prec = case[:ODE], case[:prec]
         @time sol1 =
             differentiate_output(ode, case[:param_vals], case[:ic], case[:inputs], prec)
@@ -296,7 +295,7 @@ end
         for y in ode.y_vars
             for v in vcat(ode.x_vars, ode.parameters)
                 @test sol2[y][v] == [
-                    base_ring(ode.poly_ring)(coeff(sol1[y][v], j) * factorial(j)) for
+                    base_ring(ode.poly_ring)(coeff(sol1[y][v], j) * facrorial(j)) for
                     j in 0:(prec - 1)
                 ]
             end
