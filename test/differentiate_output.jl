@@ -295,7 +295,7 @@ end
         for y in ode.y_vars
             for v in vcat(ode.x_vars, ode.parameters)
                 @test sol2[y][v] == [
-                    base_ring(ode.poly_ring)(coeff(sol1[y][v], j) * facrorial(j)) for
+                    base_ring(ode.poly_ring)(coeff(sol1[y][v], j) * factorial(j)) for
                     j in 0:(prec - 1)
                 ]
             end
