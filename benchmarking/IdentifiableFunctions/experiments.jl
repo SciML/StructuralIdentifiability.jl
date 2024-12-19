@@ -1478,10 +1478,10 @@ mqs_spec = StructuralIdentifiability.ParamPunPam.specialize_mod_p(mqs, point);
 
 Groebner.logging_enabled() = false
 
-@time graph, gb = Groebner.groebner_learn(mqs_spec, loglevel = 0, sweep = true);
-@time Groebner.groebner_apply!(graph, mqs_spec, loglevel = 0, sweep = true);
+@time graph, gb = Groebner.groebner_learn(mqs_spec, sweep = true);
+@time Groebner.groebner_apply!(graph, mqs_spec, sweep = true);
 
-@benchmark Groebner.groebner_apply!($graph, $mqs_spec, loglevel = 0, sweep = true)
+@benchmark Groebner.groebner_apply!($graph, $mqs_spec, sweep = true)
 
 # Results for covid
 #=
@@ -1523,4 +1523,4 @@ BenchmarkTools.Trial: 180 samples with 1 evaluation.
  Memory estimate: 775.77 KiB, allocs estimate: 3662.
 =#
 
-@my_profview_allocs Groebner.groebner_apply!(graph, mqs_spec, loglevel = 0, sweep = true);
+@my_profview_allocs Groebner.groebner_apply!(graph, mqs_spec, sweep = true);

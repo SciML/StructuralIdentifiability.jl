@@ -64,7 +64,7 @@ function diff_sol_Lie_derivatives(ode::ODE, params, ic, inputs, prec::Int)
                 push!(
                     result[y][v],
                     eval_at_dict(
-                        derivative(Lie_derivatives[y][j], str_to_var("$v", new_ring)),
+                        derivative(Lie_derivatives[y][j], switch_ring(v, new_ring)),
                         eval_point,
                     ),
                 )
@@ -123,6 +123,57 @@ end
         ),
     )
 
+    ode = @ODEmodel(
+        x'(t) = x(t)^2 + 2 * x(t) * y(t) - 3 * a * y(t),
+        y'(t) = x(t)^2 + a * b - b^2 + 4 * b * x(t),
+        y1(t) = a * x(t),
+        y2(t) = b * y(t)^2 - y(t)
+    )
+    push!(
+        test_cases,
+        Dict(
+            :ODE => ode,
+            :ic => Dict(x => Nemo.QQ(rand(1:10)), y => Nemo.QQ(rand(1:10))),
+            :param_vals => Dict(a => Nemo.QQ(rand(1:10)), b => Nemo.QQ(rand(1:10))),
+            :inputs => Dict{P, Array{QQFieldElem, 1}}(),
+            :prec => 7,
+        ),
+    )
+
+    ode = @ODEmodel(
+        x'(t) = x(t)^2 + 2 * x(t) * y(t) - 3 * a * y(t),
+        y'(t) = x(t)^2 + a * b - b^2 + 4 * b * x(t),
+        y1(t) = a * x(t),
+        y2(t) = b * y(t)^2 - y(t)
+    )
+    push!(
+        test_cases,
+        Dict(
+            :ODE => ode,
+            :ic => Dict(x => Nemo.QQ(rand(1:10)), y => Nemo.QQ(rand(1:10))),
+            :param_vals => Dict(a => Nemo.QQ(rand(1:10)), b => Nemo.QQ(rand(1:10))),
+            :inputs => Dict{P, Array{QQFieldElem, 1}}(),
+            :prec => 9,
+        ),
+    )
+
+    ode = @ODEmodel(
+        x'(t) = x(t)^2 + 2 * x(t) * y(t) - 3 * a * y(t),
+        y'(t) = x(t)^2 + a * b - b^2 + 4 * b * x(t),
+        y1(t) = a * x(t),
+        y2(t) = b * y(t)^2 - y(t)
+    )
+    push!(
+        test_cases,
+        Dict(
+            :ODE => ode,
+            :ic => Dict(x => Nemo.QQ(rand(1:10)), y => Nemo.QQ(rand(1:10))),
+            :param_vals => Dict(a => Nemo.QQ(rand(1:10)), b => Nemo.QQ(rand(1:10))),
+            :inputs => Dict{P, Array{QQFieldElem, 1}}(),
+            :prec => 3,
+        ),
+    )
+
     ode = @ODEmodel(x'(t) = u(t) + a, y(t) = x(t))
     push!(
         test_cases,
@@ -161,6 +212,7 @@ end
         ),
     )
 
+    t = copy(test_cases)
     varnames = vcat(
         ["x_$i" for i in 1:3],
         ["p_$i" for i in 1:3],
@@ -201,8 +253,40 @@ end
             :prec => 4,
         ),
     )
+    push!(
+        test_cases,
+        Dict(
+            :ODE => ODE{P}(
+                Dict{P, DType}(
+                    vars[i] => rand_poly(1, vars[1:5]) // (vars[1] + vars[3]) for i in 1:2
+                ),
+                Dict{P, DType}(vars[i] => rand_poly(1, vars[1:5]) for i in 6:7),
+                [vars[5]],
+            ),
+            :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:2),
+            :param_vals => Dict(vars[i + 2] => F(rand(1:50)) for i in 1:2),
+            :inputs => Dict(vars[5] => [F(rand(-30:30)) for i in 1:4]),
+            :prec => 3,
+        ),
+    )
+    push!(
+        test_cases,
+        Dict(
+            :ODE => ODE{P}(
+                Dict{P, DType}(
+                    vars[i] => rand_poly(1, vars[1:5]) // (vars[1] + vars[3]) for i in 1:2
+                ),
+                Dict{P, DType}(vars[i] => rand_poly(1, vars[1:5]) for i in 6:7),
+                [vars[5]],
+            ),
+            :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:2),
+            :param_vals => Dict(vars[i + 2] => F(rand(1:50)) for i in 1:2),
+            :inputs => Dict(vars[5] => [F(rand(-30:30)) for i in 1:5]),
+            :prec => 5,
+        ),
+    )
 
-    for case in test_cases
+    for case in t
         ode, prec = case[:ODE], case[:prec]
         @time sol1 =
             differentiate_output(ode, case[:param_vals], case[:ic], case[:inputs], prec)

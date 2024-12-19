@@ -149,8 +149,8 @@ Output:
     mqs_ratfuncs = specialize(IdealMQS(ratfuncs), point; saturated = false)
     @assert parent(first(mqs_specialized)) == parent(first(mqs_ratfuncs))
     @debug "Starting the groebner basis computation"
-    gb = groebner(mqs_specialized, loglevel = _groebner_loglevel[])
-    result = map(iszero, normalform(gb, mqs_ratfuncs, loglevel = _groebner_loglevel[]))
+    gb = groebner(mqs_specialized)
+    result = map(iszero, normalform(gb, mqs_ratfuncs))
     return result
 end
 
@@ -256,8 +256,8 @@ end
     polys_specialized =
         ParamPunPam.specialize_mod_p(mqs_tobereduced, point, saturated = false)
     @assert parent(first(gens_specialized)) == parent(first(polys_specialized))
-    gb = groebner(gens_specialized, loglevel = _groebner_loglevel[])
-    nf = normalform(gb, polys_specialized, loglevel = _groebner_loglevel[])
+    gb = groebner(gens_specialized)
+    nf = normalform(gb, polys_specialized)
     result = map(iszero, nf)
     return result
 end
