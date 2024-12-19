@@ -8,7 +8,7 @@ Takes as input a Groebner basis J of a zero-dimensional ideal and
 returns a monomial basis of the quotient ring
 (more precisely, the list of standard monomials)
 """
-function quotient_basis(J::Array{QQMPolyRingElem, 1})
+function quotient_basis(J::Array{<:MPolyRingElem, 1})
     if !Groebner.isgroebner(J)
         throw(DomainError("Input is not a Groebner basis"))
     end
