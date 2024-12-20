@@ -210,9 +210,19 @@ function __mtk_to_si(
     all_funcs = collect(Set(clean_calls(ModelingToolkit.unknowns(de))))
     inputs = filter(s -> !ModelingToolkit.isoutput(s), setdiff(all_funcs, state_vars))
     params = ModelingToolkit.parameters(de)
-    t = ModelingToolkit.arguments(diff_eqs[1].lhs)[1]
+    t = ModelingToolkit.arguments(clean_calls([diff_eqs[1].lhs])[1])[1]
+    # very long if in order to avoid duplication
     params_from_measured_quantities = union(
-        [filter(s -> !iscall(s), get_variables(y[2])) for y in measured_quantities]...,
+        [
+            filter(
+                s ->
+                    !iscall(s) &&
+                        !(string(s) in string.(state_vars)) &&
+                        !(string(s) * "(t)" in string.(state_vars)) &&
+                        (string(s) != string(t)),
+                get_variables(y[2]),
+            ) for y in measured_quantities
+        ]...,
     )
     params = union(params, params_from_measured_quantities)
 
