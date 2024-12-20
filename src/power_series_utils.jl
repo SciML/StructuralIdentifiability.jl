@@ -52,7 +52,7 @@ function ps_matrix_inv(
     power_series_ring = base_ring(parent(M))
     result = map(a -> power_series_ring(a), Base.inv(const_term))
     cur_prec = 1
-    while cur_prec <= prec
+    while cur_prec < prec
         result = _matrix_inv_newton_iteration(M, result)
         cur_prec *= 2
     end
@@ -161,7 +161,7 @@ function ps_matrix_homlinear_de(
         (one(parent(A)) + gen(ps_ring) * truncate_matrix(A, cur_prec)) *
         map(e -> truncate(ps_ring(e), cur_prec), Y0)
     Z = map(e -> truncate(ps_ring(e), cur_prec), Base.inv(Y0))
-    while cur_prec <= prec
+    while cur_prec < prec
         matrix_set_precision!(Y, 2 * cur_prec)
         matrix_set_precision!(Z, cur_prec)
         Y, Z = _matrix_homlinear_de_newton_iteration(A, Y, Z, cur_prec)
@@ -239,8 +239,7 @@ function ps_ode_solution(
     Svconst = AbstractAlgebra.matrix_space(base_ring(ring), n, 1)
     eqs = Sv(equations)
 
-    x_vars = filter(v -> ("$(v)_dot" in map(string, gens(ring))), gens(ring))
-    x_vars = [x for x in x_vars]
+    x_vars = collect(filter(v -> ("$(v)_dot" in map(var_to_str, gens(ring))), gens(ring)))
     x_dot_vars = [str_to_var(var_to_str(x) * "_dot", ring) for x in x_vars]
 
     Jac_dots = S([derivative(p, xd) for p in equations, xd in x_dot_vars])
@@ -260,14 +259,14 @@ function ps_ode_solution(
     end
 
     cur_prec = 1
-    while cur_prec <= prec
+    while cur_prec < prec
         @debug "\t Computing power series solution, currently at precision $cur_prec"
-        new_prec = min(prec + 1, 2 * cur_prec)
+        new_prec = min(prec, 2 * cur_prec)
         for i in 1:length(x_vars)
             set_precision!(solution[x_vars[i]], new_prec)
             set_precision!(solution[x_dot_vars[i]], new_prec)
         end
-        eval_point = [solution[v] for v in gens(ring)]
+        eval_point = [copy(solution[v]) for v in gens(ring)]
         map(ps -> set_precision!(ps, 2 * cur_prec), eval_point)
         eqs_eval = map(p -> evaluate(p, eval_point), eqs)
         J_eval = map(p -> evaluate(p, eval_point), Jac_xs)

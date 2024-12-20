@@ -218,11 +218,7 @@ $sat_string
     $tagged_mqs
     Monom ordering:
     $(ord)"""
-    tagged_mqs_gb = groebner(
-        tagged_mqs,
-        ordering = ord,
-        homogenize = :no,
-    )
+    tagged_mqs_gb = groebner(tagged_mqs, ordering = ord, homogenize = :no)
     # Relations between tags in K[T]
     relations_between_tags = filter(
         poly -> isempty(intersect(vars(poly), vcat(sat_var, orig_vars))),

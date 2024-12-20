@@ -241,7 +241,7 @@ end
 Input: ode is an ODE over QQ, p is a prime number
 Output: the reduction mod p, throws an exception if p divides one of the denominators
 """
-function reduce_ode_mod_p(ode::ODE, p::Int)
+function reduce_ode_mod_p(ode::ODE{<:MPolyRingElem{Nemo.QQFieldElem}}, p::Int)
     new_ring, new_vars =
         Nemo.polynomial_ring(Nemo.Native.GF(p), map(var_to_str, gens(ode.poly_ring)))
     new_type = typeof(new_vars[1])
