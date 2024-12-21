@@ -239,8 +239,7 @@ function ps_ode_solution(
     Svconst = AbstractAlgebra.matrix_space(base_ring(ring), n, 1)
     eqs = Sv(equations)
 
-    x_vars = filter(v -> ("$(v)_dot" in map(string, gens(ring))), gens(ring))
-    x_vars = [x for x in x_vars]
+    x_vars = collect(filter(v -> ("$(v)_dot" in map(var_to_str, gens(ring))), gens(ring)))
     x_dot_vars = [str_to_var(var_to_str(x) * "_dot", ring) for x in x_vars]
 
     Jac_dots = S([derivative(p, xd) for p in equations, xd in x_dot_vars])
@@ -267,7 +266,7 @@ function ps_ode_solution(
             set_precision!(solution[x_vars[i]], new_prec)
             set_precision!(solution[x_dot_vars[i]], new_prec)
         end
-        eval_point = [solution[v] for v in gens(ring)]
+        eval_point = [copy(solution[v]) for v in gens(ring)]
         map(ps -> set_precision!(ps, 2 * cur_prec), eval_point)
         eqs_eval = map(p -> evaluate(p, eval_point), eqs)
         J_eval = map(p -> evaluate(p, eval_point), Jac_xs)

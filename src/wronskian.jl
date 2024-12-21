@@ -237,7 +237,7 @@ Computes the Wronskians of io_equations
 
     @debug "Constructing Wronskians"
     result = []
-    for (i, tlist) in enumerate(termlists)
+    for tlist in termlists
         n = length(tlist)
         evaled = massive_eval(tlist, ps_ext)
         S = Nemo.matrix_space(F, n, n)
