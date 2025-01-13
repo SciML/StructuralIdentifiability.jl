@@ -38,7 +38,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     x'(t) = (-V_m * x(t)) / (k_m + x(t)) + k01 * x(t),
     y(t) = c * x(t)
 )
-ident_funcs = [k01, k_m // V_m, V_m * c]
+ident_funcs = [k01, c * k_m, V_m * c]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # Parameters b and c enter the io equations only as the product b * c.
@@ -72,7 +72,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     x2'(t) = k2 * x1(t) - (k3 + k4) * x2(t),
     y(t) = x1(t)
 )
-ident_funcs = [(k1 + k2), (k1 + k2 + k3 + k4), ((k1 + k2) * (k3 + k4) - k2 * k3)]
+ident_funcs = [k1 + k2, k3 + k4, k2 * k3]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # Diagonal with simple spectrum and observable states
@@ -123,7 +123,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     x2'(t) = p3 * x1^2 + p4 * x1 * x2,
     y(t) = x1
 )
-ident_funcs = [p1 + p4, p2 * p3 - p4 * p1]
+ident_funcs = [p1 + p4, -p2 * p3 + p4 * p1]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # Goowdin oscillator
@@ -251,7 +251,7 @@ ident_funcs = [
     T,
     Dd,
     e - rR + dr * T + d * T + g - r + a * T,
-    (2 * rR * d - 2 * dr * r) // (dr - d),
+    (d*rR - dr*r)//(d - dr),
     (dr^2 + d^2 + 2 * d * a + a^2) // (dr * d + dr * a),
     (e * dr - e * d + rR * a + dr * g - d * g - r * a) // (dr - d),
     (e * dr^2 - e * dr * d + rR * dr * a + dr * d * g - dr * r * a - d^2 * g) //
@@ -980,6 +980,9 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = true))
                 StructuralIdentifiability.RationalFunctionField(true_ident_funcs),
                 p,
             )
+            @info gens(parent(numerator(first(result_funcs))))
+            # To keep track of changes in the simplification
+            @test Set(result_funcs) == Set(true_ident_funcs)
         end
     end
 end

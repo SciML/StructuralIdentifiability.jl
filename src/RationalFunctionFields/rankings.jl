@@ -64,6 +64,9 @@ function rational_function_cmp(f, g; by = :naive)
         flag = compare_rational_func_by(f, g, length, :additive)
         flag == 1 && return false
         flag == -1 && return true
+        flag = compare_rational_func_by(f, g, total_degree, :additive)
+        flag == 1 && return false
+        flag == -1 && return true
         flag = compare_rational_func_by(f, g, total_degree)
         flag == 1 && return false
         flag == -1 && return true
