@@ -47,20 +47,14 @@ permutation.*
 Provides keyword argument `by`, a sorting order. Possible options are:
 - `:rank`: Compare by rank.
 - `:naive`: Compare features one by one. Features in the order of importance:
-    - Constant fractions are smaller.
-    - Fractions with constant denominators are smaller.
-    - Fractions with less terms and total degree are smaller.
-    - Fractions with smaller leading monomial in numerator / denominator are
-    smaller.
+    - Sum of total degrees
+    - Total number of terms
+    - Higherst appearing variable
+    - Total degree of the denominator
+    - Leading terms of denominator and numerator
 """
 function rational_function_cmp(f, g; by = :naive)
     if by === :naive
-        #flag = compare_rational_func_by(f, g, !is_constant)
-        #flag == 1 && return false
-        #flag == -1 && return true
-        #flag = compare_rational_func_by(f, g, is_constant, :denominator)
-        #flag == 1 && return false
-        #flag == -1 && return true
         flag = compare_rational_func_by(f, g, total_degree, :additive)
         flag == 1 && return false
         flag == -1 && return true
