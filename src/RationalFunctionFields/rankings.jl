@@ -37,7 +37,7 @@ function generating_set_rank(funcs)
 end
 
 """
-    rational_function_cmp(f, g; by=:naive)
+    rational_function_cmp(f, g; by=:naive, priority_variables=[])
 
 Returns `true` if `f < g`.
 
@@ -49,7 +49,6 @@ Provides keyword argument `by`, a sorting order. Possible options are:
 - `:naive`: Compare features one by one. Features in the order of importance:
     - Sum of total degrees
     - Total number of terms
-    - Higherst appearing variable
     - Total degree of the denominator
     - Leading terms of denominator and numerator
 """
@@ -61,14 +60,6 @@ function rational_function_cmp(f, g; by = :naive)
         flag = compare_rational_func_by(f, g, length, :additive)
         flag == 1 && return false
         flag == -1 && return true
-        lead_f = maximum(vars(f))
-        lead_g = maximum(vars(g))
-        if lead_f < lead_g
-            return true
-        end
-        if lead_g < lead_f
-            return false
-        end
         flag = compare_rational_func_by(f, g, total_degree, :denominator)
         flag == 1 && return false
         flag == -1 && return true

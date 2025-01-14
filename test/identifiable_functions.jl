@@ -931,7 +931,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     y2(t) = k6 * (x1 + x2 + 2x3),
     y3(t) = k7 * EpoR_A
 )
-ident_funcs = [k3, EpoR_A * k7, k1 // k7, k5 // k6, k2 // k6]
+ident_funcs = [k2 // k6, k3, EpoR_A * k7, EpoR_A * k1, k5 // k6]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 ode = @ODEmodel(x1'(t) = x1, x2'(t) = x2, y(t) = x1 + x2(t))
