@@ -55,19 +55,27 @@ Provides keyword argument `by`, a sorting order. Possible options are:
 """
 function rational_function_cmp(f, g; by = :naive)
     if by === :naive
-        flag = compare_rational_func_by(f, g, !is_constant)
-        flag == 1 && return false
-        flag == -1 && return true
-        flag = compare_rational_func_by(f, g, is_constant, :denominator)
+        #flag = compare_rational_func_by(f, g, !is_constant)
+        #flag == 1 && return false
+        #flag == -1 && return true
+        #flag = compare_rational_func_by(f, g, is_constant, :denominator)
+        #flag == 1 && return false
+        #flag == -1 && return true
+        flag = compare_rational_func_by(f, g, total_degree, :additive)
         flag == 1 && return false
         flag == -1 && return true
         flag = compare_rational_func_by(f, g, length, :additive)
         flag == 1 && return false
         flag == -1 && return true
-        flag = compare_rational_func_by(f, g, total_degree, :additive)
-        flag == 1 && return false
-        flag == -1 && return true
-        flag = compare_rational_func_by(f, g, total_degree)
+        lead_f = maximum(vars(f))
+        lead_g = maximum(vars(g))
+        if lead_f < lead_g
+            return true
+        end
+        if lead_g < lead_f
+            return false
+        end
+        flag = compare_rational_func_by(f, g, total_degree, :denominator)
         flag == 1 && return false
         flag == -1 && return true
         # promotes constants in denominators
