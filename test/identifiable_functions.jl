@@ -38,7 +38,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     x'(t) = (-V_m * x(t)) / (k_m + x(t)) + k01 * x(t),
     y(t) = c * x(t)
 )
-ident_funcs = [k01, k_m // V_m, V_m * c]
+ident_funcs = [k01, c * k_m, V_m * c]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # Parameters b and c enter the io equations only as the product b * c.
@@ -72,7 +72,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     x2'(t) = k2 * x1(t) - (k3 + k4) * x2(t),
     y(t) = x1(t)
 )
-ident_funcs = [(k1 + k2), (k1 + k2 + k3 + k4), ((k1 + k2) * (k3 + k4) - k2 * k3)]
+ident_funcs = [k1 + k2, k3 + k4, k2 * k3]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # Diagonal with simple spectrum and observable states
@@ -123,7 +123,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     x2'(t) = p3 * x1^2 + p4 * x1 * x2,
     y(t) = x1
 )
-ident_funcs = [p1 + p4, p2 * p3 - p4 * p1]
+ident_funcs = [p1 + p4, -p2 * p3 + p4 * p1]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # Goowdin oscillator
@@ -159,7 +159,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     Q'(t) = -gamma * Q(t) + psi * I(t),
     y1(t) = Q(t)
 )
-ident_funcs = [gamma, beta // psi, gamma * psi - v - psi, gamma * psi - v * psi]
+ident_funcs = [gamma * psi - psi * v, beta // psi, gamma, psi * v - psi - v]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # Bilirubin2_io.
@@ -211,7 +211,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     y1(t) = x4(t),
     y2(t) = x5(t)
 )
-ident_funcs = [k7, k6, k5, k10^2, k9 * k10, k8 + 1 // 2 * k10]
+ident_funcs = [k7, k5, k6, k10 * k9, k9^2, k10 + 2 * k8]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # SLIQR
@@ -223,17 +223,15 @@ ode = StructuralIdentifiability.@ODEmodel(
     y(t) = In(t) * Ninv
 )
 ident_funcs = [
-    g + a,
-    s + g + a,
+    (a * e) // (a + e * s - s),
+    b,
+    a + g,
+    (
+        a^2 * e * s + a^2 * g + 3 * a * e * g * s - a * e * s^2 - 2 * a * g * s +
+        e^2 * g * s^2 - 2 * e * g * s^2 + g * s^2
+    ) // (a + e * s - s),
     s,
     Ninv,
-    b,
-    (e * s - s + a) // (e * s^2 * g - s^2 * g - s^2 * a + s * g * a + s * a^2),
-    e * s * g + s * a + g * a,
-    (e * s^2 + e * s * g - s^2 - s * g + g * a + a^2) //
-    (e * s^2 * g - s^2 * g - s^2 * a + s * g * a + s * a^2),
-    e * s * g * a,
-    2 * e * Ninv * s * g + 2 * Ninv * s * a + 2 * Ninv * g * a,
 ]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
@@ -251,7 +249,7 @@ ident_funcs = [
     T,
     Dd,
     e - rR + dr * T + d * T + g - r + a * T,
-    (2 * rR * d - 2 * dr * r) // (dr - d),
+    (d * rR - dr * r) // (d - dr),
     (dr^2 + d^2 + 2 * d * a + a^2) // (dr * d + dr * a),
     (e * dr - e * d + rR * a + dr * g - d * g - r * a) // (dr - d),
     (e * dr^2 - e * dr * d + rR * dr * a + dr * d * g - dr * r * a - d^2 * g) //
@@ -826,7 +824,7 @@ ident_funcs = [α, x1^2 + x2^2]
 push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
 
 ode = StructuralIdentifiability.@ODEmodel(x'(t) = a * x(t) + b * u(t), y(t) = c * x(t))
-ident_funcs = [b * c, a, x // b]
+ident_funcs = [a, b * c, x * c]
 push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
 
 # llw1987 model
@@ -843,7 +841,7 @@ ident_funcs = [
     p2 * p4 // one(x1),
     (p3 + p1) // one(x1),
     (p2 * x2 + p4 * x1) // one(x1),
-    (p3 - p1) // (p2 * x2 - p4 * x1),
+    (p2 * x2 - p4 * x1) // (p3 - p1),
 ]
 push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
 
@@ -883,26 +881,26 @@ ode = StructuralIdentifiability.@ODEmodel(
     y3(t) = a3 * pS6(t)
 )
 ident_funcs = [
+    (EGF_EGFR * reaction_9_k1) // pS6,
     reaction_8_k1,
-    reaction_2_k2,
-    reaction_5_k2,
+    a3 // reaction_5_k1,
     reaction_3_k1,
+    reaction_2_k2,
+    reaction_2_k1 // reaction_5_k1,
+    a1 // reaction_5_k1,
+    pAkt * reaction_5_k1,
+    pEGFR * reaction_5_k1,
+    pS6 * reaction_5_k1,
+    reaction_5_k2,
     reaction_6_k1,
+    a2 // reaction_5_k1,
     reaction_7_k1,
     reaction_4_k1,
-    reaction_2_k1 * pAkt_S6,
-    reaction_2_k1 * S6,
-    reaction_5_k1 * pAkt_S6,
-    pEGFR_Akt * reaction_2_k1,
-    Akt * reaction_2_k1,
-    a1 * pAkt_S6,
-    pEGFR * reaction_2_k1,
-    pAkt * reaction_2_k1,
-    a3 * pAkt_S6,
-    pS6 * reaction_2_k1,
-    a2 * pAkt_S6,
-    reaction_9_k1 * reaction_2_k1 * EGF_EGFR,
-    reaction_1_k1 - reaction_9_k1 - reaction_1_k2,
+    pAkt_S6 * reaction_5_k1,
+    reaction_1_k1 - reaction_1_k2 - reaction_9_k1,
+    pEGFR_Akt * reaction_5_k1,
+    S6 * reaction_5_k1,
+    Akt * reaction_5_k1,
 ]
 push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
 
@@ -933,18 +931,34 @@ ode = StructuralIdentifiability.@ODEmodel(
     y2(t) = k6 * (x1 + x2 + 2x3),
     y3(t) = k7 * EpoR_A
 )
-ident_funcs = [k3, k1 // k7, k5 // k2, k6 // k2, k7 * EpoR_A]
+ident_funcs = [k2 // k6, k3, EpoR_A * k7, EpoR_A * k1, k5 // k6]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 ode = @ODEmodel(x1'(t) = x1, x2'(t) = x2, y(t) = x1 + x2(t))
 ident_funcs = [x1 + x2]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = true))
 
+# SEUIR model from the reparametrization docs
+# https://docs.sciml.ai/StructuralIdentifiability/stable/tutorials/reparametrization/
+ode = @ODEmodel(
+    S'(t) = -b * (U(t) + I(t)) * S(t) / N,
+    E'(t) = b * (U(t) + I(t)) * S(t) / N - g * E(t),
+    U'(t) = (1 - a) * g * E(t) - d * U(t),
+    I'(t) = a * g * E(t) - d * I(t),
+    y(t) = I(t)
+)
+ident_funcs = [I, d, g, S * a, E * a, U * a + I * a, (N * a) // b]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = true))
+
+ode = @ODEmodel(x'(t) = alpha * x(t)^2, y(t) = x(t)^2)
+ident_funcs = [alpha^2, x * alpha]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = true))
+
 # TODO: verify that Maple returns the same
 @testset "Identifiable functions of parameters" begin
     p = 0.99
     for case in test_cases
-        for simplify in [:weak, :standard] # :strong]
+        for simplify in [:weak, :standard] #:strong?
             ode = case.ode
             true_ident_funcs = case.ident_funcs
             with_states = false
@@ -980,6 +994,11 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = true))
                 StructuralIdentifiability.RationalFunctionField(true_ident_funcs),
                 p,
             )
+            if simplify != :weak
+                @info gens(parent(numerator(first(result_funcs))))
+                # To keep track of changes in the simplification
+                @test Set(result_funcs) == Set(true_ident_funcs)
+            end
         end
     end
 end

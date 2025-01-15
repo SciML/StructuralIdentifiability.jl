@@ -278,6 +278,7 @@ Applies the following passes:
     rff::RationalFunctionField;
     discard_redundant = true,
     reversed_order = false,
+    priority_variables = [],
 )
     time_start = time_ns()
     fracs = dennums_to_fractions(rff.dennums)
@@ -290,7 +291,11 @@ Applies the following passes:
     end
     # Remove redundant pass
     if discard_redundant
-        sort!(fracs, lt = rational_function_cmp)
+        fracs_priority = filter(f -> issubset(vars(f), priority_variables), fracs)
+        fracs_rest = filter(f -> !(f in fracs_priority), fracs)
+        sort!(fracs_priority, lt = rational_function_cmp)
+        sort!(fracs_rest, lt = rational_function_cmp)
+        fracs = vcat(fracs_priority, fracs_rest)
         @debug "The pool of fractions:\n$(join(map(repr, fracs), ",\n"))"
         if reversed_order
             non_redundant = collect(1:length(fracs))
@@ -323,7 +328,7 @@ Applies the following passes:
         @debug "Out of $(length(fracs)) simplified generators there are $(length(non_redundant)) non redundant"
         fracs = fracs[non_redundant]
     end
-    sort!(fracs, lt = rational_function_cmp)
+    sort!(fracs, lt = (f, g) -> rational_function_cmp(f, g))
     spring_cleaning_pass!(fracs)
     _runtime_logger[:id_beautifulization] += (time_ns() - time_start) / 1e9
     return fracs
@@ -552,6 +557,7 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
     simplify = :standard,
     check_variables = false, # almost always slows down and thus turned off
     rational_interpolator = :VanDerHoevenLecerf,
+    priority_variables = [],
 )
     @info "Simplifying generating set. Simplification level: $simplify"
     _runtime_logger[:id_groebner_time] = 0.0
@@ -620,8 +626,10 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
     @debug """
 Final cleaning and simplification of generators. 
 Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique."""
-    runtime =
-        @elapsed new_fracs = beautiful_generators(RationalFunctionField(new_fracs_unique))
+    runtime = @elapsed new_fracs = beautiful_generators(
+        RationalFunctionField(new_fracs_unique),
+        priority_variables = priority_variables,
+    )
     @debug "Checking inclusion with probability $prob_threshold"
     runtime =
         @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), prob_threshold)

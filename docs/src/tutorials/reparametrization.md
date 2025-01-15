@@ -68,13 +68,13 @@ reparam[:new_ode]
 
 In order to analyze this result, let us give more interpretable names to the new variables and parameters:
 
-$I := I, \; \widetilde{E} := \alpha E, \widetilde{S} := \alpha, \; \widetilde{I} := \alpha (I + U), \; \gamma := \gamma,\;\delta := \delta,\;\widetilde{\beta} := \frac{\beta}{\alpha N}$
+$I := I, \; \widetilde{E} := \alpha E, \widetilde{S} := \alpha, \; \widetilde{I} := \alpha (I + U), \; \gamma := \gamma,\;\delta := \delta,\;\widetilde{N} := \frac{\alpha N}{\beta}$
 
 Then the reparametrize system becomes
 
 $\begin{cases}
-\widetilde{S}'(t) = -\widetilde{\beta} \widetilde{S}(t) \widetilde{I}(t),\\
-\widetilde{E}'(t) = \widetilde{\beta} \widetilde{S}(t) \widetilde{I}(t) - \gamma \widetilde{E}(t),\\
+\widetilde{S}'(t) = -\widetilde{S}(t) \widetilde{I}(t) / \widetilde{N},\\
+\widetilde{E}'(t) = \widetilde{S}(t) \widetilde{I}(t) / \widetilde{N} - \gamma \widetilde{E}(t),\\
 \widetilde{I}'(t) = -\delta \widetilde{I}(t) + \gamma\widetilde{E}(t),\\
 I'(t) = \gamma\widetilde{E}(t) - \delta I(t),\\
 y(t) = I(t)

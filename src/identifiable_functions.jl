@@ -123,6 +123,7 @@ function _find_identifiable_functions(
             seed = seed,
             simplify = simplify,
             rational_interpolator = rational_interpolator,
+            priority_variables = [parent_ring_change(p, bring) for p in ode.parameters],
         )
     else
         id_funcs_fracs = dennums_to_fractions(id_funcs)

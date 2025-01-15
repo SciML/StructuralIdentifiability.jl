@@ -37,7 +37,7 @@ function generating_set_rank(funcs)
 end
 
 """
-    rational_function_cmp(f, g; by=:naive)
+    rational_function_cmp(f, g; by=:naive, priority_variables=[])
 
 Returns `true` if `f < g`.
 
@@ -47,27 +47,24 @@ permutation.*
 Provides keyword argument `by`, a sorting order. Possible options are:
 - `:rank`: Compare by rank.
 - `:naive`: Compare features one by one. Features in the order of importance:
-    - Constant fractions are smaller.
-    - Fractions with constant denominators are smaller.
-    - Fractions with less terms and total degree are smaller.
-    - Fractions with smaller leading monomial in numerator / denominator are
-    smaller.
+    - Sum of total degrees
+    - Total number of terms
+    - Total degree of the denominator
+    - Leading terms of denominator and numerator
 """
 function rational_function_cmp(f, g; by = :naive)
     if by === :naive
-        flag = compare_rational_func_by(f, g, !is_constant)
-        flag == 1 && return false
-        flag == -1 && return true
-        flag = compare_rational_func_by(f, g, is_constant, :denominator)
+        flag = compare_rational_func_by(f, g, total_degree, :additive)
         flag == 1 && return false
         flag == -1 && return true
         flag = compare_rational_func_by(f, g, length, :additive)
         flag == 1 && return false
         flag == -1 && return true
-        flag = compare_rational_func_by(f, g, total_degree)
+        flag = compare_rational_func_by(f, g, total_degree, :denominator)
         flag == 1 && return false
         flag == -1 && return true
-        flag = compare_rational_func_by(f, g, leading_monomial)
+        # promotes constants in denominators
+        flag = compare_rational_func_by(f, g, leading_monomial, :denominator)
         flag == 1 && return false
         flag == -1 && return true
         flag = compare_rational_func_by(f, g, collect ∘ monomials)

@@ -22,7 +22,7 @@ are identifiable functions containing or not the state variables
         Dict(:with_states => Array{Array{P, 1}, 1}(), :no_states => Array{Array{P, 1}, 1}())
     varnames = [var_to_str(p) for p in ode.parameters]
     if with_states
-        append!(varnames, map(var_to_str, ode.x_vars))
+        varnames = vcat(map(var_to_str, ode.x_vars), varnames)
     end
     bring, _ = Nemo.polynomial_ring(base_ring(ode.poly_ring), varnames)
 
@@ -60,21 +60,7 @@ are identifiable functions containing or not the state variables
         end
     end
 
-    # Returned entities live in a new ring, different from the one
-    # attached to the input ODE. 
-    # The new ring includes only parameter variables and, occasionally, states.
-    new_vars = ode.parameters
-    if with_states
-        new_vars = vcat(new_vars, ode.x_vars)
-    end
-    new_ring, _ = polynomial_ring(Nemo.QQ, map(Symbol, new_vars))
-    new_coeff_lists = empty(coeff_lists)
-    for (key, coeff_list) in coeff_lists
-        new_coeff_lists[key] =
-            map(coeffs -> map(c -> parent_ring_change(c, new_ring), coeffs), coeff_list)
-    end
-
-    return new_coeff_lists, new_ring
+    return coeff_lists, bring
 end
 
 # ------------------------------------------------------------------------------
