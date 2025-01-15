@@ -375,7 +375,7 @@ end
 
 Input:
 - `poly` - multivariate polynomial
-- `variables` - a list of variables from the generators of the ring of p
+- `variables` - a list of variables from the generators of the ring of `poly`
 Output:
 - dictionary with keys being tuples of length `length(variables)` and values being polynomials in the variables other than those which are the coefficients at the corresponding monomials (in a smaller polynomial ring)
 """
@@ -486,7 +486,7 @@ end
     decompose_derivative(varname, prefixes)
 
 Determines if it is possible to represent the `varname` as `a_number` where `a` is an element of `prefixes`
-If yes, returns a pair (a, number), otherwise nothing
+If yes, returns a pair `(a, number)`, otherwise nothing
 """
 function decompose_derivative(varname::String, prefixes::Array{String})
     for pr in prefixes

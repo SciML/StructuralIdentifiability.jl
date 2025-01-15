@@ -195,7 +195,7 @@ Input:
 Output:
 - a list of Wronskians evaluated at a point modulo prime
 
-Computes the Wronskians of io_equations
+Computes the Wronskians of `io_equations`
 """
 @timeit _to function wronskian(
     io_equations::Dict{P, P},

@@ -29,7 +29,7 @@ R(t + 1) = R(t) + \alpha I(t),\\
 y(t) = I(t),
 \end{cases}$
 
-where the observable is `I`, the number of infected people.
+where the observable is $I$, the number of infected people.
 The native way to define such a model in `StructuralIdentifiability` is to use `@DDSmodel` macro which
 uses the shift notation:
 

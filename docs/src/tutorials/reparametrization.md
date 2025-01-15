@@ -30,9 +30,9 @@ R(t)' = \delta(U(t) + I(t)),\\
 y(t) = I(t)
 \end{cases}$
 
-In this model `S` is, as usually, the number of susceptible people, `E` is the number of people exposed to virus but not yet infected
-(as in a simple SEIR model[^1]), and `I` and `U` correspond to number of infected people who report the infection and who do not, respectively.
-We define the model but omit `R` compartment since it does not affect the output dynamics:
+In this model $S$ is, as usually, the number of susceptible people, $E$ is the number of people exposed to virus but not yet infected
+(as in a simple SEIR model[^1]), and $I$ and $U$ correspond to number of infected people who report the infection and who do not, respectively.
+We define the model but omit $R$ compartment since it does not affect the output dynamics:
 
 ```@example seuir
 using StructuralIdentifiability
