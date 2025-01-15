@@ -66,7 +66,8 @@ using StructuralIdentifiability:
     x_equations,
     y_equations,
     inputs,
-    quotient_basis
+    quotient_basis,
+    rational_function_cmp
 
 const GROUP = get(ENV, "GROUP", "All")
 
