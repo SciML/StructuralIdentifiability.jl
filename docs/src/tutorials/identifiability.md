@@ -59,7 +59,7 @@ Function `assess_local_identifiability` has several optional parameters
   - `funcs_to_check` a list of specific functions of parameters and states to check identifiability for (see an example below).
     If not provided, the identifiability is assessed for all parameters and states.
 
-  - `prob_threshold` (default $0.99$, i.e. 99%) is the probability of correctness. The algorithm can, in theory, produce wrong result, but the probability that it is correct
+  - `prob_threshold` (default `0.99`, i.e. 99%) is the probability of correctness. The algorithm can, in theory, produce wrong result, but the probability that it is correct
     is guaranteed to be at least `prob_threshold`. However, the probability bounds we use are quite conservative, so the actual probability of correctness is
     likely to be much higher.
   - `type` (default `:SE`). By default, the algorithm checks the standard single-experiment identifiability. If one sets `type = :ME`, then the algorithm
@@ -105,7 +105,7 @@ Similarly to `assess_local_identifiability`, this function has optional paramete
     more involved than for the parameters, so one may want to call the function with `funcs_to_check = ode.parameters` if the
     call `assess_identifiability(ode)` takes too long.
 
-  - `prob_threshold` (default $0.99$, i.e. 99%) is the probability of correctness. Same story as above: the probability estimates are very conservative, so the actual
+  - `prob_threshold` (default `0.99`, i.e. 99%) is the probability of correctness. Same story as above: the probability estimates are very conservative, so the actual
     error probability is much lower than 1%.
     Also, currently, the probability of correctness does not include the probability of correctness of the modular reconstruction for Groebner bases.
     This probability is ensured by an additional check modulo a large prime, and can be neglected for practical purposes.
@@ -128,7 +128,7 @@ can be exchanged. One may wonder how could we guess these functions `beta + delt
 An experimental feature allows to provide an additional keyword argument `known_ic` to inidcate functions of states and parameters for which the
 initial conditions are assumed to be known (while the initial conditions of the system are still assumed to be generic). In this case,
 the identifiability will be assessed for parameters and all the initial conditions or for the initial conditions of `funcs_to_check`.
-Let us add an assumption that the initial conditions `x2(0)` and `x3(0)` are known:
+Let us add an assumption that the initial conditions $x_2(0)$ and $x_3(0)$ are known:
 
 ```@example global
 assess_identifiability(ode, known_ic = [x2, x3])

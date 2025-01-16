@@ -36,8 +36,9 @@ end
     ps_matrix_inv(M, prec)
 
 Input:
-- `M` - a square matrix with entries in a univariate power series ring
-      it is assumed that M(0) is invertible and all entries having the same precision
+- `M` - a square matrix with entries in a univariate power series ring it is
+        assumed that `M(0)` is invertible and all entries having the same
+        precision
 - `prec` - an integer, precision, if `-1` then defaults to precision of `M`
 
 Output:
@@ -104,8 +105,8 @@ end
     ps_matrix_log(M)
 
 Input:
-- M - a square matrix with entries in a univariate power series ring
-      it is assumed that `M(0)` is the identity
+- `M` - a square matrix with entries in a univariate power series ring
+        it is assumed that `M(0)` is the identity
 Output:
 - the natural log of `M`
 """
@@ -218,8 +219,9 @@ end
 
 Input:
 - `equations` - a system of the form ``A(x, u, mu)x' - B(x, u, mu) = 0``,
-                where A is a generically nonsingular square matrix. *Assumption*: `A` is nonzero at zero
-- `ic` - initial conditions for x's (dictionary)
+                where ``A`` is a generically nonsingular square matrix.
+                *Assumption*: ``A`` is nonzero at zero
+- `ic` - initial conditions for ``x``'s (dictionary)
 - `inputs` - power series for inputs represented as arrays (dictionary)
 - `prec` - precision of the solution
 
