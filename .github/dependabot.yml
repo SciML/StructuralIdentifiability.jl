@@ -3,5 +3,9 @@ version: 2
 updates:
   - package-ecosystem: "github-actions"
     directory: "/" # Location of package manifests
+    ignore:
+      update-types:
+        - "version-update:semver-minor"
+        - "version-update:semver-patch"
     schedule:
       interval: "weekly"
