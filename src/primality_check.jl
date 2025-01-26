@@ -14,6 +14,9 @@ function quotient_basis(J::Array{<:MPolyRingElem, 1})
     end
     n = length(gens(parent(first(J))))
     leading_exponents = [first(Nemo.exponent_vectors(Nemo.leading_monomial(p))) for p in J]
+    if length(filter(e -> count(iszero, e) == n - 1, leading_exponents)) < n
+        throw(DomainError("Input does not define zerodimensional ideal"))
+    end
     exponents_to_check = [[0 for _ in 1:n]]
     exponents_checked = []
     basis_exponents = []
