@@ -13,38 +13,49 @@ import Groebner
     )
 
     io_eqs = StructuralIdentifiability.find_ioequations(ode)
-    id_funcs, bring = StructuralIdentifiability.extract_identifiable_functions_raw(io_eqs, ode, empty(ode.parameters), true);
-    
+    id_funcs, bring = StructuralIdentifiability.extract_identifiable_functions_raw(
+        io_eqs,
+        ode,
+        empty(ode.parameters),
+        true,
+    )
+
     param_ring, _ = polynomial_ring(
-       base_ring(bring),
-       map(string, ode.parameters),
-       internal_ordering = Nemo.internal_ordering(bring),
+        base_ring(bring),
+        map(string, ode.parameters),
+        internal_ordering = Nemo.internal_ordering(bring),
     )
 
     id_funcs_no_states = map(
-        polys -> map(poly -> StructuralIdentifiability.parent_ring_change(poly, param_ring), polys),
+        polys -> map(
+            poly -> StructuralIdentifiability.parent_ring_change(poly, param_ring),
+            polys,
+        ),
         id_funcs[:no_states],
-    );
+    )
 
-    rff = StructuralIdentifiability.RationalFunctionField(id_funcs_no_states);
+    rff = StructuralIdentifiability.RationalFunctionField(id_funcs_no_states)
 
     # Part 1: mod p and specialized
     p = Nemo.Native.GF(2^62 + 135)
-    StructuralIdentifiability.ParamPunPam.reduce_mod_p!(rff.mqs, p);
-    point = rand(p, length(Nemo.gens(StructuralIdentifiability.ParamPunPam.parent_params(rff.mqs))));
-    eqs = StructuralIdentifiability.ParamPunPam.specialize_mod_p(rff.mqs, point);
-    gb = Groebner.groebner(eqs, ordering=Groebner.DegRevLex())
+    StructuralIdentifiability.ParamPunPam.reduce_mod_p!(rff.mqs, p)
+    point = rand(
+        p,
+        length(Nemo.gens(StructuralIdentifiability.ParamPunPam.parent_params(rff.mqs))),
+    )
+    eqs = StructuralIdentifiability.ParamPunPam.specialize_mod_p(rff.mqs, point)
+    gb = Groebner.groebner(eqs, ordering = Groebner.DegRevLex())
     # GB is linear
     @test length(gb) == length(gens(parent(eqs[1])))
     # 10 million characters, within 5% error
     expected = 10e6
-    str = join(map(string, eqs), ",");
+    str = join(map(string, eqs), ",")
     @test (length(str) - expected) / expected * 100 < 5
-    
+
     # Part 2: over Q
     eqs = StructuralIdentifiability.fractionfree_generators_raw(rff.mqs)[1]
     # 20 million characters, within 5% error
     expected = 20e6
-    str = join(map(string, eqs), ",");
+    str = join(map(string, eqs), ",")
     @test (length(str) - expected) / expected * 100 < 5
 end
