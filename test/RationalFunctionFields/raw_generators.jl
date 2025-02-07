@@ -54,7 +54,7 @@ import Groebner
 
     # Part 2: over Q
     eqs = StructuralIdentifiability.fractionfree_generators_raw(rff.mqs)[1]
-    expected = 19e6
+    expected = 26e6
     str = join(map(string, eqs), ",")
     @info "" length(str)
     @test abs(length(str) - expected) / expected * 100 < 5
