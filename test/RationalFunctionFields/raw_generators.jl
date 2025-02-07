@@ -47,14 +47,14 @@ import Groebner
     gb = Groebner.groebner(eqs, ordering = Groebner.DegRevLex())
     # GB is linear
     @test length(gb) == length(gens(parent(eqs[1])))
-    expected = 12e6
+    expected = 10e6
     str = join(map(string, eqs), ",")
     @info "" length(str)
     @test abs(length(str) - expected) / expected * 100 < 5
 
     # Part 2: over Q
     eqs = StructuralIdentifiability.fractionfree_generators_raw(rff.mqs)[1]
-    expected = 26e6
+    expected = 19e6
     str = join(map(string, eqs), ",")
     @info "" length(str)
     @test abs(length(str) - expected) / expected * 100 < 5
