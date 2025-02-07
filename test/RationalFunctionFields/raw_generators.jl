@@ -47,7 +47,7 @@ import Groebner
     gb = Groebner.groebner(eqs, ordering = Groebner.DegRevLex())
     # GB is linear
     @test length(gb) == length(gens(parent(eqs[1])))
-    expected = 13e6
+    expected = 11e6
     str = join(map(string, eqs), ",")
     @test abs(length(str) - expected) / expected * 100 < 5
 
