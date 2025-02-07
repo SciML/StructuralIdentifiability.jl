@@ -194,9 +194,8 @@ function fractionfree_generators_raw(mqs::IdealMQS)
     K = base_ring(ring_params)
     varnames = map(string, Nemo.symbols(ring_params))
     # The hope is that new variables' names would not intersect with the old ones
-    @assert mqs.sat_var_index == length(varnames) + 1
     old_varnames = map(i -> "y$i", 1:length(varnames))
-    new_varnames = map(i -> "라$i", 1:(length(varnames) + 1))
+    new_varnames = map(i -> "__var_$i", 1:(length(varnames) + 1))
     if !isempty(intersect(old_varnames, new_varnames))
         @warn "Intersection in two sets of variables! $varnames $new_varnames"
     end
@@ -221,7 +220,7 @@ function fractionfree_generators_raw(mqs::IdealMQS)
     end
     polys[end] = sat_y
     main_var_indices = 1:(length(varnames) + 1)
-    param_var_indices = (main_var_indices + 1):length(big_vars)
+    param_var_indices = (length(varnames) + 2):length(big_vars)
     return polys, main_var_indices, param_var_indices
 end
 
