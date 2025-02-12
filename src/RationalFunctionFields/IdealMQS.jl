@@ -130,9 +130,11 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
                 matching = :byindex,
                 shift = Int(sat_var_index == 1),
             )
-            push!(dens_qq, den)
-            push!(dens_indices, (length(nums_qq) + 1, length(nums_qq) + length(plist) - 1))
-            for j in 1:length(plist)
+            # push!(dens_qq, den)
+            # push!(dens_indices, (length(nums_qq) + 1, length(nums_qq) + length(plist) - 1))
+	    append!(dens_indices, [(_i,_i) for _i in length(nums_qq) + 1:length(nums_qq) + length(plist) - 1])
+	    append!(dens_qq, [den for _i in length(nums_qq) + 1:length(nums_qq) + length(plist) - 1])
+	    for j in 1:length(plist)
                 j == pivots_indices[i] && continue
                 num = plist[j]
                 num = parent_ring_change(
@@ -141,12 +143,16 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
                     matching = :byindex,
                     shift = Int(sat_var_index == 1),
                 )
-                push!(nums_qq, num)
+		G = gcd(num, den)
+		_num, _den = num / G, den / G
+	 	# _num, _den = num, den
+		dens_qq[length(nums_qq)+1] = _den
+		push!(nums_qq, _num)
             end
         end
         parent_ring_param, _ = polynomial_ring(ring, varnames, internal_ordering = ordering)
         @debug "Constructed MQS ideal in $R_sat with $(length(nums_qq) + 1) elements"
-        @assert length(pivots_indices) == length(dens_indices) == length(dens_qq)
+        # @assert length(pivots_indices) == length(dens_indices) == length(dens_qq)
         @assert length(pivots_indices) == length(funcs_den_nums)
 
         new{elem_type(R_sat)}(
@@ -272,7 +278,7 @@ function ParamPunPam.specialize_mod_p(
         span = dens_indices[i]
         for j in span[1]:span[2]
             num, num_spec = nums_gf[j], nums_gf_spec[j]
-            polys[j] = num * den_spec - den * num_spec
+	    polys[j] = num * den_spec - den * num_spec
         end
     end
     polys[end] = sat_gf
