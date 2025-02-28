@@ -152,9 +152,9 @@
     for case in test_cases
         ode = linear_compartment_model(
             case[:graph],
-            case[:inputs],
-            case[:outputs],
-            case[:leaks],
+            inputs = case[:inputs],
+            outputs = case[:outputs],
+            leaks = case[:leaks],
         )
         bring = ode.poly_ring
         correct = Dict{QQMPolyRingElem, Symbol}()
