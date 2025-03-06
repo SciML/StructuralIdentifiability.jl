@@ -22,13 +22,13 @@ rff = RationalFunctionField([[x, y, R(1)], [y, z]])
 mutable struct RationalFunctionField{T}
     dennums::Vector{Vector{T}}
     mqs::IdealMQS{T}
+    mqs_membership::IdealMQS{T}
 
     # cached transcendence-related information
-    #trbasis_probability
-    #trbasis::Vector{Generic.FracFieldElem{T}}
-    #trbasis_jacobian::Generic.MatSpaceElem{Generic.FracFieldElem{T}}
+    trbasis_probability::Float64
+    trbasis::Vector{Generic.FracFieldElem{T}}
     # trancendence basis of the ambient rational function field over the given one
-    #trbasis_over::Vector{T}
+    trbasis_over::Vector{T}
 
     function RationalFunctionField(polys::Vector{T}) where {T}
         RationalFunctionField(polys .// one(parent(first(polys))))
@@ -38,7 +38,16 @@ mutable struct RationalFunctionField{T}
     end
     function RationalFunctionField(dennums::Vector{Vector{T}}) where {T}
         @assert !isempty(dennums)
-        new{T}(dennums, IdealMQS(dennums))
+        F = new{T}(
+            dennums,
+            IdealMQS(dennums),
+            IdealMQS(dennums),
+            0,
+            Vector{Generic.FracFieldElem{T}}(),
+            Vector{T}(),
+        )
+        update_trbasis_info!(F, 0.9999)
+        return F
     end
 end
 
@@ -54,9 +63,39 @@ end
 
 # ------------------------------------------------------------------------------
 
-#function update_trbasis_info(F::RationalFunctionField, p::Float)
+function update_trbasis_info!(F::RationalFunctionField, p::Float64)
+    F.trbasis_probability = p
+    fgens = generators(F)
+    base_vars = gens(poly_ring(F))
+    if isempty(base_vars)
+        return
+    end
+    maxdeg = maximum(map(total_degree_frac, fgens), init = 1) - 1
+    # degree of the polynomial whose nonvanishing will be needed for correct result
+    D = max(10, Int(ceil(maxdeg * length(base_vars) / (1 - p))))
+    eval_point = [Nemo.QQ(rand(1:D)) for x in base_vars]
 
-#end
+    # Filling the jacobian for generators
+    S = matrix_space(Nemo.QQ, length(base_vars), length(fgens))
+    J = zero(S)
+    for (i, f) in enumerate(fgens)
+        for (j, x) in enumerate(base_vars)
+            J[j, i] = evaluate(derivative(f, x), eval_point)
+        end
+    end
+    pivots, _ = select_pivots(Nemo.rref(J)[2])
+    _, nonpivots = select_pivots(Nemo.rref(transpose(J))[2])
+
+    old_trbasis = F.trbasis
+    F.trbasis = [fgens[i] for i in pivots]
+    F.trbasis_over = [base_vars[i] for i in nonpivots]
+    @assert length(F.trbasis) + length(F.trbasis_over) == length(base_vars)
+
+    if old_trbasis != F.trbasis
+        F.mqs_membership =
+            IdealMQS(vcat(F.dennums, [[x, one(poly_ring(F))] for x in F.trbasis_over]))
+    end
+end
 
 # ------------------------------------------------------------------------------
 
@@ -67,7 +106,7 @@ Checks whether given rational function `ratfuncs` are algebraic over the field `
 The result is correct with probability at least `p`
 
 Inputs:
-- `field` - a rational function field
+- `F` - a rational function field
 - `ratfuncs` - a list of lists of rational functions.
 - `p` real number from (0, 1)
 
@@ -75,30 +114,46 @@ Output:
 - a list `L[i]` of bools of length `length(rat_funcs)` such that `L[i]` is true iff
    the i-th function is algebraic over the `field`
 """
-function check_algebraicity(field, ratfuncs, p)
-    fgens = generators(field)
-    base_vars = gens(poly_ring(field))
-    maxdeg = maximum([
-        max(total_degree(numerator(f)), total_degree(denominator(f))) for
-        f in vcat(ratfuncs, fgens)
-    ])
+function check_algebraicity(F::RationalFunctionField, ratfuncs, p)
+    if isempty(ratfuncs)
+        return Bool[]
+    end
+    if p > F.trbasis_probability
+        update_trbasis_info!(F, p)
+    end
+    trbasis = F.trbasis
+    base_vars = gens(poly_ring(F))
+    maxdeg = maximum(map(total_degree_frac, vcat(ratfuncs, trbasis))) - 1
+
+    # Here the story for correctness is tricky. Consider the cases when the answer may be wrong
+    # - if the element is algebraic, then the only way the function would return incorrect result
+    #   is if the trbasis was incorrect
+    # - if the element is transcendental, the only way to return incorrect result would be
+    #   to have the determinant vanishing regardless of the correctness of the transcendence basis
+
     # degree of the polynomial whose nonvanishing will be needed for correct result
-    D = Int(ceil(2 * maxdeg * (length(fgens) + 1)^3 * length(ratfuncs) / (1 - p)))
+    D = max(
+        10,
+        Int(ceil(maxdeg * (length(trbasis) + 1) * (length(ratfuncs) + 1) / (1 - p))),
+    )
     eval_point = [Nemo.QQ(rand(1:D)) for x in base_vars]
 
-    # Filling the jacobain for generators
-    S = matrix_space(Nemo.QQ, length(base_vars), length(fgens) + 1)
+    # Filling the jacobain for transcendence basis
+    S = matrix_space(Nemo.QQ, length(base_vars), length(trbasis) + 1)
     J = zero(S)
-    for (i, f) in enumerate(fgens)
+    for (i, f) in enumerate(trbasis)
         for (j, x) in enumerate(base_vars)
             J[j, i] = evaluate(derivative(f, x), eval_point)
         end
     end
     rank = LinearAlgebra.rank(J)
+    if rank < length(trbasis)
+        return check_algebraicity(F, ratfuncs, p)
+    end
 
     result = Bool[]
     for f in ratfuncs
-        f = parent_ring_change(f, poly_ring(field))
+        f = parent_ring_change(f, poly_ring(F))
         for (j, x) in enumerate(base_vars)
             J[j, end] = evaluate(derivative(f, x), eval_point)
         end
@@ -137,6 +192,29 @@ function check_field_membership_mod_p(generators, rat_funcs)
         RationalFunctionField(generators),
         RationalFunctionField(rat_funcs),
     )
+end
+
+# ------------------------------------------------------------------------------
+
+@timeit _to function check_field_membership_mod_p!(
+    generators::RationalFunctionField{T},
+    tobereduced::RationalFunctionField{T},
+) where {T}
+    mqs_generators = generators.mqs
+    mqs_tobereduced = tobereduced.mqs
+    ff = Nemo.Native.GF(2^31 - 1)
+    reduce_mod_p!(mqs_generators, ff)
+    reduce_mod_p!(mqs_tobereduced, ff)
+    param_ring = ParamPunPam.parent_params(mqs_generators)
+    point = ParamPunPam.distinct_nonzero_points(ff, nvars(param_ring))
+    gens_specialized = ParamPunPam.specialize_mod_p(mqs_generators, point)
+    polys_specialized =
+        ParamPunPam.specialize_mod_p(mqs_tobereduced, point, saturated = false)
+    @assert parent(first(gens_specialized)) == parent(first(polys_specialized))
+    gb = groebner(gens_specialized)
+    nf = normalform(gb, polys_specialized)
+    result = map(iszero, nf)
+    return result
 end
 
 # ------------------------------------------------------------------------------
@@ -250,29 +328,6 @@ function fields_equal(
 ) where {T}
     new_p = 1 - (1 - prob_threshold) / 2
     return issubfield(F, E, new_p) && issubfield(E, F, new_p)
-end
-
-# ------------------------------------------------------------------------------
-
-@timeit _to function check_field_membership_mod_p!(
-    generators::RationalFunctionField{T},
-    tobereduced::RationalFunctionField{T},
-) where {T}
-    mqs_generators = generators.mqs
-    mqs_tobereduced = tobereduced.mqs
-    ff = Nemo.Native.GF(2^31 - 1)
-    reduce_mod_p!(mqs_generators, ff)
-    reduce_mod_p!(mqs_tobereduced, ff)
-    param_ring = ParamPunPam.parent_params(mqs_generators)
-    point = ParamPunPam.distinct_nonzero_points(ff, nvars(param_ring))
-    gens_specialized = ParamPunPam.specialize_mod_p(mqs_generators, point)
-    polys_specialized =
-        ParamPunPam.specialize_mod_p(mqs_tobereduced, point, saturated = false)
-    @assert parent(first(gens_specialized)) == parent(first(polys_specialized))
-    gb = groebner(gens_specialized)
-    nf = normalform(gb, polys_specialized)
-    result = map(iszero, nf)
-    return result
 end
 
 # ------------------------------------------------------------------------------

@@ -67,7 +67,8 @@ using StructuralIdentifiability:
     y_equations,
     inputs,
     quotient_basis,
-    rational_function_cmp
+    rational_function_cmp,
+    update_trbasis_info!
 
 const GROUP = get(ENV, "GROUP", "All")
 
