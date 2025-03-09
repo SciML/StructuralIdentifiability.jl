@@ -61,6 +61,14 @@ function generators(F::RationalFunctionField)
     return dennums_to_fractions(F.dennums)
 end
 
+function Base.zero(F::RationalFunctionField)
+    return zero(poly_ring(F)) // one(poly_ring(F))
+end
+
+function Base.one(F::RationalFunctionField)
+    return one(poly_ring(F)) // one(poly_ring(F))
+end
+
 # ------------------------------------------------------------------------------
 
 function update_trbasis_info!(F::RationalFunctionField, p::Float64)
@@ -75,14 +83,7 @@ function update_trbasis_info!(F::RationalFunctionField, p::Float64)
     D = max(10, Int(ceil(maxdeg * length(base_vars) / (1 - p))))
     eval_point = [Nemo.QQ(rand(1:D)) for x in base_vars]
 
-    # Filling the jacobian for generators
-    S = matrix_space(Nemo.QQ, length(base_vars), length(fgens))
-    J = zero(S)
-    for (i, f) in enumerate(fgens)
-        for (j, x) in enumerate(base_vars)
-            J[j, i] = evaluate(derivative(f, x), eval_point)
-        end
-    end
+    J = jacobian(fgens, eval_point)
     pivots, _ = select_pivots(Nemo.rref(J)[2])
     _, nonpivots = select_pivots(Nemo.rref(transpose(J))[2])
 
@@ -138,14 +139,7 @@ function check_algebraicity(F::RationalFunctionField, ratfuncs, p)
     )
     eval_point = [Nemo.QQ(rand(1:D)) for x in base_vars]
 
-    # Filling the jacobain for transcendence basis
-    S = matrix_space(Nemo.QQ, length(base_vars), length(trbasis) + 1)
-    J = zero(S)
-    for (i, f) in enumerate(trbasis)
-        for (j, x) in enumerate(base_vars)
-            J[j, i] = evaluate(derivative(f, x), eval_point)
-        end
-    end
+    J = jacobian(vcat(trbasis, zero(F)), eval_point)
     rank = LinearAlgebra.rank(J)
     if rank < length(trbasis)
         return check_algebraicity(F, ratfuncs, p)

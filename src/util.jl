@@ -573,3 +573,25 @@ function select_pivots(M::MatElem)
     end
     return pivots, nonpivots
 end
+
+# -----------------------------------------------------------------------------
+
+"""
+    jacobian(ratfuncs, point)
+
+Computes the evaluation of the jacobian of `ratfuncs` at point `point`
+"""
+function jacobian(ratfuncs, point)
+    parent_polyring = parent(numerator(first(ratfuncs)))
+    F = base_ring(parent_polyring)
+    base_vars = gens(parent_polyring)
+    @assert length(base_vars) == length(point)
+    S = matrix_space(F, length(base_vars), length(ratfuncs))
+    J = zero(S)
+    for (i, f) in enumerate(ratfuncs)
+        for (j, x) in enumerate(base_vars)
+            J[j, i] = evaluate(derivative(f, x), point)
+        end
+    end
+    return J
+end
