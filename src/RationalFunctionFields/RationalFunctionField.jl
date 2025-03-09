@@ -100,6 +100,33 @@ end
 
 # ------------------------------------------------------------------------------
 
+function _check_algebraicity(trbasis, ratfuncs, sampling_range)
+    polyring = parent(numerator(first(trbasis)))
+    field = base_ring(polyring)
+
+    while true
+        eval_point = [field(rand(1:sampling_range)) for _ in gens(polyring)]
+
+        J = jacobian(vcat(trbasis, zero(first(trbasis))), eval_point)
+        rank = LinearAlgebra.rank(J)
+        if rank < length(trbasis)
+            continue
+        end
+
+        result = Bool[]
+        for f in ratfuncs
+            f = parent_ring_change(f, polyring)
+            for (j, x) in enumerate(gens(polyring))
+                J[j, end] = evaluate(derivative(f, x), eval_point)
+            end
+            push!(result, LinearAlgebra.rank(J) == rank)
+        end
+        return result
+    end
+end
+
+# ------------------------------------------------------------------------------
+
 """
     check_algebraicity(field, ratfuncs, p)
 
@@ -123,7 +150,6 @@ function check_algebraicity(F::RationalFunctionField, ratfuncs, p)
         update_trbasis_info!(F, p)
     end
     trbasis = F.trbasis
-    base_vars = gens(poly_ring(F))
     maxdeg = maximum(map(total_degree_frac, vcat(ratfuncs, trbasis))) - 1
 
     # Here the story for correctness is tricky. Consider the cases when the answer may be wrong
@@ -137,23 +163,37 @@ function check_algebraicity(F::RationalFunctionField, ratfuncs, p)
         10,
         Int(ceil(maxdeg * (length(trbasis) + 1) * (length(ratfuncs) + 1) / (1 - p))),
     )
-    eval_point = [Nemo.QQ(rand(1:D)) for x in base_vars]
 
-    J = jacobian(vcat(trbasis, zero(F)), eval_point)
-    rank = LinearAlgebra.rank(J)
-    if rank < length(trbasis)
-        return check_algebraicity(F, ratfuncs, p)
-    end
+    return _check_algebraicity(trbasis, ratfuncs, D)
+end
 
-    result = Bool[]
-    for f in ratfuncs
-        f = parent_ring_change(f, poly_ring(F))
-        for (j, x) in enumerate(base_vars)
-            J[j, end] = evaluate(derivative(f, x), eval_point)
-        end
-        push!(result, LinearAlgebra.rank(J) == rank)
+# ------------------------------------------------------------------------------
+
+"""
+    check_algebraicity_modp(field, ratfuncs, prime)
+
+Checks whether given rational function `ratfuncs` are algebraic over the field `field`
+via randomization modulo the given `prime`
+
+Inputs:
+- `F` - a rational function field
+- `ratfuncs` - a list of lists of rational functions.
+- `prime` a prime number
+
+Output:
+- a list `L[i]` of bools of length `length(rat_funcs)` such that `L[i]` is true iff
+  the modular test concludes that the i-th function is algebraic over the `field`
+  (no mathematical guarantees)
+"""
+function check_algebraicity_modp(F::RationalFunctionField, ratfuncs, prime = 2^31 - 1)
+    if isempty(ratfuncs)
+        return Bool[]
     end
-    return result
+    finite_field = Nemo.Native.GF(prime)
+    trbasis_modp = [_reduce_mod_p(f, prime) for f in F.trbasis]
+    ratfuncs_modp = [_reduce_mod_p(f, prime) for f in ratfuncs]
+
+    return _check_algebraicity(trbasis_modp, ratfuncs_modp, prime - 1)
 end
 
 # ------------------------------------------------------------------------------

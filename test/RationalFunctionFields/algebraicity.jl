@@ -12,9 +12,11 @@
     @test F.trbasis_probability == 0.9
 
     @test check_algebraicity(F, [a, b, c, a^2 + c^2], 0.99) == [true, true, false, false]
+    @test check_algebraicity_modp(F, [a, b, c, a^2 + c^2]) == [true, true, false, false]
 
     F = RationalFunctionField([a^10 // a, 1 // c^5])
     @test check_algebraicity(F, [a, b, c], 0.99) == [true, false, true]
+    @test check_algebraicity_modp(F, [a, b, c]) == [true, false, true]
     @test F.trbasis == [a^10 // a, 1 // c^5]
     @test F.trbasis_over == [b]
 end
