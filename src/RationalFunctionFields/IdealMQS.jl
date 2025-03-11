@@ -158,14 +158,21 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     end
 end
 
+# ------------------------------------------------------------------------------
+
 Base.length(ideal::IdealMQS) = length(ideal.nums_qq) + 1
 AbstractAlgebra.base_ring(ideal::IdealMQS) = base_ring(ideal.nums_qq[1])
 AbstractAlgebra.parent(ideal::IdealMQS) = ideal.parent_ring_param
 ParamPunPam.parent_params(ideal::IdealMQS) = base_ring(ideal.parent_ring_param)
+specialization_ring(ideal::IdealMQS) = parent(ideal.nums_qq[1])
+
+# ------------------------------------------------------------------------------
 
 function are_generators_zero(mqs::IdealMQS)
     return all(x -> length(x) == 1, mqs.funcs_den_nums)
 end
+
+# ------------------------------------------------------------------------------
 
 @noinline function __throw_unlucky_evaluation(msg)
     throw(AssertionError("""
@@ -177,6 +184,8 @@ end
     $msg
     """))
 end
+
+# ------------------------------------------------------------------------------
 
 function fractionfree_generators_raw(mqs::IdealMQS)
     # TODO: this assumes mqs.sat_var_index is last, and thus is broken
@@ -211,6 +220,8 @@ function fractionfree_generators_raw(mqs::IdealMQS)
     return polys, main_var_indices, param_var_indices
 end
 
+# ------------------------------------------------------------------------------
+
 # TODO: check that the reduction is lucky.
 function ParamPunPam.reduce_mod_p!(
     mqs::IdealMQS,
@@ -232,6 +243,8 @@ function ParamPunPam.reduce_mod_p!(
     mqs.cached_sat_gf[ff] = sat_gf
     return nothing
 end
+
+# ------------------------------------------------------------------------------
 
 function ParamPunPam.specialize_mod_p(
     mqs::IdealMQS,
@@ -266,6 +279,8 @@ function ParamPunPam.specialize_mod_p(
     return polys
 end
 
+# ------------------------------------------------------------------------------
+
 function specialize(mqs::IdealMQS, point::Vector{Nemo.QQFieldElem}; saturated = true)
     @debug "Evaluating MQS ideal over QQ at $point"
     nums_qq, dens_qq, sat_qq = mqs.nums_qq, mqs.dens_qq, mqs.sat_qq
@@ -286,6 +301,29 @@ function specialize(mqs::IdealMQS, point::Vector{Nemo.QQFieldElem}; saturated = 
     polys[end] = sat_qq
     if !saturated
         resize!(polys, length(polys) - 1)
+    end
+    return polys
+end
+
+# ------------------------------------------------------------------------------
+
+function specialize_fracs_to_mqs(mqs::IdealMQS, fracs, point)
+    @assert length(point) + 1 == nvars(parent(mqs.nums_qq[1]))
+    polys = []
+    @inbounds for f in fracs
+        num, den = unpack_fraction(f)
+        num_spec, den_spec = map(p -> evaluate(p, point), [num, den])
+        num, den = map(
+            p -> parent_ring_change(
+                p,
+                specialization_ring(mqs),
+                matching = :byindex,
+                shift = Int(mqs.sat_var_index == 1),
+            ),
+            [num, den],
+        )
+        iszero(den_spec) && __throw_unlucky_evaluation("Point: $point")
+        push!(polys, num * den_spec - den * num_spec)
     end
     return polys
 end

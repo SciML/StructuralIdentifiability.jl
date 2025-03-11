@@ -223,7 +223,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     y(t) = In(t) * Ninv
 )
 ident_funcs = [
-    (a * e) // (a + e * s - s),
+    (a + e * s - s) // (a * e),
     b,
     a + g,
     (

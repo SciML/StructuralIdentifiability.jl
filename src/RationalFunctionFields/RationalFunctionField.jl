@@ -78,6 +78,9 @@ function update_trbasis_info!(F::RationalFunctionField, p::Float64)
     if isempty(base_vars)
         return
     end
+    if isempty(fgens)
+        return
+    end
     maxdeg = maximum(map(total_degree_frac, fgens), init = 1) - 1
     # degree of the polynomial whose nonvanishing will be needed for correct result
     D = max(10, Int(ceil(maxdeg * length(base_vars) / (1 - p))))
@@ -272,27 +275,40 @@ Output:
 """
 @timeit _to function field_contains(
     field::RationalFunctionField{T},
-    ratfuncs::Vector{Vector{T}},
+    ratfuncs::Vector{Generic.FracFieldElem{T}},
     prob_threshold,
 ) where {T}
     if isempty(ratfuncs)
         return Bool[]
     end
-    @debug "Finding pivot polynomials"
-    pivots = map(plist -> plist[findmin(map(total_degree, plist))[2]], ratfuncs)
-    @debug "\tDegrees are $(map(total_degree, pivots))"
+
+    half_p = 1 - (1 - prob_threshold) / 2
+
+    algebraicity = check_algebraicity(field, ratfuncs, half_p)
+    ratfuncs_algebraic = ratfuncs[algebraicity]
+    if isempty(ratfuncs_algebraic)
+        return algebraicity
+    end
 
     @debug "Estimating the sampling bound"
+
     # uses Theorem 3.3 from https://arxiv.org/pdf/2111.00991.pdf
     # the comments below use the notation from the theorem
-    ring = parent(first(first(ratfuncs)))
-    den_lcm = lcm(field.mqs.den_lcm_orig, foldl(lcm, pivots))
+    ratfuncs_algebraic = [
+        (iszero(f) || (total_degree(numerator(f)) > total_degree(denominator(f)))) ? f :
+        1 // f for f in ratfuncs_algebraic
+    ]
+    denoms = map(denominator, ratfuncs_algebraic)
+    ring = parent(numerator(first(ratfuncs_algebraic)))
+    den_lcm = lcm(field.mqs.den_lcm_orig, foldl(lcm, denoms))
+    @debug "Common lcm is $den_lcm"
+
     # this is deg(g) + 1
     degree = total_degree(den_lcm) + 1
     # computing maximum of deg(f) for different f's to be tested
-    for (i, plist) in enumerate(ratfuncs)
-        extra_degree = total_degree(den_lcm) - total_degree(pivots[i])
-        degree = max(degree, extra_degree + maximum(total_degree, plist))
+    for (i, f) in enumerate(ratfuncs_algebraic)
+        extra_degree = total_degree(den_lcm) - total_degree(denominator(f))
+        degree = max(degree, extra_degree + total_degree(numerator(f)))
     end
     # computing maximum of deg(f_i) for the generators of the field
     for (i, plist) in enumerate(field.dennums)
@@ -306,34 +322,33 @@ Output:
         map(plist -> foldl(union, map(poly -> Set(vars(poly)), plist)), field.dennums),
     )
     @debug "\tThe total number of variables in $(length(total_vars))"
-
     sampling_bound = BigInt(
         3 *
         BigInt(degree)^(length(total_vars) + 3) *
-        (length(ratfuncs)) *
+        (length(ratfuncs_algebraic)) *
         ceil(1 / (1 - prob_threshold)),
     )
-    @debug "\tSampling from $(-sampling_bound) to $(sampling_bound)"
 
-    mqs = field.mqs
+    @debug "\tSampling from $(-sampling_bound) to $(sampling_bound)"
+    mqs = field.mqs_membership
     param_ring = ParamPunPam.parent_params(mqs)
     point = map(v -> Nemo.QQ(rand((-sampling_bound):sampling_bound)), gens(param_ring))
     mqs_specialized = specialize(mqs, point)
     @debug "Computing Groebner basis ($(length(mqs_specialized)) equations)"
-    mqs_ratfuncs = specialize(IdealMQS(ratfuncs), point; saturated = false)
+    mqs_ratfuncs = specialize_fracs_to_mqs(mqs, ratfuncs_algebraic, point)
     @assert parent(first(mqs_specialized)) == parent(first(mqs_ratfuncs))
     @debug "Starting the groebner basis computation"
     gb = groebner(mqs_specialized)
-    result = map(iszero, normalform(gb, mqs_ratfuncs))
-    return result
+    result_global = map(iszero, normalform(gb, mqs_ratfuncs))
+    return merge_results(algebraicity, result_global)
 end
 
 function field_contains(
     field::RationalFunctionField{T},
-    ratfuncs::Vector{Generic.FracFieldElem{T}},
+    ratfuncs::Vector{Vector{T}},
     prob_threshold,
 ) where {T}
-    return field_contains(field, fractions_to_dennums(ratfuncs), prob_threshold)
+    return field_contains(field, dennums_to_fractions(ratfuncs), prob_threshold)
 end
 
 function field_contains(
@@ -342,7 +357,7 @@ function field_contains(
     prob_threshold,
 ) where {T}
     id = one(parent(first(polys)))
-    return field_contains(field, [[id, p] for p in polys], prob_threshold)
+    return field_contains(field, [p // id for p in polys], prob_threshold)
 end
 
 # ------------------------------------------------------------------------------
@@ -711,18 +726,18 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
     end
 
     # Compute some normal forms
-    generators = monomial_generators_up_to_degree(
+    rff_generators = monomial_generators_up_to_degree(
         new_rff,
         normalforms_degree;
         seed = seed,
         strategy = :monte_carlo,
     )
-    append!(new_fracs, generators)
+    append!(new_fracs, rff_generators)
 
     # Compute some GBs
     fan = generating_sets_fan(new_rff, gbfan_simplification_code; seed = seed)
-    for (ord, generators) in fan
-        append!(new_fracs, generators)
+    for (ord, rff_gens) in fan
+        append!(new_fracs, rff_gens)
     end
     new_fracs_unique = unique(new_fracs)
     @debug """
