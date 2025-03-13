@@ -108,6 +108,12 @@ end
 # ------------------------------------------------------------------------------
 
 function _check_algebraicity(trbasis, ratfuncs, sampling_range)
+    if isempty(ratfuncs)
+        return Bool[]
+    end
+    if isempty(trbasis)
+        return map(f -> total_degree_frac(f) == 0, ratfuncs)
+    end
     polyring = parent(numerator(first(trbasis)))
     field = base_ring(polyring)
 
@@ -228,20 +234,28 @@ Output:
     if isempty(ratfuncs)
         return Bool[]
     end
+
+    algebraicity = check_algebraicity_modp(field, ratfuncs, prime)
+    if !any(algebraicity)
+        return algebraicity
+    end
+    ratfuncs_algebraic = ratfuncs[algebraicity]
+
     ff = Nemo.Native.GF(prime)
-    mqs_generators = field.mqs
+    mqs_generators = field.mqs_membership
     reduce_mod_p!(mqs_generators, ff)
 
     param_ring = ParamPunPam.parent_params(mqs_generators)
     point = ParamPunPam.distinct_nonzero_points(ff, nvars(param_ring))
 
     gens_specialized = ParamPunPam.specialize_mod_p(mqs_generators, point)
-    ratfuncs_mqs_specialized = specialize_fracs_to_mqs(field.mqs, ratfuncs, point)
+    ratfuncs_mqs_specialized =
+        specialize_fracs_to_mqs(mqs_generators, ratfuncs_algebraic, point)
     @assert parent(first(gens_specialized)) == parent(first(ratfuncs_mqs_specialized))
     gb = groebner(gens_specialized)
     nf = normalform(gb, ratfuncs_mqs_specialized)
     result = map(iszero, nf)
-    return result
+    return merge_results(algebraicity, result)
 end
 
 function field_contains_mod_p(

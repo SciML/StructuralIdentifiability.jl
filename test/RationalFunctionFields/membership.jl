@@ -140,6 +140,8 @@
     )
 
     for c in cases
+        R = poly_ring(c[:field])
         @test field_contains(c[:field], c[:funcs], 0.99) == c[:correct]
+        @test field_contains_mod_p(c[:field], [p // one(R) for p in c[:funcs]]) == c[:correct]
     end
 end
