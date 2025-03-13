@@ -164,7 +164,6 @@ Base.length(ideal::IdealMQS) = length(ideal.nums_qq) + 1
 AbstractAlgebra.base_ring(ideal::IdealMQS) = base_ring(ideal.nums_qq[1])
 AbstractAlgebra.parent(ideal::IdealMQS) = ideal.parent_ring_param
 ParamPunPam.parent_params(ideal::IdealMQS) = base_ring(ideal.parent_ring_param)
-specialization_ring(ideal::IdealMQS) = parent(ideal.nums_qq[1])
 
 # ------------------------------------------------------------------------------
 
@@ -246,10 +245,33 @@ end
 
 # ------------------------------------------------------------------------------
 
+"""
+    Returns a vector of MQS-polynomial evaluated at point
+"""
+function fractions_to_mqs_specialized(
+    nums::Vector{T},
+    dens::Vector{T},
+    point::Vector{P},
+) where {T, P}
+    @assert length(nums) == length(dens)
+    @assert length(gens(parent(first(nums)))) == length(point)
+    polys = Vector{typeof(first(nums))}(undef, length(nums))
+    nums_spec = map(poly -> evaluate(poly, point), nums)
+    dens_spec = map(poly -> evaluate(poly, point), dens)
+    @inbounds for i in 1:length(dens_spec)
+        den, den_spec = dens[i], dens_spec[i]
+        iszero(den_spec) && __throw_unlucky_evaluation("Point: $point")
+        num, num_spec = nums[i], nums_spec[i]
+        polys[i] = num * den_spec - den * num_spec
+    end
+    return polys
+end
+
+# ------------------------------------------------------------------------------
+
 function ParamPunPam.specialize_mod_p(
     mqs::IdealMQS,
-    point::Vector{T};
-    saturated = true,
+    point::Vector{T},
 ) where {T <: Union{fpFieldElem, FpFieldElem}}
     K_1 = parent(first(point))
     @debug "Evaluating MQS ideal over $K_1 at $point"
@@ -258,72 +280,49 @@ function ParamPunPam.specialize_mod_p(
         mqs.cached_nums_gf[K_1], mqs.cached_dens_gf[K_1], mqs.cached_sat_gf[K_1]
     K_2 = base_ring(nums_gf[1])
     @assert K_1 == K_2
-    @assert length(nums_gf) == length(dens_gf)
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
-    # +1 actual variable because of the saturation!
-    @assert length(point) + 1 == nvars(parent(nums_gf[1]))
     point_sat = append_at_index(point, mqs.sat_var_index, one(K_1))
-    nums_gf_spec = map(num -> evaluate(num, point_sat), nums_gf)
-    dens_gf_spec = map(den -> evaluate(den, point_sat), dens_gf)
-    polys = Vector{typeof(sat_gf)}(undef, length(nums_gf_spec) + 1)
-    @inbounds for i in 1:length(dens_gf_spec)
-        den, den_spec = dens_gf[i], dens_gf_spec[i]
-        iszero(den_spec) && __throw_unlucky_evaluation("Point: $point")
-        num, num_spec = nums_gf[i], nums_gf_spec[i]
-        polys[i] = num * den_spec - den * num_spec
-    end
-    polys[end] = sat_gf
-    if !saturated
-        resize!(polys, length(polys) - 1)
-    end
-    return polys
+    result = fractions_to_mqs_specialized(nums_gf, dens_gf, point_sat)
+    push!(result, sat_gf)
+    return result
 end
 
 # ------------------------------------------------------------------------------
 
-function specialize(mqs::IdealMQS, point::Vector{Nemo.QQFieldElem}; saturated = true)
+function specialize(mqs::IdealMQS, point::Vector{Nemo.QQFieldElem})
     @debug "Evaluating MQS ideal over QQ at $point"
     nums_qq, dens_qq, sat_qq = mqs.nums_qq, mqs.dens_qq, mqs.sat_qq
     K = base_ring(mqs)
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
-    # +1 actual variable because of the saturation!
-    @assert length(point) + 1 == nvars(parent(nums_qq[1]))
     point_sat = append_at_index(point, mqs.sat_var_index, one(K))
-    nums_qq_spec = map(num -> evaluate(num, point_sat), nums_qq)
-    dens_qq_spec = map(den -> evaluate(den, point_sat), dens_qq)
-    polys = Vector{typeof(sat_qq)}(undef, length(nums_qq_spec) + 1)
-    @inbounds for i in 1:length(dens_qq_spec)
-        den, den_spec = dens_qq[i], dens_qq_spec[i]
-        iszero(den_spec) && __throw_unlucky_evaluation("Point: $point")
-        num, num_spec = nums_qq[i], nums_qq_spec[i]
-        polys[i] = num * den_spec - den * num_spec
-    end
-    polys[end] = sat_qq
-    if !saturated
-        resize!(polys, length(polys) - 1)
-    end
-    return polys
+    result = fractions_to_mqs_specialized(nums_qq, dens_qq, point_sat)
+    push!(result, sat_qq)
+    return result
 end
 
 # ------------------------------------------------------------------------------
 
 function specialize_fracs_to_mqs(mqs::IdealMQS, fracs, point)
-    @assert length(point) + 1 == nvars(parent(mqs.nums_qq[1]))
-    polys = []
-    @inbounds for f in fracs
-        num, den = unpack_fraction(f)
-        num_spec, den_spec = map(p -> evaluate(p, point), [num, den])
-        num, den = map(
+    ff = parent(first(point))
+    point_sat = append_at_index(point, mqs.sat_var_index, one(ff))
+    new_ring = parent(mqs.nums_qq[1])
+    if characteristic(ff) > 0
+        @assert haskey(mqs.cached_nums_gf, ff)
+        new_ring = parent(first(mqs.cached_nums_gf[ff]))
+    end
+    num_den_pairs = map(
+        pair -> map(
             p -> parent_ring_change(
                 p,
-                specialization_ring(mqs),
+                new_ring,
                 matching = :byindex,
                 shift = Int(mqs.sat_var_index == 1),
             ),
-            [num, den],
-        )
-        iszero(den_spec) && __throw_unlucky_evaluation("Point: $point")
-        push!(polys, num * den_spec - den * num_spec)
-    end
-    return polys
+            pair,
+        ),
+        map(unpack_fraction, fracs),
+    )
+    nums = map(first, num_den_pairs)
+    dens = map(last, num_den_pairs)
+    return fractions_to_mqs_specialized(nums, dens, point_sat)
 end
