@@ -260,13 +260,11 @@ end
     field_contains(field, ratfuncs, prob_threshold)
 
 Checks whether given rational function field `field` contains given rational
-functions `ratfuncs` (represented as a list of lists). The result is correct with
-probability at least `prob_threshold`
+functions `ratfuncs`. The result is correct with probability at least `prob_threshold`
 
 Inputs:
 - `field` - a rational function field
-- `ratfuncs` - a list of lists of polynomials. Each of the lists, say, `[f1, ..., fn]`,
-  defines generators `f2/f1, ..., fn/f1`.
+- `ratfuncs` - a list of rational functions
 - `prob_threshold` real number from (0, 1)
 
 Output:
