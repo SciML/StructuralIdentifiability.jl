@@ -142,7 +142,7 @@ Returns a 4-element tuple
 
 - `memberships`: is `true` whenever `to_be_reduced[i]` belongs to the field.
 - `remainders`: is the unique expression of `to_be_reduced[i]` in terms of the
-    generators of `rff`.
+    generators of `rff`. If the membership was false, nothing undefined behaviour
 - `relations_between_tags`: is the list of algebraic relations between the
     generators of `rff`.
 - `tag_to_gen`: is a dictionary mapping each new tag to the corresponding
@@ -155,6 +155,8 @@ function check_constructive_field_membership(
     tag_names = Vector{String}(),
 ) where {T}
     @assert !isempty(to_be_reduced)
+    algebraicity = check_algebraicity(rff, to_be_reduced, 0.99)
+    to_be_reduced = to_be_reduced[algebraicity]
     # A tag is assigned for each of the the generators of the given rational
     # function field. Then, the MQS ideal is constructed in the following way:
     #   < N_i(x) - T_i * D_i(x), Q * t - 1 >  in  K(T)[x][t]
@@ -175,11 +177,13 @@ function check_constructive_field_membership(
     poly_ring = base_ring(parent(first(to_be_reduced)))
     K = base_ring(poly_ring)
     orig_strings = map(string, gens(poly_ring))
+    # add extra dummy tags for the elements of the transcendence basis
+    # the idea is that they will not appear in the final expressions anyway
     tag_strings = if !isempty(tag_names)
         @assert length(fracs_gen) == length(tag_names)
-        tag_names
+        vcat(tag_names, gen_tag_names(length(rff.trbasis_over), "Tag"))
     else
-        gen_tag_names(length(fracs_gen), "Tag")
+        gen_tag_names(length(fracs_gen) + length(rff.trbasis_over), "Tag")
     end
     sat_string = gen_tag_name("Sat")
     @debug """
@@ -188,16 +192,17 @@ $(join(map(x -> string(x[1]) * " -> " * string(x[2]),  zip(fracs_gen, tag_string
 Saturation tag:
 $sat_string
 """
+    extended_gens = vcat(fracs_gen, rff.trbasis_over)
     poly_ring_tag, vars_tag =
         polynomial_ring(K, vcat(sat_string, orig_strings, tag_strings))
     sat_var = vars_tag[1]
     orig_vars = vars_tag[2:(nvars(poly_ring) + 1)]
     tag_vars = vars_tag[(nvars(poly_ring) + 2):end]
     # Construct generators of the tagged MQS ideal.
-    tagged_mqs = Vector{elem_type(poly_ring_tag)}(undef, length(fracs_gen) + 1)
+    tagged_mqs = Vector{elem_type(poly_ring_tag)}(undef, length(extended_gens) + 1)
     Q = one(poly_ring_tag)
-    for i in 1:length(fracs_gen)
-        num, den = unpack_fraction(fracs_gen[i])
+    for i in 1:length(extended_gens)
+        num, den = unpack_fraction(extended_gens[i])
         num_tag = parent_ring_change(num, poly_ring_tag)
         den_tag = parent_ring_change(den, poly_ring_tag)
         Q = lcm(Q, den_tag)
@@ -238,7 +243,6 @@ $sat_string
     # NOTE: reduction actually happens in K(T)[x]. So we map polynomials to the
     # parametric ring K(T)[x].
     ring_of_tags, tags = polynomial_ring(K, tag_strings)
-    tag_to_gen = Dict(tags[i] => fracs_gen[i] for i in 1:length(fracs_gen))
     if !isempty(intersect(tag_strings, orig_strings))
         @warn """
     There is an intersection between the names of the tag variables and the original variables.
@@ -285,7 +289,33 @@ $sat_string
         memberships[i] = membership
         remainders[i] = remainder
     end
-    return memberships, remainders, relations_between_tags, tag_to_gen
+
+    # Cleaning up the "imaginary" tags corresponding to the transcendence basis
+    short_ring_of_tags, tags = polynomial_ring(K, tag_strings[1:length(fracs_gen)])
+    remainders = map(
+        f ->
+            parent_ring_change(numerator(f), short_ring_of_tags) //
+            parent_ring_change(denominator(f), short_ring_of_tags),
+        remainders,
+    )
+    new_remainders = Vector{typeof(first(remainders))}(undef, length(algebraicity))
+    i = 1
+    for j in 1:length(algebraicity)
+        if !algebraicity[j]
+            new_remainders[j] = one(first(remainders))
+        else
+            new_remainders[j] = remainders[i]
+            i += 1
+        end
+    end
+    relations_between_tags =
+        map(p -> parent_ring_change(p, short_ring_of_tags), relations_between_tags)
+    tag_to_gen = Dict(tags[i] => fracs_gen[i] for i in 1:length(fracs_gen))
+
+    return merge_results(algebraicity, memberships),
+    new_remainders,
+    relations_between_tags,
+    tag_to_gen
 end
 
 """

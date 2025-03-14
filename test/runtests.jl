@@ -8,10 +8,12 @@ using StructuralIdentifiability.DataStructures
 using StructuralIdentifiability.Nemo
 using StructuralIdentifiability:
     field_contains,
+    field_contains_mod_p,
     check_identifiability,
     check_primality_zerodim,
     check_primality,
     check_algebraicity,
+    check_algebraicity_modp,
     det_minor_expansion,
     ExpVectTrie,
     get_max_below,
@@ -67,7 +69,9 @@ using StructuralIdentifiability:
     y_equations,
     inputs,
     quotient_basis,
-    rational_function_cmp
+    rational_function_cmp,
+    update_trbasis_info!,
+    poly_ring
 
 const GROUP = get(ENV, "GROUP", "All")
 

@@ -542,3 +542,56 @@ function replace_with_ic(ode, funcs)
         Dict(str_to_var(p[1], ode.poly_ring) => str_to_var(p[2], R0) for p in varnames)
     return [eval_at_dict(f, eval_dict) for f in funcs]
 end
+
+# -----------------------------------------------------------------------------
+
+"""
+    select_pivots(M::MatElem)
+
+Takes as input a matrix M in the reduced row echelon form and returns
+tow lists: of the pivot indices and the non-pivot ones
+"""
+function select_pivots(M::MatElem)
+    @assert is_rref(M)
+    j = 1
+    (nrows, ncols) = size(M)
+    nonpivots = Vector{Int}()
+    pivots = Vector{Int}()
+    for i in 1:ncols
+        pivot = false
+        for k in j:nrows
+            if !iszero(M[k, i])
+                j = k + 1
+                pivot = true
+            end
+        end
+        if pivot
+            push!(pivots, i)
+        else
+            push!(nonpivots, i)
+        end
+    end
+    return pivots, nonpivots
+end
+
+# -----------------------------------------------------------------------------
+
+"""
+    jacobian(ratfuncs, point)
+
+Computes the evaluation of the jacobian of `ratfuncs` at point `point`
+"""
+function jacobian(ratfuncs, point)
+    parent_polyring = parent(numerator(first(ratfuncs)))
+    F = base_ring(parent_polyring)
+    base_vars = gens(parent_polyring)
+    @assert length(base_vars) == length(point)
+    S = matrix_space(F, length(base_vars), length(ratfuncs))
+    J = zero(S)
+    for (i, f) in enumerate(ratfuncs)
+        for (j, x) in enumerate(base_vars)
+            J[j, i] = evaluate(derivative(f, x), point)
+        end
+    end
+    return J
+end

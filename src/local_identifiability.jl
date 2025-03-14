@@ -311,21 +311,7 @@ function _assess_local_identifiability(
         end
         Nemo.rref!(reverted_Jac)
         # finding non-pivots
-        j = 1
-        h = size(reverted_Jac)[1]
-        nonpivots = []
-        for i in 1:(size(reverted_Jac)[2])
-            to_add = true
-            for k in j:h
-                if !iszero(reverted_Jac[k, i])
-                    j = k + 1
-                    to_add = false
-                end
-            end
-            if to_add
-                push!(nonpivots, i)
-            end
-        end
+        _, nonpivots = select_pivots(reverted_Jac)
 
         # selecting the trbasis of polynomials
         trbasis_indices_param = [
