@@ -12,14 +12,14 @@ end
 
 function Base.push!(tref::TinyRowEchelonForm{T}, vect::Vector{T}) where {T}
     @assert count(!iszero, vect) == 1
-    @assert !in(tref, vect)
+    @assert !in(vect, tref)
     pivot = findfirst(!iszero, vect)
     push!(tref.rows, vect)
     push!(tref.pivot_cols, pivot)
     return vect
 end
 
-function Base.in(tref::TinyRowEchelonForm{T}, vect::Vector{T}) where {T}
+function Base.in(vect::Vector{T}, tref::TinyRowEchelonForm{T}) where {T}
     nnz_inds = findall(!iszero, vect)
     for i in nnz_inds
         rref_idx = findfirst(pivot_col -> pivot_col == i, tref.pivot_cols)
@@ -72,7 +72,7 @@ function local_normal_forms(
     for deg in 1:up_to_degree
         for combination in Combinatorics.with_replacement_combinations(pivot_vectors, deg)
             exp_vect = sum(combination)
-            if in(stop_vectors, exp_vect)
+            if in(exp_vect, stop_vectors)
                 @debug "Skipping exponent vector $exp_vect"
                 continue
             end
