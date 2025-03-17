@@ -47,23 +47,55 @@ end
 
 fun_name = "assess_identifiability"
 perform_operation(benchmarks[:SIWR][:ode])
-push!(
-    suite,
-    (
-        problem_name=benchmarks[:SIWR][:name] * " " * fun_name,
-        type=:time,
-        result=perform_operation(benchmarks[:SIWR][:ode]),
+for m in [:SIWR, :LV_simple, :Pharm, :MAPK6, :Goodwin]
+    push!(
+        suite,
+        (
+            problem_name=benchmarks[m][:name] * " " * fun_name,
+            type=:time,
+            result=perform_operation(benchmarks[m][:ode]),
+        )
     )
-)
-push!(
-    suite,
-    (
-        problem_name=benchmarks[:Pharm][:name] * " " * fun_name,
-        type=:time,
-        result=perform_operation(benchmarks[:Pharm][:ode]),
-    )
-)
+end
 
+fun_name = "assess_local_identifiability"
+perform_operation(benchmarks[:SIWR][:ode])
+for m in [:SIWR, :Pharm, :MAPK5, :MAPK5bis, :Goodwin]
+    push!(
+        suite,
+        (
+            problem_name=benchmarks[m][:name] * " " * fun_name,
+            type=:time,
+            result=perform_operation(benchmarks[m][:ode], StructuralIdentifiability.assess_local_identifiability),
+        )
+    )
+end
+
+fun_name = "find_identifiable_functions"
+perform_operation(benchmarks[:SIWR][:ode])
+for m in [:SIWR, :Goodwin, :SEAIJRC, :Sntg, :QY, :LLW, :Bilirubin]
+    push!(
+        suite,
+        (
+            problem_name=benchmarks[m][:name] * " " * fun_name,
+            type=:time,
+            result=perform_operation(benchmarks[m][:ode], StructuralIdentifiability.find_identifiable_functions),
+        )
+    )
+end
+
+fun_name = "reparametrize_global"
+perform_operation(benchmarks[:SIWR][:ode])
+for m in [:Goodwin, :SEAIJRC, :Sntg, :LLW, :Bilirubin, :SEUIR]
+    push!(
+        suite,
+        (
+            problem_name=benchmarks[m][:name] * " " * fun_name,
+            type=:time,
+            result=perform_operation(benchmarks[m][:ode], StructuralIdentifiability.reparametrize_global),
+        )
+    )
+end
 
 stopwatch = time_ns() - stopwatch
 push!(suite, (problem_name="total", type=:time, result=[stopwatch / 1e9]))

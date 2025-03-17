@@ -48,15 +48,14 @@ benchmarks = Dict(
     :SEAIJRC => Dict(
         :name => "SEAIJRC Covid model",
         :ode => @ODEmodel(
-            S'(t) = -b * S(t) * (I(t) + J(t) + q * A(t)) * Ninv(t),
-            E'(t) = b * S(t) * (I(t) + J(t) + q * A(t)) * Ninv(t) - k * E(t),
+            S'(t) = -b * S(t) * (I(t) + J(t) + q * A(t)) * Ninv,
+            E'(t) = b * S(t) * (I(t) + J(t) + q * A(t)) * Ninv - k * E(t),
             A'(t) = k * (1 - r) * E(t) - g1 * A(t),
             I'(t) = k * r * E(t) - (alpha + g1) * I(t),
             J'(t) = alpha * I(t) - g2 * J(t),
             C'(t) = alpha * I(t),
-            Ninv'(t) = 0,
             y(t) = C(t),
-            y2(t) = Ninv(t)
+            y2(t) = Ninv
         ),
         :skip => false,
     ),
@@ -308,4 +307,145 @@ benchmarks = Dict(
             y2(t) = x2(t)
         ),
     ),
+    :SLIQR => Dict(
+        :name => "SLIQR",
+        :ode => @ODEmodel(
+            S'(t) = -b * In(t) * S(t) * Ninv - u(t) * S(t) * Ninv,
+            L'(t) = b * In(t) * S(t) * Ninv - a * L(t),
+            In'(t) = a * L(t) - g * In(t) + s * Q(t),
+            Q'(t) = (1 - e) * g * In(t) - s * Q(t),
+            y(t) = In(t) * Ninv
+        ),
+    ),
+    :Sntg => Dict(
+        :name => "Sntg",
+        :ode => @ODEmodel(
+            S'(t) = r * S(t) - (e + a * W(t)) * S(t) - d * W(t) * S(t) + g * R(t),
+            R'(t) = rR * R(t) + (e + a * W(t)) * S(t) - dr * W(t) * R(t) - g * R(t),
+            W'(t) = Dd * (T - W(t)),
+            y1(t) = S(t) + R(t),
+            y2(t) = T
+        ),
+    ),
+    :QY => Dict(
+        :name => "QY",
+        :ode => @ODEmodel(
+            P0'(t) = P1(t),
+            P1'(t) = P2(t),
+            P2'(t) = P3(t),
+            P3'(t) = P4(t),
+            P4'(t) =
+                -(
+                    Ks * M * siga1 * siga2 * P1(t) +
+                    (
+                        Ks * M * siga1 +
+                        Ks * M * siga2 +
+                        Ks * siga1 * siga2 +
+                        siga1 * siga2 * M
+                    ) * P2(t) +
+                    (
+                        Ks * M +
+                        Ks * siga1 +
+                        Ks * siga2 +
+                        M * siga1 +
+                        M * siga2 +
+                        siga1 * siga2
+                    ) * P3(t) +
+                    (Ks + M + siga1 + siga2) * P4(t)
+                ) -
+                (
+                    Mar * P5(t) +
+                    beta +
+                    beta_SA / (siga2 * M) * (
+                        P3(t) +
+                        P2(t) * (Ks + M + Mar) +
+                        P1(t) * (Ks * M + Ks * Mar + M * Mar) +
+                        P0(t) * Ks * M * Mar
+                    ) +
+                    beta_SI / M * (P2(t) + P1(t) * (Ks + Mar) + P0(t) * Ks * Mar) +
+                    beta_SA * phi / ((1 - phi) * siga2 * M) * (
+                        P3(t) +
+                        P2(t) * (Ks + M + siga2) +
+                        P1(t) * (Ks * M + Ks * siga2 + M * siga2) +
+                        P0(t) * Ks * M * siga2
+                    )
+                ) * (
+                    alpa +
+                    Ks * M * siga1 * siga2 * P0(t) +
+                    (
+                        Ks * M * siga1 +
+                        Ks * M * siga2 +
+                        Ks * siga1 * siga2 +
+                        siga1 * siga2 * M
+                    ) * P1(t) +
+                    (
+                        Ks * M +
+                        Ks * siga1 +
+                        Ks * siga2 +
+                        M * siga1 +
+                        M * siga2 +
+                        siga1 * siga2
+                    ) * P2(t) +
+                    (Ks + M + siga1 + siga2) * P3(t) +
+                    P4(t)
+                ),
+            P5'(t) =
+                -Mar * P5(t) - (
+                    beta +
+                    beta_SA / (siga2 * M) * (
+                        P3(t) +
+                        P2(t) * (Ks + M + Mar) +
+                        P1(t) * (Ks * M + Ks * Mar + M * Mar) +
+                        P0(t) * Ks * M * Mar
+                    ) +
+                    beta_SI / M * (P2(t) + P1(t) * (Ks + Mar) + P0(t) * Ks * Mar) +
+                    beta_SA * phi / ((1 - phi) * siga2 * M) * (
+                        P3(t) +
+                        P2(t) * (Ks + M + siga2) +
+                        P1(t) * (Ks * M + Ks * siga2 + M * siga2) +
+                        P0(t) * Ks * M * siga2
+                    )
+                ),
+            y(t) = P0(t)
+        ),
+    ),
+    :LLW => Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/General/LLW1987_io.jl
+        :name => "LLW1987_io",
+        :ode => @ODEmodel(
+            x1'(t) = -p1 * x1(t) + p2 * u(t),
+            x2'(t) = -p3 * x2(t) + p4 * u(t),
+            x3'(t) = -(p1 + p3) * x3(t) + (p4 * x1(t) + p2 * x2(t)) * u(t),
+            y1(t) = x3(t)
+        ),
+    ),
+    :Bilirubin => Dict(
+        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Physiology/Bilirubin2_io.jl
+        :name => "Bilirubin2_io",
+        :ode => @ODEmodel(
+            x1'(t) =
+                -(k21 + k31 + k41 + k01) * x1(t) +
+                k12 * x2(t) +
+                k13 * x3(t) +
+                k14 * x4(t) +
+                u(t),
+            x2'(t) = k21 * x1(t) - k12 * x2(t),
+            x3'(t) = k31 * x1(t) - k13 * x3(t),
+            x4'(t) = k41 * x1(t) - k14 * x4(t),
+            y1(t) = x1(t)
+        ),
+    ),
+    # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SEUIR.jl
+    :SEUIR => Dict(
+        :name => "SEUIR",
+        :ode => @ODEmodel(
+            S'(t) = -beta * (U(t) + I(t)) * (S(t) / N),
+            E'(t) = beta * (U(t) + I(t)) * (S(t) / N) - E(t) * z,
+            U'(t) = (z - w) * E(t) - U(t) * d,
+            I'(t) = w * E(t) - I(t) * d,
+            R'(t) = (U(t) + I(t)) * d,
+            y1(t) = I(t)
+        ),
+    ),
+
 )
