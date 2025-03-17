@@ -29,8 +29,8 @@ function nemo_make_prime_finite_field(p)
     end
 end
 
-function perform_operation(ode, fun=StructuralIdentifiability.assess_identifiability, trials=7; kws...)
-    @asser fun in [
+function perform_operation(ode, fun=StructuralIdentifiability.assess_identifiability, trials=5; kws...)
+    @assert fun in [
         StructuralIdentifiability.assess_identifiability,
         StructuralIdentifiability.assess_local_identifiability,
         StructuralIdentifiability.find_identifiable_functions,
@@ -55,6 +55,15 @@ push!(
         result=perform_operation(benchmarks[:SIWR][:ode]),
     )
 )
+push!(
+    suite,
+    (
+        problem_name=benchmarks[:Pharm][:name] * " " * fun_name,
+        type=:time,
+        result=perform_operation(benchmarks[:Pharm][:ode]),
+    )
+)
+
 
 stopwatch = time_ns() - stopwatch
 push!(suite, (problem_name="total", type=:time, result=[stopwatch / 1e9]))
