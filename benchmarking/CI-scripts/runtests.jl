@@ -27,14 +27,14 @@ function runbench()
         @info "Benchmarking StructuralIdentifiability.jl, master, running $dir_master"
         @time run(
             `$(Base.julia_cmd()) --startup-file=no --threads=$(nthreads()) --project=$dir_master $dir_master/run_benchmarks.jl $i`,
-            wait=true
+            wait = true,
         )
 
         # Run benchmarks on nightly
         @info "Benchmarking StructuralIdentifiability.jl, nightly, running $dir_nightly"
         @time run(
             `$(Base.julia_cmd()) --startup-file=no --threads=$(nthreads()) --project=$dir_nightly $dir_nightly/run_benchmarks.jl $i`,
-            wait=true
+            wait = true,
         )
     end
 end
@@ -80,7 +80,7 @@ function load_data()
         @assert results_master_i[1] == "master" && results_nightly_i[1] == "nightly"
         results_master_i = results_master_i[2:end]
         results_nightly_i = results_nightly_i[2:end]
-        push!(results, (master=results_master_i, nightly=results_nightly_i))
+        push!(results, (master = results_master_i, nightly = results_nightly_i))
     end
     results
 end
@@ -100,11 +100,11 @@ function clean_data(results)
             @assert problem_name_master == problem_name_nightly
             times_master = map(
                 x -> parse(Float64, String(strip(x, ['[', ']', ' ', '\t']))),
-                split(times_master, ",")
+                split(times_master, ","),
             )
             times_nightly = map(
                 x -> parse(Float64, String(strip(x, ['[', ']', ' ', '\t']))),
-                split(times_nightly, ",")
+                split(times_nightly, ","),
             )
             append!(results_master[j], times_master)
             append!(results_nightly[j], times_nightly)
@@ -127,11 +127,11 @@ function compare()
             master = 1e9 .* master
             nightly = 1e9 .* nightly
             f, unit = best_unit(maximum(master))
-            m1 = round(mean(master) / f, digits=2)
-            d1 = round(std(master) / f, digits=2)
+            m1 = round(mean(master) / f, digits = 2)
+            d1 = round(std(master) / f, digits = 2)
             label_master = "$m1 ± $d1 $unit"
-            m2 = round(mean(nightly) / f, digits=2)
-            d2 = round(std(nightly) / f, digits=2)
+            m2 = round(mean(nightly) / f, digits = 2)
+            d2 = round(std(nightly) / f, digits = 2)
             label_nightly = "$m2 ± $d2 $unit"
             indicator = if mean(master) < 1e9 * IGNORE_SMALL
                 0, "insignificant"
@@ -180,7 +180,7 @@ function post(fail, table)
         println(io, "No regressions detected✅")
     end
     table_header = ["Problem", "Master", "This commit", "Result"]
-    pretty_table(io, table, header=table_header, alignment=[:l, :r, :r, :r])
+    pretty_table(io, table, header = table_header, alignment = [:l, :r, :r, :r])
     comment_str = String(take!(io))
     println(comment_str)
 end
@@ -189,7 +189,7 @@ function main()
     runbench()
     fail, table = compare()
     post(fail, table)
-    versioninfo(verbose=true)
+    versioninfo(verbose = true)
     @testset "Benchmarks" begin
         @test !fail
         if fail

@@ -12,7 +12,10 @@ include("benchmarks.jl")
 
 suite = []
 
-push!(suite, (problem_name="using StructuralIdentifiability", type=:time, result=[t1.time]))
+push!(
+    suite,
+    (problem_name = "using StructuralIdentifiability", type = :time, result = [t1.time]),
+)
 
 # Allocations
 # Coming soon
@@ -29,7 +32,12 @@ function nemo_make_prime_finite_field(p)
     end
 end
 
-function perform_operation(ode, fun=StructuralIdentifiability.assess_identifiability, trials=5; kws...)
+function perform_operation(
+    ode,
+    fun = StructuralIdentifiability.assess_identifiability,
+    trials = 5;
+    kws...,
+)
     @assert fun in [
         StructuralIdentifiability.assess_identifiability,
         StructuralIdentifiability.assess_local_identifiability,
@@ -51,10 +59,10 @@ for m in [:SIWR, :LV_simple, :Pharm, :MAPK6, :Goodwin]
     push!(
         suite,
         (
-            problem_name=benchmarks[m][:name] * " " * fun_name,
-            type=:time,
-            result=perform_operation(benchmarks[m][:ode]),
-        )
+            problem_name = benchmarks[m][:name] * " " * fun_name,
+            type = :time,
+            result = perform_operation(benchmarks[m][:ode]),
+        ),
     )
 end
 
@@ -64,10 +72,13 @@ for m in [:SIWR, :Pharm, :MAPK5, :MAPK5bis, :Goodwin]
     push!(
         suite,
         (
-            problem_name=benchmarks[m][:name] * " " * fun_name,
-            type=:time,
-            result=perform_operation(benchmarks[m][:ode], StructuralIdentifiability.assess_local_identifiability),
-        )
+            problem_name = benchmarks[m][:name] * " " * fun_name,
+            type = :time,
+            result = perform_operation(
+                benchmarks[m][:ode],
+                StructuralIdentifiability.assess_local_identifiability,
+            ),
+        ),
     )
 end
 
@@ -77,10 +88,13 @@ for m in [:SIWR, :Goodwin, :SEAIJRC, :Sntg, :QY, :LLW, :Bilirubin]
     push!(
         suite,
         (
-            problem_name=benchmarks[m][:name] * " " * fun_name,
-            type=:time,
-            result=perform_operation(benchmarks[m][:ode], StructuralIdentifiability.find_identifiable_functions),
-        )
+            problem_name = benchmarks[m][:name] * " " * fun_name,
+            type = :time,
+            result = perform_operation(
+                benchmarks[m][:ode],
+                StructuralIdentifiability.find_identifiable_functions,
+            ),
+        ),
     )
 end
 
@@ -90,12 +104,15 @@ for m in [:Goodwin, :SEAIJRC, :Sntg, :LLW, :Bilirubin, :SEUIR]
     push!(
         suite,
         (
-            problem_name=benchmarks[m][:name] * " " * fun_name,
-            type=:time,
-            result=perform_operation(benchmarks[m][:ode], StructuralIdentifiability.reparametrize_global),
-        )
+            problem_name = benchmarks[m][:name] * " " * fun_name,
+            type = :time,
+            result = perform_operation(
+                benchmarks[m][:ode],
+                StructuralIdentifiability.reparametrize_global,
+            ),
+        ),
     )
 end
 
 stopwatch = time_ns() - stopwatch
-push!(suite, (problem_name="total", type=:time, result=[stopwatch / 1e9]))
+push!(suite, (problem_name = "total", type = :time, result = [stopwatch / 1e9]))

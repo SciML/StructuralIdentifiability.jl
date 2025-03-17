@@ -3,7 +3,7 @@ Pkg.activate(@__DIR__)
 Pkg.instantiate()
 Pkg.status()
 
-Pkg.add(url="https://github.com/SciML/StructuralIdentifiability.jl")
+Pkg.add(url = "https://github.com/SciML/StructuralIdentifiability.jl")
 
 id = ARGS[1]
 

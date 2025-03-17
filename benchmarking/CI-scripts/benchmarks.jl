@@ -251,10 +251,10 @@ benchmarks = Dict(
             pEGFR'(t) =
                 EGF_EGFR(t) * reaction_9_k1 - pEGFR(t) * reaction_4_k1 +
                 pEGFR_Akt(t) * reaction_2_k2 +
-                pEGFR_Akt(t) * reaction_3_k1 - Akt(t) * pEGFR(t) * reaction_2_k1,
+                pEGFR_Akt(t) * reaction_3_k1 -
+                Akt(t) * pEGFR(t) * reaction_2_k1,
             pEGFR_Akt'(t) =
-                Akt(t) * pEGFR(t) * reaction_2_k1 - pEGFR_Akt(t) * reaction_3_k1 -
-                pEGFR_Akt(t) * reaction_2_k2,
+                Akt(t) * pEGFR(t) * reaction_2_k1 - pEGFR_Akt(t) * reaction_3_k1 - pEGFR_Akt(t) * reaction_2_k2,
             Akt'(t) =
                 pAkt(t) * reaction_7_k1 + pEGFR_Akt(t) * reaction_2_k2 -
                 Akt(t) * pEGFR(t) * reaction_2_k1,
@@ -447,5 +447,4 @@ benchmarks = Dict(
             y1(t) = I(t)
         ),
     ),
-
 )
