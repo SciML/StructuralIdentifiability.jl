@@ -1,0 +1,29 @@
+name: Performance Check
+on:
+  push:
+    branches:
+      - 'master'
+    tags: '*'
+  pull_request:
+jobs:
+  build-and-benchmark:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        julia-version: ['1']
+        julia-arch: [x64]
+        os: [ubuntu-latest]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install Julia
+      uses: julia-actions/setup-julia@latest
+      with:
+        version: ${{ matrix.julia-version }}
+    - name: Build project
+      uses: julia-actions/julia-buildpkg@latest
+    - name: Benchmark
+      env:
+        GITHUB_TOKEN: ${{ secrets.BENCHMARK_KEY }}
+        PR_NUMBER: ${{ github.event.number }}
+      run: julia --threads=4 --project=./benchmarking/CI-scripts ./benchmarking/CI-scripts/runtests.jl 2
