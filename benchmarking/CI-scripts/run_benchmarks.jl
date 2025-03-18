@@ -35,7 +35,7 @@ end
 function perform_operation(
     ode,
     fun = StructuralIdentifiability.assess_identifiability,
-    trials = 5;
+    trials = 3;
     kws...,
 )
     @assert fun in [
@@ -54,8 +54,8 @@ function perform_operation(
 end
 
 fun_name = "assess_identifiability"
-perform_operation(benchmarks[:SIWR][:ode])
-for m in [:SIWR, :LV_simple, :Pharm, :MAPK6, :Goodwin]
+perform_operation(benchmarks[:LV_simple][:ode])
+for m in [:SIWR, :LV_simple, :Pharm]
     push!(
         suite,
         (
@@ -67,7 +67,10 @@ for m in [:SIWR, :LV_simple, :Pharm, :MAPK6, :Goodwin]
 end
 
 fun_name = "assess_local_identifiability"
-perform_operation(benchmarks[:SIWR][:ode])
+perform_operation(
+    benchmarks[:LV_simple][:ode],
+    StructuralIdentifiability.assess_local_identifiability,
+)
 for m in [:SIWR, :Pharm, :MAPK5, :MAPK5bis, :Goodwin]
     push!(
         suite,
@@ -83,8 +86,11 @@ for m in [:SIWR, :Pharm, :MAPK5, :MAPK5bis, :Goodwin]
 end
 
 fun_name = "find_identifiable_functions"
-perform_operation(benchmarks[:SIWR][:ode])
-for m in [:SIWR, :Goodwin, :SEAIJRC, :Sntg, :QY, :LLW, :Bilirubin]
+perform_operation(
+    benchmarks[:LV_simple][:ode],
+    StructuralIdentifiability.find_identifiable_functions,
+)
+for m in [:Goodwin, :SEAIJRC, :Sntg, :LLW, :Bilirubin]
     push!(
         suite,
         (
@@ -99,8 +105,11 @@ for m in [:SIWR, :Goodwin, :SEAIJRC, :Sntg, :QY, :LLW, :Bilirubin]
 end
 
 fun_name = "reparametrize_global"
-perform_operation(benchmarks[:SIWR][:ode])
-for m in [:Goodwin, :SEAIJRC, :Sntg, :LLW, :Bilirubin, :SEUIR]
+perform_operation(
+    benchmarks[:LV_simple][:ode],
+    StructuralIdentifiability.reparametrize_global,
+)
+for m in [:Goodwin, :SEAIJRC, :SEUIR]
     push!(
         suite,
         (
