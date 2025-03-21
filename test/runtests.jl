@@ -150,8 +150,16 @@ if !isempty(ARGS)
     all_tests = ARGS
 end
 
-@time @testset "All the tests" verbose = true begin
-    for test_file in all_tests
-        include(test_file)
+if GROUP == "QA"
+    include("qa.jl")
+end
+
+if GROUP == "All" || GROUP == "Core"
+    @time @testset "All the tests" verbose = true begin
+        for test_file in all_tests
+            if !contains(test_file, "qa.jl")
+                include(test_file)
+            end
+        end
     end
 end
