@@ -1,10 +1,6 @@
 name: Performance Check
 on:
-  push:
-    branches:
-      - 'master'
-    tags: '*'
-  pull_request:
+  workflow_dispatch:
 jobs:
   build-and-benchmark:
     runs-on: ${{ matrix.os }}
