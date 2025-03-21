@@ -173,6 +173,20 @@ function clean_calls(funcs)
 end
 
 #------------------------------------------------------------------------------
+
+function scalarize(arr)
+    result = []
+    for a in arr
+        if typeof(a) <: SymbolicUtils.BasicSymbolic{<:Vector}
+            append!(result, collect(a))
+        else
+            push!(result, a)
+        end
+    end
+    return result
+end
+
+#------------------------------------------------------------------------------
 """
     function __mtk_to_si(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{Tuple{String, SymbolicUtils.BasicSymbolic}})
 
@@ -209,7 +223,7 @@ function __mtk_to_si(
         filter(s -> !ModelingToolkit.isoutput(s), clean_calls(map(e -> e.lhs, diff_eqs)))
     all_funcs = collect(Set(clean_calls(ModelingToolkit.unknowns(de))))
     inputs = filter(s -> !ModelingToolkit.isoutput(s), setdiff(all_funcs, state_vars))
-    params = ModelingToolkit.parameters(de)
+    params = scalarize(ModelingToolkit.parameters(de))
     t = ModelingToolkit.arguments(clean_calls([diff_eqs[1].lhs])[1])[1]
     # very long if in order to avoid duplication
     params_from_measured_quantities = union(

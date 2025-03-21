@@ -427,6 +427,25 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         @test assess_local_identifiability(sys, measured_quantities = [x[1], x[2]]) ==
               correct
 
+        # Extension of https://github.com/SciML/StructuralIdentifiability.jl/issues/398
+        @parameters k[1:2] a
+        @variables (X(t))[1:2] (y(t))[1:2] [output = true]
+        eqs = [
+            D(X[1]) ~ k[1] - k[2] * X[2],
+            D(X[2]) ~ k[1] - k[2] * X[1],
+            y[1] ~ X[1] * X[2] + a,
+            y[2] ~ X[1] - X[2],
+        ]
+        @mtkbuild osys = ODESystem(eqs, t)
+        correct = OrderedDict(
+            X[1] => :locally,
+            X[2] => :locally,
+            k[1] => :locally,
+            k[2] => :globally,
+            a => :globally,
+        )
+        @test assess_identifiability(osys) == correct
+
         #------------------------------------
         # system from the SciML tutorial
         # https://docs.sciml.ai/ModelingToolkit/stable/tutorials/parameter_identifiability/
