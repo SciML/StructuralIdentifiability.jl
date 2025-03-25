@@ -26,7 +26,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     # Numerators and denominators over QQ
     nums_qq::Vector{T}
     dens_qq::Vector{T}
-    sat_qq::T
+    const_polys::Vector{T} # the first one is the sat, but could be others
     den_lcm::T
     sat_var_index::Int
     # Numerators and denominators over GF. 
@@ -34,7 +34,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     # a finite field --> an image over this finite field
     cached_nums_gf::Dict{Any, Any}
     cached_dens_gf::Dict{Any, Any}
-    cached_sat_gf::Dict{Any, Any}
+    cached_const_polys_gf::Dict{Any, Any}
     # Cached GBs. A mapping
     # (monomial ordering, degree) --> a GB
     cached_groebner_bases::Dict{Any, Any}
@@ -53,6 +53,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         sat_varname = "t",
         sat_var_position = :first,
         ordering = :degrevlex,
+        extra_const_polys::Vector{PolyQQ}=Vector{PolyQQ}(),
     ) where {PolyQQ}
         # We are given polynomials of form
         # [[f1, f2, f3, ...], [g1, g2, g3, ...], ...]
@@ -107,6 +108,8 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         )
         den_lcm_sat = parent_ring_change(den_lcm, R_sat)
         sat_qq = den_lcm_sat * t_sat - 1
+        const_polys = [sat_qq]
+
         # We construct the array of numerators nums_qq and the array of
         # denominators dens_qq of the same length
         nums_qq = empty(funcs_den_nums[1])
@@ -147,7 +150,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
             parent_ring_param,
             nums_qq,
             dens_qq,
-            sat_qq,
+            const_polys,
             den_lcm,
             sat_var_index,
             Dict(),
@@ -200,20 +203,22 @@ function fractionfree_generators_raw(mqs::IdealMQS)
     # NOTE: new variables go first!
     big_ring, big_vars =
         polynomial_ring(K, vcat(new_varnames, old_varnames), internal_ordering = :lex)
-    @info "$(mqs.sat_var_index) $(varnames) $ring_params $(parent(mqs.sat_qq))"
-    nums_qq, dens_qq, sat_qq = mqs.nums_qq, mqs.dens_qq, mqs.sat_qq
+    @info "$(mqs.sat_var_index) $(varnames) $ring_params $(parent(first(mqs.const_polys)))"
+    nums_qq, dens_qq, const_polys = mqs.nums_qq, mqs.dens_qq, mqs.const_polys
     nums_y = map(num -> parent_ring_change(num, big_ring, matching = :byindex), nums_qq)
     dens_y = map(den -> parent_ring_change(den, big_ring, matching = :byindex), dens_qq)
-    sat_y = parent_ring_change(sat_qq, big_ring, matching = :byindex)
+    const_polys_y = map(p -> parent_ring_change(p, big_ring, matching = :byindex), const_polys)
     nums_x = map(num -> parent_ring_change(num, big_ring, matching = :byname), nums_qq)
     dens_x = map(den -> parent_ring_change(den, big_ring, matching = :byname), dens_qq)
-    polys = Vector{elem_type(big_ring)}(undef, length(nums_qq) + 1)
+    polys = Vector{elem_type(big_ring)}(undef, length(nums_qq) + length(const_polys))
     @inbounds for i in 1:length(dens_qq)
         den_y, den_x = dens_y[i], dens_x[i]
         num_y, num_x = nums_y[i], nums_x[i]
         polys[i] = num_y * den_x - den_y * num_x
     end
-    polys[end] = sat_y
+    @inbounds for i in 1:length(const_polys)
+        polys[length(nums_qq) + i] = const_polys_y[i]
+    end
     main_var_indices = 1:(length(varnames) + 1)
     param_var_indices = (length(varnames) + 2):length(big_vars)
     return polys, main_var_indices, param_var_indices
@@ -232,14 +237,14 @@ function ParamPunPam.reduce_mod_p!(
         @debug "Cache hit with $(ff)!"
         return nothing
     end
-    nums_qq, dens_qq, sat_qq = mqs.nums_qq, mqs.dens_qq, mqs.sat_qq
-    sat_gf = map_coefficients(c -> ff(c), sat_qq)
-    ring_ff = parent(sat_gf)
+    nums_qq, dens_qq, const_polys = mqs.nums_qq, mqs.dens_qq, mqs.const_polys
+    ring_ff, _ = Nemo.polynomial_ring(ff, map(var_to_str, gens(parent(first(const_polys)))))
     nums_gf = map(poly -> map_coefficients(c -> ff(c), poly, parent = ring_ff), nums_qq)
     dens_gf = map(poly -> map_coefficients(c -> ff(c), poly, parent = ring_ff), dens_qq)
+    const_polys_gf = map(poly -> map_coefficients(c -> ff(c), poly, parent = ring_ff), const_polys)
     mqs.cached_nums_gf[ff] = nums_gf
     mqs.cached_dens_gf[ff] = dens_gf
-    mqs.cached_sat_gf[ff] = sat_gf
+    mqs.cached_const_polys_gf[ff] = const_polys_gf
     return nothing
 end
 
@@ -276,14 +281,14 @@ function ParamPunPam.specialize_mod_p(
     K_1 = parent(first(point))
     @debug "Evaluating MQS ideal over $K_1 at $point"
     @assert haskey(mqs.cached_nums_gf, K_1)
-    nums_gf, dens_gf, sat_gf =
-        mqs.cached_nums_gf[K_1], mqs.cached_dens_gf[K_1], mqs.cached_sat_gf[K_1]
+    nums_gf, dens_gf, const_polys_gf =
+        mqs.cached_nums_gf[K_1], mqs.cached_dens_gf[K_1], mqs.cached_const_polys_gf[K_1]
     K_2 = base_ring(nums_gf[1])
     @assert K_1 == K_2
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
     point_sat = append_at_index(point, mqs.sat_var_index, one(K_1))
     result = fractions_to_mqs_specialized(nums_gf, dens_gf, point_sat)
-    push!(result, sat_gf)
+    append!(result, const_polys_gf)
     return result
 end
 
@@ -291,12 +296,12 @@ end
 
 function specialize(mqs::IdealMQS, point::Vector{Nemo.QQFieldElem})
     @debug "Evaluating MQS ideal over QQ at $point"
-    nums_qq, dens_qq, sat_qq = mqs.nums_qq, mqs.dens_qq, mqs.sat_qq
+    nums_qq, dens_qq = mqs.nums_qq, mqs.dens_qq
     K = base_ring(mqs)
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
     point_sat = append_at_index(point, mqs.sat_var_index, one(K))
     result = fractions_to_mqs_specialized(nums_qq, dens_qq, point_sat)
-    push!(result, sat_qq)
+    append!(result, mqs.const_polys)
     return result
 end
 

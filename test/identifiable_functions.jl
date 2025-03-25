@@ -215,6 +215,7 @@ ident_funcs = [k7, k5, k6, k10 * k9, k9^2, k10 + 2 * k8]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # SLIQR
+# a^2 + 3*a*g - a*s + e*g*s + g^2 - 2*g*s ??
 ode = StructuralIdentifiability.@ODEmodel(
     S'(t) = -b * In(t) * S(t) * Ninv - S(t) * Ninv * u(t),
     In'(t) = -In(t) * g + s * Q(t) + a * L(t),
