@@ -238,7 +238,8 @@ function ParamPunPam.reduce_mod_p!(
         return nothing
     end
     nums_qq, dens_qq, const_polys = mqs.nums_qq, mqs.dens_qq, mqs.const_polys
-    ring_ff, _ = Nemo.polynomial_ring(ff, map(var_to_str, gens(parent(first(const_polys)))))
+    ring_qq = parent(first(const_polys))
+    ring_ff, _ = Nemo.polynomial_ring(ff, map(var_to_str, gens(ring_qq)), internal_ordering=Nemo.internal_ordering(ring_qq))
     nums_gf = map(poly -> map_coefficients(c -> ff(c), poly, parent = ring_ff), nums_qq)
     dens_gf = map(poly -> map_coefficients(c -> ff(c), poly, parent = ring_ff), dens_qq)
     const_polys_gf = map(poly -> map_coefficients(c -> ff(c), poly, parent = ring_ff), const_polys)
