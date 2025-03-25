@@ -53,7 +53,7 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         sat_varname = "t",
         sat_var_position = :first,
         ordering = :degrevlex,
-        extra_const_polys::Vector{PolyQQ}=Vector{PolyQQ}(),
+        extra_const_polys::Vector{PolyQQ} = Vector{PolyQQ}(),
     ) where {PolyQQ}
         # We are given polynomials of form
         # [[f1, f2, f3, ...], [g1, g2, g3, ...], ...]
@@ -207,7 +207,8 @@ function fractionfree_generators_raw(mqs::IdealMQS)
     nums_qq, dens_qq, const_polys = mqs.nums_qq, mqs.dens_qq, mqs.const_polys
     nums_y = map(num -> parent_ring_change(num, big_ring, matching = :byindex), nums_qq)
     dens_y = map(den -> parent_ring_change(den, big_ring, matching = :byindex), dens_qq)
-    const_polys_y = map(p -> parent_ring_change(p, big_ring, matching = :byindex), const_polys)
+    const_polys_y =
+        map(p -> parent_ring_change(p, big_ring, matching = :byindex), const_polys)
     nums_x = map(num -> parent_ring_change(num, big_ring, matching = :byname), nums_qq)
     dens_x = map(den -> parent_ring_change(den, big_ring, matching = :byname), dens_qq)
     polys = Vector{elem_type(big_ring)}(undef, length(nums_qq) + length(const_polys))
@@ -239,10 +240,15 @@ function ParamPunPam.reduce_mod_p!(
     end
     nums_qq, dens_qq, const_polys = mqs.nums_qq, mqs.dens_qq, mqs.const_polys
     ring_qq = parent(first(const_polys))
-    ring_ff, _ = Nemo.polynomial_ring(ff, map(var_to_str, gens(ring_qq)), internal_ordering=Nemo.internal_ordering(ring_qq))
+    ring_ff, _ = Nemo.polynomial_ring(
+        ff,
+        map(var_to_str, gens(ring_qq)),
+        internal_ordering = Nemo.internal_ordering(ring_qq),
+    )
     nums_gf = map(poly -> map_coefficients(c -> ff(c), poly, parent = ring_ff), nums_qq)
     dens_gf = map(poly -> map_coefficients(c -> ff(c), poly, parent = ring_ff), dens_qq)
-    const_polys_gf = map(poly -> map_coefficients(c -> ff(c), poly, parent = ring_ff), const_polys)
+    const_polys_gf =
+        map(poly -> map_coefficients(c -> ff(c), poly, parent = ring_ff), const_polys)
     mqs.cached_nums_gf[ff] = nums_gf
     mqs.cached_dens_gf[ff] = dens_gf
     mqs.cached_const_polys_gf[ff] = const_polys_gf
