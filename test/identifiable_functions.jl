@@ -216,6 +216,7 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # SLIQR
 # a^2 + 3*a*g - a*s + e*g*s + g^2 - 2*g*s ??
+# appears with internal_ordering being lex (or with strong simplification)
 ode = StructuralIdentifiability.@ODEmodel(
     S'(t) = -b * In(t) * S(t) * Ninv - S(t) * Ninv * u(t),
     In'(t) = -In(t) * g + s * Q(t) + a * L(t),
