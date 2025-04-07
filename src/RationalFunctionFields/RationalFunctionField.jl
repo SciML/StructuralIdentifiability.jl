@@ -23,6 +23,7 @@ mutable struct RationalFunctionField{T}
     dennums::Vector{Vector{T}}
     mqs::IdealMQS{T}
     mqs_membership::IdealMQS{T}
+    mqs_simplification::IdealMQS{T}
 
     # cached transcendence-related information
     trbasis_probability::Float64
@@ -40,6 +41,7 @@ mutable struct RationalFunctionField{T}
         @assert !isempty(dennums)
         F = new{T}(
             dennums,
+            IdealMQS(dennums),
             IdealMQS(dennums),
             IdealMQS(dennums),
             0,
@@ -102,6 +104,7 @@ function update_trbasis_info!(F::RationalFunctionField, p::Float64)
     if old_trbasis != F.trbasis
         F.mqs_membership =
             IdealMQS(vcat(F.dennums, [[x, one(poly_ring(F))] for x in F.trbasis_over]))
+        F.mqs_simplification = IdealMQS(F.dennums, extra_const_polys = [x - rand(1:42) for x in F.trbasis_over])
     end
 end
 
@@ -518,7 +521,7 @@ end
     up_to_degree = (typemax(Int), typemax(Int)),
     rational_interpolator = :VanDerHoevenLecerf,
 )
-    mqs = rff.mqs
+    mqs = rff.mqs_simplification
     if are_generators_zero(mqs)
         return rff
     end

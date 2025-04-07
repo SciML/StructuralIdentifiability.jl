@@ -109,6 +109,10 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         den_lcm_sat = parent_ring_change(den_lcm, R_sat)
         sat_qq = den_lcm_sat * t_sat - 1
         const_polys = [sat_qq]
+        append!(const_polys, map(
+            p -> parent_ring_change(p, R_sat, matching = :byindex, shift = Int(sat_var_index == 1)),
+            extra_const_polys)
+        )
 
         # We construct the array of numerators nums_qq and the array of
         # denominators dens_qq of the same length
