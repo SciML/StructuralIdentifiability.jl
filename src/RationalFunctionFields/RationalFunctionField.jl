@@ -104,7 +104,7 @@ function update_trbasis_info!(F::RationalFunctionField, p::Float64)
     if old_trbasis != F.trbasis
         F.mqs_membership =
             IdealMQS(vcat(F.dennums, [[x, one(poly_ring(F))] for x in F.trbasis_over]))
-        F.mqs_simplification = IdealMQS(F.dennums, extra_const_polys = [x - rand(1:42) for x in F.trbasis_over])
+        F.mqs_simplification = IdealMQS(F.dennums, extra_const_polys = [x^3 - rand(1:42) for x in F.trbasis_over])
     end
 end
 
@@ -741,6 +741,7 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
     end
 
     # Compute the first GB in some ordering
+    update_trbasis_info!(rff, 0.99)
     new_rff = groebner_basis_coeffs(
         rff,
         seed = seed,
