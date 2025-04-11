@@ -447,4 +447,41 @@ benchmarks = Dict(
             y1(t) = I(t)
         ),
     ),
+    :Lincomp1 => Dict(
+        :name => "Linear_compartment_hard",
+        :ode => linear_compartment_model([[2], [3], [4], [5], [1]], inputs = [1], outputs => [5], leaks => [2, 3]),
+    ),
+    :Covid1 => Dict(
+        :name => "Covid model (Gevertz et al)",
+        :ode => @ODEmodel(
+            Sd'(t) = -es * ba * (An(t) + ea * Ad(t)) * Sd(t) - h1 * Sd(t) + h2 * Sn(t) - es * bi * Sd(t) * I(t),
+            Sn'(t) = -bi * Sn(t) * I(t) - ba * (An(t) + ea * Ad(t)) * Sn(t) + h1 * Sd(t) - h2 * Sn(t),
+            Ad'(t) = es * bi * Sd(t) * I(t) + es * ba * (An(t) + ea * Ad(t)) * Sd(t) + h2 * An(t) - gai * Ad(t) - h1 * Ad(t),
+            An'(t) = bi * Sn(t) * I(t) + ba * (An(t) + ea * Ad(t)) * Sn(t) + h1 * Ad(t) - gai * An(t) - h2 * An(t),
+            I'(t) = f * gai * (Ad(t) + An(t)) - delta * I(t) - gir * I(t),
+            y1(t) = Sd(t),
+            y2(t) = I(t),
+        ),
+    ),
+    :Covid2 => Dict(
+        :name => "Covid model (Galina)",
+        :ode => @ODEmodel(
+            S'(t) = b * N - S(t) * (l * I(t) + l * ea * eq * Q(t) + l * ea * A(t) + l * ej * J(t) + d1),
+            I'(t) = k1 * A(t) - (g1 + m2 + d2) * I(t),
+            A'(t) = S(t) * (l * I(t) + l * ea * eq * Q(t) + l * ea * A(t) + l * ej * J(t)) - (k1 + m1 + d4) * A(t),
+            Q'(t) = m1 * A(t) - (k2 + d5) * Q(t),
+            J'(t) = k2 * Q(t) + m2 * I(t) - (g2 + d6) * J(t),
+            y1(t) = Q(t),
+            y2(t) = J(t),
+        ),
+    ),
+    :Covid3 => Dict(
+        :name => "Covid model (Chitnis)",
+        :ode => @ODEmodel(
+            S'(t) = L - r * b * S(t) * I(t) / N - m * S(t),
+            E'(t) = b * S(t) * I(t) / N - e * E(t) - m * E(t),
+            I'(t) = e * E(t) - g * I(t) - m * I(t),
+            y(t) = K * I(t),
+        )
+    ),
 )
