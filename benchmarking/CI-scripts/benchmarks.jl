@@ -449,7 +449,7 @@ benchmarks = Dict(
     ),
     :Lincomp1 => Dict(
         :name => "Linear_compartment_hard",
-        :ode => linear_compartment_model([[2], [3], [4], [5], [1]], inputs = [1], outputs => [5], leaks => [2, 3]),
+        :ode => linear_compartment_model([[2], [3], [4], [5], [1]], inputs = [1], outputs = [5], leaks = [2, 3]),
     ),
     :Covid1 => Dict(
         :name => "Covid model (Gevertz et al)",
