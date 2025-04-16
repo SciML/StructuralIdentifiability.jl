@@ -104,7 +104,17 @@ function update_trbasis_info!(F::RationalFunctionField, p::Float64)
     if old_trbasis != F.trbasis
         F.mqs_membership =
             IdealMQS(vcat(F.dennums, [[x, one(poly_ring(F))] for x in F.trbasis_over]))
-        F.mqs_simplification = IdealMQS(F.dennums, extra_const_polys = [x^3 - rand(1:42) for x in F.trbasis_over])
+        #F.mqs_simplification = IdealMQS(F.dennums, extra_const_polys = [x^3 - rand(1:42) for x in F.trbasis_over])
+        #F.mqs_simplification = IdealMQS(F.dennums)
+        if isempty(F.trbasis_over)
+            F.mqs_simplification = IdealMQS(F.dennums)
+        else
+            extra_const = [last(F.trbasis_over)^3 - rand(1:42)]
+            for i in 1:(length(F.trbasis_over) - 1)
+                push!(extra_const, F.trbasis_over[i] - F.trbasis_over[i + 1] - rand(1:42))
+            end
+            F.mqs_simplification = IdealMQS(F.dennums, extra_const_polys = extra_const)
+        end
     end
 end
 
@@ -522,6 +532,7 @@ end
     rational_interpolator = :VanDerHoevenLecerf,
 )
     mqs = rff.mqs_simplification
+    @info "Simplification for a field with transcendence basis $(rff.trbasis_over)"
     if are_generators_zero(mqs)
         return rff
     end
@@ -621,7 +632,7 @@ Returns a set of Groebner bases for multiple different rankings of variables.
             # n1, n2 = div(n, 2), n - div(n, 2)
             n1, n2 = n - 1, 1
             ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
-            @debug "Computing GB for ordering $ord"
+            @info "Computing GB for ordering $ord"
             new_rff = groebner_basis_coeffs(
                 gb_rff,
                 seed = seed,
@@ -638,7 +649,7 @@ Returns a set of Groebner bases for multiple different rankings of variables.
             n = length(vars_shuffled)
             n1, n2 = max(n - 2, 1), min(2, length(vars) - 1)
             ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
-            @debug "Computing GB for ordering $ord"
+            @info "Computing GB for ordering $ord"
             new_rff = groebner_basis_coeffs(
                 gb_rff,
                 seed = seed,
@@ -656,7 +667,7 @@ Returns a set of Groebner bases for multiple different rankings of variables.
             n1 = div(n, 2)
             n2 = n - n1
             ord = DegRevLex(vars_shuffled[1:n1]) * DegRevLex(vars_shuffled[(n1 + 1):end])
-            @debug "Computing GB for ordering $ord"
+            @info "Computing GB for ordering $ord"
             new_rff = groebner_basis_coeffs(
                 gb_rff,
                 seed = seed,
