@@ -68,7 +68,7 @@ reparam[:new_ode]
 
 In order to analyze this result, let us give more interpretable names to the new variables and parameters:
 
-$I := I, \; \widetilde{E} := \alpha E, \widetilde{S} := \alpha, \; \widetilde{I} := \alpha (I + U), \; \gamma := \gamma,\;\delta := \delta,\;\widetilde{N} := \frac{\alpha N}{\beta}$
+$I := I, \; \widetilde{E} := \alpha E, \widetilde{S} := \alpha S, \; \widetilde{I} := \alpha (I + U), \; \gamma := \gamma,\;\delta := \delta,\;\widetilde{N} := \frac{\alpha N}{\beta}$
 
 Then the reparametrize system becomes
 
