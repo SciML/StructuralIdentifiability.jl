@@ -231,9 +231,9 @@ function __mtk_to_si(
             filter(
                 s ->
                     !iscall(s) &&
-                        !(string(s) in string.(state_vars)) &&
-                        !(string(s) * "(t)" in string.(state_vars)) &&
-                        (string(s) != string(t)),
+                    !(string(s) in string.(state_vars)) &&
+                    !(string(s) * "(t)" in string.(state_vars)) &&
+                    (string(s) != string(t)),
                 get_variables(y[2]),
             ) for y in measured_quantities
         ]...,
