@@ -87,23 +87,21 @@ if GROUP == "All" || GROUP == "Core"
         R, (a, b, y, x2, c, x1) = polynomial_ring(Nemo.QQ, ["a", "b", "y", "x2", "c", "x1"])
         append!(
             cases,
-            [
-                (
-                    generators = [
-                        x1 // one(R),
-                        a // one(R),
-                        (a * c + c^2) // one(R),
-                        c // x2,
-                        x2 // (a + b),
-                    ],
-                    to_be_reduced = [
-                        (a * c + c^2 + x1) // (a * c + c^2),
-                        (a * c + c^2 + x1) // (a^2 + a * b + a * c + b * c),
-                        (a * x2 + a * x1 + b * x1) // x2,
-                    ],
-                    memberships = Bool[1, 1, 1],
-                ),
-            ],
+            [(
+                generators = [
+                    x1 // one(R),
+                    a // one(R),
+                    (a * c + c^2) // one(R),
+                    c // x2,
+                    x2 // (a + b),
+                ],
+                to_be_reduced = [
+                    (a * c + c^2 + x1) // (a * c + c^2),
+                    (a * c + c^2 + x1) // (a^2 + a * b + a * c + b * c),
+                    (a * x2 + a * x1 + b * x1) // x2,
+                ],
+                memberships = Bool[1, 1, 1],
+            ),],
         )
 
         for case in cases
