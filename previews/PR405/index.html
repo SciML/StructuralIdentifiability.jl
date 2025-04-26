@@ -15,8 +15,8 @@ Pkg.add(&quot;StructuralIdentifiability&quot;)</code></pre><h2 id="Citation"><a 
   pages   = {194-235}
 }</code></pre><h2 id="Feature-Summary"><a class="docs-heading-anchor" href="#Feature-Summary">Feature Summary</a><a id="Feature-Summary-1"></a><a class="docs-heading-anchor-permalink" href="#Feature-Summary" title="Permalink"></a></h2><p><code>StructuralIdentifiability.jl</code> can assess local and global identifiability of ODE models. In addition to these straightforward identifiability queries on individual parameters, the package can distinguish between single- and multi-experiment identifiability.</p><h2 id="Feature-List"><a class="docs-heading-anchor" href="#Feature-List">Feature List</a><a id="Feature-List-1"></a><a class="docs-heading-anchor-permalink" href="#Feature-List" title="Permalink"></a></h2><ul><li>Local identifiability checks</li><li>Global identifiability checks</li><li>Assessment of identifiable functions of parameters and states</li><li>Model reparametrization (experimental)</li></ul><h2 id="Contributing"><a class="docs-heading-anchor" href="#Contributing">Contributing</a><a id="Contributing-1"></a><a class="docs-heading-anchor-permalink" href="#Contributing" title="Permalink"></a></h2><ul><li><p>Please refer to the <a href="https://github.com/SciML/ColPrac/blob/master/README.md">SciML ColPrac: Contributor&#39;s Guide on Collaborative Practices for Community Packages</a> for guidance on PRs, issues, and other matters relating to contributing to StructuralIdentifiability.</p></li><li><p>There are a few community forums:</p><ul><li>The #diffeq-bridged channel in the <a href="https://julialang.org/slack/">Julia Slack</a></li><li><a href="https://gitter.im/JuliaDiffEq/Lobby">JuliaDiffEq</a> on Gitter</li><li>On the Julia Discourse forums</li><li>See also <a href="https://sciml.ai/community/">SciML Community page</a></li></ul></li></ul><h2 id="Reproducibility"><a class="docs-heading-anchor" href="#Reproducibility">Reproducibility</a><a id="Reproducibility-1"></a><a class="docs-heading-anchor-permalink" href="#Reproducibility" title="Permalink"></a></h2><details><summary>The documentation of this SciML package was built using these direct dependencies,</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl/docs/Project.toml`
   [6e4b80f9] BenchmarkTools v1.6.0
-  [e30172f5] Documenter v1.10.1
-  [961ee093] ModelingToolkit v9.73.0
+  [e30172f5] Documenter v1.10.2
+  [961ee093] ModelingToolkit v9.75.0
   [220ca800] StructuralIdentifiability v0.5.14 `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.11.5
 Commit 760b2e5b739 (2025-04-14 06:53 UTC)
 Build Info:
@@ -29,7 +29,7 @@ Platform Info:
 Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></details><details><summary>A more complete overview of all dependencies and their versions is also provided.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl/docs/Manifest.toml`
   [47edcb42] ADTypes v1.14.0
   [a4c015fc] ANSIColoredPrinters v0.0.1
-  [c3fe647b] AbstractAlgebra v0.44.11
+  [c3fe647b] AbstractAlgebra v0.44.12
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.42
   [79e6a3ab] Adapt v4.3.0
@@ -41,15 +41,14 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [6e4b80f9] BenchmarkTools v1.6.0
   [e2ed5e7c] Bijections v0.1.9
   [62783981] BitTwiddlingConvenienceFunctions v0.1.6
-  [8e7c35d0] BlockArrays v1.6.1
-  [70df07ce] BracketingNonlinearSolve v1.1.3
+  [8e7c35d0] BlockArrays v1.6.2
+  [70df07ce] BracketingNonlinearSolve v1.2.0
   [2a0fbf3d] CPUSummary v0.2.6
-  [00ebfdb7] CSTParser v3.4.3
   [d360d2e6] ChainRulesCore v1.25.1
   [fb6a15b2] CloseOpenIntervals v0.1.13
   [944b1d66] CodecZlib v0.7.8
   [861a8166] Combinatorics v1.0.2
-⌅ [a80b9123] CommonMark v0.8.16
+  [a80b9123] CommonMark v0.9.0
   [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.1
   [f70d9fcc] CommonWorldInvalidations v1.0.0
@@ -63,8 +62,8 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [9a962f9c] DataAPI v1.16.0
   [864edb3b] DataStructures v0.18.22
   [e2d170a0] DataValueInterfaces v1.0.0
-  [2b5f629d] DiffEqBase v6.168.0
-  [459566f4] DiffEqCallbacks v4.4.0
+  [2b5f629d] DiffEqBase v6.170.1
+  [459566f4] DiffEqCallbacks v4.4.1
   [77a26b50] DiffEqNoiseProcess v5.24.1
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
@@ -72,7 +71,7 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [8d63f2c5] DispatchDoctor v0.4.19
   [31c24e10] Distributions v0.25.119
   [ffbed154] DocStringExtensions v0.9.4
-  [e30172f5] Documenter v1.10.1
+  [e30172f5] Documenter v1.10.2
   [5b8099bc] DomainSets v0.7.15
   [7c1d4256] DynamicPolynomials v0.6.1
   [06fc5a27] DynamicQuantities v1.8.0
@@ -101,7 +100,7 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [615f187c] IfElse v0.1.1
   [d25df0c9] Inflate v0.1.5
   [18e54dd8] IntegerMathUtils v0.1.2
-  [8197267c] IntervalSets v0.7.10
+  [8197267c] IntervalSets v0.7.11
   [3587e190] InverseFunctions v0.1.17
   [92d709cd] IrrationalConstants v0.2.4
   [c8e1da08] IterTools v1.10.0
@@ -109,7 +108,8 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [692b3bcd] JLLWrappers v1.7.0
   [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
-⌅ [98e50ef6] JuliaFormatter v1.0.62
+  [98e50ef6] JuliaFormatter v2.1.2
+⌅ [70703baa] JuliaSyntax v0.4.10
   [ccbc3e58] JumpProcesses v9.14.3
   [ba0b0d4f] Krylov v0.10.0
   [b964fa9f] LaTeXStrings v1.4.0
@@ -119,7 +119,7 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [5078a376] LazyArrays v2.6.1
   [87fe0de2] LineSearch v0.1.4
   [d3d80556] LineSearches v7.3.0
-  [7ed4a6bd] LinearSolve v3.8.0
+  [7ed4a6bd] LinearSolve v3.9.0
   [2ab3a3ac] LogExpFunctions v0.3.29
   [d8e11817] MLStyle v0.4.17
   [1914dd2f] MacroTools v0.5.16
@@ -127,26 +127,26 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [d0879d2d] MarkdownAST v0.1.2
   [bb5d69b7] MaybeInplace v0.1.4
   [e1d29d7a] Missings v1.2.0
-  [961ee093] ModelingToolkit v9.73.0
+  [961ee093] ModelingToolkit v9.75.0
   [2e0e35c7] Moshi v0.3.5
   [46d2c3a1] MuladdMacro v0.2.4
   [102ac46a] MultivariatePolynomials v0.5.7
   [d8a4904e] MutableArithmetics v1.6.4
   [d41bc354] NLSolversBase v7.9.1
   [77ba4419] NaNMath v1.1.3
-  [2edaba10] Nemo v0.49.3
-  [8913a72c] NonlinearSolve v4.7.0
-  [be0214bd] NonlinearSolveBase v1.5.3
-  [5959db7a] NonlinearSolveFirstOrder v1.3.1
-  [9a2c21bd] NonlinearSolveQuasiNewton v1.2.1
-  [26075421] NonlinearSolveSpectralMethods v1.1.1
+  [2edaba10] Nemo v0.49.4
+  [8913a72c] NonlinearSolve v4.8.0
+  [be0214bd] NonlinearSolveBase v1.6.0
+  [5959db7a] NonlinearSolveFirstOrder v1.4.0
+  [9a2c21bd] NonlinearSolveQuasiNewton v1.3.0
+  [26075421] NonlinearSolveSpectralMethods v1.2.0
   [6fe1bfb0] OffsetArrays v1.17.0
   [429524aa] Optim v1.12.0
   [bac558e1] OrderedCollections v1.8.0
   [90014a1f] PDMats v0.11.34
   [3e851597] ParamPunPam v0.5.2
   [d96e819e] Parameters v0.12.3
-  [69de0a69] Parsers v2.8.2
+  [69de0a69] Parsers v2.8.3
   [e409e4f3] PoissonRandom v0.4.4
   [f517fe37] Polyester v0.7.16
   [1d0040c9] PolyesterWeave v0.2.2
@@ -162,21 +162,21 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [fb686558] RandomExtensions v0.4.4
   [e6cf234a] RandomNumbers v1.6.0
   [3cdcf5f2] RecipesBase v1.3.4
-  [731186ca] RecursiveArrayTools v3.32.0
+  [731186ca] RecursiveArrayTools v3.33.0
   [189a3867] Reexport v1.2.2
   [2792f1a3] RegistryInstances v0.1.0
   [ae029012] Requires v1.3.1
   [ae5879a3] ResettableStacks v1.1.1
   [79098fc4] Rmath v0.8.0
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.13
-  [9dfe8606] SCCNonlinearSolve v1.0.0
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.14
+  [9dfe8606] SCCNonlinearSolve v1.1.0
   [94e857df] SIMDTypes v0.1.0
-  [0bca4576] SciMLBase v2.85.0
-  [19f34311] SciMLJacobianOperators v0.1.2
+  [0bca4576] SciMLBase v2.86.1
+  [19f34311] SciMLJacobianOperators v0.1.3
   [c0aeaf25] SciMLOperators v0.3.13
   [53ae85a6] SciMLStructures v1.7.0
   [efcf1570] Setfield v1.1.2
-  [727e6d20] SimpleNonlinearSolve v2.2.2
+  [727e6d20] SimpleNonlinearSolve v2.3.0
   [699a6c99] SimpleTraits v0.9.4
   [a2af1166] SortingAlgorithms v1.2.1
   [0a514795] SparseMatrixColorings v0.4.18
@@ -194,7 +194,7 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [220ca800] StructuralIdentifiability v0.5.14 `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl`
   [2efcf032] SymbolicIndexingInterface v0.3.39
   [19f23fe9] SymbolicLimits v0.2.2
-  [d1185830] SymbolicUtils v3.26.1
+  [d1185830] SymbolicUtils v3.27.0
   [0c5d862f] Symbolics v6.38.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.0
@@ -203,7 +203,6 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [1c621080] TestItems v1.0.0
   [8290d209] ThreadingUtilities v0.5.3
   [a759f4b9] TimerOutputs v0.5.28
-  [0796e94c] Tokenize v0.5.29
   [3bb67fe8] TranscodingStreams v0.11.3
   [410a4b4d] Tricks v0.1.10
   [781d530d] TruncatedStacktraces v1.4.0
@@ -212,6 +211,7 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [1986cc42] Unitful v1.22.0
   [a7c27f48] Unityper v0.1.6
   [013be700] UnsafeAtomics v0.3.0
+  [897b6980] WeakValueDicts v0.1.0
   [2e619515] Expat_jll v2.6.5+0
   [e134572f] FLINT_jll v300.200.100+0
   [f8c6e375] Git_jll v2.49.0+0
@@ -219,7 +219,7 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [94ce4f54] Libiconv_jll v1.18.0+0
   [856f044c] MKL_jll v2025.0.1+1
   [656ef2d0] OpenBLAS32_jll v0.3.29+0
-  [458c3c95] OpenSSL_jll v3.0.16+0
+  [458c3c95] OpenSSL_jll v3.5.0+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
   [f50d1b31] Rmath_jll v0.5.1+0
   [1317d2d5] oneTBB_jll v2022.0.0+0
@@ -276,4 +276,4 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`</code></pre></details>You can also download the 
 <a href="">manifest</a> file and the
-<a href="">project</a> file.</article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/creating_ode/">Creating ODE System »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.10.1 on <span class="colophon-date" title="Tuesday 22 April 2025 08:29">Tuesday 22 April 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+<a href="">project</a> file.</article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/creating_ode/">Creating ODE System »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.10.2 on <span class="colophon-date" title="Saturday 26 April 2025 21:20">Saturday 26 April 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
