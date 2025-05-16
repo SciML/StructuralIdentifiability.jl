@@ -406,14 +406,16 @@ Given a field of rational functions `rff` returns a set of "simpler" and
 standardized generators for `rff`.
 
 Applies the following passes:
-1. Filter constants,
+1. Filter constants.
 2. Remove redundant generators.
+3. Flip some fractions.
 """
 @timeit _to function beautiful_generators(
     rff::RationalFunctionField;
     discard_redundant = true,
     reversed_order = false,
     priority_variables = [],
+    want_in_numerator = [],
 )
     time_start = time_ns()
     fracs = dennums_to_fractions(rff.dennums)
@@ -423,6 +425,14 @@ Applies the following passes:
     if isempty(fracs)
         @debug "The set of generators is empty"
         return fracs
+    end
+    # Flip a/x => x/a when x is in want_in_numerator
+    for i in 1:length(fracs)
+        if !isempty(vars(denominator(fracs[i]))) &&
+           issubset(vars(denominator(fracs[i])), want_in_numerator) &&
+           isempty(intersect(vars(numerator(fracs[i])), want_in_numerator))
+            fracs[i] = denominator(fracs[i]) // numerator(fracs[i])
+        end
     end
     # Remove redundant pass
     if discard_redundant
@@ -698,6 +708,7 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
     check_variables = false, # almost always slows down and thus turned off
     rational_interpolator = :VanDerHoevenLecerf,
     priority_variables = [],
+    want_in_numerator = [],
 )
     @info "Simplifying generating set. Simplification level: $simplify"
     _runtime_logger[:id_groebner_time] = 0.0
@@ -769,6 +780,7 @@ Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactica
     runtime = @elapsed new_fracs = beautiful_generators(
         RationalFunctionField(new_fracs_unique),
         priority_variables = priority_variables,
+        want_in_numerator = want_in_numerator,
     )
     @debug "Checking inclusion with probability $prob_threshold"
     runtime =
