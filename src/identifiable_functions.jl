@@ -124,6 +124,7 @@ function _find_identifiable_functions(
             simplify = simplify,
             rational_interpolator = rational_interpolator,
             priority_variables = [parent_ring_change(p, bring) for p in ode.parameters],
+            want_in_numerator = ode.x_vars,
         )
     else
         id_funcs_fracs = dennums_to_fractions(id_funcs)
