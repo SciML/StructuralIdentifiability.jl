@@ -73,7 +73,7 @@ function StructuralIdentifiability.eval_at_nemo(
     return out
 end
 
-function get_measured_quantities(ode::ModelingToolkit.ODESystem)
+function get_measured_quantities(ode::ModelingToolkit.System)
     outputs = filter(eq -> ModelingToolkit.isoutput(eq.lhs), ModelingToolkit.equations(ode))
     if !isempty(outputs)
         return outputs
@@ -282,10 +282,10 @@ function __mtk_to_si(
 end
 # -----------------------------------------------------------------------------
 """
-    function assess_local_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=ModelingToolkit.Equation[], funcs_to_check=Array{}[], prob_threshold::Float64=0.99, type=:SE, loglevel=Logging.Info)
+    function assess_local_identifiability(ode::ModelingToolkit.System; measured_quantities=ModelingToolkit.Equation[], funcs_to_check=Array{}[], prob_threshold::Float64=0.99, type=:SE, loglevel=Logging.Info)
 
 Input:
-- `ode` - the ODESystem object from ModelingToolkit
+- `ode` - the System object from ModelingToolkit
 - `measured_quantities` - the measurable outputs of the model
 - `funcs_to_check` - functions of parameters for which to check identifiability
 - `prob_threshold` - probability of correctness
@@ -304,7 +304,7 @@ The result is correct with probability at least `prob_threshold`.
 The return value is a tuple consisting of the array of bools and the number of experiments to be performed.
 """
 function StructuralIdentifiability.assess_local_identifiability(
-    ode::ModelingToolkit.ODESystem;
+    ode::ModelingToolkit.System;
     measured_quantities = ModelingToolkit.Equation[],
     funcs_to_check = Array{}[],
     prob_threshold::Float64 = 0.99,
@@ -324,7 +324,7 @@ function StructuralIdentifiability.assess_local_identifiability(
 end
 
 @timeit _to function _assess_local_identifiability(
-    ode::ModelingToolkit.ODESystem;
+    ode::ModelingToolkit.System;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = Array{}[],
     prob_threshold::Float64 = 0.99,
@@ -367,10 +367,10 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    assess_identifiability(ode::ModelingToolkit.ODESystem; measured_quantities=ModelingToolkit.Equation[], funcs_to_check=[], known_ic=[], prob_threshold = 0.99, loglevel=Logging.Info)
+    assess_identifiability(ode::ModelingToolkit.System; measured_quantities=ModelingToolkit.Equation[], funcs_to_check=[], known_ic=[], prob_threshold = 0.99, loglevel=Logging.Info)
 
 Input:
-- `ode` - the ModelingToolkit.ODESystem object that defines the model
+- `ode` - the ModelingToolkit.System object that defines the model
 - `measured_quantities` - the output functions of the model
 - `funcs_to_check` - functions of parameters for which to check the identifiability
 - `known_ic` - functions, for which initial conditions are assumed to be known
@@ -382,7 +382,7 @@ at least `prob_threshold`.
 If known initial conditions are provided, the identifiability results for the states will also hold at `t = 0`
 """
 function StructuralIdentifiability.assess_identifiability(
-    ode::ModelingToolkit.ODESystem;
+    ode::ModelingToolkit.System;
     measured_quantities = ModelingToolkit.Equation[],
     funcs_to_check = [],
     known_ic = [],
@@ -402,7 +402,7 @@ function StructuralIdentifiability.assess_identifiability(
 end
 
 function _assess_identifiability(
-    ode::ModelingToolkit.ODESystem;
+    ode::ModelingToolkit.System;
     measured_quantities = ModelingToolkit.Equation[],
     funcs_to_check = [],
     known_ic = [],
@@ -537,7 +537,7 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    find_identifiable_functions(ode::ModelingToolkit.ODESystem; measured_quantities=[], known_ic=[], options...)
+    find_identifiable_functions(ode::ModelingToolkit.System; measured_quantities=[], known_ic=[], options...)
 
 Finds all functions of parameters/states that are identifiable in the given ODE
 system.
@@ -566,7 +566,7 @@ eqs = [
     D(x0) ~ -(a01 + a21) * x0 + a12 * x1,
     D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0
 ]
-de = ODESystem(eqs, t, name = :Test)
+de = System(eqs, t, name = :Test)
 
 find_identifiable_functions(de, measured_quantities = [y1 ~ x0])
 
@@ -577,7 +577,7 @@ find_identifiable_functions(de, measured_quantities = [y1 ~ x0])
 ```
 """
 function StructuralIdentifiability.find_identifiable_functions(
-    ode::ModelingToolkit.ODESystem;
+    ode::ModelingToolkit.System;
     measured_quantities = ModelingToolkit.Equation[],
     known_ic = [],
     prob_threshold::Float64 = 0.99,
@@ -604,7 +604,7 @@ function StructuralIdentifiability.find_identifiable_functions(
 end
 
 function _find_identifiable_functions(
-    ode::ModelingToolkit.ODESystem;
+    ode::ModelingToolkit.System;
     measured_quantities = ModelingToolkit.Equation[],
     known_ic = Symbolics.Num[],
     prob_threshold::Float64 = 0.99,

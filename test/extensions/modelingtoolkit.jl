@@ -15,7 +15,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         @test nemo == x + y * a^2 + y^20 * (b + c)
     end
 
-    @testset "Check identifiability of `ODESystem` object" begin
+    @testset "Check identifiability of `System` object" begin
         using ModelingToolkit
         using ModelingToolkit: parameters
         using Symbolics
@@ -25,7 +25,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         D = Differential(t)
 
         eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
-        de = ODESystem(eqs, t, name = :Test)
+        de = System(eqs, t, name = :Test)
 
         correct = OrderedDict(
             a01 => :nonidentifiable,
@@ -55,7 +55,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         D = Differential(t)
 
         eqs = [D(x) ~ (-V_m * x) / (k_m + x) + k01 * x, y1 ~ c * x]
-        de = ODESystem(eqs, t, name = :Test)
+        de = System(eqs, t, name = :Test)
 
         correct = [k01, c * k_m, V_m * c]
         result = find_identifiable_functions(de)
@@ -71,7 +71,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         D = Differential(t)
 
         eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
-        de = ODESystem(eqs, t, name = :Test)
+        de = System(eqs, t, name = :Test)
 
         correct = OrderedDict(
             a01 => :nonidentifiable,
@@ -90,7 +90,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         D = Differential(t)
 
         eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
-        de = ODESystem(eqs, t, name = :Test)
+        de = System(eqs, t, name = :Test)
         funcs_to_check = [a01, a21, a12, a01 * a12, a01 + a12 + a21]
         correct = OrderedDict(
             a01 => :nonidentifiable,
@@ -109,7 +109,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
 
         eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1]
         measured_quantities = [y1 ~ x0]
-        de = ODESystem(eqs, t, name = :Test)
+        de = System(eqs, t, name = :Test)
         funcs_to_check = [a01, a21, a12, a01 * a12, a01 + a12 + a21]
         correct = OrderedDict(
             a01 => :nonidentifiable,
@@ -137,7 +137,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             D(W) ~ χ * (I - W),
             D(R) ~ γ * I - (μ + a) * R,
         ]
-        de = ODESystem(eqs, t, name = :TestSIWR)
+        de = System(eqs, t, name = :TestSIWR)
         measured_quantities = [y ~ k * I]
         # check all parameters (default)
         @test isequal(
@@ -194,7 +194,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             D(R) ~ gm * I - (mu + a) * R,
             y ~ k * I,
         ]
-        de = ODESystem(eqs, t, name = :TestSIWR)
+        de = System(eqs, t, name = :TestSIWR)
         # check all parameters (default)
         @test isequal(true, all(values(assess_local_identifiability(de))))
 
@@ -236,7 +236,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             D(W) ~ xi * (I - 0.6 * W),
             D(R) ~ gm * I - (mu + a) * R,
         ]
-        de = ODESystem(eqs, t, name = :TestSIWR)
+        de = System(eqs, t, name = :TestSIWR)
         measured_quantities = [y ~ 1.57 * I * k]
         funcs_to_check = [mu, bi, bw, a, xi, gm, mu, gm + mu, k, S, I, W, R]
         correct = OrderedDict(f => true for f in funcs_to_check)
@@ -275,7 +275,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             D(x1) ~ a21 * x0 - a12 * x1,
         ]
 
-        de = ODESystem(eqs, t, name = :Test)
+        de = System(eqs, t, name = :Test)
         measured_quantities = [y1 ~ x0]
         funcs_to_check = [a01, a21, a12, a01 * a12, a01 + a12 + a21]
         correct = Dict(
@@ -296,7 +296,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         D = Differential(t)
 
         eqs = [D(x1) ~ -a * x1 + x2 * b / (x1 + b / (c^2 - x2)), D(x2) ~ x2 * c^2 + x1]
-        de = ODESystem(eqs, t, name = :Test)
+        de = System(eqs, t, name = :Test)
         measured_quantities = [y ~ x2]
         correct = Dict(a => :globally, b => :globally, c => :locally)
         to_check = [a, b, c]
@@ -324,7 +324,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             D(x2) ~ x2 * c^2 + x1,
             D(c) ~ 0,
         ]
-        de = ODESystem(eqs, t, name = :Test)
+        de = System(eqs, t, name = :Test)
         measured_quantities = [y1 ~ x2, y2 ~ c]
         correct = OrderedDict(a => :globally, b => :globally)
         to_check = [a, b]
@@ -346,7 +346,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             D = Differential(t)
             equs = [D(x) ~ α^2 * x + z]
 
-            ODESystem(equs, t, vars, ps; name = name)
+            System(equs, t, vars, ps; name = name)
         end
 
         function wolves_creator(; name)
@@ -355,7 +355,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             D = Differential(t)
             equs = [D(y) ~ -δ * y + q]
 
-            ODESystem(equs, t, vars, ps; name = name)
+            System(equs, t, vars, ps; name = name)
         end
 
         function lotka_volterra_creator(; name)
@@ -368,7 +368,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             eqs =
                 [rabbits.z ~ -β * wolves.y * rabbits.x, wolves.q ~ γ * wolves.y * rabbits.x]
 
-            ModelingToolkit.compose(ODESystem(eqs, t, [], ps; name = name), wolves, rabbits)
+            ModelingToolkit.compose(System(eqs, t, [], ps; name = name), wolves, rabbits)
         end
 
         function getbyname(sys, name)
@@ -405,7 +405,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
 
         @variables t, x(t), y(t), z(t), w(t)
         @parameters a
-        @named sys = ODESystem([D(x) ~ a * y], t, [x], [a]; observed = [y ~ z, z ~ x])
+        @named sys = System([D(x) ~ a * y], t, [x], [a]; observed = [y ~ z, z ~ x])
         measured_quantities = [w ~ x]
         result = assess_identifiability(sys, measured_quantities = measured_quantities)
         @test result[a] == :globally
@@ -422,7 +422,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
 
         eqs = [D(x[1]) ~ -k1 * x[2], D(x[2]) ~ -k2 * x[1]]
 
-        sys = ODESystem(eqs, t, name = :example_vector)
+        sys = System(eqs, t, name = :example_vector)
         correct = OrderedDict(x[1] => true, x[2] => true, k1 => true, k2 => true)
         @test assess_local_identifiability(sys, measured_quantities = [x[1], x[2]]) ==
               correct
@@ -436,7 +436,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             y[1] ~ X[1] * X[2] + a,
             y[2] ~ X[1] - X[2],
         ]
-        @mtkbuild osys = ODESystem(eqs, t)
+        @mtkbuild osys = System(eqs, t)
         correct = OrderedDict(
             X[1] => :locally,
             X[2] => :locally,
@@ -819,7 +819,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             D(x2) ~ r2 * x2 * (1 - c2 * x2) + beta2 * x1 * x2 / (chi2 + x1),
         ]
         measured_quantities = [y ~ x1]
-        ode_mtk = ODESystem(eqs, t, name = :mutualist)
+        ode_mtk = System(eqs, t, name = :mutualist)
 
         global_id_1 =
             assess_identifiability(ode_mtk, measured_quantities = measured_quantities)
@@ -863,7 +863,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         x1_0 = substitute(x1, Dict(t => 0))
         x2_0 = substitute(x2, Dict(t => 0))
         eqs = [D(x1) ~ a * x1 - b * x1 * x2, D(x2) ~ -c * x2 + d * x1 * x2]
-        ode_mtk = ODESystem(eqs, t, name = :lv)
+        ode_mtk = System(eqs, t, name = :lv)
         push!(
             cases,
             Dict(
@@ -881,7 +881,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         @variables x3(t)
         x3_0 = substitute(x3, Dict(t => 0))
         eqs = [D(x1) ~ a + x2 + x3, D(x2) ~ b^2 + c, D(x3) ~ -c]
-        ode_mtk = ODESystem(eqs, t, name = :ex2)
+        ode_mtk = System(eqs, t, name = :ex2)
 
         push!(
             cases,
@@ -916,7 +916,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         )
 
         eqs = [D(x1) ~ a * x1, D(x2) ~ x1 + 1 / x1]
-        ode_mtk = ODESystem(eqs, t, name = :ex3)
+        ode_mtk = System(eqs, t, name = :ex3)
         push!(
             cases,
             Dict(
@@ -939,7 +939,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             D(x3) ~ gama * x2 - delta * x3,
             D(x4) ~ sigma * x4 * (gama * x2 - delta * x3) / x3,
         ]
-        ode_mtk = ODESystem(eqs, t, name = :goodwin)
+        ode_mtk = System(eqs, t, name = :goodwin)
         push!(
             cases,
             Dict(
