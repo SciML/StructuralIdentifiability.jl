@@ -164,7 +164,7 @@ As for `assess_identifiability`, one can assess local identifiability of arbitra
 **Remark** The algorithms we used are randomized, the default probability of the correctness of the result is 99%, one can change it by changing the value of a keyword argument `p` to any real number between 0 and 1, for example:
 
 ```julia
-# pobability of correctness 99.9%
+# probability of correctness 99.9%
 assess_identifiability(ode; p = 0.999)
 ```
 
