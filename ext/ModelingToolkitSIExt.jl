@@ -449,14 +449,14 @@ end
 
 """
     function assess_local_identifiability(
-        dds::ModelingToolkit.DiscreteSystem;
+        dds::ModelingToolkit.System;
         measured_quantities=Array{ModelingToolkit.Equation}[],
         funcs_to_check=Array{}[],
         known_ic=Array{}[],
         prob_threshold::Float64=0.99)
 
 Input:
-- `dds` - the DiscreteSystem object from ModelingToolkit
+- `dds` - the System object from ModelingToolkit
 - `measured_quantities` - the measurable outputs of the model
 - `funcs_to_check` - functions of parameters for which to check identifiability (all parameters and states if not specified)
 - `known_ic` - functions (of states and parameter) whose initial conditions are assumed to be known
@@ -468,7 +468,7 @@ Output:
 The result is correct with probability at least `prob_threshold`.
 """
 function StructuralIdentifiability.assess_local_identifiability(
-    dds::ModelingToolkit.DiscreteSystem;
+    dds::ModelingToolkit.System;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = Array{}[],
     known_ic = Array{}[],
@@ -488,7 +488,7 @@ function StructuralIdentifiability.assess_local_identifiability(
 end
 
 function _assess_local_identifiability(
-    dds::ModelingToolkit.DiscreteSystem;
+    dds::ModelingToolkit.System;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = Array{}[],
     known_ic = Array{}[],

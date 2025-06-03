@@ -568,7 +568,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             I(k) ~ I(k - 1) + β * S(k - 1) * I(k - 1) - α * I(k - 1),
             R(k) ~ R(k - 1) + α * I(k - 1),
         ]
-        @mtkbuild sir = DiscreteSystem(eqs, t)
+        @mtkbuild sir = System(eqs, t)
         push!(
             cases,
             Dict(
@@ -586,7 +586,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
 
         eqs = [x(k) ~ θ * x(k - 1)^3]
 
-        @mtkbuild eqs = DiscreteSystem(eqs, t)
+        @mtkbuild eqs = System(eqs, t)
         push!(
             cases,
             Dict(
@@ -604,7 +604,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
 
         eqs = [x1(k) ~ x1(k - 1) + x2(k - 1), x2(k) ~ x2(k - 1) + θ + β]
 
-        @mtkbuild eqs = DiscreteSystem(eqs, t)
+        @mtkbuild eqs = System(eqs, t)
         push!(
             cases,
             Dict(
@@ -625,7 +625,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             x2(k) ~ -c * x2(k - 1) + d * x1(k - 1) * x2(k - 1),
         ]
 
-        @mtkbuild lv = DiscreteSystem(eqs, t)
+        @mtkbuild lv = System(eqs, t)
         push!(
             cases,
             Dict(
@@ -704,7 +704,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             x2(k) ~ (1 - theta2) * x1(k - 1) + x2(k - 1)^2 + u(k - 1),
         ]
 
-        @named abmd1 = DiscreteSystem(eqs, t)
+        @named abmd1 = System(eqs, t)
         push!(
             cases,
             Dict(
@@ -726,7 +726,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             x2(k) ~ theta3 * x1(k - 1),
         ]
 
-        @named abmd2 = DiscreteSystem(eqs, t)
+        @named abmd2 = System(eqs, t)
         push!(
             cases,
             Dict(
@@ -767,7 +767,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
 
         eqs = [x1(k) ~ x1(k - 1) + a]
 
-        @mtkbuild kic = DiscreteSystem(eqs, t)
+        @mtkbuild kic = System(eqs, t)
         push!(
             cases,
             Dict(
