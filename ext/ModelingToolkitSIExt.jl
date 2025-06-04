@@ -89,11 +89,11 @@ function get_measured_quantities(ode::ModelingToolkit.System)
 end
 
 """
-    function mtk_to_si(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{ModelingToolkit.Equation})
-    function mtk_to_si(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{SymbolicUtils.BasicSymbolic})
+    function mtk_to_si(de::ModelingToolkit.System, measured_quantities::Array{ModelingToolkit.Equation})
+    function mtk_to_si(de::ModelingToolkit.System, measured_quantities::Array{SymbolicUtils.BasicSymbolic})
 
 Input:
-- `de` - ModelingToolkit.AbstractTimeDependentSystem, a system for identifiability query
+- `de` - ModelingToolkit.System, a system for identifiability query
 - `measured_quantities` - array of output functions (as equations of just functions)
 
 Output:
@@ -102,7 +102,7 @@ Output:
   involved in the produced `ODE` object
 """
 function StructuralIdentifiability.mtk_to_si(
-    de::ModelingToolkit.AbstractTimeDependentSystem,
+    de::ModelingToolkit.System,
     measured_quantities::Array{ModelingToolkit.Equation},
 )
     if isempty(measured_quantities)
@@ -115,7 +115,7 @@ function StructuralIdentifiability.mtk_to_si(
 end
 
 function StructuralIdentifiability.mtk_to_si(
-    de::ModelingToolkit.AbstractTimeDependentSystem,
+    de::ModelingToolkit.System,
     measured_quantities::Array{<:Symbolics.Num},
 )
     return __mtk_to_si(
@@ -125,7 +125,7 @@ function StructuralIdentifiability.mtk_to_si(
 end
 
 function StructuralIdentifiability.mtk_to_si(
-    de::ModelingToolkit.AbstractTimeDependentSystem,
+    de::ModelingToolkit.System,
     measured_quantities::Array{<:SymbolicUtils.BasicSymbolic},
 )
     return __mtk_to_si(de, [("y$i", e) for (i, e) in enumerate(measured_quantities)])
@@ -135,7 +135,7 @@ end
 # old name kept for compatibility purposes
 
 function preprocess_ode(
-    de::ModelingToolkit.AbstractTimeDependentSystem,
+    de::ModelingToolkit.System,
     measured_quantities::Array{ModelingToolkit.Equation},
 )
     @warn "Function `preprocess_ode` has been renamed to `mtk_to_si`. The old name can be still used but will disappear in the future releases."
@@ -143,7 +143,7 @@ function preprocess_ode(
 end
 
 function preprocess_ode(
-    de::ModelingToolkit.AbstractTimeDependentSystem,
+    de::ModelingToolkit.System,
     measured_quantities::Array{<:Symbolics.Num},
 )
     @warn "Function `preprocess_ode` has been renamed to `mtk_to_si`. The old name can be still used but will disappear in the future releases."
@@ -151,7 +151,7 @@ function preprocess_ode(
 end
 
 function preprocess_ode(
-    de::ModelingToolkit.AbstractTimeDependentSystem,
+    de::ModelingToolkit.System,
     measured_quantities::Array{<:SymbolicUtils.BasicSymbolic},
 )
     @warn "Function `preprocess_ode` has been renamed to `mtk_to_si`. The old name can be still used but will disappear in the future releases."
@@ -188,10 +188,10 @@ end
 
 #------------------------------------------------------------------------------
 """
-    function __mtk_to_si(de::ModelingToolkit.AbstractTimeDependentSystem, measured_quantities::Array{Tuple{String, SymbolicUtils.BasicSymbolic}})
+    function __mtk_to_si(de::ModelingToolkit.System, measured_quantities::Array{Tuple{String, SymbolicUtils.BasicSymbolic}})
 
 Input:
-- `de` - ModelingToolkit.AbstractTimeDependentSystem, a system for identifiability query
+- `de` - ModelingToolkit.System, a system for identifiability query
 - `measured_quantities` - array of output function in the form (name, expression)
 
 Output:
@@ -200,7 +200,7 @@ Output:
   involved in the produced `ODE` object
 """
 function __mtk_to_si(
-    de::ModelingToolkit.AbstractTimeDependentSystem,
+    de::ModelingToolkit.System,
     measured_quantities::Array{<:Tuple{String, <:SymbolicUtils.BasicSymbolic}},
 )
     polytype = StructuralIdentifiability.Nemo.QQMPolyRingElem
