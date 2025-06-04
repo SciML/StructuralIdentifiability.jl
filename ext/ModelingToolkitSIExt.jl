@@ -282,14 +282,15 @@ function __mtk_to_si(
 end
 # -----------------------------------------------------------------------------
 """
-    function assess_local_identifiability(ode::ModelingToolkit.System; measured_quantities=ModelingToolkit.Equation[], funcs_to_check=Array{}[], prob_threshold::Float64=0.99, type=:SE, loglevel=Logging.Info)
+    function assess_local_identifiability(sys::ModelingToolkit.System; measured_quantities=ModelingToolkit.Equation[], funcs_to_check=Array{}[], prob_threshold::Float64=0.99, type=:SE, loglevel=Logging.Info)
 
 Input:
-- `ode` - the System object from ModelingToolkit
+- `ode` - the System object from ModelingToolkit (could represent an ODE or a discrete-time dynamical system)
 - `measured_quantities` - the measurable outputs of the model
 - `funcs_to_check` - functions of parameters for which to check identifiability
+- `known_ic` - functions of states (e.g., some of the states) for which initial conditions are assumed to be known (and generic)
 - `prob_threshold` - probability of correctness
-- `type` - identifiability type (`:SE` for single-experiment, `:ME` for multi-experiment)
+- `type` - identifiability type (`:SE` for single-experiment, `:ME` for multi-experiment). `:ME` not implemented for discrete-time systems
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
 Output:
@@ -299,34 +300,50 @@ Output:
 The function determines local identifiability of parameters in `funcs_to_check` or all possible parameters if `funcs_to_check` is empty
 
 The result is correct with probability at least `prob_threshold`.
-
-`type` can be either `:SE` (single-experiment identifiability) or `:ME` (multi-experiment identifiability).
-The return value is a tuple consisting of the array of bools and the number of experiments to be performed.
 """
 function StructuralIdentifiability.assess_local_identifiability(
-    ode::ModelingToolkit.System;
+    sys::ModelingToolkit.System;
     measured_quantities = ModelingToolkit.Equation[],
     funcs_to_check = Array{}[],
+    known_ic = [],
     prob_threshold::Float64 = 0.99,
     type = :SE,
     loglevel = Logging.Info,
 )
     restart_logging(loglevel = loglevel)
     with_logger(_si_logger[]) do
-        return _assess_local_identifiability(
-            ode,
-            measured_quantities = measured_quantities,
-            funcs_to_check = funcs_to_check,
-            prob_threshold = prob_threshold,
-            type = type,
-        )
+        if any(ModelingToolkit.hasshift, equations(sys))
+            if type == :ME
+                throw(
+                    "Only single-experiment identifiability is implemented in the discrete-time case",
+                )
+            else
+                return _assess_local_identifiability_dds(
+                    sys,
+                    measured_quantities = measured_quantities,
+                    funcs_to_check = funcs_to_check,
+                    known_ic = known_ic,
+                    prob_threshold = prob_threshold,
+                )
+            end
+        else
+            return _assess_local_identifiability_ode(
+                sys,
+                measured_quantities = measured_quantities,
+                funcs_to_check = funcs_to_check,
+                known_ic = known_ic,
+                prob_threshold = prob_threshold,
+                type = type,
+            )
+        end
     end
 end
 
-@timeit _to function _assess_local_identifiability(
+@timeit _to function _assess_local_identifiability_ode(
     ode::ModelingToolkit.System;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = Array{}[],
+    known_ic = [],
     prob_threshold::Float64 = 0.99,
     type = :SE,
 )
@@ -338,19 +355,39 @@ end
     end
 
     funcs_to_check_ = [eval_at_nemo(x, conversion) for x in funcs_to_check]
+    known_ic_ = [eval_at_nemo(each, conversion) for each in known_ic]
 
     if isequal(type, :SE)
-        result = StructuralIdentifiability._assess_local_identifiability(
-            ode,
-            funcs_to_check = funcs_to_check_,
-            prob_threshold = prob_threshold,
-            type = type,
-        )
+        if isempty(known_ic)
+            result = StructuralIdentifiability._assess_local_identifiability(
+                ode,
+                funcs_to_check = funcs_to_check_,
+                prob_threshold = prob_threshold,
+                type = type,
+            )
+        else
+            result = StructuralIdentifiability._assess_local_identifiability_kic(
+                ode,
+                funcs_to_check = funcs_to_check_,
+                prob_threshold = prob_threshold,
+                known_ic = known_ic_,
+            )
+        end
         nemo2mtk = Dict(funcs_to_check_ .=> funcs_to_check)
         out_dict =
             OrderedDict(nemo2mtk[param] => result[param] for param in funcs_to_check_)
+        if length(known_ic) > 0
+            @warn "Since known initial conditions were provided, identifiability of states (e.g., `x(t)`) is at t = 0 only !"
+            t = SymbolicUtils.Sym{Real}(:t)
+            out_dict = OrderedDict(substitute(k, Dict(t => 0)) => v for (k, v) in out_dict)
+        end
         return out_dict
     elseif isequal(type, :ME)
+        if !isempty(known_ic)
+            throw(
+                "Known initail conditions are not well-defined in the multi-experimental regime",
+            )
+        end
         result, bd = StructuralIdentifiability._assess_local_identifiability(
             ode,
             funcs_to_check = funcs_to_check_,
@@ -447,47 +484,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-"""
-    function assess_local_identifiability(
-        dds::ModelingToolkit.System;
-        measured_quantities=Array{ModelingToolkit.Equation}[],
-        funcs_to_check=Array{}[],
-        known_ic=Array{}[],
-        prob_threshold::Float64=0.99)
-
-Input:
-- `dds` - the System object from ModelingToolkit
-- `measured_quantities` - the measurable outputs of the model
-- `funcs_to_check` - functions of parameters for which to check identifiability (all parameters and states if not specified)
-- `known_ic` - functions (of states and parameter) whose initial conditions are assumed to be known
-- `prob_threshold` - probability of correctness
-
-Output:
-- the result is an (ordered) dictionary from each function to to boolean;
-
-The result is correct with probability at least `prob_threshold`.
-"""
-function StructuralIdentifiability.assess_local_identifiability(
-    dds::ModelingToolkit.System;
-    measured_quantities = Array{ModelingToolkit.Equation}[],
-    funcs_to_check = Array{}[],
-    known_ic = Array{}[],
-    prob_threshold::Float64 = 0.99,
-    loglevel = Logging.Info,
-)
-    restart_logging(loglevel = loglevel)
-    with_logger(_si_logger[]) do
-        return _assess_local_identifiability(
-            dds,
-            measured_quantities = measured_quantities,
-            funcs_to_check = funcs_to_check,
-            known_ic = known_ic,
-            prob_threshold = prob_threshold,
-        )
-    end
-end
-
-function _assess_local_identifiability(
+function _assess_local_identifiability_dds(
     dds::ModelingToolkit.System;
     measured_quantities = Array{ModelingToolkit.Equation}[],
     funcs_to_check = Array{}[],
