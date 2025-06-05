@@ -62,8 +62,9 @@ In order to do this, we first introduce all functions and scalars:
 ```@example 2; continued = true
 using StructuralIdentifiability, ModelingToolkit
 
+@independent_variables t
 @parameters r1, r2, c1, c2, beta1, beta2, chi1, chi2
-@variables t, x1(t), x2(t), y(t), u(t)
+@variables x1(t), x2(t), y(t), u(t)
 
 D = Differential(t)
 ```

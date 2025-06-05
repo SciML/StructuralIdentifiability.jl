@@ -79,8 +79,9 @@ The following code will perform the same computation as above (note that `Modeli
 using ModelingToolkit
 using StructuralIdentifiability
 
+@independent_variables t
 @parameters α β
-@variables t S(t) I(t) R(t)
+@variables S(t) I(t) R(t)
 k = ShiftIndex(t)
 
 eqs = [
