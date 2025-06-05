@@ -3,8 +3,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         using ModelingToolkit, Symbolics
         using Nemo
 
+        @independent_variables t
         @parameters a01 a21 a12
-        @variables t x0 x1
+        @variables x0 x1
 
         ring, (a, b, c, x, y) = QQ["a", "b", "c", "x", "y"]
 
@@ -20,8 +21,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         using ModelingToolkit: parameters
         using Symbolics
 
+        @independent_variables t
         @parameters a01 a21 a12
-        @variables t x0(t) x1(t) y1(t) [output = true]
+        @variables x0(t) x1(t) y1(t) [output = true]
         D = Differential(t)
 
         eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
@@ -50,8 +52,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         # --------------------------------------------------------------------------
 
         # check identifiabile functions
+        @independent_variables t
         @parameters V_m k_m k01 c
-        @variables t x(t) y1(t) [output = true]
+        @variables x(t) y1(t) [output = true]
         D = Differential(t)
 
         eqs = [D(x) ~ (-V_m * x) / (k_m + x) + k01 * x, y1 ~ c * x]
@@ -66,8 +69,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         @test isequal(Set(correct), Set(result))
 
         # --------------------------------------------------------------------------
+        @independent_variables t
         @parameters a01 a21 a12
-        @variables t x0(t) x1(t) y1(t) [output = true]
+        @variables x0(t) x1(t) y1(t) [output = true]
         D = Differential(t)
 
         eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
@@ -85,8 +89,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
 
         # --------------------------------------------------------------------------
 
+        @independent_variables t
         @parameters a01 a21 a12
-        @variables t x0(t) x1(t) y1(t) [output = true]
+        @variables x0(t) x1(t) y1(t) [output = true]
         D = Differential(t)
 
         eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1, y1 ~ x0]
@@ -103,8 +108,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
 
         # --------------------------------------------------------------------------
 
+        @independent_variables t
         @parameters a01 a21 a12
-        @variables t x0(t) x1(t) y1(t)
+        @variables x0(t) x1(t) y1(t)
         D = Differential(t)
 
         eqs = [D(x0) ~ -(a01 + a21) * x0 + a12 * x1, D(x1) ~ a21 * x0 - a12 * x1]
@@ -128,8 +134,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         )
 
         # --------------------------------------------------------------------------
+        @independent_variables t
         @parameters μ bi bw a χ γ k
-        @variables t S(t) I(t) W(t) R(t) y(t)
+        @variables S(t) I(t) W(t) R(t) y(t)
 
         eqs = [
             D(S) ~ μ - bi * S * I - bw * S * W - μ * S + a * R,
@@ -184,8 +191,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         @test isequal(Set(correct), Set(result))
 
         # --------------------------------------------------------------------------
+        @independent_variables t
         @parameters mu bi bw a xi gm k
-        @variables t S(t) I(t) W(t) R(t) y(t) [output = true]
+        @variables S(t) I(t) W(t) R(t) y(t) [output = true]
 
         eqs = [
             D(S) ~ mu - bi * S * I - bw * S * W - mu * S + a * R,
@@ -227,8 +235,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         )
 
         # --------------------------------------------------------------------------
+        @independent_variables t
         @parameters mu bi bw a xi gm k
-        @variables t S(t) I(t) W(t) R(t) y(t)
+        @variables S(t) I(t) W(t) R(t) y(t)
 
         eqs = [
             D(S) ~ 2.0 * mu - bi * S * I - bw * S * W - mu * S + a * R,
@@ -265,8 +274,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
 
         # ----------
 
+        @independent_variables t
         @parameters a01 a21 a12
-        @variables t x0(t) x1(t) y1(t)
+        @variables x0(t) x1(t) y1(t)
         D = Differential(t)
         using SpecialFunctions
 
@@ -291,8 +301,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             funcs_to_check = funcs_to_check,
         )
         # ----------
+        @independent_variables t
         @parameters a b c
-        @variables t x1(t) x2(t) y(t)
+        @variables x1(t) x2(t) y(t)
         D = Differential(t)
 
         eqs = [D(x1) ~ -a * x1 + x2 * b / (x1 + b / (c^2 - x2)), D(x2) ~ x2 * c^2 + x1]
@@ -315,8 +326,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         @test isequal(Set(result), Set(correct))
 
         # ----------
+        @independent_variables t
         @parameters a b
-        @variables t c(t) x1(t) x2(t) y1(t) y2(t)
+        @variables c(t) x1(t) x2(t) y1(t) y2(t)
         D = Differential(t)
 
         eqs = [
@@ -339,7 +351,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
 
         #----------------------------------
         # Composable models test (from https://github.com/SciML/StructuralIdentifiability.jl/issues/162)
-        @variables t
+        @independent_variables t
         function rabbits_creator(; name)
             ps = @parameters α = 1.5
             vars = @variables x(t) = 1.0 z(t) = 0.0 [input = true]
@@ -403,7 +415,8 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
 
         #----------------------------------
 
-        @variables t, x(t), y(t), z(t), w(t)
+        @independent_variables t
+        @variables x(t), y(t), z(t), w(t)
         @parameters a
         @named sys = System([D(x) ~ a * y], t, [x], [a]; observed = [y ~ z, z ~ x])
         measured_quantities = [w ~ x]
@@ -417,7 +430,8 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
 
         # Tensor definition case as reported in
         # https://github.com/SciML/StructuralIdentifiability.jl/issues/178
-        @variables t, x(t)[1:2], y(t)[1:2]
+        @independent_variables t
+        @variables x(t)[1:2], y(t)[1:2]
         @parameters k1, k2
 
         eqs = [D(x[1]) ~ -k1 * x[2], D(x[2]) ~ -k2 * x[1]]
@@ -436,7 +450,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             y[1] ~ X[1] * X[2] + a,
             y[2] ~ X[1] - X[2],
         ]
-        @mtkbuild osys = System(eqs, t)
+        @named osys = System(eqs, t)
         correct = OrderedDict(
             X[1] => :locally,
             X[2] => :locally,
@@ -559,8 +573,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
     @testset "Discrete local identifiability, ModelingToolkit interface" begin
         cases = []
 
+        @independent_variables t
         @parameters α β
-        @variables t S(t) I(t) R(t) y(t)
+        @variables S(t) I(t) R(t) y(t)
         k = ShiftIndex(t)
 
         eqs = [
@@ -811,8 +826,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
     @testset "Exporting ModelingToolkit Model to SI Model" begin
 
         # Creates MTK model and assesses its identifiability.
+        @independent_variables t
         @parameters r1, r2, c1, c2, beta1, beta2, chi1, chi2
-        @variables t, x1(t), x2(t), y(t), u(t)
+        @variables x1(t), x2(t), y(t), u(t)
         D = Differential(t)
         eqs = [
             D(x1) ~ r1 * x1 * (1 - c1 * x1) + beta1 * x1 * x2 / (chi1 + x2) + u,
@@ -857,8 +873,9 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
     @testset "Identifiability of MTK models with known generic initial conditions" begin
         cases = []
 
+        @independent_variables t
         @parameters a, b, c, d
-        @variables t, x1(t), x2(t)
+        @variables x1(t), x2(t)
         D = Differential(t)
         x1_0 = substitute(x1, Dict(t => 0))
         x2_0 = substitute(x2, Dict(t => 0))
