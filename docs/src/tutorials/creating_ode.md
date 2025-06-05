@@ -54,16 +54,17 @@ assess_identifiability(ode)
 
 ## Defining using `ModelingToolkit`
 
-`StructuralIdentifiability` has an extension `ModelingToolkitSIExt` which allows to use `ODESystem` from `ModelingToolkit` to describe
+`StructuralIdentifiability` has an extension `ModelingToolkitSIExt` which allows to use `System` from `ModelingToolkit` to describe
 a model. The extension is loaded automatically once `ModelingToolkit` is loaded via `using ModelingToolkit`.
-In this case, one should encode the equations for the states as `ODESystem` and specify the outputs separately.
+In this case, one should encode the equations for the states as `System` and specify the outputs separately.
 In order to do this, we first introduce all functions and scalars:
 
 ```@example 2; continued = true
 using StructuralIdentifiability, ModelingToolkit
 
+@independent_variables t
 @parameters r1, r2, c1, c2, beta1, beta2, chi1, chi2
-@variables t, x1(t), x2(t), y(t), u(t)
+@variables x1(t), x2(t), y(t), u(t)
 
 D = Differential(t)
 ```
@@ -78,7 +79,7 @@ eqs = [
 
 measured_quantities = [y ~ x1]
 
-ode_mtk = ODESystem(eqs, t, name = :mutualist)
+ode_mtk = System(eqs, t, name = :mutualist)
 ```
 
 Then, for example, the identifiability of parameters and states can be assessed as follows:
