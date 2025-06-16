@@ -14,7 +14,7 @@
 `StructuralIdentifiability.jl` is a Julia package for assessing structural parameter identifiability of parametric ODE models, both local and global.
 This includes computation of identifiable functions of states and parameters. The package also offers functionality to assess local identifiability
 in discrete-time models.
-For an introduction to structural identifiability, we refer to [[2]](#review).
+For an introduction to structural identifiability, we refer to [[3]](#review).
 
 ## How to install
 
@@ -31,6 +31,9 @@ For information on using the package,
 [see the stable documentation](https://docs.sciml.ai/StructuralIdentifiability/stable/). Use the
 [in-development documentation](https://docs.sciml.ai/StructuralIdentifiability/dev/) for the version of
 the documentation, which contains the unreleased features.
+We would like to point out a tutorial paper [[2]](#epidem) describing some of the functionality
+(identifiability assessment and finding identifiable functions)
+in the context of epidemiological modeling (tested with the version 0.5.15 of the package).
 
 ## How to use
 
@@ -176,18 +179,20 @@ Maintained by Gleb Pogudin ([gleb.pogudin@polytechnique.edu](mailto:gleb.pogudin
 
 <a id="global">[1]</a>
 Ruiwen Dong, Christian Goodbrake, Heather Harrington, and Gleb Pogudin,
-[*Differential elimination for dynamical models via projections with applications to structural identifiability*](https://arxiv.org/abs/2111.00991),
-preprint, 2021.
+[*Differential Elimination for Dynamical Models via Projections with Applications to Structural Identifiability*](https://arxiv.org/abs/2111.00991),
+SIAM Journal on Applied Algebra and Geometry, 2023.
 
-<a id="review">[2]</a>
+<a id="epidem">[2]</a>
+Yuganthi R. Liyanage, Omar Saucedo, Necibe Tuncer, and Gerardo Chowell
+Hongyu Miao, Xiaohua Xia, Alan S. Perelson, and Hulin Wu,
+[*A Tutorial on Structural Identifiability of Epidemic Models Using StructuralIdentifiability.jl*](https://arxiv.org/abs/2505.10517),
+preprint, 2025.
+
+
+<a id="review">[3]</a>
 Hongyu Miao, Xiaohua Xia, Alan S. Perelson, and Hulin Wu,
 [*On Identifiability of Nonlinear ODE Models and Applications in Viral Dynamics*](https://doi.org/10.1137/090757009),
 SIAM Review, 2011.
-
-<a id="allident">[3]</a>
-Alexey Ovchinnikov, Anand Pillay, Gleb Pogudin, and Thomas Scanlon,
-[*Computing all identifiable functions for ODE models*](https://arxiv.org/abs/2004.07774),
-preprint, 2020.
 
 <a id="local">[4]</a>
 Alexandre Sedoglavic,
