@@ -188,7 +188,6 @@ Hongyu Miao, Xiaohua Xia, Alan S. Perelson, and Hulin Wu,
 [*A Tutorial on Structural Identifiability of Epidemic Models Using StructuralIdentifiability.jl*](https://arxiv.org/abs/2505.10517),
 preprint, 2025.
 
-
 <a id="review">[3]</a>
 Hongyu Miao, Xiaohua Xia, Alan S. Perelson, and Hulin Wu,
 [*On Identifiability of Nonlinear ODE Models and Applications in Viral Dynamics*](https://doi.org/10.1137/090757009),

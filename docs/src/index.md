@@ -39,7 +39,7 @@ Pkg.add("StructuralIdentifiability")
 
 ## External tutorials
 
-A [tutorial paper](https://arxiv.org/abs/2505.10517) describes some of the functionality (identifiability assessment and finding identifiable functions) in the context of epidemiological modeling (tested with the version 0.5.15 of the package). 
+A [tutorial paper](https://arxiv.org/abs/2505.10517) describes some of the functionality (identifiability assessment and finding identifiable functions) in the context of epidemiological modeling (tested with the version 0.5.15 of the package).
 
 ## Contributing
 
