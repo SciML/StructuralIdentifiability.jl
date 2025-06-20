@@ -265,7 +265,7 @@ end
     rename_variables(ode, transform)
 
 Input: ode and a map from the old names to the new names
-Output: variables and parameters are renamed acccording to the correspondce given in the `transform`;
+Output: variables and parameters are renamed according to the correspondce given in the `transform`;
 if a variable is not given any new name, it keeps the name it had.
 """
 function rename_variables(
