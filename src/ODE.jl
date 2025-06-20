@@ -261,6 +261,35 @@ end
 
 #------------------------------------------------------------------------------
 
+"""
+    rename_variables(ode, transform)
+
+Input: ode and a map from the old names to the new names
+Output: variables and parameters are renamed acccording to the correspondce given in the `transform`;
+if a variable is not given any new name, it keeps the name it had.
+"""
+function rename_variables(ode::ODE{P}, transform::Dict{String, String}) where {P <: MPolyRingElem{<:FieldElem}}
+    new_varnames = map(var_to_str, gens(parent(ode)))
+    for (i, old_name) in enumerate(new_varnames)
+        if old_name in keys(transform)
+            new_varnames[i] = transform[old_name]
+        elseif endswith(old_name, "(t)") && old_name[1:(end - 3)] in keys(transform)
+            new_varnames[i] = transform[old_name[1:(end - 3)]] * "(t)"
+        end
+    end
+
+    new_ring, _ = Nemo.polynomial_ring(base_ring(parent(ode)), new_varnames)
+    renamer = (p -> parent_ring_change(p, new_ring, matching = :byindex))
+    new_x_vars = map(renamer, ode.x_vars)
+    new_y_vars = map(renamer, ode.y_vars)
+    new_inputs = map(renamer, ode.u_vars)
+    new_x_eqs = Dict(renamer(k) => renamer(v) // one(new_ring) for (k, v) in ode.x_equations)
+    new_y_eqs = Dict(renamer(k) => renamer(v) // one(new_ring) for (k, v) in ode.y_equations)
+    return ODE{P}(new_x_vars, new_y_vars, new_x_eqs, new_y_eqs, new_inputs)
+end
+
+#------------------------------------------------------------------------------
+
 function Base.show(io::IO, ode::ODE)
     for x in ode.x_vars
         if endswith(var_to_str(x), "(t)")
