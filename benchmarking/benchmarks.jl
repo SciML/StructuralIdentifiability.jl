@@ -252,10 +252,10 @@ benchmarks = Dict(
             pEGFR'(t) =
                 EGF_EGFR(t) * reaction_9_k1 - pEGFR(t) * reaction_4_k1 +
                 pEGFR_Akt(t) * reaction_2_k2 +
-                pEGFR_Akt(t) * reaction_3_k1 - Akt(t) * pEGFR(t) * reaction_2_k1,
+                pEGFR_Akt(t) * reaction_3_k1 -
+                Akt(t) * pEGFR(t) * reaction_2_k1,
             pEGFR_Akt'(t) =
-                Akt(t) * pEGFR(t) * reaction_2_k1 - pEGFR_Akt(t) * reaction_3_k1 -
-                pEGFR_Akt(t) * reaction_2_k2,
+                Akt(t) * pEGFR(t) * reaction_2_k1 - pEGFR_Akt(t) * reaction_3_k1 - pEGFR_Akt(t) * reaction_2_k2,
             Akt'(t) =
                 pAkt(t) * reaction_7_k1 + pEGFR_Akt(t) * reaction_2_k2 -
                 Akt(t) * pEGFR(t) * reaction_2_k1,
@@ -433,10 +433,10 @@ benchmarks = Dict(
             pEGFR'(t) =
                 EGF_EGFR(t) * reaction_9_k1 - pEGFR(t) * reaction_4_k1 +
                 pEGFR_Akt(t) * reaction_2_k2 +
-                pEGFR_Akt(t) * reaction_3_k1 - Akt(t) * pEGFR(t) * reaction_2_k1,
+                pEGFR_Akt(t) * reaction_3_k1 -
+                Akt(t) * pEGFR(t) * reaction_2_k1,
             pEGFR_Akt'(t) =
-                Akt(t) * pEGFR(t) * reaction_2_k1 - pEGFR_Akt(t) * reaction_3_k1 -
-                pEGFR_Akt(t) * reaction_2_k2,
+                Akt(t) * pEGFR(t) * reaction_2_k1 - pEGFR_Akt(t) * reaction_3_k1 - pEGFR_Akt(t) * reaction_2_k2,
             Akt'(t) =
                 pAkt(t) * reaction_7_k1 + pEGFR_Akt(t) * reaction_2_k2 -
                 Akt(t) * pEGFR(t) * reaction_2_k1,
@@ -547,7 +547,8 @@ benchmarks = Dict(
             x5'(t) = t3 * x4(t) - t4 * x5(t),
             x6'(t) =
                 -t7 * x3(t) * x6(t) / (1 + t13 * x1(t)) -
-                t7 * x4(t) * x6(t) / (1 + t13 * x10(t)) + t8 * (-x6(t) + 3) * 92,
+                t7 * x4(t) * x6(t) / (1 + t13 * x10(t)) +
+                t8 * (-x6(t) + 3) * 92,
             x7'(t) = -t9 * x7(t) * (-x6(t) + 3) + t10 * (-x7(t) + 165) * 92,
             x8'(t) = t11 * (-x7(t) + 165),
             x9'(t) = -t12 * 2 * u(t) * x9(t),
@@ -570,8 +571,7 @@ benchmarks = Dict(
             A'(t) = 0,
             S'(t) = A(t) - mu + S(t) - c * phi * I(t) * S(t) / (I(t) + S(t)),
             I'(t) =
-                -mu * I(t) + c * phi * I(t) * S(t) / (I(t) + S(t)) - gamma * I(t) -
-                I(t) * u1(t) / (S(t) + I(t)),
+                -mu * I(t) + c * phi * I(t) * S(t) / (I(t) + S(t)) - gamma * I(t) - I(t) * u1(t) / (S(t) + I(t)),
             R'(t) = -mu * R(t) + gamma * I(t) + I(t) * u1(t) / (S(t) + I(t)),
             y1(t) = K * I(t)
         ),
@@ -636,8 +636,7 @@ benchmarks = Dict(
         :name => "SEIR 36 ref",
         :ode => @ODEmodel(
             S'(t) =
-                -beta * S(t) * I(t) / N - q * beta_d * S(t) * Di(t) / N +
-                nu * N - mu_0 * S(t),
+                -beta * S(t) * I(t) / N - q * beta_d * S(t) * Di(t) / N + nu * N - mu_0 * S(t),
             E'(t) =
                 beta * S(t) * I(t) / N + q(t) * beta_d * S(t) * Di(t) / N - s * E(t) - phi_e * E(t) - mu_0 * E(t),
             I'(t) = s * E(t) - gamma * I(t) - mu_i * I(t) - phi * I(t) - mu_0 * I(t),
@@ -682,8 +681,7 @@ benchmarks = Dict(
                 pI * L(t) * I(t) / (gI + I(t)) +
                 u1(t) - KL * M(t) * L(t), # tumor-specific effector cells, T-celss
             N'(t) =
-                alpha1 - f * N(t) + g * T(t) * N(t) / (h + T(t)) - p * N(t) * T(t) -
-                KN * M(t) * N(t), # non-specific effector cells, NK cells
+                alpha1 - f * N(t) + g * T(t) * N(t) / (h + T(t)) - p * N(t) * T(t) - KN * M(t) * N(t), # non-specific effector cells, NK cells
             C'(t) = alpha2 - beta * C(t) - KC * M(t) * C(t), #circulating lymphocytes
             I'(t) =
                 pt * T(t) * L(t) / (gt + T(t)) + w * L(t) * I(t) - muI * I(t) + u2(t), # IL-2, VI = u2 aplicación directa, terapia de IL2
@@ -724,7 +722,6 @@ benchmarks = Dict(
             E'(t) = beta * (U(t) + I(t)) * (S(t) / N) - E(t) * z,
             U'(t) = (z - w) * E(t) - U(t) * d,
             I'(t) = w * E(t) - I(t) * d,
-            R'(t) = (U(t) + I(t)) * d,
             y1(t) = I(t)
         ),
     ),
@@ -917,8 +914,9 @@ benchmarks = Dict(
                     pi1(t) * (
                         g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
                     ) +
-                    pi2(t) *
-                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t))
+                    pi2(t) * (
+                        g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
+                    )
                 ),
             pi2'(t) =
                 pi2(t) * (
@@ -926,8 +924,9 @@ benchmarks = Dict(
                     pi1(t) * (
                         g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
                     ) +
-                    pi2(t) *
-                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t))
+                    pi2(t) * (
+                        g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
+                    )
                 ),
             pi3'(t) =
                 pi3(t) * (
@@ -935,8 +934,9 @@ benchmarks = Dict(
                     pi1(t) * (
                         g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
                     ) +
-                    pi2(t) *
-                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t))
+                    pi2(t) * (
+                        g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
+                    )
                 ),
             y1(t) = pi1(t),
             y2(t) = pi2(t)
@@ -952,8 +952,9 @@ benchmarks = Dict(
                     pi1(t) * (
                         g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
                     ) +
-                    pi2(t) *
-                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t))
+                    pi2(t) * (
+                        g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
+                    )
                 ),
             pi2'(t) =
                 pi2(t) * (
@@ -961,8 +962,9 @@ benchmarks = Dict(
                     pi1(t) * (
                         g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
                     ) +
-                    pi2(t) *
-                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t))
+                    pi2(t) * (
+                        g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
+                    )
                 ),
             pi3'(t) =
                 pi3(t) * (
@@ -970,8 +972,9 @@ benchmarks = Dict(
                     pi1(t) * (
                         g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
                     ) +
-                    pi2(t) *
-                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t))
+                    pi2(t) * (
+                        g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
+                    )
                 ),
             y1(t) = pi1(t)
         ),
@@ -998,32 +1001,51 @@ benchmarks = Dict(
     # Next two models are from Appendix A from https://arxiv.org/abs/2412.05283
     :Lincomp1 => Dict(
         :name => "Linear_compartment_hard_1",
-        :ode => linear_compartment_model([[2], [3], [4], [5], [1]], inputs = [1], outputs = [5], leaks = [2, 3]),
+        :ode => linear_compartment_model(
+            [[2], [3], [4], [5], [1]],
+            inputs = [1],
+            outputs = [5],
+            leaks = [2, 3],
+        ),
     ),
     :Lincomp2 => Dict(
         :name => "Linear_compartment_hard_2",
-        :ode => linear_compartment_model([[2], [3], [4], [5], [1]], inputs = [1], outputs = [5], leaks = [2, 4]),
+        :ode => linear_compartment_model(
+            [[2], [3], [4], [5], [1]],
+            inputs = [1],
+            outputs = [5],
+            leaks = [2, 4],
+        ),
     ),
     # Equations (8)-(13) from https://www.sciencedirect.com/science/article/pii/S0022519320303945?via%3Dihub
     :Covid1 => Dict(
         :name => "Covid model (Gevertz et al)",
         :ode => @ODEmodel(
-            Sd'(t) = -es * ba * (An(t) + ea * Ad(t)) * Sd(t) - h1 * Sd(t) + h2 * Sn(t) - es * bi * Sd(t) * I(t),
-            Sn'(t) = -bi * Sn(t) * I(t) - ba * (An(t) + ea * Ad(t)) * Sn(t) + h1 * Sd(t) - h2 * Sn(t),
-            Ad'(t) = es * bi * Sd(t) * I(t) + es * ba * (An(t) + ea * Ad(t)) * Sd(t) + h2 * An(t) - gai * Ad(t) - h1 * Ad(t),
-            An'(t) = bi * Sn(t) * I(t) + ba * (An(t) + ea * Ad(t)) * Sn(t) + h1 * Ad(t) - gai * An(t) - h2 * An(t),
+            Sd'(t) =
+                -es * ba * (An(t) + ea * Ad(t)) * Sd(t) - h1 * Sd(t) + h2 * Sn(t) - es * bi * Sd(t) * I(t),
+            Sn'(t) =
+                -bi * Sn(t) * I(t) - ba * (An(t) + ea * Ad(t)) * Sn(t) + h1 * Sd(t) - h2 * Sn(t),
+            Ad'(t) =
+                es * bi * Sd(t) * I(t) +
+                es * ba * (An(t) + ea * Ad(t)) * Sd(t) +
+                h2 * An(t) - gai * Ad(t) - h1 * Ad(t),
+            An'(t) =
+                bi * Sn(t) * I(t) + ba * (An(t) + ea * Ad(t)) * Sn(t) + h1 * Ad(t) - gai * An(t) - h2 * An(t),
             I'(t) = f * gai * (Ad(t) + An(t)) - delta * I(t) - gir * I(t),
             y1(t) = Sd(t),
             y2(t) = I(t),
         ),
     ),
-   # Equations (2.17)-(2.22) from https://thesis.unipd.it/bitstream/20.500.12608/15925/1/tesi.pdf
+    # Equations (2.17)-(2.22) from https://thesis.unipd.it/bitstream/20.500.12608/15925/1/tesi.pdf
     :Covid2 => Dict(
         :name => "Covid model (Gallina)",
         :ode => @ODEmodel(
-            S'(t) = b * N - S(t) * (l * I(t) + l * ea * eq * Q(t) + l * ea * A(t) + l * ej * J(t) + d1),
+            S'(t) =
+                b * N -
+                S(t) * (l * I(t) + l * ea * eq * Q(t) + l * ea * A(t) + l * ej * J(t) + d1),
             I'(t) = k1 * A(t) - (g1 + m2 + d2) * I(t),
-            A'(t) = S(t) * (l * I(t) + l * ea * eq * Q(t) + l * ea * A(t) + l * ej * J(t)) - (k1 + m1 + d4) * A(t),
+            A'(t) =
+                S(t) * (l * I(t) + l * ea * eq * Q(t) + l * ea * A(t) + l * ej * J(t)) - (k1 + m1 + d4) * A(t),
             Q'(t) = m1 * A(t) - (k2 + d5) * Q(t),
             J'(t) = k2 * Q(t) + m2 * I(t) - (g2 + d6) * J(t),
             y1(t) = Q(t),

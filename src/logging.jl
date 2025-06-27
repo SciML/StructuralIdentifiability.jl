@@ -12,6 +12,7 @@ const _runtime_rubrics = (
     :id_npoints_degree,
     :id_npoints_interpolation,
     :id_beautifulization,
+    :id_npoints_normalform,
 )
 
 const _runtime_logger = Dict(
@@ -21,6 +22,7 @@ const _runtime_logger = Dict(
     :id_npoints_degree => 0,
     :id_npoints_interpolation => 0,
     :id_beautifulization => 0,
+    :id_npoints_normalform => 0,
 )
 
 const _si_logger = @static if VERSION >= v"1.7.0"

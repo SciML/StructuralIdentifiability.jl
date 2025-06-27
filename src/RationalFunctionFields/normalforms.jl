@@ -310,6 +310,7 @@ is not specified but is assumed to be close to 1.
     # Then, we use this knowledge to drop out some monomials of higher degrees.
     tref = TinyRowEchelonForm{Int}()
     point = ParamPunPam.distinct_nonzero_points(finite_field, nvars(ring_param))
+    _runtime_logger[:id_npoints_normalform] += 1
     _, normal_forms_ff_1, monoms_ff_1 = local_normal_forms(mqs, finite_field, 1, point)
     relations_ff_1 = empty(monoms_ff_1)
     for i in 1:length(normal_forms_ff_1)
@@ -327,6 +328,7 @@ is not specified but is assumed to be close to 1.
         point = ParamPunPam.distinct_nonzero_points(finite_field, nvars(ring_param))
         @debug "Used specialization points: $iters"
         @debug "Computing normal forms to to degree $up_to_degree"
+        _runtime_logger[:id_npoints_normalform] += 1
         gb_ff, normal_forms_ff, monoms_ff =
             local_normal_forms(mqs, finite_field, up_to_degree, point, stop_vectors = tref)
         if isempty(normal_forms_ff)

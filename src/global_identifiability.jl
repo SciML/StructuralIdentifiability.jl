@@ -96,7 +96,7 @@ The function returns a tuple containing the following:
         _find_ioequations(ode; var_change_policy = var_change_policy)
     @debug "Sizes: $(map(length, values(io_equations)))"
     @info "Computed IO-equations in $ioeq_time seconds"
-    _runtime_logger[:ioeq_time] = ioeq_time
+    _runtime_logger[:id_io_time] = ioeq_time
 
     if isempty(ode.parameters)
         @info "No parameters, so Wronskian computation is not needed"
