@@ -5,9 +5,9 @@ manifest_format = "2.0"
 project_hash = "6b9805cc266ab4b2f25c41e736d235968c3abf15"
 
 [[deps.ADTypes]]
-git-tree-sha1 = "e2478490447631aedba0823d4d7a80b2cc8cdb32"
+git-tree-sha1 = "be7ae030256b8ef14a441726c4c37766b90b93a3"
 uuid = "47edcb42-4c32-4615-8424-f2b9edc5f35b"
-version = "1.14.0"
+version = "1.15.0"
 weakdeps = ["ChainRulesCore", "ConstructionBase", "EnzymeCore"]
 
     [deps.ADTypes.extensions]
@@ -204,9 +204,9 @@ version = "0.2.6"
 
 [[deps.ChainRulesCore]]
 deps = ["Compat", "LinearAlgebra"]
-git-tree-sha1 = "1713c74e00545bfe14605d2a2be1712de8fbcb58"
+git-tree-sha1 = "06ee8d1aa558d2833aa799f6f0b31b30cada405f"
 uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
-version = "1.25.1"
+version = "1.25.2"
 weakdeps = ["SparseArrays"]
 
     [deps.ChainRulesCore.extensions]
@@ -370,9 +370,9 @@ version = "6.176.0"
 
 [[deps.DiffEqCallbacks]]
 deps = ["ConcreteStructs", "DataStructures", "DiffEqBase", "DifferentiationInterface", "Functors", "LinearAlgebra", "Markdown", "RecipesBase", "RecursiveArrayTools", "SciMLBase", "StaticArraysCore"]
-git-tree-sha1 = "91394d44c0c390e7000336447dc5b00047e853f2"
+git-tree-sha1 = "80a782f3e65d4900dcf5f2cb71f5e19d9459c04a"
 uuid = "459566f4-90b8-5000-8ac3-15dfb0a30def"
-version = "4.7.0"
+version = "4.8.0"
 
 [[deps.DiffEqNoiseProcess]]
 deps = ["DiffEqBase", "Distributions", "GPUArraysCore", "LinearAlgebra", "Markdown", "Optim", "PoissonRandom", "QuadGK", "Random", "Random123", "RandomNumbers", "RecipesBase", "RecursiveArrayTools", "ResettableStacks", "SciMLBase", "StaticArraysCore", "Statistics"]
@@ -450,14 +450,19 @@ version = "0.6.54"
 
 [[deps.DispatchDoctor]]
 deps = ["MacroTools", "Preferences"]
-git-tree-sha1 = "f311fe66bfe4e38b2f1c8d1081f06920092b57aa"
+git-tree-sha1 = "f8768e80847f15f91b01a84df19ea0cf3661e51e"
 uuid = "8d63f2c5-f18a-4cf2-ba9d-b3f60fc568c8"
-version = "0.4.19"
-weakdeps = ["ChainRulesCore", "EnzymeCore"]
+version = "0.4.20"
 
     [deps.DispatchDoctor.extensions]
     DispatchDoctorChainRulesCoreExt = "ChainRulesCore"
     DispatchDoctorEnzymeCoreExt = "EnzymeCore"
+    DispatchDoctorMooncakeExt = "Mooncake"
+
+    [deps.DispatchDoctor.weakdeps]
+    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+    EnzymeCore = "f151be2c-9106-41f4-ab19-57ee4f262869"
+    Mooncake = "da2b9cff-9c12-43a0-ae48-6db2b0edb7d6"
 
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
@@ -580,15 +585,16 @@ uuid = "9aa1b823-49e4-5ca5-8b0f-3971ec8bab6a"
 version = "0.3.2"
 
 [[deps.FastPower]]
-git-tree-sha1 = "df32f07f373f06260cd6af5371385b5ef85dd762"
+git-tree-sha1 = "5f7afd4b1a3969dc34d692da2ed856047325b06e"
 uuid = "a4df4552-cc26-4903-aec0-212e50a0e84b"
-version = "1.1.2"
+version = "1.1.3"
 
     [deps.FastPower.extensions]
     FastPowerEnzymeExt = "Enzyme"
     FastPowerForwardDiffExt = "ForwardDiff"
     FastPowerMeasurementsExt = "Measurements"
     FastPowerMonteCarloMeasurementsExt = "MonteCarloMeasurements"
+    FastPowerMooncakeExt = "Mooncake"
     FastPowerReverseDiffExt = "ReverseDiff"
     FastPowerTrackerExt = "Tracker"
 
@@ -597,6 +603,7 @@ version = "1.1.2"
     ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
     Measurements = "eff96d63-e80a-5855-80a2-b1b0885c5ab7"
     MonteCarloMeasurements = "0987c9cc-fe09-11e8-30f0-b96dd679fdca"
+    Mooncake = "da2b9cff-9c12-43a0-ae48-6db2b0edb7d6"
     ReverseDiff = "37e2e3b7-166d-5795-8a7a-e32c996b4267"
     Tracker = "9f7883ad-71c0-57eb-9f7f-b5c9e6d3789c"
 
@@ -695,9 +702,9 @@ version = "1.4.0"
 
 [[deps.Git_jll]]
 deps = ["Artifacts", "Expat_jll", "JLLWrappers", "LibCURL_jll", "Libdl", "Libiconv_jll", "OpenSSL_jll", "PCRE2_jll", "Zlib_jll"]
-git-tree-sha1 = "2f6d6f7e6d6de361865d4394b802c02fc944fc7c"
+git-tree-sha1 = "b981ed24de5855f20fce5b8cb767c179f93e4268"
 uuid = "f8c6e375-362e-5223-8a59-34ff63f689eb"
-version = "2.49.0+0"
+version = "2.50.0+0"
 
 [[deps.Glob]]
 git-tree-sha1 = "97285bbd5230dd766e9ef6749b80fc617126d496"
@@ -830,10 +837,10 @@ uuid = "70703baa-626e-46a2-a12c-08ffd08c73b4"
 version = "0.4.10"
 
 [[deps.JumpProcesses]]
-deps = ["ArrayInterface", "DataStructures", "DiffEqBase", "DiffEqCallbacks", "DocStringExtensions", "FunctionWrappers", "Graphs", "LinearAlgebra", "Markdown", "PoissonRandom", "Random", "RandomNumbers", "RecursiveArrayTools", "Reexport", "SciMLBase", "Setfield", "StaticArrays", "SymbolicIndexingInterface", "UnPack"]
-git-tree-sha1 = "fb7fd516de38db80f50fe15e57d44da2836365e7"
+deps = ["ArrayInterface", "DataStructures", "DiffEqBase", "DiffEqCallbacks", "DocStringExtensions", "FunctionWrappers", "Graphs", "LinearAlgebra", "Markdown", "PoissonRandom", "Random", "RecursiveArrayTools", "Reexport", "SciMLBase", "Setfield", "StaticArrays", "SymbolicIndexingInterface", "UnPack"]
+git-tree-sha1 = "f8da88993c914357031daf0023f18748ff473924"
 uuid = "ccbc3e58-028d-4f4c-8cd5-9ae44345cda5"
-version = "9.16.0"
+version = "9.16.1"
 weakdeps = ["FastBroadcast"]
 
 [[deps.Krylov]]
@@ -957,9 +964,9 @@ version = "1.11.0"
 
 [[deps.LinearSolve]]
 deps = ["ArrayInterface", "ChainRulesCore", "ConcreteStructs", "DocStringExtensions", "EnumX", "GPUArraysCore", "InteractiveUtils", "Krylov", "LazyArrays", "Libdl", "LinearAlgebra", "MKL_jll", "Markdown", "PrecompileTools", "Preferences", "RecursiveArrayTools", "Reexport", "SciMLBase", "SciMLOperators", "Setfield", "StaticArraysCore", "UnPack"]
-git-tree-sha1 = "8e3338feeba33eb287e5b86a99666289542e382e"
+git-tree-sha1 = "062c11f1d84ffc80d00fddaa515f7e37e8e9f9d5"
 uuid = "7ed4a6bd-45f5-4d41-b270-4a48e9bafcae"
-version = "3.18.0"
+version = "3.18.2"
 
     [deps.LinearSolve.extensions]
     LinearSolveBandedMatricesExt = "BandedMatrices"
@@ -1083,9 +1090,9 @@ version = "1.11.0"
 
 [[deps.ModelingToolkit]]
 deps = ["ADTypes", "AbstractTrees", "ArrayInterface", "BlockArrays", "ChainRulesCore", "Combinatorics", "CommonSolve", "Compat", "ConstructionBase", "DataStructures", "DiffEqBase", "DiffEqCallbacks", "DiffEqNoiseProcess", "DiffRules", "DifferentiationInterface", "Distributed", "Distributions", "DocStringExtensions", "DomainSets", "DynamicQuantities", "EnumX", "ExprTools", "FindFirstFunctions", "ForwardDiff", "FunctionWrappers", "FunctionWrappersWrappers", "Graphs", "ImplicitDiscreteSolve", "InteractiveUtils", "JuliaFormatter", "JumpProcesses", "Latexify", "Libdl", "LinearAlgebra", "MLStyle", "Moshi", "NaNMath", "NonlinearSolve", "OffsetArrays", "OrderedCollections", "OrdinaryDiffEqCore", "PrecompileTools", "RecursiveArrayTools", "Reexport", "RuntimeGeneratedFunctions", "SCCNonlinearSolve", "SciMLBase", "SciMLPublic", "SciMLStructures", "Serialization", "Setfield", "SimpleNonlinearSolve", "SparseArrays", "SpecialFunctions", "StaticArrays", "SymbolicIndexingInterface", "SymbolicUtils", "Symbolics", "URIs", "UnPack", "Unitful"]
-git-tree-sha1 = "5a0fff843b66006da07c964ffe2dbe89b91a8dff"
+git-tree-sha1 = "89d3822cd1abd56b12dac4e54610f5fdd18fa5a1"
 uuid = "961ee093-0014-501f-94e3-6117800e7a78"
-version = "10.4.0"
+version = "10.6.0"
 
     [deps.ModelingToolkit.extensions]
     MTKBifurcationKitExt = "BifurcationKit"
@@ -1107,9 +1114,9 @@ version = "10.4.0"
 
 [[deps.Moshi]]
 deps = ["ExproniconLite", "Jieko"]
-git-tree-sha1 = "453de0fc2be3d11b9b93ca4d0fddd91196dcf1ed"
+git-tree-sha1 = "d5198869af7a8aec7354dc8559ae71aba77a625a"
 uuid = "2e0e35c7-a2e4-4343-998d-7ef72827ed2d"
-version = "0.3.5"
+version = "0.3.6"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
@@ -1529,9 +1536,9 @@ version = "0.5.15"
 
 [[deps.SCCNonlinearSolve]]
 deps = ["CommonSolve", "PrecompileTools", "Reexport", "SciMLBase", "SymbolicIndexingInterface"]
-git-tree-sha1 = "5e67b56af8615d1b47720fdc04e34482279c4559"
+git-tree-sha1 = "6d70fbaa6f242fab7058eb4b66fd0a49dfcb38fb"
 uuid = "9dfe8606-65a1-4bb3-9748-cb89d1561431"
-version = "1.2.0"
+version = "1.3.0"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
@@ -1544,9 +1551,9 @@ version = "0.1.0"
 
 [[deps.SciMLBase]]
 deps = ["ADTypes", "Accessors", "Adapt", "ArrayInterface", "CommonSolve", "ConstructionBase", "Distributed", "DocStringExtensions", "EnumX", "FunctionWrappersWrappers", "IteratorInterfaceExtensions", "LinearAlgebra", "Logging", "Markdown", "Moshi", "PrecompileTools", "Preferences", "Printf", "RecipesBase", "RecursiveArrayTools", "Reexport", "RuntimeGeneratedFunctions", "SciMLOperators", "SciMLStructures", "StaticArraysCore", "Statistics", "SymbolicIndexingInterface"]
-git-tree-sha1 = "a3fa02bf0ac97856e2f9129f5fb33a4b9ba0bae1"
+git-tree-sha1 = "31587e20cdea9fba3a689033313e658dfc9aae78"
 uuid = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
-version = "2.102.0"
+version = "2.102.1"
 
     [deps.SciMLBase.extensions]
     SciMLBaseChainRulesCoreExt = "ChainRulesCore"
@@ -1811,9 +1818,9 @@ version = "3.29.0"
 
 [[deps.Symbolics]]
 deps = ["ADTypes", "ArrayInterface", "Bijections", "CommonWorldInvalidations", "ConstructionBase", "DataStructures", "DiffRules", "Distributions", "DocStringExtensions", "DomainSets", "DynamicPolynomials", "LaTeXStrings", "Latexify", "Libdl", "LinearAlgebra", "LogExpFunctions", "MacroTools", "Markdown", "NaNMath", "OffsetArrays", "PrecompileTools", "Primes", "RecipesBase", "Reexport", "RuntimeGeneratedFunctions", "SciMLBase", "Setfield", "SparseArrays", "SpecialFunctions", "StaticArraysCore", "SymbolicIndexingInterface", "SymbolicLimits", "SymbolicUtils", "TermInterface"]
-git-tree-sha1 = "11bb86a9b2a967b303720fd60c0bd82387915906"
+git-tree-sha1 = "df665535546bb07078ee42e0972527b5d6bd3f69"
 uuid = "0c5d862f-8b57-4792-8d23-62f2024744c7"
-version = "6.42.0"
+version = "6.43.0"
 
     [deps.Symbolics.extensions]
     SymbolicsForwardDiffExt = "ForwardDiff"
