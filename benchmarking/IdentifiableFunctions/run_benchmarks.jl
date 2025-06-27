@@ -41,7 +41,7 @@ using StructuralIdentifiability: _runtime_logger, ODE
 using StructuralIdentifiability.ParamPunPam
 
 global_logger(Logging.ConsoleLogger(stdout, Logging.Warn))
-include("benchmarks.jl")
+include("../benchmarks.jl")
 global_logger(Logging.ConsoleLogger(stdout, Logging.Info))
 
 const _progressbar_color = :light_green
