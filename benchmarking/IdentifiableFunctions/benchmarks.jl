@@ -1,5 +1,5 @@
-benchmarks = [
-    Dict(
+benchmarks = Dict(
+    :LV => Dict(
         :name => "Modified LV for testing",
         :ode => @ODEmodel(
             x1'(t) = (a + b) * x1(t) - c * x1(t) * x2(t),
@@ -7,7 +7,7 @@ benchmarks = [
             y1(t) = x1(t)
         ),
     ),
-    Dict(
+    :SIWR_orig => Dict(
         :name => "SIWR original",
         :ode => @ODEmodel(
             S'(t) = mu - bi * S(t) * I(t) - bw * S(t) * W(t) - mu * S(t) + a * R(t),
@@ -18,7 +18,7 @@ benchmarks = [
         ),
         :skip => false,
     ),
-    Dict(
+    :SIWR_multiout => Dict(
         :name => "SIWR with extra output",
         :ode => @ODEmodel(
             S'(t) = mu - bi * S(t) * I(t) - bw * S(t) * W(t) - mu * S(t) + a * R(t),
@@ -30,7 +30,7 @@ benchmarks = [
         ),
         :skip => false,
     ),
-    Dict(
+    :Pharm => Dict(
         :name => "Pharm",
         :ode => @ODEmodel(
             x0'(t) =
@@ -45,7 +45,7 @@ benchmarks = [
         ),
         :skip => false,
     ),
-    Dict(
+    :SEAIJRC => Dict(
         :name => "SEAIJRC Covid model",
         :ode => @ODEmodel(
             S'(t) = -b * S(t) * (I(t) + J(t) + q * A(t)) * Ninv(t),
@@ -60,7 +60,7 @@ benchmarks = [
         ),
         :skip => false,
     ),
-    Dict(
+    :MAPK_5out => Dict(
         :name => "MAPK model (5 outputs)",
         :ode => @ODEmodel(
             KS00'(t) =
@@ -109,7 +109,7 @@ benchmarks = [
             y5(t) = S11(t)
         ),
     ),
-    Dict(
+    :MAPK_5out_bis => Dict(
         :name => "MAPK model (5 outputs bis)",
         :ode => @ODEmodel(
             KS00'(t) =
@@ -159,7 +159,7 @@ benchmarks = [
         ),
         :skip => false,
     ),
-    Dict(
+    :MAPK_6out => Dict(
         :name => "MAPK model (6 outputs)",
         :ode => @ODEmodel(
             KS00'(t) =
@@ -209,7 +209,7 @@ benchmarks = [
             y5(t) = S11(t)
         ),
     ),
-    Dict(
+    :Goodwin => Dict(
         :name => "Goodwin oscillator",
         :ode => @ODEmodel(
             x1'(t) = -b * x1(t) + 1 / (c + x4(t)),
@@ -219,7 +219,7 @@ benchmarks = [
             y(t) = x1(t)
         ),
     ),
-    Dict(
+    :HIV => Dict(
         :name => "HIV",
         :ode => @ODEmodel(
             x'(t) = lm - d * x(t) - beta * x(t) * v(t),
@@ -231,7 +231,7 @@ benchmarks = [
             y2(t) = z(t)
         ),
     ),
-    Dict(
+    :SIRC_forced => Dict(
         :name => "SIRS forced",
         :ode => @ODEmodel(
             s'(t) = mu - mu * s(t) - b0 * (1 + b1 * x1(t)) * i(t) * s(t) + g * r(t),
@@ -243,7 +243,7 @@ benchmarks = [
             y2(t) = r(t)
         ),
     ),
-    Dict(
+    :Akt => Dict(
         :name => "Akt pathway",
         :ode => @ODEmodel(
             EGFR'(t) =
@@ -278,7 +278,7 @@ benchmarks = [
             y3(t) = a3 * pS6(t)
         ),
     ),
-    Dict(
+    :CD8 => Dict(
         :name => "CD8 T cell differentiation",
         :ode => @ODEmodel(
             N'(t) = -N(t) * mu_N - N(t) * P(t) * delta_NE,
@@ -295,7 +295,7 @@ benchmarks = [
             y3(t) = M(t)
         ),
     ),
-    Dict(
+    :CRN => Dict(
         :name => "Chemical reaction network",
         :ode => @ODEmodel(
             x1'(t) = -k1 * x1(t) * x2(t) + k2 * x4(t) + k4 * x6(t),
@@ -308,7 +308,7 @@ benchmarks = [
             y2(t) = x2(t)
         ),
     ),
-    Dict(
+    :QWWC => Dict(
         :name => "QWWC",
         :ode => @ODEmodel(
             x'(t) = a * (y(t) - x(t)) + y(t) * z(t),
@@ -322,7 +322,7 @@ benchmarks = [
     # The most simplified version of the result I could get by hand is
     # Ninv, b, s, g + a,  (1 - e) * g * (a - s), a * e * g
     # but I have no idea how I did this...
-    Dict(
+    :SLIQR => Dict(
         :name => "SLIQR",
         :ode => @ODEmodel(
             S'(t) = -b * In(t) * S(t) * Ninv - u(t) * S(t) * Ninv,
@@ -332,7 +332,7 @@ benchmarks = [
             y(t) = In(t) * Ninv
         ),
     ),
-    Dict(
+    :St => Dict(
         :name => "St",
         :ode => @ODEmodel(
             S'(t) = r * S(t) - (e + a * W(t)) * S(t) - d * W(t) * S(t) + g * R(t),
@@ -342,7 +342,7 @@ benchmarks = [
             y2(t) = T
         ),
     ),
-    Dict(
+    :QY => Dict(
         :name => "QY",
         :ode => @ODEmodel(
             P0'(t) = P1(t),
@@ -424,7 +424,7 @@ benchmarks = [
             y(t) = P0(t)
         ),
     ),
-    Dict(
+    :Fujita => Dict(
         :name => "Fujita",
         :ode => @ODEmodel(
             EGFR'(t) =
@@ -459,7 +459,7 @@ benchmarks = [
             y3(t) = a3 * pS6(t)
         ),
     ),
-    Dict(
+    :LLW => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/General/LLW1987_io.jl
         :name => "LLW1987_io",
         :ode => @ODEmodel(
@@ -469,7 +469,7 @@ benchmarks = [
             y1(t) = x3(t)
         ),
     ),
-    Dict(
+    :Bilirubin => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Physiology/Bilirubin2_io.jl
         :name => "Bilirubin2_io",
         :ode => @ODEmodel(
@@ -485,7 +485,7 @@ benchmarks = [
             y1(t) = x1(t)
         ),
     ),
-    Dict(
+    :HIV2 => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Virology/HIV2_io.jl
         :name => "HIV2_io",
         :ode => @ODEmodel(
@@ -497,7 +497,7 @@ benchmarks = [
             y2(t) = x4(t)
         ),
     ),
-    Dict(
+    :Biohydrogenation => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Metabolism/Biohydrogenation_io.jl
         :name => "Biohydrogenation_io",
         :ode => @ODEmodel(
@@ -510,7 +510,7 @@ benchmarks = [
             y2(t) = x5(t)
         ),
     ),
-    Dict(
+    :Treatment => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/Treatment_io.jl
         :name => "Treatment_io",
         :ode => @ODEmodel(
@@ -523,7 +523,7 @@ benchmarks = [
             y2(t) = N(t)
         ),
     ),
-    Dict(
+    :SEIR1 => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SEIR_1_io.jl
         :name => "SEIR_1_io",
         :ode => @ODEmodel(
@@ -535,36 +535,7 @@ benchmarks = [
             y1(t) = Q(t)
         ),
     ),
-    Dict(
-        # https://arxiv.org/pdf/2207.09745.pdf
-        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Pharmacokinetics/PK1.jl
-        :name => "PK1",
-        :ode => @ODEmodel(
-            x1'(t) = u1(t) - (k1 + k2) * x1(t),
-            x2'(t) = k1 * x1(t) - (k3 + k6 + k7) * x2(t) + k5 * x4(t),
-            x3'(t) = k2 * x1(t) + k3 * x2(t) - k4 * x3(t),
-            x4'(t) = k6 * x2(t) - k5 * x4(t),
-            y1(t) = s2 * x2(t),
-            y2(t) = s3 * x3(t)
-        ),
-    ),
-    Dict(
-        # https://arxiv.org/pdf/2207.09745.pdf
-        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Pharmacokinetics/PK2.jl
-        :name => "PK2",
-        :ode => @ODEmodel(
-            x0'(t) =
-                a1 * (x1(t) - x0(t)) -
-                (ka * n * x0(t)) / (kc * ka + kc * x2(t) + ka * x0(t)),
-            x1'(t) = a2 * (x0(t) - x1(t)),
-            x2'(t) =
-                b1 * (x3(t) - x2(t)) -
-                (kc * n * x2(t)) / (kc * ka + kc * x2(t) + ka * x0(t)),
-            x3'(t) = b2 * (x2(t) - x3(t)),
-            y1(t) = x0(t)
-        ),
-    ),
-    Dict(
+    :JAK_STAT => Dict(
         # https://arxiv.org/pdf/2207.09745.pdf
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Cellular%20signalling/JAKSTAT1.jl
         :name => "JAK-STAT 1",
@@ -591,7 +562,7 @@ benchmarks = [
             y8(t) = -x7(t) + 165
         ),
     ),
-    Dict(
+    :SIR24 => Dict(
         # https://arxiv.org/pdf/2006.14295.pdf
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SIR_24.jl
         :name => "SIR 24",
@@ -605,95 +576,84 @@ benchmarks = [
             y1(t) = K * I(t)
         ),
     ),
-    Dict(
+    :SIR21 => Dict(
         # https://arxiv.org/pdf/2006.14295.pdf
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SIR_21.jl
         :name => "SIR 21",
         :ode => @ODEmodel(
-            N'(t) = 0,
-            S'(t) = -beta * S(t) * I(t) / N(t) - pp * S(t) + q * C(t),
-            I'(t) = beta * S(t) * I(t) / N(t) - (r + mu) * I(t),
+            S'(t) = -beta * S(t) * I(t) / N - pp * S(t) + q * C(t),
+            I'(t) = beta * S(t) * I(t) / N - (r + mu) * I(t),
             R'(t) = r * I(t),
             C'(t) = pp * S(t) - q * C(t),
             D'(t) = mu * I(t),
-            y1(t) = N(t),
+            y1(t) = N,
             y2(t) = D(t),
             y3(t) = C(t)
         ),
     ),
-    Dict(
+    :SIR19 => Dict(
         # https://arxiv.org/pdf/2006.14295.pdf
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SIR_19.jl
         :name => "SIR 19",
         :ode => @ODEmodel(
-            N'(t) = 0,
-            S'(t) = -beta * S(t) * I(t) / N(t) - pp * S(t) + q * C(t),
-            I'(t) = beta * S(t) * I(t) / N(t) - (r + mu) * I(t),
-            R'(t) = r * I(t),
+            S'(t) = -beta * S(t) * I(t) / N - pp * S(t) + q * C(t),
+            I'(t) = beta * S(t) * I(t) / N - (r + mu) * I(t),
             C'(t) = pp * S(t) - q * C(t),
             D'(t) = mu * I(t),
-            y1(t) = N(t),
+            y1(t) = N,
             y2(t) = D(t),
             y3(t) = C(t)
         ),
     ),
-    Dict(
+    :SIR6 => Dict(
         # https://arxiv.org/pdf/2006.14295.pdf
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SIR_6.jl
         :name => "SIR 6",
         :ode => @ODEmodel(
-            N'(t) = 0,
-            S'(t) = -beta * I(t) * S(t) / N(t),
-            I'(t) = beta * I(t) * S(t) / N(t) - gamma * I(t),
-            R'(t) = gamma * I(t),
+            S'(t) = -beta * I(t) * S(t) / N,
+            I'(t) = beta * I(t) * S(t) / N - gamma * I(t),
             y1(t) = I(t) * K,
-            y2(t) = N(t)
+            y2(t) = N
         ),
     ),
-    Dict(
+    :SEIR34 => Dict(
         # https://arxiv.org/pdf/2006.14295.pdf
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SEIR_34.jl
         :name => "SEIR 34",
         :ode => @ODEmodel(
             A'(t) = 0,
-            N'(t) = 0,
-            S'(t) = A(t) - r * beta * S(t) * I(t) / N(t) - mu * S(t),
-            E'(t) = r * beta * S(t) * I(t) / N(t) - epsilon * E(t) - mu * E(t),
+            S'(t) = A(t) - r * beta * S(t) * I(t) / N - mu * S(t),
+            E'(t) = r * beta * S(t) * I(t) / N - epsilon * E(t) - mu * E(t),
             I'(t) = epsilon * E(t) - gamma * I(t) - mu * I(t),
-            R'(t) = gamma * I(t) - mu * R(t),
             y1(t) = K * I(t),
             y2(t) = A(t),
-            y3(t) = N(t)
+            y3(t) = N
         ),
     ),
-    Dict(
+    :SEIR36_ref => Dict(
         # https://arxiv.org/pdf/2006.14295.pdf
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SEIR_36_ref.jl
         :name => "SEIR 36 ref",
         :ode => @ODEmodel(
-            N'(t) = 0,
-            nu'(t) = 0,
-            q'(t) = 0,
             S'(t) =
-                -beta * S(t) * I(t) / N(t) - q(t) * beta_d * S(t) * Di(t) / N(t) +
-                nu(t) * N(t) - mu_0 * S(t),
+                -beta * S(t) * I(t) / N - q * beta_d * S(t) * Di(t) / N +
+                nu * N - mu_0 * S(t),
             E'(t) =
-                beta * S(t) * I(t) / N(t) + q(t) * beta_d * S(t) * Di(t) / N(t) - s * E(t) - phi_e * E(t) - mu_0 * E(t),
+                beta * S(t) * I(t) / N + q(t) * beta_d * S(t) * Di(t) / N - s * E(t) - phi_e * E(t) - mu_0 * E(t),
             I'(t) = s * E(t) - gamma * I(t) - mu_i * I(t) - phi * I(t) - mu_0 * I(t),
             De'(t) = phi_e * E(t) - s_d * De(t) - mu_0 * De(t),
             Di'(t) =
                 phi * I(t) + s_d * De(t) - gamma_d * Di(t) - mu_d * Di(t) - mu_0 * Di(t),
-            R'(t) = gamma * I(t) + gamma_d * Di(t) - mu_0 * R(t),
             F'(t) = mu_i * I(t) + mu_d * Di(t),
             y1(t) = De(t),
             y2(t) = Di(t),
             y5(t) = F(t),
-            y3(t) = N(t),
-            y4(t) = nu(t),
-            y6(t) = q(t)
+            y3(t) = N,
+            y4(t) = nu,
+            y6(t) = q
         ),
     ),
-    Dict(
+    :TumorHu => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Tumor/TumorHu2019.jl
         :name => "TumorHu2019",
         :ode => @ODEmodel(
@@ -709,7 +669,7 @@ benchmarks = [
             y1(t) = z(t)
         ),
     ),
-    Dict(
+    :TumorPillis => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Tumor/TumorPillis2007.jl
         :name => "TumorPillis2007",
         :ode => @ODEmodel(
@@ -733,47 +693,30 @@ benchmarks = [
             y3(t) = M(t)
         ),
     ),
-    Dict(
-        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Cellular%20signalling/Phosphorylation.jl
-        :name => "Phosphorylation",
-        :ode => @ODEmodel(
-            x5'(t) = k5 * x6(t) + k4 * x6(t) - k6 * x5(t) * x3(t),
-            x6'(t) = -k5 * x6(t) - k4 * x6(t) + k6 * x5(t) * x3(t),
-            x4'(t) = -k3 * x4(t) - k2 * x4(t) + k1 * x1(t) * x2(t),
-            x2'(t) = k3 * x4(t) + k2 * x4(t) + k1 * x1(t) * x2(t),
-            x1'(t) = k4 * x6(t) + k2 * x4(t) - k1 * x1(t) * x2(t),
-            x3'(t) = k5 * x6(t) + k3 * x4(t) - k6 * x5(t) * x3(t),
-            y1(t) = x3(t),
-            y2(t) = x2(t)
-        ),
-    ),
-    Dict(
+    :SEIR2T => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SEIR2T.jl
         :name => "SEIR2T",
         :ode => @ODEmodel(
-            S'(t) = -b * S(t) * In(t) / N(t),
-            E'(t) = b * S(t) * In(t) / N(t) - nu * E(t),
+            S'(t) = -b * S(t) * In(t) / N,
+            E'(t) = b * S(t) * In(t) / N - nu * E(t),
             In'(t) = nu * E(t) - a * In(t),
-            N'(t) = 0,
             Cu'(t) = nu * E(t),
             y1(t) = Cu(t),
-            y2(t) = N(t)
+            y2(t) = N
         ),
     ),
-    Dict(
+    :SEIRT => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SEIRT.jl
         :name => "SEIRT",
         :ode => @ODEmodel(
-            S'(t) = -beta * I(t) * (S(t) / N(t)),
-            E'(t) = beta * I(t) * (S(t) / N(t)) - alpha * E(t),
+            S'(t) = -beta * I(t) * (S(t) / N),
+            E'(t) = beta * I(t) * (S(t) / N) - alpha * E(t),
             I'(t) = alpha * E(t) - lambda * I(t),
-            R'(t) = lambda * I(t),
-            N'(t) = 0,
             y1(t) = I(t),
-            y2(t) = N(t)
+            y2(t) = N
         ),
     ),
-    Dict(
+    :SEUIR => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SEUIR.jl
         :name => "SEUIR",
         :ode => @ODEmodel(
@@ -785,19 +728,7 @@ benchmarks = [
             y1(t) = I(t)
         ),
     ),
-    Dict(
-        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/cholera.jl
-        :name => "cholera",
-        :ode => @ODEmodel(
-            S'(t) = mu - bi * S(t) * I(t) - bw * S(t) * W(t) - mu * S(t) + a * R(t),
-            I'(t) = bw * S(t) * W(t) + bi * S(t) * I(t) - (gam + mu) * I(t),
-            W'(t) = xi * (I(t) - W(t)),
-            R'(t) = gam * I(t) - (mu + a) * R(t),
-            y1(t) = k * I(t),
-            y2(t) = S(t) + I(t) + R(t)
-        ),
-    ),
-    Dict(
+    :Bruno2016 => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Gene%20expression/Bruno2016.jl
         :name => "Bruno2016",
         :ode => @ODEmodel(
@@ -812,7 +743,7 @@ benchmarks = [
             y2(t) = beta10(t)
         ),
     ),
-    Dict(
+    :Transfection => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Gene%20expression/Transfection_4State.jl
         :name => "Transfection_4State",
         :ode => @ODEmodel(
@@ -823,7 +754,7 @@ benchmarks = [
             y1(t) = GFP(t)
         ),
     ),
-    Dict(
+    :p53 => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Gene%20expression/p53.jl
         :name => "p53",
         :ode => @ODEmodel(
@@ -849,7 +780,7 @@ benchmarks = [
             y4(t) = x4(t)
         ),
     ),
-    Dict(
+    :Crauste => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/General/Crauste_SI.jl
         :name => "Crauste_SI",
         :ode => @ODEmodel(
@@ -867,7 +798,7 @@ benchmarks = [
             y3(t) = M(t)
         ),
     ),
-    Dict(
+    :HDNL => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/General/HighDimNonLin.jl
         :name => "HighDimNonLin",
         :ode => @ODEmodel(
@@ -913,7 +844,7 @@ benchmarks = [
             y20(t) = x20(t)
         ),
     ),
-    Dict(
+    :KD1999 => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/General/KD1999.jl
         :name => "KD1999",
         :ode => @ODEmodel(
@@ -932,7 +863,7 @@ benchmarks = [
             y2(t) = T(t)
         ),
     ),
-    Dict(
+    :CGV1990 => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Immunology/CGV1990.jl
         :name => "CGV1990",
         :ode => @ODEmodel(
@@ -946,7 +877,7 @@ benchmarks = [
             y1(t) = q7(t)
         ),
     ),
-    Dict(
+    :LeukaemiaLeon2021 => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Immunology/LeukaemiaLeon2021.jl
         :name => "LeukaemiaLeon2021",
         :ode => @ODEmodel(
@@ -962,7 +893,7 @@ benchmarks = [
             y3(t) = P(t) + B(t) + I(t) #células B totales 
         ),
     ),
-    Dict(
+    :Lipolysis => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Metabolism/Ruminal%20lipolysis.jl
         :name => "Ruminal lipolysis",
         :ode => @ODEmodel(
@@ -976,7 +907,7 @@ benchmarks = [
             y3(t) = x4(t)
         ),
     ),
-    Dict(
+    :cLV1 => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Microbial/cLV1.jl
         :name => "cLV1 (2o)",
         :ode => @ODEmodel(
@@ -1011,7 +942,7 @@ benchmarks = [
             y2(t) = pi2(t)
         ),
     ),
-    Dict(
+    :cLV2 => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Microbial/cLV1.jl
         :name => "cLV1 (1o)",
         :ode => @ODEmodel(
@@ -1045,17 +976,7 @@ benchmarks = [
             y1(t) = pi1(t)
         ),
     ),
-    Dict(
-        # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Microbial/generalizedLoktaVolterra.jl
-        :name => "generalizedLoktaVolterra (2o)",
-        :ode => @ODEmodel(
-            x1'(t) = r1 * x1(t) + beta11 * x1(t)^2 + beta12 * x1(t) * x2(t),
-            x2'(t) = r2 * x2(t) + beta21 * x1(t) * x2(t) + beta22 * x2(t)^2,
-            y1(t) = x1(t),
-            y2(t) = x2(t)
-        ),
-    ),
-    Dict(
+    :genLV => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Microbial/generalizedLoktaVolterra.jl
         :name => "generalizedLoktaVolterra (1o)",
         :ode => @ODEmodel(
@@ -1064,7 +985,7 @@ benchmarks = [
             y1(t) = x1(t)
         ),
     ),
-    Dict(
+    :Pivastatin => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Pharmacokinetics/Pivastatin.jl
         :name => "Pivastatin",
         :ode => @ODEmodel(
@@ -1074,7 +995,52 @@ benchmarks = [
             y1(t) = k * (x2(t) + x3(t))
         ),
     ),
-]
+    # Next two models are from Appendix A from https://arxiv.org/abs/2412.05283
+    :Lincomp1 => Dict(
+        :name => "Linear_compartment_hard_1",
+        :ode => linear_compartment_model([[2], [3], [4], [5], [1]], inputs = [1], outputs = [5], leaks = [2, 3]),
+    ),
+    :Lincomp2 => Dict(
+        :name => "Linear_compartment_hard_2",
+        :ode => linear_compartment_model([[2], [3], [4], [5], [1]], inputs = [1], outputs = [5], leaks = [2, 4]),
+    ),
+    # Equations (8)-(13) from https://www.sciencedirect.com/science/article/pii/S0022519320303945?via%3Dihub
+    :Covid1 => Dict(
+        :name => "Covid model (Gevertz et al)",
+        :ode => @ODEmodel(
+            Sd'(t) = -es * ba * (An(t) + ea * Ad(t)) * Sd(t) - h1 * Sd(t) + h2 * Sn(t) - es * bi * Sd(t) * I(t),
+            Sn'(t) = -bi * Sn(t) * I(t) - ba * (An(t) + ea * Ad(t)) * Sn(t) + h1 * Sd(t) - h2 * Sn(t),
+            Ad'(t) = es * bi * Sd(t) * I(t) + es * ba * (An(t) + ea * Ad(t)) * Sd(t) + h2 * An(t) - gai * Ad(t) - h1 * Ad(t),
+            An'(t) = bi * Sn(t) * I(t) + ba * (An(t) + ea * Ad(t)) * Sn(t) + h1 * Ad(t) - gai * An(t) - h2 * An(t),
+            I'(t) = f * gai * (Ad(t) + An(t)) - delta * I(t) - gir * I(t),
+            y1(t) = Sd(t),
+            y2(t) = I(t),
+        ),
+    ),
+   # Equations (2.17)-(2.22) from https://thesis.unipd.it/bitstream/20.500.12608/15925/1/tesi.pdf
+    :Covid2 => Dict(
+        :name => "Covid model (Gallina)",
+        :ode => @ODEmodel(
+            S'(t) = b * N - S(t) * (l * I(t) + l * ea * eq * Q(t) + l * ea * A(t) + l * ej * J(t) + d1),
+            I'(t) = k1 * A(t) - (g1 + m2 + d2) * I(t),
+            A'(t) = S(t) * (l * I(t) + l * ea * eq * Q(t) + l * ea * A(t) + l * ej * J(t)) - (k1 + m1 + d4) * A(t),
+            Q'(t) = m1 * A(t) - (k2 + d5) * Q(t),
+            J'(t) = k2 * Q(t) + m2 * I(t) - (g2 + d6) * J(t),
+            y1(t) = Q(t),
+            y2(t) = J(t),
+        ),
+    ),
+    # Slide 35 from https://indico.ictp.it/event/7960/session/3/contribution/19/material/slides/0.pdf
+    :Covid3 => Dict(
+        :name => "Covid model (Chitnis)",
+        :ode => @ODEmodel(
+            S'(t) = L - r * b * S(t) * I(t) / N - m * S(t),
+            E'(t) = b * S(t) * I(t) / N - e * E(t) - m * E(t),
+            I'(t) = e * E(t) - g * I(t) - m * I(t),
+            y(t) = K * I(t),
+        )
+    ),
+)
 
 # the NFkB example
 
@@ -1132,4 +1098,4 @@ ode = set_parameter_values(
     ),
 )
 
-push!(benchmarks, Dict(:name => "NFkB", :ode => ode, :skip => false))
+benchmarks[:NFkB] = Dict(:name => "NFkB", :ode => ode, :skip => false)

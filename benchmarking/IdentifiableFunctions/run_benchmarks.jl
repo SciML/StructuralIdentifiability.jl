@@ -83,11 +83,11 @@ function parse_commandline()
         "--workers"
             help = "The number of available worker processes."
             arg_type = Int
-            default = 4
+            default = 1
         "--skip"
             help = "Skip specified benchmark models."
-            arg_type = Vector{String}
-            default = ["NFkB", ]
+            arg_type = Vector{Symbol}
+            default = [:NFkB,]
                 # "JAK-STAT 1", 
                 # "LeukaemiaLeon2021", 
                 # "MAPK model (5 outputs bis)", 
