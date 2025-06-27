@@ -14,11 +14,13 @@ include("benchmarks.jl")
 runtimes = Dict()
 TIME_CATEGORIES =
     [:loc_time, :glob_time, :ioeq_time, :wrnsk_time, :rank_time, :check_time, :total]
+# wll take all without skip = true if empty
+MODELS = [:SIWR, :SEUIR]
 NUM_RUNS = 5
 
-for bmark in benchmarks
+for (id, bmark) in benchmarks
     name = bmark[:name]
-    if (:skip in keys(bmark)) && bmark[:skip]
+    if (!isempty(MODELS) && !(id in MODELS)) || ((:skip in keys(bmark)) && bmark[:skip])
         @info "Skipping $name"
         continue
     end

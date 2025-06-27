@@ -253,8 +253,8 @@ Output:
         specialize_fracs_to_mqs(mqs_generators, ratfuncs_algebraic, point)
     @assert parent(first(gens_specialized)) == parent(first(ratfuncs_mqs_specialized))
     gb = groebner(gens_specialized)
-    nf = normalform(gb, ratfuncs_mqs_specialized)
-    result = map(iszero, nf)
+    d_nf = normalform(gb, ratfuncs_mqs_specialized)
+    result = map(iszero, d_nf)
     return merge_results(algebraicity, result)
 end
 
@@ -749,6 +749,7 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
     end
 
     # Compute some normal forms
+    start_time = time_ns()
     rff_generators = monomial_generators_up_to_degree(
         new_rff,
         normalforms_degree;
@@ -756,6 +757,7 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
         strategy = :monte_carlo,
     )
     append!(new_fracs, rff_generators)
+    _runtime_logger[:id_normalforms_time] = (time_ns() - start_time) / 1e9
 
     # Compute some GBs
     fan = generating_sets_fan(new_rff, gbfan_simplification_code; seed = seed)

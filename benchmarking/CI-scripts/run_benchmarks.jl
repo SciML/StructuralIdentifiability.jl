@@ -8,7 +8,7 @@ stopwatch = time_ns()
 # TTFX
 t1 = @timed using StructuralIdentifiability
 
-include("benchmarks.jl")
+include("../benchmarks.jl")
 
 suite = []
 

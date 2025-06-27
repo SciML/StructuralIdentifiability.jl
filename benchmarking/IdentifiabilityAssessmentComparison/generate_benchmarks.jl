@@ -3,7 +3,7 @@ using Printf
 using StructuralIdentifiability
 using StructuralIdentifiability: ODE, print_for_DAISY, print_for_COMBOS, print_for_maple
 
-include("benchmarks.jl")
+include("../benchmarks.jl")
 
 formats = [
     Dict(
@@ -28,7 +28,7 @@ formats = [
 for frmt in formats
     mkpath(frmt[:name])
     cd(frmt[:name])
-    for bnchmrk in benchmarks
+    for (id, bnchmrk) in benchmarks
         as_text = frmt[:function](bnchmrk[:ode])
         fname = replace(bnchmrk[:name], " " => "-") * frmt[:extension]
         open(fname, "w") do io
