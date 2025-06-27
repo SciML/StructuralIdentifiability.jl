@@ -154,7 +154,7 @@ function _assess_identifiability(
     )
     @debug "Local identifiability assessed in $runtime seconds"
     @debug "Trasncendence basis to be specialized is $trbasis"
-    # _runtime_logger[:loc_time] = runtime
+    _runtime_logger[:loc_time] = runtime
 
     loc_id = [local_result[each] for each in funcs_to_check]
     locally_identifiable = Array{Any, 1}()
