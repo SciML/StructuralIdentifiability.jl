@@ -318,7 +318,7 @@ Output:
     ]
     denoms = map(denominator, ratfuncs_algebraic)
     ring = parent(numerator(first(ratfuncs_algebraic)))
-    den_lcm = lcm(field.mqs.den_lcm_orig, foldl(lcm, denoms))
+    den_lcm = reduce(lcm, field.mqs.dens_to_sat_orig, init = reduce(lcm, denoms))
     @debug "Common lcm is $den_lcm"
 
     # this is deg(g) + 1
@@ -564,7 +564,7 @@ end
         _runtime_logger[:id_inclusion_check_mod_p] += runtime
         two_sided_inclusion = two_sided_inclusion && inclusion
         @debug "Inclusion checked in $(runtime) seconds. Result: $two_sided_inclusion"
-        current_degrees = current_degrees .* 2
+        current_degrees = current_degrees .* (2, 2)
     end
     @debug "The coefficients of the Groebner basis are presented by $(length(fracs)) rational functions"
     new_rff.mqs.cached_groebner_bases[ordering, up_to_degree] = gb
