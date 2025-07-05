@@ -57,6 +57,10 @@ function trivial(F::RationalFunctionField)
     return isempty(F.dennums)
 end
 
+function isconstant(F::RationalFunctionField)
+    return all(map(d -> all(map(p -> total_degree(p) == 0, d)), F.dennums))
+end
+
 function poly_ring(F::RationalFunctionField)
     return parent(first(first(F.dennums)))
 end
@@ -605,12 +609,13 @@ Returns a set of Groebner bases for multiple different rankings of variables.
     if isempty(cfs)
         return ordering_to_generators
     end
-    if length(vars) == 1
-        return ordering_to_generators
-    end
     # NOTE: maybe hide the computation of multiple bases inside
     # RationalFunctionField
     gb_rff = RationalFunctionField(cfs)
+    vars = gens(parent(gb_rff.mqs))
+    if length(vars) == 1
+        return ordering_to_generators
+    end
     if code >= 1
         for i in 1:nbases
             vars_shuffled = circshift(vars, i)
@@ -699,6 +704,9 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
     rational_interpolator = :VanDerHoevenLecerf,
     priority_variables = [],
 )
+    if isconstant(rff)
+        return empty([one(poly_ring(rff)) // one(poly_ring(rff))])
+    end
     @info "Simplifying generating set. Simplification level: $simplify"
     _runtime_logger[:id_groebner_time] = 0.0
     _runtime_logger[:id_calls_to_gb] = 0
