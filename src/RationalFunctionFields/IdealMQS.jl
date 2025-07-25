@@ -19,16 +19,16 @@ https://mediatum.ub.tum.de/doc/685465/685465.pdf
 """
 mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
     funcs_den_nums::Vector{Vector{T}}
-    den_lcm_orig::T
+    dens_to_sat_orig::Vector{T}
     # Indices of pivot elements for each component of funcs_den_nums 
     pivots_indices::Vector{Int}
     parent_ring_param::Generic.MPolyRing{T}
     # Numerators and denominators over QQ
     nums_qq::Vector{T}
     dens_qq::Vector{T}
-    const_polys::Vector{T} # the first one is the sat, but could be others
-    den_lcm::T
-    sat_var_index::Int
+    const_polys::Vector{T} # for the moment, only sats
+    dens_to_sat::Vector{T}
+    sat_var_indices::Vector{Int}
     # Numerators and denominators over GF. 
     # We cache them and maintain a map:
     # a finite field --> an image over this finite field
@@ -73,42 +73,41 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         pivots =
             map(plist -> findmin(p -> (total_degree(p), length(p)), plist), funcs_den_nums)
         pivots_indices = map(last, pivots)
-        for plist in funcs_den_nums
-            @debug "\tDegrees in this list are $(map(total_degree, plist))"
-        end
         @debug "\tDegrees and lengths are $(map(first, pivots))"
-        den_lcm = mapreduce(
-            i -> funcs_den_nums[i][pivots_indices[i]],
-            lcm,
-            1:length(funcs_den_nums),
-        )
-        @debug "Rational functions common denominator is of degree $(total_degree(den_lcm)) and of length $(length(den_lcm))"
-        is_constant(den_lcm) &&
+        #den_lcm = mapreduce(
+        #    i -> funcs_den_nums[i][pivots_indices[i]],
+        #    lcm,
+        #    1:length(funcs_den_nums),
+        #)
+        polys_to_sat = cancel_gcds([funcs_den_nums[i][pivots_indices[i]] for i in 1:length(funcs_den_nums)])
+        @debug "There are $(length(polys_to_sat)) polynomials to saturate at; their degrees are $(map(total_degree, polys_to_sat))"
+        sat_varnames = [sat_varname * "$i" for i in 1:length(polys_to_sat)]
+        is_empty(polys_to_sat) &&
             (@debug "Common denominator of the field generators is constant")
         existing_varnames = map(String, symbols(ring))
         ystrs = ["y$i" for i in 1:length(existing_varnames)]
-        @assert !(sat_varname in ystrs) "The name of the saturation variable collided with a primary variable"
-        sat_var_index = if sat_var_position === :first
-            1
+        @assert isempty(intersect(sat_varnames, ystrs)) "The name of the saturation variable collided with a primary variable"
+        if sat_var_position === :first
+            sat_var_indices = 1:length(sat_varnames)
+            varnames = vcat(sat_varnames, ystrs)
         else
             @assert sat_var_position === :last
-            length(ystrs) + 1
+            sat_var_indices = (length(ystrs) + 1):(length(ystrs) + length(sat_varnames))
+            varnames = vcat(ystrs, sat_varnames)
         end
-        varnames = append_at_index(ystrs, sat_var_index, sat_varname)
-        @debug "Saturating variable is $sat_varname, index is $sat_var_index"
+        @debug "Saturating variables are $sat_varnames, at the indices $sat_var_indices"
         R_sat, v_sat = Nemo.polynomial_ring(K, varnames, internal_ordering = ordering)
-        # Saturation
-        t_sat = v_sat[sat_var_index]
-        den_lcm_orig = den_lcm
-        den_lcm = parent_ring_change(
-            den_lcm,
+        to_R_sat = p -> parent_ring_change(
+            p,
             R_sat,
             matching = :byindex,
-            shift = Int(sat_var_index == 1),
+            shift = Int(sat_var_position == :first) * length(sat_varnames),
         )
-        den_lcm_sat = parent_ring_change(den_lcm, R_sat)
-        sat_qq = den_lcm_sat * t_sat - 1
-        const_polys = [sat_qq]
+        # Saturation
+        ts_sat = v_sat[sat_var_indices]
+        den_orig = polys_to_sat
+        den_new = map(to_R_sat, polys_to_sat)
+        const_polys = [den * t_sat - 1 for (den, t_sat) in zip(den_new, ts_sat)]
 
         # We construct the array of numerators nums_qq and the array of
         # denominators dens_qq of the same length
@@ -116,22 +115,10 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         dens_qq = empty(funcs_den_nums[1])
         for i in 1:length(funcs_den_nums)
             plist = funcs_den_nums[i]
-            den = plist[pivots_indices[i]]
-            den = parent_ring_change(
-                den,
-                R_sat,
-                matching = :byindex,
-                shift = Int(sat_var_index == 1),
-            )
+            den = to_R_sat(plist[pivots_indices[i]])
             for j in 1:length(plist)
                 j == pivots_indices[i] && continue
-                num = plist[j]
-                num = parent_ring_change(
-                    num,
-                    R_sat,
-                    matching = :byindex,
-                    shift = Int(sat_var_index == 1),
-                )
+                num = to_R_sat(plist[j])
                 G = gcd(num, den)
                 _num, _den = num / G, den / G
                 push!(nums_qq, _num)
@@ -145,14 +132,14 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
 
         new{elem_type(R_sat)}(
             funcs_den_nums,
-            den_lcm_orig,
+            den_orig,
             pivots_indices,
             parent_ring_param,
             nums_qq,
             dens_qq,
             const_polys,
-            den_lcm,
-            sat_var_index,
+            den_new,
+            sat_var_indices,
             Dict(),
             Dict(),
             Dict(),
@@ -239,7 +226,7 @@ function ParamPunPam.reduce_mod_p!(
         return nothing
     end
     nums_qq, dens_qq, const_polys = mqs.nums_qq, mqs.dens_qq, mqs.const_polys
-    ring_qq = parent(first(const_polys))
+    ring_qq = parent(first(nums_qq))
     ring_ff, _ = Nemo.polynomial_ring(
         ff,
         map(var_to_str, gens(ring_qq)),
@@ -286,14 +273,14 @@ function ParamPunPam.specialize_mod_p(
     point::Vector{T},
 ) where {T <: Union{fpFieldElem, FpFieldElem}}
     K_1 = parent(first(point))
-    @debug "Evaluating MQS ideal over $K_1 at $point"
+    #@debug "Evaluating MQS ideal over $K_1 at $point"
     @assert haskey(mqs.cached_nums_gf, K_1)
     nums_gf, dens_gf, const_polys_gf =
         mqs.cached_nums_gf[K_1], mqs.cached_dens_gf[K_1], mqs.cached_const_polys_gf[K_1]
     K_2 = base_ring(nums_gf[1])
     @assert K_1 == K_2
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
-    point_sat = append_at_index(point, mqs.sat_var_index, one(K_1))
+    point_sat = insert_at_indices(point, mqs.sat_var_indices, one(K_1))
     result = fractions_to_mqs_specialized(nums_gf, dens_gf, point_sat)
     append!(result, const_polys_gf)
     return result
@@ -306,7 +293,7 @@ function specialize(mqs::IdealMQS, point::Vector{Nemo.QQFieldElem})
     nums_qq, dens_qq = mqs.nums_qq, mqs.dens_qq
     K = base_ring(mqs)
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
-    point_sat = append_at_index(point, mqs.sat_var_index, one(K))
+    point_sat = insert_at_indices(point, mqs.sat_var_indices, one(K))
     result = fractions_to_mqs_specialized(nums_qq, dens_qq, point_sat)
     append!(result, mqs.const_polys)
     return result
@@ -316,7 +303,7 @@ end
 
 function specialize_fracs_to_mqs(mqs::IdealMQS, fracs, point)
     ff = parent(first(point))
-    point_sat = append_at_index(point, mqs.sat_var_index, one(ff))
+    point_sat = insert_at_indices(point, mqs.sat_var_indices, one(ff))
     new_ring = parent(mqs.nums_qq[1])
     if characteristic(ff) > 0
         @assert haskey(mqs.cached_nums_gf, ff)
@@ -328,7 +315,7 @@ function specialize_fracs_to_mqs(mqs::IdealMQS, fracs, point)
                 p,
                 new_ring,
                 matching = :byindex,
-                shift = Int(mqs.sat_var_index == 1),
+                shift = Int(1 in mqs.sat_var_indices) * length(mqs.sat_var_indices),
             ),
             pair,
         ),

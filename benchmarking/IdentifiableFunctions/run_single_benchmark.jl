@@ -12,7 +12,7 @@ include("utils.jl")
 
 const data = Dict()
 
-const NUM_RUNS = 1
+const NUM_RUNS = 5
 const FUNCTION_NAME = ARGS[1]
 const PROBLEM_NAME = ARGS[2]
 const KWARGS = parse_keywords(ARGS[3])[1]

@@ -54,14 +54,14 @@ function local_normal_forms(
 )
     @assert !isempty(point)
     @assert parent(first(point)) == finite_field
-    point_ff_ext = append_at_index(point, mqs.sat_var_index, one(finite_field))
+    point_ff_ext = insert_at_indices(point, mqs.sat_var_indices, one(finite_field))
     gens_ff_spec = specialize_mod_p(mqs, point)
     gb_ff_spec = Groebner.groebner(gens_ff_spec)
     ring_ff = parent(gb_ff_spec[1])
     xs_ff = gens(ring_ff)
     normal_forms_ff = Vector{elem_type(ring_ff)}(undef, 0)
     monoms_ff = Vector{elem_type(ring_ff)}(undef, 0)
-    xs_ff = cut_at_index(xs_ff, mqs.sat_var_index)
+    deleteat!(xs_ff, mqs.sat_var_indices)
     pivot_vectors = map(f -> exponent_vector(f, 1), xs_ff)
     @debug """
     variables in the finite field: $(xs_ff)
@@ -358,7 +358,7 @@ is not specified but is assumed to be close to 1.
         n_relations_ff = length(complete_intersection_relations_ff)
         # Filter out some relations from the complete intersection
         zeroed_relations_inds = Vector{Int}()
-        point_ext = append_at_index(point, mqs.sat_var_index, one(finite_field))
+        point_ext = insert_at_indices(point, mqs.sat_var_indices, one(finite_field))
         for i in 1:length(complete_intersection_relations_ff)
             relation = complete_intersection_relations_ff[i]
             relation_mqs = relation - evaluate(relation, point_ext)
@@ -410,7 +410,7 @@ is not specified but is assumed to be close to 1.
         end
         relation_qq_param = evaluate(
             relation_qq,
-            append_at_index(xs_param, mqs.sat_var_index, one(ring_param)),
+            insert_at_indices(xs_param, mqs.sat_var_indices, one(ring_param)),
         )
         relations_qq[i] = relation_qq_param // one(relation_qq_param)
     end
