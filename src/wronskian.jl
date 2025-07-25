@@ -220,11 +220,12 @@ Computes the Wronskians of `io_equations`
     @debug "Computing power series solution up to order $ord"
     ps = power_series_solution(
         ode_red,
-        Dict(p => rand(1:100) for p in ode_red.parameters),
-        Dict(x => rand(1:100) for x in ode_red.x_vars),
-        Dict(u => [rand(1:100) for i in 0:ord] for u in ode_red.u_vars),
+        Dict(p => rand(1:(PRIME - 1)) for p in ode_red.parameters),
+        Dict(x => rand(1:(PRIME - 1)) for x in ode_red.x_vars),
+        Dict(u => [rand(1:(PRIME - 1)) for i in 0:ord] for u in ode_red.u_vars),
         ord,
     )
+
     @debug "Computing the derivatives of the solution"
     ps_ext = Dict{MPolyRingElem, Nemo.fpAbsPowerSeriesRingElem}()# Generic.AbsSeries}()
     for v in vcat(ode_red.y_vars, ode_red.u_vars)
