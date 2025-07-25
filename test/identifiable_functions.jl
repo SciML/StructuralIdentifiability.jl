@@ -960,47 +960,53 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = true))
 @testset "Identifiable functions of parameters" begin
     p = 0.99
     for case in test_cases
-        for simplify in [:weak, :standard] #:strong?
-            ode = case.ode
-            true_ident_funcs = case.ident_funcs
-            with_states = false
-            if haskey(case, :with_states)
-                with_states = case.with_states
-            end
-            result_funcs = StructuralIdentifiability.find_identifiable_functions(
-                ode,
-                simplify = simplify,
-                with_states = with_states,
-            )
-
-            if isempty(true_ident_funcs)
-                @test isempty(result_funcs)
-                continue
-            end
-
-            @test parent(numerator(result_funcs[1])) == parent(ode)
-
-            R = parent(numerator(result_funcs[1]))
-
-            @info "Test, result_funcs = \n$result_funcs" case simplify R with_states
-
-            true_ident_funcs = map(f -> f // one(f), true_ident_funcs)
-            true_ident_funcs = map(
-                f -> StructuralIdentifiability.parent_ring_change(f, R),
-                true_ident_funcs,
-            )
-
-            # Check inclusion <true funcs> in <result funcs>
-            @test StructuralIdentifiability.fields_equal(
-                StructuralIdentifiability.RationalFunctionField(result_funcs),
-                StructuralIdentifiability.RationalFunctionField(true_ident_funcs),
-                p,
-            )
-            if simplify != :weak
-                @info gens(parent(numerator(first(result_funcs))))
-                # To keep track of changes in the simplification
-                @test Set(result_funcs) == Set(true_ident_funcs)
+        for simplify in (:weak, :standard) #:strong?
+            for sat_factorization in (:none, :lazy, :full)
+                StructuralIdentifiability.SAT_FACTORIZATION_DEFAULT = sat_factorization
+                ode = case.ode
+                true_ident_funcs = case.ident_funcs
+                with_states = false
+                if haskey(case, :with_states)
+                    with_states = case.with_states
+                end
+                result_funcs = StructuralIdentifiability.find_identifiable_functions(
+                    ode,
+                    simplify = simplify,
+                    with_states = with_states,
+                )
+    
+                if isempty(true_ident_funcs)
+                    @test isempty(result_funcs)
+                    continue
+                end
+    
+                @test parent(numerator(result_funcs[1])) == parent(ode)
+    
+                R = parent(numerator(result_funcs[1]))
+    
+                @info "Test, result_funcs = \n$result_funcs" case simplify R with_states
+    
+                true_ident_funcs = map(f -> f // one(f), true_ident_funcs)
+                true_ident_funcs = map(
+                    f -> StructuralIdentifiability.parent_ring_change(f, R),
+                    true_ident_funcs,
+                )
+    
+                # Check inclusion <true funcs> in <result funcs>
+                @test StructuralIdentifiability.fields_equal(
+                    StructuralIdentifiability.RationalFunctionField(result_funcs),
+                    StructuralIdentifiability.RationalFunctionField(true_ident_funcs),
+                    p,
+                )
+                if simplify != :weak
+                    @info gens(parent(numerator(first(result_funcs))))
+                    # To keep track of changes in the simplification
+                    @test Set(result_funcs) == Set(true_ident_funcs)
+                end
             end
         end
     end
 end
+
+# restoring the default
+StructuralIdentifiability.SAT_FACTORIZATION_DEFAULT = :none

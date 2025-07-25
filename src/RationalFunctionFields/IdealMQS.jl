@@ -1,4 +1,6 @@
 
+SAT_FACTORIZATION_DEFAULT::Symbol = :none
+
 """
     IdealMQS
 
@@ -54,12 +56,14 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         sat_var_position = :first,
         ordering = :degrevlex,
         extra_const_polys::Vector{PolyQQ} = Vector{PolyQQ}(),
+        sat_factorization = SAT_FACTORIZATION_DEFAULT,
     ) where {PolyQQ}
         # We are given polynomials of form
         # [[f1, f2, f3, ...], [g1, g2, g3, ...], ...]
         # We prepare and store them to construct ideal specializations later 
         @assert !isempty(funcs_den_nums)
         @assert sat_var_position in (:first, :last)
+        @assert sat_factorization in (:none, :lazy, :full)
         ordering !== :degrevlex && (@warn "Ordering is not degrevlex but $ordering")
         ring = parent(first(first(funcs_den_nums)))
         @debug "Constructing the MQS ideal in $ring"
@@ -74,12 +78,13 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
             map(plist -> findmin(p -> (total_degree(p), length(p)), plist), funcs_den_nums)
         pivots_indices = map(last, pivots)
         @debug "\tDegrees and lengths are $(map(first, pivots))"
-        #den_lcm = mapreduce(
-        #    i -> funcs_den_nums[i][pivots_indices[i]],
-        #    lcm,
-        #    1:length(funcs_den_nums),
-        #)
         polys_to_sat = cancel_gcds([funcs_den_nums[i][pivots_indices[i]] for i in 1:length(funcs_den_nums)])
+        if !isempty(polys_to_sat) && sat_factorization == :none
+            polys_to_sat = [prod(polys_to_sat)]
+        end
+        if sat_factorization == :full
+            polys_to_sat = [p for factorization in map(Nemo.factor, polys_to_sat) for (p, e) in factorization]
+        end
         @debug "There are $(length(polys_to_sat)) polynomials to saturate at; their degrees are $(map(total_degree, polys_to_sat))"
         sat_varnames = [sat_varname * "$i" for i in 1:length(polys_to_sat)]
         is_empty(polys_to_sat) &&

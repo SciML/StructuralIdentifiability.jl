@@ -66,8 +66,19 @@ end
 
 # ------------------------------------------------------------------------------
 
+# Feels like inventing a bycicle
+function squarefree_part(p)
+    g = p
+    for x in vars(p)
+        g = gcd(g, derivative(p, x))
+    end
+    return divexact(p, g)
+end
+
+# ------------------------------------------------------------------------------
+
 function cancel_gcds(polys::Vector)
-    cancelled_polys = copy(polys)
+    cancelled_polys = [squarefree_part(p) for p in polys]
     for (i, p) in enumerate(cancelled_polys)
         for j in (i + 1):length(cancelled_polys)
             cancelled_polys[j] = divexact(cancelled_polys[j], gcd(cancelled_polys[j], p))

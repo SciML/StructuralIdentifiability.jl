@@ -33,9 +33,11 @@ mutable struct RationalFunctionField{T}
     function RationalFunctionField(polys::Vector{T}) where {T}
         RationalFunctionField(polys .// one(parent(first(polys))))
     end
+
     function RationalFunctionField(fractions::Vector{Generic.FracFieldElem{T}}) where {T}
         RationalFunctionField(fractions_to_dennums(fractions))
     end
+
     function RationalFunctionField(dennums::Vector{Vector{T}}) where {T}
         @assert !isempty(dennums)
         F = new{T}(
