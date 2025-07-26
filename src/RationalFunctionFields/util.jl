@@ -68,10 +68,7 @@ end
 
 # Feels like inventing a bycicle
 function squarefree_part(p)
-    g = p
-    for x in vars(p)
-        g = gcd(g, derivative(p, x))
-    end
+    g = reduce(gcd, map(x -> derivative(p, x), vars(p)), init = p)
     return divexact(p, g)
 end
 
