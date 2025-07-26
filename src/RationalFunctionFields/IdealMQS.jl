@@ -78,12 +78,17 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
             map(plist -> findmin(p -> (total_degree(p), length(p)), plist), funcs_den_nums)
         pivots_indices = map(last, pivots)
         @debug "\tDegrees and lengths are $(map(first, pivots))"
-        polys_to_sat = cancel_gcds([funcs_den_nums[i][pivots_indices[i]] for i in 1:length(funcs_den_nums)])
+        polys_to_sat = cancel_gcds([
+            funcs_den_nums[i][pivots_indices[i]] for i in 1:length(funcs_den_nums)
+        ])
         if !isempty(polys_to_sat) && sat_factorization == :none
             polys_to_sat = [prod(polys_to_sat)]
         end
         if sat_factorization == :full
-            polys_to_sat = [p for factorization in map(Nemo.factor, polys_to_sat) for (p, e) in factorization]
+            polys_to_sat = [
+                p for factorization in map(Nemo.factor, polys_to_sat) for
+                (p, e) in factorization
+            ]
         end
         @debug "There are $(length(polys_to_sat)) polynomials to saturate at; their degrees are $(map(total_degree, polys_to_sat))"
         sat_varnames = [sat_varname * "$i" for i in 1:length(polys_to_sat)]
@@ -102,12 +107,13 @@ mutable struct IdealMQS{T} <: AbstractBlackboxIdeal
         end
         @debug "Saturating variables are $sat_varnames, at the indices $sat_var_indices"
         R_sat, v_sat = Nemo.polynomial_ring(K, varnames, internal_ordering = ordering)
-        to_R_sat = p -> parent_ring_change(
-            p,
-            R_sat,
-            matching = :byindex,
-            shift = Int(sat_var_position == :first) * length(sat_varnames),
-        )
+        to_R_sat =
+            p -> parent_ring_change(
+                p,
+                R_sat,
+                matching = :byindex,
+                shift = Int(sat_var_position == :first) * length(sat_varnames),
+            )
         # Saturation
         ts_sat = v_sat[sat_var_indices]
         den_orig = polys_to_sat

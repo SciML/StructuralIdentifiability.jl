@@ -407,10 +407,7 @@ is not specified but is assumed to be close to 1.
             modulo: $finite_field"""
             throw(ErrorException("Rational reconstruction failed."))
         end
-        relation_qq_param = evaluate(
-            relation_qq,
-            extend_point(xs_param, mqs),
-        )
+        relation_qq_param = evaluate(relation_qq, extend_point(xs_param, mqs))
         relations_qq[i] = relation_qq_param // one(relation_qq_param)
     end
     @info "Used $iters specializations in $((time_ns() - time_start) / 1e9) seconds, found $(length(complete_intersection_relations_ff)) relations"

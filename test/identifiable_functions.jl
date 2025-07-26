@@ -974,24 +974,24 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = true))
                     simplify = simplify,
                     with_states = with_states,
                 )
-    
+
                 if isempty(true_ident_funcs)
                     @test isempty(result_funcs)
                     continue
                 end
-    
+
                 @test parent(numerator(result_funcs[1])) == parent(ode)
-    
+
                 R = parent(numerator(result_funcs[1]))
-    
+
                 @info "Test, result_funcs = \n$result_funcs" case simplify R with_states
-    
+
                 true_ident_funcs = map(f -> f // one(f), true_ident_funcs)
                 true_ident_funcs = map(
                     f -> StructuralIdentifiability.parent_ring_change(f, R),
                     true_ident_funcs,
                 )
-    
+
                 # Check inclusion <true funcs> in <result funcs>
                 @test StructuralIdentifiability.fields_equal(
                     StructuralIdentifiability.RationalFunctionField(result_funcs),
