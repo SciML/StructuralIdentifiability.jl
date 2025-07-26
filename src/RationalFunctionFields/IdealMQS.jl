@@ -195,7 +195,7 @@ function fractionfree_generators_raw(mqs::IdealMQS)
     # NOTE: new variables go first!
     big_ring, big_vars =
         polynomial_ring(K, vcat(new_varnames, old_varnames), internal_ordering = :lex)
-    @info "$(mqs.sat_var_index) $(varnames) $ring_params $(parent(first(mqs.const_polys)))"
+    @info "$(mqs.sat_var_indices) $(varnames) $ring_params $(parent(first(mqs.const_polys)))"
     nums_qq, dens_qq, const_polys = mqs.nums_qq, mqs.dens_qq, mqs.const_polys
     nums_y = map(num -> parent_ring_change(num, big_ring, matching = :byindex), nums_qq)
     dens_y = map(den -> parent_ring_change(den, big_ring, matching = :byindex), dens_qq)
@@ -273,6 +273,16 @@ end
 
 # ------------------------------------------------------------------------------
 
+function extend_point(point::Vector{T}, mqs::IdealMQS) where {T <: RingElem}
+    return insert_at_indices(point, mqs.sat_var_indices, one(first(point)))
+end
+
+function contract_point(point::Vector{T}, mqs::IdealMQS) where {T <: RingElem}
+    return point[[!(i in mqs.sat_var_indices) for i in 1:length(point)]]
+end
+
+# ------------------------------------------------------------------------------
+
 function ParamPunPam.specialize_mod_p(
     mqs::IdealMQS,
     point::Vector{T},
@@ -285,8 +295,7 @@ function ParamPunPam.specialize_mod_p(
     K_2 = base_ring(nums_gf[1])
     @assert K_1 == K_2
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
-    point_sat = insert_at_indices(point, mqs.sat_var_indices, one(K_1))
-    result = fractions_to_mqs_specialized(nums_gf, dens_gf, point_sat)
+    result = fractions_to_mqs_specialized(nums_gf, dens_gf, extend_point(point, mqs))
     append!(result, const_polys_gf)
     return result
 end
@@ -296,10 +305,8 @@ end
 function specialize(mqs::IdealMQS, point::Vector{Nemo.QQFieldElem})
     @debug "Evaluating MQS ideal over QQ at $point"
     nums_qq, dens_qq = mqs.nums_qq, mqs.dens_qq
-    K = base_ring(mqs)
     @assert length(point) == nvars(ParamPunPam.parent_params(mqs))
-    point_sat = insert_at_indices(point, mqs.sat_var_indices, one(K))
-    result = fractions_to_mqs_specialized(nums_qq, dens_qq, point_sat)
+    result = fractions_to_mqs_specialized(nums_qq, dens_qq, extend_point(point, mqs))
     append!(result, mqs.const_polys)
     return result
 end
@@ -308,7 +315,6 @@ end
 
 function specialize_fracs_to_mqs(mqs::IdealMQS, fracs, point)
     ff = parent(first(point))
-    point_sat = insert_at_indices(point, mqs.sat_var_indices, one(ff))
     new_ring = parent(mqs.nums_qq[1])
     if characteristic(ff) > 0
         @assert haskey(mqs.cached_nums_gf, ff)
@@ -328,5 +334,5 @@ function specialize_fracs_to_mqs(mqs::IdealMQS, fracs, point)
     )
     nums = map(first, num_den_pairs)
     dens = map(last, num_den_pairs)
-    return fractions_to_mqs_specialized(nums, dens, point_sat)
+    return fractions_to_mqs_specialized(nums, dens, extend_point(point, mqs))
 end
