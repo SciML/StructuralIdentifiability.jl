@@ -66,7 +66,7 @@ end
 
 # ------------------------------------------------------------------------------
 
-# Feels like inventing a bycicle
+# Feels like inventing a bicycle
 function squarefree_part(p)
     g = reduce(gcd, map(x -> derivative(p, x), vars(p)), init = p)
     return divexact(p, g)
