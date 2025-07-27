@@ -25,19 +25,11 @@ const _runtime_logger = Dict(
     :id_npoints_normalform => 0,
 )
 
-const _si_logger = @static if VERSION >= v"1.7.0"
-    Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(Logging.Info, show_limited = false))
-else
-    Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(stderr, Logging.Info))
-end
+const _si_logger = Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(Logging.Info, show_limited = false))
 
 function restart_logging(; loglevel = Logging.Info)
     @assert loglevel isa Base.CoreLogging.LogLevel
-    _si_logger[] = @static if VERSION >= v"1.7.0"
-        Logging.ConsoleLogger(loglevel, show_limited = false)
-    else
-        Logging.ConsoleLogger(stderr, loglevel)
-    end
+    _si_logger[] = Logging.ConsoleLogger(loglevel, show_limited = false)
     for r in _runtime_rubrics
         _runtime_logger[r] = 0
     end
