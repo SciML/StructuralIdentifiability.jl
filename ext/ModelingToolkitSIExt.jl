@@ -9,10 +9,7 @@ using StructuralIdentifiability: str_to_var, parent_ring_change, eval_at_dict
 using StructuralIdentifiability: restart_logging, _si_logger, reset_timings, _to
 using TimerOutputs
 
-    using ModelingToolkit
-else
-    using ..ModelingToolkit
-end
+using ModelingToolkit
 
 # ------------------------------------------------------------------------------
 
