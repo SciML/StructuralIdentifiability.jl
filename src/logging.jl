@@ -25,7 +25,8 @@ const _runtime_logger = Dict(
     :id_npoints_normalform => 0,
 )
 
-const _si_logger = Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(Logging.Info, show_limited = false))
+const _si_logger =
+    Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(Logging.Info, show_limited = false))
 
 function restart_logging(; loglevel = Logging.Info)
     @assert loglevel isa Base.CoreLogging.LogLevel
