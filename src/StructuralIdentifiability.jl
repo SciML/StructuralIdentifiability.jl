@@ -76,11 +76,7 @@ include("known_ic.jl")
 include("input_macro.jl")
 
 function __init__()
-    _si_logger[] = @static if VERSION >= v"1.7.0"
-        Logging.ConsoleLogger(Logging.Info, show_limited = false)
-    else
-        Logging.ConsoleLogger(stderr, Logging.Info)
-    end
+    _si_logger[] = Logging.ConsoleLogger(Logging.Info, show_limited = false)
 end
 
 """
