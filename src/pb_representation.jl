@@ -30,7 +30,7 @@ struct PBRepresentation
         new_varnames = filter(
             v ->
                 (v in param_names) ||
-                decompose_derivative(v, vcat(y_names, u_names)) != nothing,
+                    decompose_derivative(v, vcat(y_names, u_names)) != nothing,
             map(var_to_str, gens(old_ring)),
         )
         newring, _ = Nemo.polynomial_ring(base_ring(old_ring), new_varnames)

@@ -65,8 +65,8 @@ function differentiate_solution(
     return (
         ps_sol,
         Dict(
-            (vars[i], vars[j]) => sol_var_system[i, j] for
-            i in 1:length(ode.x_vars), j in 1:length(vars)
+            (vars[i], vars[j]) => sol_var_system[i, j] for i in 1:length(ode.x_vars),
+            j in 1:length(vars)
         ),
     )
 end
