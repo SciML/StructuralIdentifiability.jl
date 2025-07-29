@@ -381,7 +381,7 @@ end
     elseif isequal(type, :ME)
         if !isempty(known_ic)
             throw(
-                "Known initail conditions are not well-defined in the multi-experimental regime",
+                "Known initial conditions are not well-defined in the multi-experimental regime",
             )
         end
         result, bd = StructuralIdentifiability._assess_local_identifiability(
