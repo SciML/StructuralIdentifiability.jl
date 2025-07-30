@@ -1,6 +1,42 @@
 @testset "RationalFunctionField: membership" begin
     cases = []
 
+    R, (x, y, z) = Nemo.polynomial_ring(Nemo.QQ, ["x", "y", "z"])
+
+    push!(
+        cases,
+        Dict(
+            :field => RationalFunctionField([[R(1), x + y], [R(1), x * y], [z, (x + y)^2]]),
+            :funcs => [
+                (x^2 + y^2) // R(1),
+                (x^3 + y^3) // (z - x * y),
+                R(1) // (z + x + y),
+                z // x,
+            ],
+            :correct => [true, true, true, false],
+        ),
+    )
+
+    push!(
+        cases,
+        Dict(
+            :field => RationalFunctionField([[
+                x + y + z,
+                x^2 + y^2 + z^2,
+                (x + y + z)^2,
+                x^3 + y^3 + z^3,
+            ]]),
+            :funcs => [x + y + z // 1, x * y * z // 1, x + y + 2 * z // 1, x // (y + z)],
+            :correct => [true, true, false, false],
+        ),
+    )
+
+    @test field_contains(
+        RationalFunctionField([x + y + z // 1, x * y + y * z + z * x // 1, x * y * z // 1]),
+        [x^2 + y^2 + z^2, x^6 + y^6 + z^6, x - y + z, x^2 - y^2 + z^2],
+        0.99,
+    ) == [true, true, false, false]
+
     R, (a, b, c) = QQ["a", "b", "c"]
     F = StructuralIdentifiability.RationalFunctionField([a, b, a + b + c])
     push!(cases, Dict(:field => F, :funcs => [zero(R), one(R)], :correct => [true, true]))

@@ -6,10 +6,10 @@
         a * b // (a + b),
         (a + b) // (a^2 + b^3),
     ])
-    update_trbasis_info!(F, 0.9)
+    update_trbasis_info!(F, 0.95)
     @test F.trbasis == [(a^3 + b^3) // (a^2 + b^2), a * b // (a + b)]
     @test F.trbasis_over == [c]
-    @test F.trbasis_probability == 0.9
+    @test F.trbasis_probability == 0.95
 
     @test check_algebraicity(F, [a, b, c, a^2 + c^2], 0.99) == [true, true, false, false]
     @test check_algebraicity_modp(F, [a, b, c, a^2 + c^2]) == [true, true, false, false]
@@ -68,4 +68,13 @@
     correct = [true, false, false, true, true, false, false]
     @test check_algebraicity(F, [x // one(R) for x in gens(R)], 0.999) == correct
     @test check_algebraicity_modp(F, [x // one(R) for x in gens(R)], 2^30 + 3) == correct
+
+    R, (x, y, z) = polynomial_ring(QQ, ["x", "y", "z"])
+    F = RationalFunctionField([[one(R), x + y, x * y]])
+    fs = [x // one(R), z // one(R), x^3 - y^3 // one(R), x + z // one(R)]
+    @test check_algebraicity(F, fs, 0.99) == [true, false, true, false]
+
+    F = RationalFunctionField([[x, y], [y, z]])
+    fs = [x // z, (x + y) // z, x // one(R), y // one(R), z // one(R)]
+    @test check_algebraicity(F, fs, 0.95) == [true, true, false, false, false]
 end
