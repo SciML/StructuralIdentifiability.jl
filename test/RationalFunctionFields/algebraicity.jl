@@ -6,10 +6,10 @@
         a * b // (a + b),
         (a + b) // (a^2 + b^3),
     ])
-    update_trbasis_info!(F, 0.95)
+    update_trbasis_info!(F, 0.999)
     @test F.trbasis == [(a^3 + b^3) // (a^2 + b^2), a * b // (a + b)]
     @test F.trbasis_over == [c]
-    @test F.trbasis_probability == 0.95
+    @test F.trbasis_probability == 0.999
 
     @test check_algebraicity(F, [a, b, c, a^2 + c^2], 0.99) == [true, true, false, false]
     @test check_algebraicity_modp(F, [a, b, c, a^2 + c^2]) == [true, true, false, false]
