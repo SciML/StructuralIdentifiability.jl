@@ -33,9 +33,11 @@ mutable struct RationalFunctionField{T}
     function RationalFunctionField(polys::Vector{T}) where {T}
         RationalFunctionField(polys .// one(parent(first(polys))))
     end
+
     function RationalFunctionField(fractions::Vector{Generic.FracFieldElem{T}}) where {T}
         RationalFunctionField(fractions_to_dennums(fractions))
     end
+
     function RationalFunctionField(dennums::Vector{Vector{T}}) where {T}
         @assert !isempty(dennums)
         F = new{T}(
@@ -55,6 +57,10 @@ end
 
 function trivial(F::RationalFunctionField)
     return isempty(F.dennums)
+end
+
+function isconstant(F::RationalFunctionField)
+    return all(map(d -> all(map(p -> total_degree(p) == 0, d)), F.dennums))
 end
 
 function poly_ring(F::RationalFunctionField)
@@ -318,7 +324,7 @@ Output:
     ]
     denoms = map(denominator, ratfuncs_algebraic)
     ring = parent(numerator(first(ratfuncs_algebraic)))
-    den_lcm = lcm(field.mqs.den_lcm_orig, foldl(lcm, denoms))
+    den_lcm = reduce(lcm, field.mqs.dens_to_sat_orig, init = reduce(lcm, denoms))
     @debug "Common lcm is $den_lcm"
 
     # this is deg(g) + 1
@@ -564,7 +570,7 @@ end
         _runtime_logger[:id_inclusion_check_mod_p] += runtime
         two_sided_inclusion = two_sided_inclusion && inclusion
         @debug "Inclusion checked in $(runtime) seconds. Result: $two_sided_inclusion"
-        current_degrees = current_degrees .* 2
+        current_degrees = current_degrees .* (2, 2)
     end
     @debug "The coefficients of the Groebner basis are presented by $(length(fracs)) rational functions"
     new_rff.mqs.cached_groebner_bases[ordering, up_to_degree] = gb
@@ -605,12 +611,13 @@ Returns a set of Groebner bases for multiple different rankings of variables.
     if isempty(cfs)
         return ordering_to_generators
     end
-    if length(vars) == 1
-        return ordering_to_generators
-    end
     # NOTE: maybe hide the computation of multiple bases inside
     # RationalFunctionField
     gb_rff = RationalFunctionField(cfs)
+    vars = gens(parent(gb_rff.mqs))
+    if length(vars) == 1
+        return ordering_to_generators
+    end
     if code >= 1
         for i in 1:nbases
             vars_shuffled = circshift(vars, i)
@@ -699,6 +706,9 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
     rational_interpolator = :VanDerHoevenLecerf,
     priority_variables = [],
 )
+    if isconstant(rff)
+        return empty([one(poly_ring(rff)) // one(poly_ring(rff))])
+    end
     @info "Simplifying generating set. Simplification level: $simplify"
     _runtime_logger[:id_groebner_time] = 0.0
     _runtime_logger[:id_calls_to_gb] = 0

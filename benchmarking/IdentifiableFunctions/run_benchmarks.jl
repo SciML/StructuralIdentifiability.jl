@@ -75,19 +75,19 @@ function parse_commandline()
             NOTE: each of these must be present in the list of
             `ALL_POSSIBLE_CATEGORIES` in `utils.jl`"""
             arg_type = String
-            default = "id_total"
+            default = join(ALL_CATEGORIES, ",")
         "--timeout"
             help = "Timeout, s."
             arg_type = Int
-            default = 300
+            default = 3600
         "--workers"
             help = "The number of available worker processes."
             arg_type = Int
-            default = 1
+            default = 4
         "--skip"
             help = "Skip specified benchmark models."
             arg_type = Vector{Symbol}
-            default = [:NFkB,]
+            default = [:NFkB,:Covid2, :Lincomp1, :Lincomp2]
                 # "JAK-STAT 1", 
                 # "LeukaemiaLeon2021", 
                 # "MAPK model (5 outputs bis)", 
@@ -144,7 +144,7 @@ function populate_benchmarks(args, kwargs)
         enabled = progressbar_enabled(),
         color = _progressbar_color,
     )
-    for bmark in benchmarks
+    for (id, bmark) in benchmarks
         next!(prog) # , spinner = "⌜⌝⌟⌞")
         name = bmark[:name]
         system = bmark[:ode]
@@ -177,7 +177,7 @@ function run_benchmarks(args, kwargs)
     to_run_names = if isempty(models_from_args)
         dirnames
     else
-        models_from_args
+        [benchmarks[Symbol(id)][:name] for id in models_from_args]
     end
     to_run_names = setdiff(to_run_names, to_skip)
     to_run_indices = collect(1:length(to_run_names))
@@ -485,7 +485,7 @@ function main()
         problems = if isempty(models_from_args)
             dirnames
         else
-            models_from_args
+            [benchmarks[Symbol(id)][:name] for id in models_from_args]
         end
         problems = setdiff(problems, args["skip"])
     else

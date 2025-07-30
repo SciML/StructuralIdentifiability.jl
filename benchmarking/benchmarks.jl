@@ -1041,13 +1041,14 @@ benchmarks = Dict(
         :name => "Covid model (Gallina)",
         :ode => @ODEmodel(
             S'(t) =
-                b * N -
+                b * (S(t) + I(t) + A(t) + Q(t) + J(t) + R(t)) -
                 S(t) * (l * I(t) + l * ea * eq * Q(t) + l * ea * A(t) + l * ej * J(t) + d1),
             I'(t) = k1 * A(t) - (g1 + m2 + d2) * I(t),
             A'(t) =
                 S(t) * (l * I(t) + l * ea * eq * Q(t) + l * ea * A(t) + l * ej * J(t)) - (k1 + m1 + d4) * A(t),
             Q'(t) = m1 * A(t) - (k2 + d5) * Q(t),
             J'(t) = k2 * Q(t) + m2 * I(t) - (g2 + d6) * J(t),
+            R'(t) = g1 * I(t) + g2 * J(t) - d3 * R(t),
             y1(t) = Q(t),
             y2(t) = J(t),
         ),

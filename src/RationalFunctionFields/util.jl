@@ -63,3 +63,41 @@ function merge_results(outer::Vector{Bool}, inner::Vector{Bool})
     end
     return result
 end
+
+# ------------------------------------------------------------------------------
+
+# Feels like inventing a bicycle
+function squarefree_part(p)
+    g = reduce(gcd, map(x -> derivative(p, x), vars(p)), init = p)
+    return divexact(p, g)
+end
+
+# ------------------------------------------------------------------------------
+
+function cancel_gcds(polys::Vector)
+    cancelled_polys = [squarefree_part(p) for p in polys]
+    for (i, p) in enumerate(cancelled_polys)
+        for j in (i + 1):length(cancelled_polys)
+            cancelled_polys[j] = divexact(cancelled_polys[j], gcd(cancelled_polys[j], p))
+        end
+    end
+    @debug "Degrees before taking product $(map(total_degree, cancelled_polys))"
+    @debug "Length before taking product $(map(length, cancelled_polys))"
+    return filter(p -> total_degree(p) > 0, cancelled_polys)
+end
+
+# ------------------------------------------------------------------------------
+
+function insert_at_indices(arr::Vector, indices::Vector{Int}, elem)
+    result = empty(arr)
+    idx_arr = 1
+    for i in 1:(length(arr) + length(indices))
+        if i in indices
+            push!(result, elem)
+        else
+            push!(result, arr[idx_arr])
+            idx_arr += 1
+        end
+    end
+    return result
+end
