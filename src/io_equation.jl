@@ -47,7 +47,7 @@ function generate_io_equation_problem(ode::ODE{P}) where {P <: MPolyRingElem{<:F
     )
     ring, ring_vars = Nemo.polynomial_ring(base_ring(ode.poly_ring), var_names)
 
-    # Definiting a (partial) derivation on it
+    # Defining a (partial) derivation on it
     derivation = Dict{P, P}()
     for x in ode.x_vars
         derivation[switch_ring(x, ring)] = str_to_var(var_to_str(x) * "_dot", ring)

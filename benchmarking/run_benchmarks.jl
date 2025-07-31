@@ -14,7 +14,7 @@ include("benchmarks.jl")
 runtimes = Dict()
 TIME_CATEGORIES =
     [:loc_time, :glob_time, :ioeq_time, :wrnsk_time, :rank_time, :check_time, :total]
-# wll take all without skip = true if empty
+# will take all without skip = true if empty
 MODELS = [:SIWR, :SEUIR]
 NUM_RUNS = 5
 
