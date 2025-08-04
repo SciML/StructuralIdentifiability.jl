@@ -774,6 +774,8 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
     for (ord, rff_gens) in fan
         append!(new_fracs, rff_gens)
     end
+    # retaining the original generators
+    append!(new_fracs, generators(rff))
     new_fracs_unique = unique(new_fracs)
     @debug """
 Final cleaning and simplification of generators. 
