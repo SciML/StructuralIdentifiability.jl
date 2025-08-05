@@ -31,11 +31,18 @@
         ),
     )
 
-    @test field_contains(
-        RationalFunctionField([x + y + z // 1, x * y + y * z + z * x // 1, x * y * z // 1]),
-        [x^2 + y^2 + z^2, x^6 + y^6 + z^6, x - y + z, x^2 - y^2 + z^2],
-        0.99,
-    ) == [true, true, false, false]
+    push!(
+        cases,
+        Dict(
+            :field => RationalFunctionField([
+                x + y + z // 1,
+                x * y + y * z + z * x // 1,
+                x * y * z // 1,
+            ]),
+            :funcs => [x^2 + y^2 + z^2, x^6 + y^6 + z^6, x - y + z, x^2 - y^2 + z^2],
+            :correct => [true, true, false, false],
+        ),
+    )
 
     R, (a, b, c) = QQ["a", "b", "c"]
     F = StructuralIdentifiability.RationalFunctionField([a, b, a + b + c])
