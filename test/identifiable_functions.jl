@@ -224,17 +224,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     Q'(t) = -e * In(t) * g + In(t) * g - s * Q(t),
     y(t) = In(t) * Ninv
 )
-ident_funcs = [
-    (a + e * s - s) // (a * e),
-    b,
-    a + g,
-    (
-        a^2 * e * s + a^2 * g + 3 * a * e * g * s - a * e * s^2 - 2 * a * g * s +
-        e^2 * g * s^2 - 2 * e * g * s^2 + g * s^2
-    ) // (a + e * s - s),
-    s,
-    Ninv,
-]
+ident_funcs = [(a + e * s - s) // (a * e), b, a + g, a*b*g + a*b*s + b*e*g*s, s, Ninv]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # St.
@@ -830,6 +820,8 @@ ident_funcs = [a, b * c, x * c]
 push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
 
 # llw1987 model
+# also contains (p2 * x2 - p4 * x1) // (p3 - p1)
+# which shows up if the original generators are not added
 ode = StructuralIdentifiability.@ODEmodel(
     x1'(t) = -p1 * x1(t) + p2 * u(t),
     x2'(t) = -p3 * x2(t) + p4 * u(t),
@@ -843,7 +835,7 @@ ident_funcs = [
     p2 * p4 // one(x1),
     (p3 + p1) // one(x1),
     (p2 * x2 + p4 * x1) // one(x1),
-    (p2 * x2 - p4 * x1) // (p3 - p1),
+    x1 * p1 * p4 + x2 * p2 * p3,
 ]
 push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
 

@@ -71,7 +71,8 @@ using StructuralIdentifiability:
     quotient_basis,
     rational_function_cmp,
     update_trbasis_info!,
-    poly_ring
+    poly_ring,
+    simplified_generating_set
 
 const GROUP = get(ENV, "GROUP", "All")
 
