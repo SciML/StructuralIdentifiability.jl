@@ -1,34 +1,70 @@
-eq_up_to_the_order(a, b) = issubset(a, b) && issubset(b, a)
-
 @testset "Linear relations over the rationals" begin
     R, (a, b, c) = QQ["a", "b", "c"]
 
-    f = [a + 9]
-    rff = StructuralIdentifiability.RationalFunctionField(f)
-    relations = StructuralIdentifiability.monomial_generators_up_to_degree(rff, 2)
-    @test eq_up_to_the_order(relations, [a])
+    cases = []
 
-    f = [a * b // R(1), (b * c + a * b) // (a * b)]
-    rff = StructuralIdentifiability.RationalFunctionField(f)
-    relations = StructuralIdentifiability.monomial_generators_up_to_degree(rff, 2)
-    @test eq_up_to_the_order(relations, [a * b // R(1), b * c // R(1)])
+    push!(
+        cases,
+        Dict(
+            :rff => StructuralIdentifiability.RationalFunctionField([a + 9]),
+            :correct => Set([a // one(R)]),
+            :degree => 2,
+        ),
+    )
 
-    R, (a, b, c) = QQ["a", "b", "c"]
+    push!(
+        cases,
+        Dict(
+            :rff => StructuralIdentifiability.RationalFunctionField([
+                a * b // R(1),
+                (b * c + a * b) // (a * b),
+            ]),
+            :correct => Set([a * b // one(R), b * c // one(R)]),
+            :degree => 2,
+        ),
+    )
+
     f = [a^2 + b^2, a^3 + b^3, a^4 + b^4]
     rff = StructuralIdentifiability.RationalFunctionField(f)
-    relations = StructuralIdentifiability.monomial_generators_up_to_degree(rff, 1)
-    @test eq_up_to_the_order(relations, [a + b])
-    relations = StructuralIdentifiability.monomial_generators_up_to_degree(rff, 2)
-    @test eq_up_to_the_order(relations, [a + b, a * b, a^2 + b^2])
+    push!(cases, Dict(:rff => rff, :correct => Set([a + b // one(R)]), :degree => 1))
+    push!(
+        cases,
+        Dict(
+            :rff => rff,
+            :correct => Set([a + b // one(R), a * b // one(R)]),
+            :degree => 2,
+        ),
+    )
 
     f = [9a^7 + 10b^6, b^10 - 5b^2]
     rff = StructuralIdentifiability.RationalFunctionField(f)
-    relations = StructuralIdentifiability.monomial_generators_up_to_degree(rff, 1)
-    @test eq_up_to_the_order(relations, empty(f))
-    relations = StructuralIdentifiability.monomial_generators_up_to_degree(rff, 7)
-    @test eq_up_to_the_order(relations, [a^7 + (10 // 9) * b^6])
-    relations = StructuralIdentifiability.monomial_generators_up_to_degree(rff, 12)
-    @test eq_up_to_the_order(relations, [a^7 + (10 // 9) * b^6, b^10 - 5b^2])
+    push!(cases, Dict(:rff => rff, :correct => Set(empty([a // one(R)])), :degree => 1))
+    push!(
+        cases,
+        Dict(:rff => rff, :correct => Set([a^7 + (10 // 9) * b^6 // one(R)]), :degree => 7),
+    )
+    push!(
+        cases,
+        Dict(
+            :rff => rff,
+            :correct => Set([a^7 + (10 // 9) * b^6 // one(R), b^10 - 5b^2 // one(R)]),
+            :degree => 12,
+        ),
+    )
+
+    push!(
+        cases,
+        Dict(
+            :rff => StructuralIdentifiability.RationalFunctionField([a, a * b + b * c]),
+            :correct => Set([a // one(R), a * b + b * c // one(R)]),
+            :degree => 2,
+        ),
+    )
+
+    for c in cases
+        @test Set(StructuralIdentifiability.polynomial_generators(c[:rff], c[:degree])) ==
+              c[:correct]
+    end
 
     # Regression tests
     ###
@@ -45,19 +81,8 @@ eq_up_to_the_order(a, b) = issubset(a, b) && issubset(b, a)
         (p2 * x2 - p4 * x1) // (p1 - p3),
     ]
     rff = StructuralIdentifiability.RationalFunctionField(f)
-    relations = StructuralIdentifiability.monomial_generators_up_to_degree(
-        rff,
-        2,
-        strategy = :monte_carlo,
-    )
+    relations = StructuralIdentifiability.polynomial_generators(rff, 2)
     @test (x1 * p4 + p2 * x2) // one(R) in relations
-
-    ###
-    R, (a, b, c) = QQ["a", "b", "c"]
-    f = [a, a * b + b * c]
-    rff = StructuralIdentifiability.RationalFunctionField(f)
-    relations = StructuralIdentifiability.monomial_generators_up_to_degree(rff, 2)
-    @test eq_up_to_the_order(relations, [a, a * b + b * c])
 
     ###
     # Some arbitrary generators for the SLIQR model
@@ -76,6 +101,6 @@ eq_up_to_the_order(a, b) = issubset(a, b) && issubset(b, a)
         (e * In + e * L - In - Q - L) // (e * Q),
     ]
     rff = StructuralIdentifiability.RationalFunctionField(f)
-    relations = StructuralIdentifiability.monomial_generators_up_to_degree(rff, 2)
+    relations = StructuralIdentifiability.polynomial_generators(rff, 2)
     @test s * Q - Q * a in relations
 end
