@@ -1,6 +1,6 @@
 # abstract function to preform Gaussian elimination
 
-# reducer is assumed to have the pivot coordiante equal to 1
+# reducer is assumed to have the pivot coordinate equal to 1
 function abstract_reduce!(prey, reducer)
     c = coordinate(prey, pivot(reducer))
     if !iszero(c)
