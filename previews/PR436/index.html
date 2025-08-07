@@ -16,7 +16,7 @@ Pkg.add(&quot;StructuralIdentifiability&quot;)</code></pre><h2 id="Citation"><a 
 }</code></pre><h2 id="Feature-Summary"><a class="docs-heading-anchor" href="#Feature-Summary">Feature Summary</a><a id="Feature-Summary-1"></a><a class="docs-heading-anchor-permalink" href="#Feature-Summary" title="Permalink"></a></h2><p><code>StructuralIdentifiability.jl</code> can assess local and global identifiability of ODE models. In addition to these straightforward identifiability queries on individual parameters, the package can distinguish between single- and multi-experiment identifiability.</p><h2 id="Feature-List"><a class="docs-heading-anchor" href="#Feature-List">Feature List</a><a id="Feature-List-1"></a><a class="docs-heading-anchor-permalink" href="#Feature-List" title="Permalink"></a></h2><ul><li>Local identifiability checks</li><li>Global identifiability checks</li><li>Assessment of identifiable functions of parameters and states</li><li>Model reparametrization (experimental)</li></ul><h2 id="External-tutorials"><a class="docs-heading-anchor" href="#External-tutorials">External tutorials</a><a id="External-tutorials-1"></a><a class="docs-heading-anchor-permalink" href="#External-tutorials" title="Permalink"></a></h2><p>A <a href="https://arxiv.org/abs/2505.10517">tutorial paper</a> describes some of the functionality (identifiability assessment and finding identifiable functions) in the context of epidemiological modeling (tested with the version 0.5.15 of the package).</p><h2 id="Contributing"><a class="docs-heading-anchor" href="#Contributing">Contributing</a><a id="Contributing-1"></a><a class="docs-heading-anchor-permalink" href="#Contributing" title="Permalink"></a></h2><ul><li><p>Please refer to the <a href="https://github.com/SciML/ColPrac/blob/master/README.md">SciML ColPrac: Contributor&#39;s Guide on Collaborative Practices for Community Packages</a> for guidance on PRs, issues, and other matters relating to contributing to StructuralIdentifiability.</p></li><li><p>There are a few community forums:</p><ul><li>The #diffeq-bridged channel in the <a href="https://julialang.org/slack/">Julia Slack</a></li><li><a href="https://gitter.im/JuliaDiffEq/Lobby">JuliaDiffEq</a> on Gitter</li><li>On the Julia Discourse forums</li><li>See also <a href="https://sciml.ai/community/">SciML Community page</a></li></ul></li></ul><h2 id="Reproducibility"><a class="docs-heading-anchor" href="#Reproducibility">Reproducibility</a><a id="Reproducibility-1"></a><a class="docs-heading-anchor-permalink" href="#Reproducibility" title="Permalink"></a></h2><details><summary>The documentation of this SciML package was built using these direct dependencies,</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl/docs/Project.toml`
   [6e4b80f9] BenchmarkTools v1.6.0
   [e30172f5] Documenter v1.14.1
-  [961ee093] ModelingToolkit v10.14.0
+  [961ee093] ModelingToolkit v10.15.0
   [220ca800] StructuralIdentifiability v0.5.15 `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.11.6
 Commit 9615af0f269 (2025-07-09 12:58 UTC)
 Build Info:
@@ -63,7 +63,7 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
 ⌅ [864edb3b] DataStructures v0.18.22
   [e2d170a0] DataValueInterfaces v1.0.0
   [2b5f629d] DiffEqBase v6.182.0
-  [459566f4] DiffEqCallbacks v4.8.0
+  [459566f4] DiffEqCallbacks v4.9.0
   [77a26b50] DiffEqNoiseProcess v5.24.1
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
@@ -112,15 +112,12 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [98e50ef6] JuliaFormatter v2.1.6
 ⌅ [70703baa] JuliaSyntax v0.4.10
   [ccbc3e58] JumpProcesses v9.16.1
-  [ba0b0d4f] Krylov v0.10.1
   [b964fa9f] LaTeXStrings v1.4.0
   [23fbe1c1] Latexify v0.16.8
   [10f19ff3] LayoutPointers v0.1.17
   [0e77f7df] LazilyInitializedFields v1.3.0
-  [5078a376] LazyArrays v2.6.2
   [87fe0de2] LineSearch v0.1.4
   [d3d80556] LineSearches v7.4.0
-  [7ed4a6bd] LinearSolve v3.25.1
   [2ab3a3ac] LogExpFunctions v0.3.29
   [d8e11817] MLStyle v0.4.17
   [1914dd2f] MacroTools v0.5.16
@@ -128,7 +125,7 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [d0879d2d] MarkdownAST v0.1.2
   [bb5d69b7] MaybeInplace v0.1.4
   [e1d29d7a] Missings v1.2.0
-  [961ee093] ModelingToolkit v10.14.0
+  [961ee093] ModelingToolkit v10.15.0
   [2e0e35c7] Moshi v0.3.7
   [46d2c3a1] MuladdMacro v0.2.4
   [102ac46a] MultivariatePolynomials v0.5.9
@@ -136,11 +133,7 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [d41bc354] NLSolversBase v7.10.0
   [77ba4419] NaNMath v1.1.3
 ⌅ [2edaba10] Nemo v0.49.5
-  [8913a72c] NonlinearSolve v4.10.0
-  [be0214bd] NonlinearSolveBase v1.13.0
-  [5959db7a] NonlinearSolveFirstOrder v1.6.0
-  [9a2c21bd] NonlinearSolveQuasiNewton v1.7.0
-  [26075421] NonlinearSolveSpectralMethods v1.2.0
+  [be0214bd] NonlinearSolveBase v1.14.0
   [6fe1bfb0] OffsetArrays v1.17.0
   [429524aa] Optim v1.13.2
   [bac558e1] OrderedCollections v1.8.1
@@ -183,7 +176,6 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [699a6c99] SimpleTraits v0.9.4
   [ce78b400] SimpleUnPack v1.1.0
   [a2af1166] SortingAlgorithms v1.2.2
-  [0a514795] SparseMatrixColorings v0.4.21
   [276daf66] SpecialFunctions v2.5.1
   [aedffcd0] Static v1.2.0
   [0d7ed370] StaticArrayInterface v1.8.0
@@ -198,7 +190,7 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [220ca800] StructuralIdentifiability v0.5.15 `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl`
   [2efcf032] SymbolicIndexingInterface v0.3.42
   [19f23fe9] SymbolicLimits v0.2.2
-  [d1185830] SymbolicUtils v3.29.0
+  [d1185830] SymbolicUtils v3.30.0
   [0c5d862f] Symbolics v6.49.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.1
@@ -215,19 +207,15 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [1986cc42] Unitful v1.24.0
   [a7c27f48] Unityper v0.1.6
   [013be700] UnsafeAtomics v0.3.0
-  [897b6980] WeakValueDicts v0.1.0
   [2e619515] Expat_jll v2.6.5+0
 ⌅ [e134572f] FLINT_jll v300.200.201+0
   [f8c6e375] Git_jll v2.50.1+0
-  [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
   [94ce4f54] Libiconv_jll v1.18.0+0
-  [856f044c] MKL_jll v2025.2.0+0
   [656ef2d0] OpenBLAS32_jll v0.3.29+0
   [9bd350c2] OpenSSH_jll v10.0.1+0
   [458c3c95] OpenSSL_jll v3.5.1+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
   [f50d1b31] Rmath_jll v0.5.1+0
-  [1317d2d5] oneTBB_jll v2022.0.0+0
   [0dad84c5] ArgTools v1.1.2
   [56f22d72] Artifacts v1.11.0
   [2a0f44e3] Base64 v1.11.0
@@ -237,7 +225,6 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [7b1f6079] FileWatching v1.11.0
   [9fa8497b] Future v1.11.0
   [b77e0a4c] InteractiveUtils v1.11.0
-  [4af54fe1] LazyArtifacts v1.11.0
   [b27032c2] LibCURL v0.6.4
   [76f85450] LibGit2 v1.11.0
   [8f399da3] Libdl v1.11.0
@@ -281,4 +268,4 @@ Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`</code></pre></details>You can also download the 
 <a href="">manifest</a> file and the
-<a href="">project</a> file.</article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/creating_ode/">Creating ODE System »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Wednesday 6 August 2025 22:24">Wednesday 6 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+<a href="">project</a> file.</article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/creating_ode/">Creating ODE System »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Thursday 7 August 2025 08:23">Thursday 7 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
