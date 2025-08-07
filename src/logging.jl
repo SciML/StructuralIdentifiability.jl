@@ -13,6 +13,7 @@ const _runtime_rubrics = (
     :id_npoints_interpolation,
     :id_beautifulization,
     :id_npoints_normalform,
+    :id_normalforms_time,
 )
 
 const _runtime_logger = Dict(
@@ -23,6 +24,7 @@ const _runtime_logger = Dict(
     :id_npoints_interpolation => 0,
     :id_beautifulization => 0,
     :id_npoints_normalform => 0,
+    :id_normalforms_time => 0.0,
 )
 
 const _si_logger =

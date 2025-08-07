@@ -598,11 +598,11 @@ Returns a set of Groebner bases for multiple different rankings of variables.
     time_start = time_ns()
     vars = gens(parent(rff.mqs))
     nbases = length(vars)
-    @info "Computing $nbases Groebner bases for degrees $up_to_degree for block orderings"
     ordering_to_generators = Dict()
     if code == 0
         return ordering_to_generators
     end
+    @info "Computing $nbases Groebner bases for degrees $up_to_degree for block orderings"
     # The first basis in some ordering
     ord = InputOrdering()
     new_rff = groebner_basis_coeffs(rff, seed = seed, ordering = ord)
@@ -676,20 +676,11 @@ Returns a set of Groebner bases for multiple different rankings of variables.
     return ordering_to_generators
 end
 
-function monomial_generators_up_to_degree(
-    rff::RationalFunctionField{T},
-    up_to_degree;
-    seed = 42,
-    strategy = :monte_carlo,
-) where {T}
-    @assert strategy in (:monte_carlo,)
-    relations = linear_relations_between_normal_forms(
-        beautiful_generators(rff),
-        up_to_degree,
-        seed = seed,
-    )
-    return relations
-end
+SIMPLIFICATION_REGIMES = Dict(
+    :weak => Dict(:poly_gens => 0, :gb_fan => 0),
+    :standard => Dict(:poly_gens => 3, :gb_fan => 0),
+    :strong => Dict(:poly_gens => 3, :gb_fan => 3),
+)
 
 """
     simplified_generating_set(rff; prob_threshold = 0.99, seed = 42)
@@ -735,17 +726,8 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
         rff = RationalFunctionField(field_gens)
     end
 
-    normalforms_degree = 2
-    gbfan_simplification_code = 1
-    if simplify === :standard
-        # pass
-    elseif simplify === :weak
-        normalforms_degree = 2
-        gbfan_simplification_code = 0
-    elseif simplify === :strong
-        normalforms_degree = 3
-        gbfan_simplification_code = 3
-    end
+    @assert simplify in keys(SIMPLIFICATION_REGIMES)
+    simpl_params = SIMPLIFICATION_REGIMES[simplify]
 
     # Compute the first GB in some ordering
     new_rff = groebner_basis_coeffs(
@@ -759,18 +741,15 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
     end
 
     # Compute some normal forms
-    start_time = time_ns()
-    rff_generators = monomial_generators_up_to_degree(
-        new_rff,
-        normalforms_degree;
+    poly_generators = polynomial_generators(
+        RationalFunctionField(new_fracs),
+        simpl_params[:poly_gens];
         seed = seed,
-        strategy = :monte_carlo,
     )
-    append!(new_fracs, rff_generators)
-    _runtime_logger[:id_normalforms_time] = (time_ns() - start_time) / 1e9
+    append!(new_fracs, poly_generators)
 
     # Compute some GBs
-    fan = generating_sets_fan(new_rff, gbfan_simplification_code; seed = seed)
+    fan = generating_sets_fan(new_rff, simpl_params[:gb_fan]; seed = seed)
     for (ord, rff_gens) in fan
         append!(new_fracs, rff_gens)
     end
@@ -780,10 +759,12 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
     @debug """
 Final cleaning and simplification of generators. 
 Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactically unique."""
+    start_time = time_ns()
     runtime = @elapsed new_fracs = beautiful_generators(
         RationalFunctionField(new_fracs_unique),
         priority_variables = priority_variables,
     )
+    @info "Selecting generators in $((time_ns() - start_time) / 1e9)"
     @debug "Checking inclusion with probability $prob_threshold"
     runtime =
         @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), prob_threshold)

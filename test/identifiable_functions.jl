@@ -215,8 +215,7 @@ ident_funcs = [k7, k5, k6, k10 * k9, k9^2, k10 + 2 * k8]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # SLIQR
-# a^2 + 3*a*g - a*s + e*g*s + g^2 - 2*g*s ??
-# appears with internal_ordering being lex (or with strong simplification)
+# Gives less simplified results if normal forms are computed only up to degree 2
 ode = StructuralIdentifiability.@ODEmodel(
     S'(t) = -b * In(t) * S(t) * Ninv - S(t) * Ninv * u(t),
     In'(t) = -In(t) * g + s * Q(t) + a * L(t),
@@ -224,7 +223,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     Q'(t) = -e * In(t) * g + In(t) * g - s * Q(t),
     y(t) = In(t) * Ninv
 )
-ident_funcs = [(a + e * s - s) // (a * e), b, a + g, a*b*g + a*b*s + b*e*g*s, s, Ninv]
+ident_funcs = [a * g + e * g * s - g * s, b, a + g, a * e * g, s, Ninv]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # St.
@@ -875,15 +874,14 @@ ode = StructuralIdentifiability.@ODEmodel(
     y3(t) = a3 * pS6(t)
 )
 ident_funcs = [
-    (EGF_EGFR * reaction_9_k1) // pS6,
     reaction_8_k1,
     a3 // reaction_5_k1,
     reaction_3_k1,
     reaction_2_k2,
-    reaction_2_k1 // reaction_5_k1,
-    a1 // reaction_5_k1,
     pAkt * reaction_5_k1,
     pEGFR * reaction_5_k1,
+    reaction_2_k1 // reaction_5_k1,
+    a1 // reaction_5_k1,
     pS6 * reaction_5_k1,
     reaction_5_k2,
     reaction_6_k1,
@@ -894,6 +892,7 @@ ident_funcs = [
     reaction_1_k1 - reaction_1_k2 - reaction_9_k1,
     pEGFR_Akt * reaction_5_k1,
     S6 * reaction_5_k1,
+    EGF_EGFR * reaction_5_k1 * reaction_9_k1,
     Akt * reaction_5_k1,
 ]
 push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))

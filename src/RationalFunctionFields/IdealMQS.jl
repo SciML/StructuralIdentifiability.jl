@@ -165,6 +165,7 @@ Base.length(ideal::IdealMQS) = length(ideal.nums_qq) + 1
 AbstractAlgebra.base_ring(ideal::IdealMQS) = base_ring(ideal.nums_qq[1])
 AbstractAlgebra.parent(ideal::IdealMQS) = ideal.parent_ring_param
 ParamPunPam.parent_params(ideal::IdealMQS) = base_ring(ideal.parent_ring_param)
+specialization_ring(ideal::IdealMQS) = parent(first(ideal.nums_qq))
 
 # ------------------------------------------------------------------------------
 
@@ -284,7 +285,7 @@ function extend_point(point::Vector{T}, mqs::IdealMQS) where {T <: RingElem}
 end
 
 function contract_point(point::Vector{T}, mqs::IdealMQS) where {T <: RingElem}
-    return point[[!(i in mqs.sat_var_indices) for i in 1:length(point)]]
+    return Vector{T}(point[[!(i in mqs.sat_var_indices) for i in 1:length(point)]])
 end
 
 # ------------------------------------------------------------------------------
