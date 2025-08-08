@@ -947,7 +947,133 @@ ode = @ODEmodel(x'(t) = alpha * x(t)^2, y(t) = x(t)^2)
 ident_funcs = [alpha^2, x * alpha]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = true))
 
-# TODO: verify that Maple returns the same
+# Examples from the paper "An algorithm for finding globally identifiable parameter combinations of nonlinear ODE models using Gröbner Bases"
+# http://dx.doi.org/10.1016/j.mbs.2009.08.010
+
+# Section 6
+ode = @ODEmodel(
+    x1'(t) = -(k01 + k21) * x1(t) + k12 * x2(t) + u(t),
+    x2'(t) = k21 * x1(t) - (k02 + k12) * x2(t),
+    y(t) = x1(t) / v
+)
+ident_funcs = [v, k02 + k12, k01 + k21, k12 * k21]
+ident_funcs_states = [v, x1, k02 + k12, k01 + k21, k12 * k21, x2 * k12]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
+
+# Example 1
+ode = @ODEmodel(
+    x1'(t) = -(k21 + V_M / (K_M + x1(t))) * x1(t) + k12 * x2(t) + b1 * u(t),
+    x2'(t) = k21 * x1(t) - (k02 + k12) * x2(t),
+    y(t) = c * x1(t)
+)
+ident_funcs = [k21, k12, k02, b1 * c, V_M * c, K_M * c]
+ident_funcs_states = [k21, k12, k02, b1 * c, V_M * c, K_M * c, x2 * c, x1 * c]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
+
+# Example 2
+ode = @ODEmodel(
+    x1'(t) = k13 * x3(t) + k12 * x2(t) - (k12 + k31) * x1(t) + u(t),
+    x2'(t) = k21 * x1(t) - (k12 + k02) * x2(t),
+    x3'(t) = k31 * x1(t) - (k13 + k03) * x3(t),
+    y(t) = x1(t) / v
+)
+ident_funcs = [
+    v,
+    k12 + k31,
+    k02 + k03 + k13 - k31,
+    k12*k21 + k13*k31,
+    k02*k03 + k02*k13 + k03*k12 + k12*k13,
+    k02*k13*k31 + k03*k12*k21 + k12*k13*k21 + k12*k13*k31,
+]
+ident_funcs_states = [
+    v,
+    x1,
+    k12 + k31,
+    k02 + k03 + k13 - k31,
+    k12*k21 + k13*k31,
+    x2*k12 + x3*k13,
+    k02*k03 + k02*k13 + k03*k12 + k12*k13,
+    k02*k13*k31 + k03*k12*k21 + k12*k13*k21 + k12*k13*k31,
+    x2*k03*k12 + x2*k12*k13 + x3*k02*k13 + x3*k12*k13,
+]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
+
+# Example 3
+ode = @ODEmodel(
+    x1'(t) = -a31 * x1(t) + a13 * x3(t) + u(t),
+    x2'(t) = -a42 * x2(t) + a24 * x4(t),
+    x3'(t) = a31 * x1(t) - (a03 + a13 + a43) * x3(t),
+    x4'(t) = a42 * x2(t) + a43 * x3(t) - (a04 + a24) * x4(t),
+    y1(t) = x1(t),
+    y2(t) = x2(t)
+)
+ident_funcs = [a31, a13, a03 + a43, a04 + a24 + a42, a24*a43, a04*a42]
+ident_funcs_states =
+    [a31, a13, x3, x2, x1, a03 + a43, a04 + a24 + a42, a24*a43, a04*a42, x2*a42 - x4*a24]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
+
+# Example 4
+ode = @ODEmodel(
+    S'(t) = mu * N - S * (mu + beta / N * I(t)),
+    I'(t) = I(t) * (beta / N * S(t) - mu - nu),
+    y(t) = k * I(t)
+)
+ident_funcs = [nu, mu, beta, N*k]
+ident_funcs_states = [nu, mu, beta, N*k, I*k, S*k]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
+
+# Example 5
+ode = @ODEmodel(
+    x1'(t) = p1 * x1(t) - p2 * x1(t) * x2(t),
+    x2'(t) = p3 * x2(t) * (1 - p4 * x2(t)) + p5 * x1(t) * x2(t),
+    y(t) = x1(t)
+)
+ident_funcs = [p5, p3, p1, p2//p4]
+ident_funcs_states = [p5, p3, p1, x1, x2*p4, p2//p4]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
+
+# Example 6
+ode = @ODEmodel(
+    x1'(t) = -beta * x1(t) * x4(t) - d * x1(t) + s,
+    x2'(t) = beta * q1 * x1(t) * x4(t) - k1 * x2(t) - mu1 * x2(t),
+    x3'(t) = beta * q2 * x1(t) * x4(t) + k1 * x2(t) - mu2 * x3(t),
+    x4'(t) = -c * x4(t) + k2 * x3(t),
+    y1(t) = x1(t),
+    y2(t) = x4(t)
+)
+ident_funcs = [
+    s,
+    d,
+    beta,
+    c + k1 + mu1 + mu2,
+    k2*q2,
+    c*k1 + c*mu1 + c*mu2 + k1*mu2 + mu1*mu2,
+    c*k1*mu2 + c*mu1*mu2,
+    k1*k2*q1 + k1*k2*q2 + k2*mu1*q2,
+]
+ident_funcs_states = [
+    s,
+    d,
+    beta,
+    x4,
+    x1,
+    c + k1 + mu1 + mu2,
+    k2*q2,
+    x3*k2 - x4*c,
+    c*k1 + c*mu1 + c*mu2 + k1*mu2 + mu1*mu2,
+    c*k1*mu2 + c*mu1*mu2,
+    k1*k2*q1 + k1*k2*q2 + k2*mu1*q2,
+    x2*k1*k2 + x3*k1*k2 + x3*k2*mu1 + x4*k1*mu2 + x4*mu1*mu2,
+]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
+
 @testset "Identifiable functions of parameters" begin
     p = 0.99
     for case in test_cases
