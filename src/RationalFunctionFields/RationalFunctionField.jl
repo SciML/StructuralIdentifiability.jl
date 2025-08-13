@@ -227,11 +227,10 @@ function field_contains_algebraic_mod_p(field, rat_funcs, prime)
     point = ParamPunPam.distinct_nonzero_points(ff, nvars(param_ring))
 
     gens_specialized = ParamPunPam.specialize_mod_p(mqs_generators, point)
-    ratfuncs_mqs_specialized =
-        specialize_fracs_to_mqs(mqs_generators, rat_funcs, point)
+    ratfuncs_mqs_specialized = specialize_fracs_to_mqs(mqs_generators, rat_funcs, point)
     @assert parent(first(gens_specialized)) == parent(first(ratfuncs_mqs_specialized))
     gb = groebner(gens_specialized)
-    return map(iszero,  normalform(gb, ratfuncs_mqs_specialized))
+    return map(iszero, normalform(gb, ratfuncs_mqs_specialized))
 end
 
 """
@@ -264,7 +263,10 @@ Output:
     end
     ratfuncs_algebraic = ratfuncs[algebraicity]
 
-    return merge_results(algebraicity, field_contains_algebraic_mod_p(field, ratfuncs_algebraic, prime))
+    return merge_results(
+        algebraicity,
+        field_contains_algebraic_mod_p(field, ratfuncs_algebraic, prime),
+    )
 end
 
 function field_contains_mod_p(
@@ -290,6 +292,7 @@ end
 
 # checks containment under assumption that rat_funcs are algebraic over the field
 function field_contains_algebraic(field, ratfuncs, prob_threshold)
+    start_time = time_ns()
     @debug "Estimating the sampling bound"
 
     # uses Theorem 3.3 from https://arxiv.org/pdf/2111.00991.pdf
@@ -339,7 +342,11 @@ function field_contains_algebraic(field, ratfuncs, prob_threshold)
     @assert parent(first(mqs_specialized)) == parent(first(mqs_ratfuncs))
     @debug "Starting the groebner basis computation"
     gb = groebner(mqs_specialized)
-    return map(iszero, normalform(gb, mqs_ratfuncs))
+    @debug "Computing GB in $((time_ns() - start_time) / 1e9) seconds"
+    start_time = time_ns()
+    res = map(iszero, normalform(gb, mqs_ratfuncs))
+    @debug "Normal forms computed in $((time_ns() - start_time) / 1e9) seconds"
+    return res
 end
 
 """
@@ -366,15 +373,21 @@ Output:
         return Bool[]
     end
 
-    half_p = 1 - (1 - prob_threshold) / 2
+    half_p = 1 - (1 - prob_threshold) / 100
 
+    start_time = time_ns()
     algebraicity = check_algebraicity(field, ratfuncs, half_p)
     ratfuncs_algebraic = ratfuncs[algebraicity]
+    @debug "Algebraicity checked in $((time_ns() - start_time)/1e9) seconds"
     if isempty(ratfuncs_algebraic)
         return algebraicity
     end
 
-    return merge_results(algebraicity, field_contains_algebraic(field, ratfuncs_algebraic, half_p))
+    half_p = 1 - (1 - prob_threshold) * 99.0 / 100
+    return merge_results(
+        algebraicity,
+        field_contains_algebraic(field, ratfuncs_algebraic, half_p),
+    )
 end
 
 function field_contains(
@@ -451,7 +464,7 @@ Applies the following passes:
         sort!(fracs_priority, lt = rational_function_cmp)
         sort!(fracs_rest, lt = rational_function_cmp)
         fracs = vcat(fracs_priority, fracs_rest)
-        @debug "The pool of fractions:\n$(join(map(repr, fracs), ",\n"))"
+        @debug "The pool of fractions of size $(length(fracs))\n$(join(map(repr, fracs), ",\n"))"
         if reversed_order
             non_redundant = collect(1:length(fracs))
             for i in length(fracs):-1:1
@@ -491,6 +504,7 @@ Applies the following passes:
     sort!(fracs, lt = (f, g) -> rational_function_cmp(f, g))
     spring_cleaning_pass!(fracs)
     _runtime_logger[:id_beautifulization] += (time_ns() - time_start) / 1e9
+    @debug "Generators beautified in $(_runtime_logger[:id_beautifulization]) seconds"
     return fracs
 end
 
@@ -768,8 +782,19 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
     for (ord, rff_gens) in fan
         append!(new_fracs, rff_gens)
     end
-    # retaining the original generators
-    append!(new_fracs, generators(rff))
+
+    # retaining the original generators (but not all!)
+    sort!(new_fracs, lt = rational_function_cmp)
+    original_fracs = generators(rff)
+    sort!(original_fracs, lt = rational_function_cmp)
+    merge_index = findfirst(f -> rational_function_cmp(new_fracs[end], f), original_fracs)
+    if isnothing(merge_index)
+        merge_index = length(original_fracs)
+    else
+        merge_index -= 1
+    end
+    @debug "Retaining $(merge_index) out of $(length(original_fracs)) original generators"
+    append!(new_fracs, original_fracs[1:merge_index])
     new_fracs_unique = unique(new_fracs)
     @debug """
 Final cleaning and simplification of generators. 
@@ -781,8 +806,8 @@ Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactica
     )
     @info "Selecting generators in $((time_ns() - start_time) / 1e9)"
     @debug "Checking inclusion with probability $prob_threshold"
-    runtime =
-        @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), prob_threshold)
+    runtime = @elapsed result =
+        fields_equal(rff, RationalFunctionField(new_fracs), prob_threshold)
     _runtime_logger[:id_inclusion_check] = runtime
     if !result
         @warn "Field membership check failed. Error will follow."
