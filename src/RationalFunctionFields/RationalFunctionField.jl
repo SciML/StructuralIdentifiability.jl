@@ -217,6 +217,22 @@ end
 
 # ------------------------------------------------------------------------------
 
+# checks containment under assumption that rat_funcs are algebraic over the field
+function field_contains_algebraic_mod_p(field, rat_funcs, prime)
+    ff = Nemo.Native.GF(prime)
+    mqs_generators = field.mqs_membership
+    reduce_mod_p!(mqs_generators, ff)
+
+    param_ring = ParamPunPam.parent_params(mqs_generators)
+    point = ParamPunPam.distinct_nonzero_points(ff, nvars(param_ring))
+
+    gens_specialized = ParamPunPam.specialize_mod_p(mqs_generators, point)
+    ratfuncs_mqs_specialized = specialize_fracs_to_mqs(mqs_generators, rat_funcs, point)
+    @assert parent(first(gens_specialized)) == parent(first(ratfuncs_mqs_specialized))
+    gb = groebner(gens_specialized)
+    return map(iszero, normalform(gb, ratfuncs_mqs_specialized))
+end
+
 """
     field_contains_mod_p(field, rat_funcs, prime)
 
@@ -247,21 +263,10 @@ Output:
     end
     ratfuncs_algebraic = ratfuncs[algebraicity]
 
-    ff = Nemo.Native.GF(prime)
-    mqs_generators = field.mqs_membership
-    reduce_mod_p!(mqs_generators, ff)
-
-    param_ring = ParamPunPam.parent_params(mqs_generators)
-    point = ParamPunPam.distinct_nonzero_points(ff, nvars(param_ring))
-
-    gens_specialized = ParamPunPam.specialize_mod_p(mqs_generators, point)
-    ratfuncs_mqs_specialized =
-        specialize_fracs_to_mqs(mqs_generators, ratfuncs_algebraic, point)
-    @assert parent(first(gens_specialized)) == parent(first(ratfuncs_mqs_specialized))
-    gb = groebner(gens_specialized)
-    d_nf = normalform(gb, ratfuncs_mqs_specialized)
-    result = map(iszero, d_nf)
-    return merge_results(algebraicity, result)
+    return merge_results(
+        algebraicity,
+        field_contains_algebraic_mod_p(field, ratfuncs_algebraic, prime),
+    )
 end
 
 function field_contains_mod_p(
@@ -277,10 +282,72 @@ function issubfield_mod_p(
     E::RationalFunctionField{T},
     prime = 2^31 - 1,
 ) where {T}
-    return all(field_contains_mod_p(E, F.dennums, prime))
+    if !all(check_algebraicity_modp(E, generators(F), prime))
+        return false
+    end
+    return all(field_contains_algebraic_mod_p(E, generators(F), prime))
 end
 
 # ------------------------------------------------------------------------------
+
+# checks containment under assumption that rat_funcs are algebraic over the field
+function field_contains_algebraic(field, ratfuncs, prob_threshold)
+    start_time = time_ns()
+    @debug "Estimating the sampling bound"
+
+    # uses Theorem 3.3 from https://arxiv.org/pdf/2111.00991.pdf
+    # the comments below use the notation from the theorem
+    ratfuncs = [
+        (iszero(f) || (total_degree(numerator(f)) > total_degree(denominator(f)))) ? f :
+        1 // f for f in ratfuncs
+    ]
+    denoms = map(denominator, ratfuncs)
+    ring = parent(numerator(first(ratfuncs)))
+    den_lcm = reduce(lcm, field.mqs.dens_to_sat_orig, init = reduce(lcm, denoms))
+    @debug "Common lcm is $den_lcm"
+
+    # this is deg(g) + 1
+    degree = total_degree(den_lcm) + 1
+    # computing maximum of deg(f) for different f's to be tested
+    for (i, f) in enumerate(ratfuncs)
+        extra_degree = total_degree(den_lcm) - total_degree(denominator(f))
+        degree = max(degree, extra_degree + total_degree(numerator(f)))
+    end
+    # computing maximum of deg(f_i) for the generators of the field
+    for (i, plist) in enumerate(field.dennums)
+        extra_degree = total_degree(den_lcm) - total_degree(field.mqs.dens_qq[i])
+        degree = max(degree, extra_degree + maximum(total_degree, plist))
+    end
+    @debug "\tBound for the degrees is $degree"
+
+    total_vars = foldl(
+        union,
+        map(plist -> foldl(union, map(poly -> Set(vars(poly)), plist)), field.dennums),
+    )
+    @debug "\tThe total number of variables in $(length(total_vars))"
+    sampling_bound = BigInt(
+        3 *
+        BigInt(degree)^(length(total_vars) + 3) *
+        (length(ratfuncs)) *
+        ceil(1 / (1 - prob_threshold)),
+    )
+
+    @debug "\tSampling from $(-sampling_bound) to $(sampling_bound)"
+    mqs = field.mqs_membership
+    param_ring = ParamPunPam.parent_params(mqs)
+    point = map(v -> Nemo.QQ(rand((-sampling_bound):sampling_bound)), gens(param_ring))
+    mqs_specialized = specialize(mqs, point)
+    @debug "Computing Groebner basis ($(length(mqs_specialized)) equations)"
+    mqs_ratfuncs = specialize_fracs_to_mqs(mqs, ratfuncs, point)
+    @assert parent(first(mqs_specialized)) == parent(first(mqs_ratfuncs))
+    @debug "Starting the groebner basis computation"
+    gb = groebner(mqs_specialized)
+    @debug "Computing GB in $((time_ns() - start_time) / 1e9) seconds"
+    start_time = time_ns()
+    res = map(iszero, normalform(gb, mqs_ratfuncs))
+    @debug "Normal forms computed in $((time_ns() - start_time) / 1e9) seconds"
+    return res
+end
 
 """
     field_contains(field, ratfuncs, prob_threshold)
@@ -306,65 +373,21 @@ Output:
         return Bool[]
     end
 
-    half_p = 1 - (1 - prob_threshold) / 2
+    half_p = 1 - (1 - prob_threshold) / 100
 
+    start_time = time_ns()
     algebraicity = check_algebraicity(field, ratfuncs, half_p)
     ratfuncs_algebraic = ratfuncs[algebraicity]
+    @debug "Algebraicity checked in $((time_ns() - start_time)/1e9) seconds"
     if isempty(ratfuncs_algebraic)
         return algebraicity
     end
 
-    @debug "Estimating the sampling bound"
-
-    # uses Theorem 3.3 from https://arxiv.org/pdf/2111.00991.pdf
-    # the comments below use the notation from the theorem
-    ratfuncs_algebraic = [
-        (iszero(f) || (total_degree(numerator(f)) > total_degree(denominator(f)))) ? f :
-        1 // f for f in ratfuncs_algebraic
-    ]
-    denoms = map(denominator, ratfuncs_algebraic)
-    ring = parent(numerator(first(ratfuncs_algebraic)))
-    den_lcm = reduce(lcm, field.mqs.dens_to_sat_orig, init = reduce(lcm, denoms))
-    @debug "Common lcm is $den_lcm"
-
-    # this is deg(g) + 1
-    degree = total_degree(den_lcm) + 1
-    # computing maximum of deg(f) for different f's to be tested
-    for (i, f) in enumerate(ratfuncs_algebraic)
-        extra_degree = total_degree(den_lcm) - total_degree(denominator(f))
-        degree = max(degree, extra_degree + total_degree(numerator(f)))
-    end
-    # computing maximum of deg(f_i) for the generators of the field
-    for (i, plist) in enumerate(field.dennums)
-        extra_degree = total_degree(den_lcm) - total_degree(field.mqs.dens_qq[i])
-        degree = max(degree, extra_degree + maximum(total_degree, plist))
-    end
-    @debug "\tBound for the degrees is $degree"
-
-    total_vars = foldl(
-        union,
-        map(plist -> foldl(union, map(poly -> Set(vars(poly)), plist)), field.dennums),
+    half_p = 1 - (1 - prob_threshold) * 99.0 / 100
+    return merge_results(
+        algebraicity,
+        field_contains_algebraic(field, ratfuncs_algebraic, half_p),
     )
-    @debug "\tThe total number of variables in $(length(total_vars))"
-    sampling_bound = BigInt(
-        3 *
-        BigInt(degree)^(length(total_vars) + 3) *
-        (length(ratfuncs_algebraic)) *
-        ceil(1 / (1 - prob_threshold)),
-    )
-
-    @debug "\tSampling from $(-sampling_bound) to $(sampling_bound)"
-    mqs = field.mqs_membership
-    param_ring = ParamPunPam.parent_params(mqs)
-    point = map(v -> Nemo.QQ(rand((-sampling_bound):sampling_bound)), gens(param_ring))
-    mqs_specialized = specialize(mqs, point)
-    @debug "Computing Groebner basis ($(length(mqs_specialized)) equations)"
-    mqs_ratfuncs = specialize_fracs_to_mqs(mqs, ratfuncs_algebraic, point)
-    @assert parent(first(mqs_specialized)) == parent(first(mqs_ratfuncs))
-    @debug "Starting the groebner basis computation"
-    gb = groebner(mqs_specialized)
-    result_global = map(iszero, normalform(gb, mqs_ratfuncs))
-    return merge_results(algebraicity, result_global)
 end
 
 function field_contains(
@@ -391,7 +414,11 @@ function issubfield(
     E::RationalFunctionField{T},
     prob_threshold,
 ) where {T}
-    return all(field_contains(E, F.dennums, prob_threshold))
+    half_p = 1 - (1 - prob_threshold) / 2
+    if !all(check_algebraicity(E, generators(F), half_p))
+        return false
+    end
+    return all(field_contains_algebraic(E, generators(F), prob_threshold))
 end
 
 function fields_equal(
@@ -437,7 +464,7 @@ Applies the following passes:
         sort!(fracs_priority, lt = rational_function_cmp)
         sort!(fracs_rest, lt = rational_function_cmp)
         fracs = vcat(fracs_priority, fracs_rest)
-        @debug "The pool of fractions:\n$(join(map(repr, fracs), ",\n"))"
+        @debug "The pool of fractions of size $(length(fracs))\n$(join(map(repr, fracs), ",\n"))"
         if reversed_order
             non_redundant = collect(1:length(fracs))
             for i in length(fracs):-1:1
@@ -477,6 +504,7 @@ Applies the following passes:
     sort!(fracs, lt = (f, g) -> rational_function_cmp(f, g))
     spring_cleaning_pass!(fracs)
     _runtime_logger[:id_beautifulization] += (time_ns() - time_start) / 1e9
+    @debug "Generators beautified in $(_runtime_logger[:id_beautifulization]) seconds"
     return fracs
 end
 
@@ -560,15 +588,16 @@ end
         @debug "Generators up to degrees $(current_degrees) are $fracs"
         @debug "Checking two-sided inclusion modulo a prime"
         time_start = time_ns()
-        # Check inclusion: <simplified generators> in <original generators> 
         new_rff = RationalFunctionField(fracs)
-        inclusion = issubfield_mod_p(new_rff, rff)
-        two_sided_inclusion = two_sided_inclusion || inclusion
-        # Check inclusion: <original generators> in <simplified generators>
-        inclusion = issubfield_mod_p(rff, new_rff)
+        # the ordering of the checks is not arbitrary - the first one can terminate earlier
+        # via the algebraicity check
+        if !issubfield_mod_p(rff, new_rff)
+            two_sided_inclusion = false
+        else
+            two_sided_inclusion = issubfield_mod_p(new_rff, rff)
+        end
         runtime = (time_ns() - time_start) / 1e9
         _runtime_logger[:id_inclusion_check_mod_p] += runtime
-        two_sided_inclusion = two_sided_inclusion && inclusion
         @debug "Inclusion checked in $(runtime) seconds. Result: $two_sided_inclusion"
         current_degrees = current_degrees .* (2, 2)
     end
@@ -753,8 +782,19 @@ Result is correct (in the Monte-Carlo sense) with probability at least `prob_thr
     for (ord, rff_gens) in fan
         append!(new_fracs, rff_gens)
     end
-    # retaining the original generators
-    append!(new_fracs, generators(rff))
+
+    # retaining the original generators (but not all!)
+    sort!(new_fracs, lt = rational_function_cmp)
+    original_fracs = generators(rff)
+    sort!(original_fracs, lt = rational_function_cmp)
+    merge_index = findfirst(f -> rational_function_cmp(new_fracs[end], f), original_fracs)
+    if isnothing(merge_index)
+        merge_index = length(original_fracs)
+    else
+        merge_index -= 1
+    end
+    @debug "Retaining $(merge_index) out of $(length(original_fracs)) original generators"
+    append!(new_fracs, original_fracs[1:merge_index])
     new_fracs_unique = unique(new_fracs)
     @debug """
 Final cleaning and simplification of generators. 
@@ -766,8 +806,8 @@ Out of $(length(new_fracs)) fractions $(length(new_fracs_unique)) are syntactica
     )
     @info "Selecting generators in $((time_ns() - start_time) / 1e9)"
     @debug "Checking inclusion with probability $prob_threshold"
-    runtime =
-        @elapsed result = issubfield(rff, RationalFunctionField(new_fracs), prob_threshold)
+    runtime = @elapsed result =
+        fields_equal(rff, RationalFunctionField(new_fracs), prob_threshold)
     _runtime_logger[:id_inclusion_check] = runtime
     if !result
         @warn "Field membership check failed. Error will follow."
