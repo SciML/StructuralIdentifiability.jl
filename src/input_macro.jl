@@ -42,7 +42,7 @@ function _extract_aux!(funcs, all_symb, eq; ders_ok = false, type = :ode)
 end
 
 """
-  For an expression of the form f'(t)/f(t + 1) or f(t) returns (f, true) and (f, false), resp
+  For an expression of the form f'(t) or f(t + 1) (or f(t)) returns (f, true) (resp., (f, false))
 """
 function _get_var(expr, type = :ode)
     if @capture(expr, f_'(t))
