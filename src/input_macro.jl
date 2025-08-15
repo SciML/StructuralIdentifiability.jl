@@ -99,6 +99,26 @@ end
 
 #------------------------------------------------------------------------------
 
+function macrohelper_check(ex::Expr)
+    MacroTools.postwalk(x -> begin
+        if @capture(x, f_^g_) && !isa(g, Integer)
+            throw(nonrational_error("noninteger exponent $g"))
+        end
+        x
+    end, ex)
+    MacroTools.postwalk(
+        x -> begin
+            if @capture(x, f_(g_)) && (g != :t) && !(f in (:-, :+, :*, :(//)))
+                throw(nonrational_error("function $f is nonarithmetic one"))
+            end
+            x
+        end,
+        ex,
+    )
+end
+
+#------------------------------------------------------------------------------
+
 function generate_model_code(type, ex::Expr...)
     @assert type in (:ode, :dds)
     equations = [ex...]
@@ -129,6 +149,7 @@ function generate_model_code(type, ex::Expr...)
 
     # preparing equations
     equations = map(macrohelper_clean, equations)
+    map(macrohelper_check, equations)
     x_dict = gensym()
     y_dict = gensym()
     x_dict_create_expr = :(

@@ -6,7 +6,8 @@ using Nemo
 using Random
 using StructuralIdentifiability
 using StructuralIdentifiability: str_to_var, parent_ring_change, eval_at_dict
-using StructuralIdentifiability: restart_logging, _si_logger, reset_timings, _to, nonrational_error
+using StructuralIdentifiability:
+    restart_logging, _si_logger, reset_timings, _to, nonrational_error
 using TimerOutputs
 
 using ModelingToolkit
@@ -49,7 +50,11 @@ function StructuralIdentifiability.eval_at_nemo(e::SymbolicUtils.BasicSymbolic, 
         elseif startswith(String(Symbol(Symbolics.operation(e))), "Shift")
             return args[1]
         end
-        throw(nonrational_error("operator $(Symbolics.operation(e)) is not an arithmetic one"))
+        throw(
+            nonrational_error(
+                "operator $(Symbolics.operation(e)) is not an arithmetic one",
+            ),
+        )
     elseif e isa Symbolics.Symbolic
         return get(vals, e, e)
     end
