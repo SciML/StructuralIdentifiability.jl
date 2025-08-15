@@ -42,7 +42,7 @@ function _extract_aux!(funcs, all_symb, eq; ders_ok = false, type = :ode)
 end
 
 """
-  For an expression of the form f'(t)/f(t + 1) or f(t) returns (f, true) and (f, false), resp
+  For an expression of the form f'(t) or f(t + 1) (or f(t)) returns (f, true) (resp., (f, false))
 """
 function _get_var(expr, type = :ode)
     if @capture(expr, f_'(t))
@@ -99,6 +99,26 @@ end
 
 #------------------------------------------------------------------------------
 
+function macrohelper_check(ex::Expr)
+    MacroTools.postwalk(x -> begin
+        if @capture(x, f_^g_) && !isa(g, Integer)
+            throw(nonrational_error("noninteger exponent $g"))
+        end
+        x
+    end, ex)
+    MacroTools.postwalk(
+        x -> begin
+            if @capture(x, f_(g_)) && (g != :t) && !(f in (:-, :+, :*, :(//)))
+                throw(nonrational_error("function $f is nonarithmetic one"))
+            end
+            x
+        end,
+        ex,
+    )
+end
+
+#------------------------------------------------------------------------------
+
 function generate_model_code(type, ex::Expr...)
     @assert type in (:ode, :dds)
     equations = [ex...]
@@ -129,6 +149,7 @@ function generate_model_code(type, ex::Expr...)
 
     # preparing equations
     equations = map(macrohelper_clean, equations)
+    map(macrohelper_check, equations)
     x_dict = gensym()
     y_dict = gensym()
     x_dict_create_expr = :(
