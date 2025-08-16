@@ -1063,6 +1063,118 @@ benchmarks = Dict(
             y(t) = K * I(t),
         )
     ),
+    # Section 3.2 from https://hal.science/hal-03739205
+    :Ovarian_follicle => Dict(
+        :name => "Ovarian follicle population dynamics",
+        # ordering of the variables is important as otherwise the ties in the
+        # io-equation computation are broken differently and the algorithm gets stuck.
+        # Maybe worth looking at this closely to get extra criteria for tie breaking.
+        :ode => @ODEmodel(
+            Y2'(t) = m1 * Y1(t) - D2 * Y2(t),
+            Y1'(t) = Y0(t) - D1 * Y1(t),
+            Y3'(t) = m2 * Y2(t) - D3 * Y3(t),
+            Y4'(t) = m3 * Y3(t) - D4 * Y4(t),
+            Z0'(t) = -E0 * Z0(t),
+            Y0'(t) = -D0 * Y0(t),
+            Z1'(t) =
+                Z0(t) - E1 * Z1(t) -
+                (n1 + f1 * w1(t)) * (w2(t)^20 / (Tau + w2(t)^20)) * Z1(t),
+            Z2'(t) =
+                (n1 + f1 * w1(t)) * (w2(t)^20 / (Tau + w2(t)^20)) * Z1(t) - E2 * Z2(t),
+            Z3'(t) = n2 * Z2(t) - E3 * Z3(t),
+            w1'(t) =
+                -n *
+                w1(t) *
+                (1 - w1(t)) *
+                (
+                    m2*Y2(t) + (m3-D3)*Y3(t) - D4*Y4(t) +
+                    n2*Z2(t) +
+                    (n3-E3)*Z3(t)-E4*(
+                        -E0*Y2(t)*D1*E2*m2*E4*D0*m3*E3 - E0*n3*D2*E1*D1*I1(t)*n2*D4*D0*D3 -
+                        E0*n3*D2*E1*Y1(t)*n2*D4*D0*D3 -
+                        E0*n3*D2*E1*Y0(t)*n2*D4*D3 -
+                        E0*n3*D2*D1*Z2(t)*n2*D4*D0*D3 -
+                        E0*n3*D2*D1*Z1(t)*n2*D4*D0*D3 -
+                        E0*n3*D2*D1*Z3(t)*E2*D4*D0*D3 -
+                        E0*D2*D1*I4(t)*E2*E4*D4*D0*D3*E3 -
+                        E0*D2*D1*Y3(t)*E2*E4*D0*m3*E3 +
+                        E0*D2*D1*E2*J3*E4*D4*D0*D3*E3 -
+                        E0*D2*D1*E2*E4*Y4(t)*D0*D3*E3 -
+                        E0*Y1(t)*m1*E2*m2*E4*D0*m3*E3 -
+                        E0*Y0(t)*m1*E2*m2*E4*m3*E3 - n3*D2*D1*Z0(t)*n2*D4*D0*D3
+                    )//(E0*D2*D1*E2*D4*D0*D3*E3)
+                )/(
+                    Y3(t)+Y4(t)+Z3(t)+(
+                        -E0*Y2(t)*D1*E2*m2*E4*D0*m3*E3 - E0*n3*D2*E1*D1*I1(t)*n2*D4*D0*D3 -
+                        E0*n3*D2*E1*Y1(t)*n2*D4*D0*D3 -
+                        E0*n3*D2*E1*Y0(t)*n2*D4*D3 -
+                        E0*n3*D2*D1*Z2(t)*n2*D4*D0*D3 -
+                        E0*n3*D2*D1*Z1(t)*n2*D4*D0*D3 -
+                        E0*n3*D2*D1*Z3(t)*E2*D4*D0*D3 -
+                        E0*D2*D1*I4(t)*E2*E4*D4*D0*D3*E3 -
+                        E0*D2*D1*Y3(t)*E2*E4*D0*m3*E3 +
+                        E0*D2*D1*E2*J3*E4*D4*D0*D3*E3 -
+                        E0*D2*D1*E2*E4*Y4(t)*D0*D3*E3 -
+                        E0*Y1(t)*m1*E2*m2*E4*D0*m3*E3 -
+                        E0*Y0(t)*m1*E2*m2*E4*m3*E3 - n3*D2*D1*Z0(t)*n2*D4*D0*D3
+                    )//(E0*D2*D1*E2*D4*D0*D3*E3)
+                ),
+            w2'(t) = 1,
+            O1(t) = Y1(t) + Z1(t),
+            O2(t) = Y2(t) + Z2(t),
+            O3(t) = Y3(t) + Z3(t),
+            O4(t) =
+                Y4(t) +
+                (
+                    -E0*Y2(t)*D1*E2*m2*E4*D0*m3*E3 - E0*n3*D2*E1*D1*I1(t)*n2*D4*D0*D3 -
+                    E0*n3*D2*E1*Y1(t)*n2*D4*D0*D3 - E0*n3*D2*E1*Y0(t)*n2*D4*D3 -
+                    E0*n3*D2*D1*Z2(t)*n2*D4*D0*D3 -
+                    E0*n3*D2*D1*Z1(t)*n2*D4*D0*D3 -
+                    E0*n3*D2*D1*Z3(t)*E2*D4*D0*D3 -
+                    E0*D2*D1*I4(t)*E2*E4*D4*D0*D3*E3 -
+                    E0*D2*D1*Y3(t)*E2*E4*D0*m3*E3 +
+                    E0*D2*D1*E2*J3*E4*D4*D0*D3*E3 -
+                    E0*D2*D1*E2*E4*Y4(t)*D0*D3*E3 -
+                    E0*Y1(t)*m1*E2*m2*E4*D0*m3*E3 - E0*Y0(t)*m1*E2*m2*E4*m3*E3 -
+                    n3*D2*D1*Z0(t)*n2*D4*D0*D3
+                )//(E0*D2*D1*E2*D4*D0*D3*E3),
+            O6(t) = w2(t),
+            I1'(t) = Y1(t) + Z1(t),
+            I4'(t) =
+                Y4(t) +
+                (
+                    -E0*Y2(t)*D1*E2*m2*E4*D0*m3*E3 - E0*n3*D2*E1*D1*I1(t)*n2*D4*D0*D3 -
+                    E0*n3*D2*E1*Y1(t)*n2*D4*D0*D3 - E0*n3*D2*E1*Y0(t)*n2*D4*D3 -
+                    E0*n3*D2*D1*Z2(t)*n2*D4*D0*D3 -
+                    E0*n3*D2*D1*Z1(t)*n2*D4*D0*D3 -
+                    E0*n3*D2*D1*Z3(t)*E2*D4*D0*D3 -
+                    E0*D2*D1*I4(t)*E2*E4*D4*D0*D3*E3 -
+                    E0*D2*D1*Y3(t)*E2*E4*D0*m3*E3 +
+                    E0*D2*D1*E2*J3*E4*D4*D0*D3*E3 -
+                    E0*D2*D1*E2*E4*Y4(t)*D0*D3*E3 -
+                    E0*Y1(t)*m1*E2*m2*E4*D0*m3*E3 - E0*Y0(t)*m1*E2*m2*E4*m3*E3 -
+                    n3*D2*D1*Z0(t)*n2*D4*D0*D3
+                )//(E0*D2*D1*E2*D4*D0*D3*E3),
+            O7(t) = I1(t),
+            O8(t) =
+                J1 -
+                (
+                    E1*D1*D2*I1(t) +
+                    D1*D2*(Z1(t) + Z2(t) + Z0(t) // E0) +
+                    D1*E2*Y2(t) +
+                    (D2*E1+m1*E2)*(Y1(t) + Y0(t) // D0)
+                ) // (D1*E2*D2),
+            O9(t) =
+                J2 -
+                (
+                    E1*n2*D1*D2*D3*I1(t) +
+                    n2*D1*D2*D3*(Z0(t) // E0+Z1(t)+Z2(t)+E2*Z3(t) // n2) +
+                    (n2*E1*D2*D3+m1*m2*E2*E3)*(Y1(t)+Y0(t) // D0) +
+                    (m2*D1*E2*E3)*(Y2(t)+D2*Y3(t) // m2)
+                ) // (D1*E2*D2*E3*D3),
+            O10(t) = I4(t),
+        )
+    ),
 )
 
 # the NFkB example
