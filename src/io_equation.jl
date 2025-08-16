@@ -207,7 +207,9 @@ Output:
         var_degs_next = [
             (Nemo.degree(y_equations[y_prolong], x), Nemo.degree(next_y_equation, x), x) for x in keys(x_equations) if Nemo.degree(y_equations[y_prolong], x) > 0
         ]
+        @debug "Choosing the variable to eliminate, scores: $(sort(var_degs_next))"
         our_choice = sort(var_degs_next)[1]
+        @debug "Chosen: $our_choice"
         var_elim_deg, var_elim = our_choice[1], our_choice[3]
 
         @debug "Elimination of $var_elim, $(length(x_equations)) left"
