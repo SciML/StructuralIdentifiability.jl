@@ -55,6 +55,7 @@ function _find_identifiable_functions_kic(
         seed = seed,
         simplify = simplify,
         rational_interpolator = rational_interpolator,
+        want_in_numerator = ode.x_vars,
     )
 
     @info "The search for identifiable functions with known initial conditions concluded in $((time_ns() - runtime_start) / 1e9) seconds"
