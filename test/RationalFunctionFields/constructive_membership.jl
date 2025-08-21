@@ -1,23 +1,23 @@
 @testset "RationalFunctionField: constructive field membership (basic)" begin
-     R, (x,) = polynomial_ring(Nemo.QQ, ["x"])
+    R, (x,) = polynomial_ring(Nemo.QQ, ["x"])
 
-     generators = [x^2, x^3]
-     to_be_reduced = [x^2, x, 3one(R), zero(R)]
+    generators = [x^2, x^3]
+    to_be_reduced = [x^2, x, 3one(R), zero(R)]
 
-     memberships, remainders, relations_between_tags, tag_to_gen =
-         StructuralIdentifiability.check_constructive_field_membership(
-             StructuralIdentifiability.RationalFunctionField(generators),
-             map(f -> f // one(f), to_be_reduced),
-             tag_names = ["T1", "T2"],
-         )
-     tags = gens(base_ring(parent(first(remainders))))
+    memberships, remainders, relations_between_tags, tag_to_gen =
+        StructuralIdentifiability.check_constructive_field_membership(
+            StructuralIdentifiability.RationalFunctionField(generators),
+            map(f -> f // one(f), to_be_reduced),
+            tag_names = ["T1", "T2"],
+        )
+    tags = gens(base_ring(parent(first(remainders))))
 
-     @test length(tags) == 2
-     @test all(memberships)
-     @test map(string, remainders) == ["T1", "T1^2//T2", "3", "0"]
-     @test tag_to_gen == Dict(tags[1] => x^2, tags[2] => x^3)
-     @test length(relations_between_tags) == 1
-     @test string(relations_between_tags[1]) == "T1^3 - T2^2"
+    @test length(tags) == 2
+    @test all(memberships)
+    @test map(string, remainders) == ["T1", "T1^2//T2", "3", "0"]
+    @test tag_to_gen == Dict(tags[1] => x^2, tags[2] => x^3)
+    @test length(relations_between_tags) == 1
+    @test string(relations_between_tags[1]) == "T1^3 - T2^2"
 end
 
 @testset "RationalFunctionField: constructive field membership" begin
@@ -134,8 +134,8 @@ end
         Dict(
             :field => RationalFunctionField([T1^2]),
             :funcs => [T1, T1^2],
-            :correct => [false, true]
-        )
+            :correct => [false, true],
+        ),
     )
 
     R, (T1, t, _t) = polynomial_ring(Nemo.QQ, ["T1", "t", "_t"])
@@ -145,7 +145,7 @@ end
             :field => RationalFunctionField([T1, t, _t]),
             :funcs => [_t, t, T1 * t * _t],
             :correct => [true, true, true],
-        )
+        ),
     )
 
     R, (x,) = polynomial_ring(Nemo.QQ, ["x"])
@@ -155,15 +155,16 @@ end
             :field => RationalFunctionField([(x - 1), R(1) // (x^5 - 1), x]),
             :funcs => [x^4 + x^3 + x^2 + x + 1, x, R(33) // x^2],
             :correct => [true, true, true],
-        )
+        ),
     )
     push!(
         cases,
         Dict(
-            :field => RationalFunctionField([(x^10 + x^9 + x^2 + 1) // (x^7 - x^6 - x^3 + 1)]),
-            :funcs => [x,],
+            :field =>
+                RationalFunctionField([(x^10 + x^9 + x^2 + 1) // (x^7 - x^6 - x^3 + 1)]),
+            :funcs => [x],
             :correct => [false],
-        )
+        ),
     )
     push!(
         cases,
@@ -171,7 +172,7 @@ end
             :field => RationalFunctionField([x^2]),
             :funcs => [x, x^42],
             :correct => [false, true],
-        )
+        ),
     )
 
     R, (x, y, z) = polynomial_ring(Nemo.QQ, ["x", "y", "z"])
@@ -181,7 +182,7 @@ end
             :field => RationalFunctionField([x^2 + y^2, x^3 + y^3, x^4 + y^4]),
             :funcs => [x * y, x + y, x + y + 1, x + y + z],
             :correct => [true, true, true, false],
-        )
+        ),
     )
 
     # NOTE: in this case it actually matter to cancel out the gcd after
@@ -203,22 +204,24 @@ end
                 (a * x2 + a * x1 + b * x1) // x2,
             ],
             :correct => [true, true, true],
-        )
+        ),
     )
-
-
 
     for c in cases
         R = poly_ring(c[:field])
-        containment, expressions, relations, tag_to_gen = check_constructive_field_membership(c[:field], c[:funcs] .// one(R))
+        containment, expressions, relations, tag_to_gen =
+            check_constructive_field_membership(c[:field], c[:funcs] .// one(R))
         @test containment == c[:correct]
         for (i, expr) in enumerate(expressions)
             if containment[i]
-                @test c[:funcs][i] == StructuralIdentifiability.eval_at_dict(expr, tag_to_gen)
+                @test c[:funcs][i] ==
+                      StructuralIdentifiability.eval_at_dict(expr, tag_to_gen)
             end
         end
         if :relations in values(c)
-            @test Set(relations) == Set([parent_ring_change(p, parent(first(relations))) for p in c[:relations]])
+            @test Set(relations) == Set([
+                parent_ring_change(p, parent(first(relations))) for p in c[:relations]
+            ])
         end
     end
 end

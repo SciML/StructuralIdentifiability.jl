@@ -128,7 +128,7 @@ function check_constructive_field_membership(
     @assert !isempty(to_be_reduced)
     fracs_gen = generators(rff)
     @assert parent(first(fracs_gen)) == parent(first(to_be_reduced))
- 
+
     algebraicity = check_algebraicity(rff, to_be_reduced, 0.99)
     to_be_reduced = to_be_reduced[algebraicity]
     # A tag is assigned for each of the the generators of the given rational
@@ -230,7 +230,10 @@ $sat_string
         map(poly -> parent_ring_change(poly, ring_of_tags), relations_between_tags)
     param_var_mapping = merge(
         Dict(gens(poly_ring_tag)[2:(nvars(x_ring) + 1)] .=> gens(parametric_ring)),
-        Dict(gens(poly_ring_tag)[(nvars(x_ring) + 2):end] .=> (gens(ring_of_tags)) .* one(parametric_ring)),
+        Dict(
+            gens(poly_ring_tag)[(nvars(x_ring) + 2):end] .=>
+                (gens(ring_of_tags)) .* one(parametric_ring),
+        ),
     )
     @debug """
     Variable mapping:
@@ -238,10 +241,7 @@ $sat_string
     Parametric ring:
     $parametric_ring
     """
-    tagged_mqs_gb_param = map(
-        poly -> eval_at_dict(poly, param_var_mapping),
-        tagged_mqs_gb,
-    )
+    tagged_mqs_gb_param = map(poly -> eval_at_dict(poly, param_var_mapping), tagged_mqs_gb)
     tagged_mqs_gb_param = map(f -> divexact(f, leading_coefficient(f)), tagged_mqs_gb_param)
     @debug "Tagged parametric mqs: $tagged_mqs_gb_param"
     # Reduce each fraction
