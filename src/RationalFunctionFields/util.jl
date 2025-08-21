@@ -104,26 +104,6 @@ end
 
 # ------------------------------------------------------------------------------
 
-# Maps the variables of the given polynomial according to `var_mapping`.
-# The output polynomial lives in the given `new_ring`.
-function crude_parent_ring_change(poly, new_ring, var_mapping)
-    new_poly = zero(new_ring)
-    for (i, term) in enumerate(terms(poly))
-        new_term = one(new_ring) * coeff(poly, i)
-        for var in vars(term)
-            exp = degree(term, var)
-            exp == 0 && continue
-            new_var = var_mapping[var]
-            new_term *= new_var^exp
-        end
-        new_poly += new_term
-    end
-    return new_poly
-end
-
-# ------------------------------------------------------------------------------
-
-# Reduces the parametric coefficients of a polynomial modulo
 # a Groebner basis of an ideal in the parameter ring.
 # Assumes that there is no division by zero
 function normalize_coefficients(poly, coeff_relations)

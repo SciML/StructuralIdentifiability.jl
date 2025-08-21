@@ -226,7 +226,7 @@ $sat_string
         map(poly -> parent_ring_change(poly, ring_of_tags), relations_between_tags)
     param_var_mapping = merge(
         Dict(gens(poly_ring_tag)[2:(nvars(x_ring) + 1)] .=> gens(parametric_ring)),
-        Dict(gens(poly_ring_tag)[(nvars(x_ring) + 2):end] .=> gens(ring_of_tags)),
+        Dict(gens(poly_ring_tag)[(nvars(x_ring) + 2):end] .=> (gens(ring_of_tags)) .* one(parametric_ring)),
     )
     @debug """
     Variable mapping:
@@ -235,7 +235,7 @@ $sat_string
     $parametric_ring
     """
     tagged_mqs_gb_param = map(
-        poly -> crude_parent_ring_change(poly, parametric_ring, param_var_mapping),
+        poly -> eval_at_dict(poly, param_var_mapping),
         tagged_mqs_gb,
     )
     tagged_mqs_gb_param = map(f -> divexact(f, leading_coefficient(f)), tagged_mqs_gb_param)
@@ -246,8 +246,8 @@ $sat_string
     remainders = Vector{Generic.FracFieldElem{T}}(undef, length(to_be_reduced))
     for i in 1:length(to_be_reduced)
         frac = to_be_reduced[i]
-        num = crude_parent_ring_change(numerator(frac), parametric_ring, var_mapping)
-        den = crude_parent_ring_change(denominator(frac), parametric_ring, var_mapping)
+        num = eval_at_dict(numerator(frac), var_mapping)
+        den = eval_at_dict(denominator(frac), var_mapping)
         membership, remainder = check_constructive_field_membership(
             tagged_mqs_gb_param,
             relations_between_tags,
