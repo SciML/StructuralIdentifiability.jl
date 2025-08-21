@@ -81,6 +81,9 @@ function check_constructive_field_membership(
     _, num_tags_factored = divrem(num_tags, tag_relations)
     _, den_tags_factored = divrem(den_tags, tag_relations)
     @debug """
+    Before factoring out relations:
+    Num: $(num_tags)
+    Den: $(den_tags)
     After factoring out relations:
     Num: $(num_tags_factored)
     Den: $(den_tags_factored)
@@ -123,6 +126,9 @@ function check_constructive_field_membership(
     tag_names = Vector{String}(),
 ) where {T}
     @assert !isempty(to_be_reduced)
+    fracs_gen = generators(rff)
+    @assert parent(first(fracs_gen)) == parent(first(to_be_reduced))
+ 
     algebraicity = check_algebraicity(rff, to_be_reduced, 0.99)
     to_be_reduced = to_be_reduced[algebraicity]
     # A tag is assigned for each of the the generators of the given rational
@@ -140,8 +146,6 @@ function check_constructive_field_membership(
     # If A belongs to K(T), then Num // Den belongs to the the given field.
     # Otherwise, A belongs to K(T)[x], and Num // Den does not belong to the
     # given field.
-    fracs_gen = generators(rff)
-    @assert parent(first(fracs_gen)) == parent(first(to_be_reduced))
     x_ring = poly_ring(rff)
     K = base_ring(x_ring)
     orig_strings = map(string, gens(x_ring))
@@ -266,11 +270,11 @@ $sat_string
             parent_ring_change(denominator(f), short_ring_of_tags),
         remainders,
     )
-    new_remainders = Vector{typeof(first(remainders))}(undef, length(algebraicity))
+    new_remainders = Vector{Generic.FracFieldElem{T}}(undef, length(algebraicity))
     i = 1
     for j in 1:length(algebraicity)
         if !algebraicity[j]
-            new_remainders[j] = one(first(remainders))
+            new_remainders[j] = one(short_ring_of_tags) // one(short_ring_of_tags)
         else
             new_remainders[j] = remainders[i]
             i += 1
