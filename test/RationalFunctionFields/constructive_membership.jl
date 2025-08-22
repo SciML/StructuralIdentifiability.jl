@@ -225,3 +225,33 @@ end
         end
     end
 end
+
+@testset "RationalFunctionField: simplification" begin
+    n = 5
+
+    R, (x1, x2, x3, x4, x5) = polynomial_ring(QQ, ["x$i" for i in 1:n])
+
+    fgens = [
+        x1 + x2 + x3 + x4 + x5,
+        x1*x3 + x1*x4 + x2*x4 + x2*x5 + x3*x5,
+        x1*x2 + x1*x5 + x2*x3 + x3*x4 + x4*x5,
+        x1*x2*x4 + x1*x3*x4 + x1*x3*x5 + x2*x3*x5 + x2*x4*x5,
+        x1*x2*x3 + x1*x2*x5 + x1*x4*x5 + x2*x3*x4 + x3*x4*x5,
+        x1^2*x5 + x1*x2^2 + x2*x3^2 + x3*x4^2 + x4*x5^2,
+    ]
+
+    F = RationalFunctionField(fgens)
+
+    success, expressions, relations, tagdict = check_constructive_field_membership(
+        F,
+        [fgens[5] // one(R)],
+        tag_names = ["y1", "y2", "y3", "y4", "y5", "y6"],
+    )
+
+    # check mathematical correctness
+    @test eval_at_dict(expressions[1], tagdict) == fgens[5]
+
+    # check that the representation is concise
+    # @test string(expressions[1]) == "y5"
+    # Does not pass for the moment, it returns horrible (but correct!) expression
+end
