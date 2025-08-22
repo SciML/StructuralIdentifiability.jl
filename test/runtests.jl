@@ -14,6 +14,7 @@ using StructuralIdentifiability:
     check_primality,
     check_algebraicity,
     check_algebraicity_modp,
+    check_constructive_field_membership,
     det_minor_expansion,
     ExpVectTrie,
     get_max_below,

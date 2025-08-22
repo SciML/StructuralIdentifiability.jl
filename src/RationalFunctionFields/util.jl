@@ -101,3 +101,17 @@ function insert_at_indices(arr::Vector, indices::Vector{Int}, elem)
     end
     return result
 end
+
+# ------------------------------------------------------------------------------
+
+# a Groebner basis of an ideal in the parameter ring.
+# Assumes that there is no division by zero
+function normalize_coefficients(poly, coeff_relations)
+    res = zero(parent(poly))
+    for (c, m) in zip(coefficients(poly), monomials(poly))
+        c_num = numerator(c)
+        _, c_num = divrem(c_num, coeff_relations)
+        res += c_num // denominator(c) * m
+    end
+    return res
+end
