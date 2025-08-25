@@ -1175,6 +1175,97 @@ benchmarks = Dict(
             O10(t) = I4(t),
         )
     ),
+    # The following models are the ones from https://doi.org/10.1016/j.jtbi.2024.111898
+    # featuring nonidentifiability
+    :Influenza_MB1 => Dict(
+        :name => "Immune response to influenza (MB1 model)",
+        :ode => @ODEmodel(
+            U'(t) = -beta*U(t)*V(t),
+            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
+            V'(t) = p*I(t)-c*V(t),
+            T'(t) = s_T - 0.011*T(t) + r*T(t)*(V(t)/(V(t)+k_T)),
+            # commenting out the first state yields a ratio of states
+            y1(t) = V(t),
+            y2(t) = T(t)
+        )
+    ),
+    :Influenza_MB2 => Dict(
+        :name => "Immune response to influenza (MB2 model)",
+        :ode => @ODEmodel(
+            U'(t) = -beta*U(t)*V(t),
+            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
+            V'(t) = p*I(t)-c*V(t),
+            T'(t) = s_T - 0.011*T(t) + r*T(t)*(V(t)/(V(t)+k_T)) - c_T*(1/(1+V(t)^2)),
+            y1(t) = V(t),
+            y2(t) = T(t)
+        )
+    ),
+    :Influenza_MB3 => Dict(
+        :name => "Immune response to influenza (MB3 model)",
+        :ode => @ODEmodel(
+            U'(t) = -beta*U(t)*V(t),
+            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
+            V'(t) = p*I(t)-c*V(t),
+            T'(t) = s_T - d_T*T(t) + r*T(t)*(V(t)/(V(t)+k_T)),
+            y1(t) = V(t),
+            y2(t) = T(t)
+        )
+    ),
+    :Influenza_MB4 => Dict(
+        :name => "Immune response to influenza (MB4 model)",
+        :ode => @ODEmodel(
+            U'(t) = -beta*U(t)*V(t),
+            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
+            V'(t) = p*I(t)-c*V(t),
+            T'(t) = s_T - d_T*T(t) + r*T(t)*(V(t)/(V(t)+k_T)) - c_T*(1/(1+V(t)^2)),
+            y1(t) = V(t),
+            y2(t) = T(t)
+        )
+    ),
+    :Influenza_MD1 => Dict(
+        :name => "Immune response to influenza (MD1 model)",
+        :ode => @ODEmodel(
+            U'(t) = -beta*U(t)*V(t),
+            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
+            V'(t) = p*I(t)-c*V(t),
+            T'(t) = s_T - 0.011*T(t) + r*T(t)*V(t),
+            y1(t) = V(t),
+            y2(t) = T(t)
+        )
+    ),
+    :Influenza_MD2 => Dict(
+        :name => "Immune response to influenza (MD2 model)",
+        :ode => @ODEmodel(
+            U'(t) = -beta*U(t)*V(t),
+            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
+            V'(t) = p*I(t)-c*V(t),
+            T'(t) = s_T - 0.011*T(t) + r*T(t)*V(t) - c_T*(1/(1+V(t)^2)),
+            y1(t) = V(t),
+            y2(t) = T(t)
+        )
+    ),
+    :Influenza_MD3 => Dict(
+        :name => "Immune response to influenza (MD3 model)",
+        :ode => @ODEmodel(
+            U'(t) = -beta*U(t)*V(t),
+            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
+            V'(t) = p*I(t)-c*V(t),
+            T'(t) = s_T - d_T*T(t) + r*T(t)*V(t),
+            y1(t) = V(t),
+            y2(t) = T(t)
+        )
+    ),
+    :Influenza_MD4 => Dict(
+        :name => "Immune response to influenza (MD4 model)",
+        :ode => @ODEmodel(
+            U'(t) = -beta*U(t)*V(t),
+            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
+            V'(t) = p*I(t)-c*V(t),
+            T'(t) = s_T - d_T*T(t) + r*T(t)*V(t) - c_T*(1/(1+V(t)^2)),
+            y1(t) = V(t),
+            y2(t) = T(t)
+        )
+    ),
 )
 
 # the NFkB example
