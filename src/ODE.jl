@@ -212,30 +212,6 @@ end
 #------------------------------------------------------------------------------
 
 """
-    _reduce_mod_p(f, p)
-
-Reduces a polynomial/rational function over Q modulo p
-"""
-function _reduce_mod_p(poly::QQMPolyRingElem, p::Int)
-    den = denominator(poly)
-    num = change_base_ring(Nemo.ZZ, den * poly)
-    if Nemo.Native.GF(p)(den) == 0
-        throw(Base.ArgumentError("Prime $p divides the denominator of $poly"))
-    end
-    return change_base_ring(Nemo.Native.GF(p), num) * (1 // Nemo.Native.GF(p)(den))
-end
-
-function _reduce_mod_p(rat::Generic.FracFieldElem{QQMPolyRingElem}, p::Int)
-    num, den = map(poly -> _reduce_mod_p(poly, p), [numerator(rat), denominator(rat)])
-    if den == 0
-        throw(Base.ArgumentError("Prime $p divides the denominator of $rat"))
-    end
-    return num // den
-end
-
-#--------------------------------------
-
-"""
     reduce_ode_mod_p(ode, p)
 
 Input: ode is an ODE over QQ, p is a prime number
