@@ -10,6 +10,7 @@ on:
       - master
     paths-ignore:
       - 'docs/**'
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -17,7 +18,7 @@ jobs:
       matrix:
         group:
           - Core
-        mode: ['deps']
+        downgrade_mode: ['deps']
         julia-version: ['1.10']
     steps:
       - uses: actions/checkout@v5
@@ -25,9 +26,9 @@ jobs:
         with:
           version: ${{ matrix.julia-version }}
       - uses: julia-actions/julia-downgrade-compat@v2
-#        if: ${{ matrix.version == '1.6' }}
         with:
-          skip: Pkg,TOML
+          mode: ${{ matrix.downgrade_mode }}
+          skip: Pkg, TOML
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
         with:
