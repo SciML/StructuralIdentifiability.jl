@@ -28,7 +28,7 @@ jobs:
       - uses: julia-actions/julia-downgrade-compat@v2
         with:
           mode: ${{ matrix.downgrade_mode }}
-          skip: Pkg, TOML, Dates, Logging, Random
+          skip: Pkg, TOML, Dates, Logging, Random, RationalFunctionFields
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
         with:
