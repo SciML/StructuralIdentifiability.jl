@@ -25,7 +25,7 @@ jobs:
       - uses: julia-actions/setup-julia@v2
         with:
           version: ${{ matrix.julia-version }}
-      - run: julia --project=. -e 'using Pkg; Pkg.resolve()'
+      - run: julia --project=. -e 'using Pkg; Pkg.Registry.add("General"); Pkg.resolve()'
       - uses: julia-actions/julia-downgrade-compat@v2
         with:
           mode: ${{ matrix.downgrade_mode }}
