@@ -34,7 +34,7 @@ import Groebner
         id_funcs[:no_states],
     )
 
-    rff = StructuralIdentifiability.RationalFunctionField(id_funcs_no_states)
+    rff = RationalFunctionField(id_funcs_no_states)
 
     # Part 1: mod p and specialized
     p = Nemo.Native.GF(2^62 + 135)
@@ -53,7 +53,7 @@ import Groebner
     @test abs(length(str) - expected) / expected * 100 < 5
 
     # Part 2: over Q
-    eqs = StructuralIdentifiability.fractionfree_generators_raw(rff.mqs)[1]
+    eqs = fractionfree_generators_raw(rff.mqs)[1]
     expected = 21486079
     str = join(map(string, eqs), ",")
     @info "" length(str)

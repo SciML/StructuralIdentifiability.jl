@@ -6,15 +6,13 @@ using SpecialFunctions
 
 using StructuralIdentifiability.DataStructures
 using StructuralIdentifiability.Nemo
+using StructuralIdentifiability.RationalFunctionFields
+using StructuralIdentifiability.RationalFunctionFields:
+    str_to_var, unpack_fraction, var_to_str, eval_at_dict, fractionfree_generators_raw
 using StructuralIdentifiability:
-    field_contains,
-    field_contains_mod_p,
     check_identifiability,
     check_primality_zerodim,
     check_primality,
-    check_algebraicity,
-    check_algebraicity_modp,
-    check_constructive_field_membership,
     det_minor_expansion,
     ExpVectTrie,
     get_max_below,
@@ -31,13 +29,9 @@ using StructuralIdentifiability:
     @ODEmodel,
     truncate_matrix,
     find_ioequations,
-    str_to_var,
-    unpack_fraction,
     assess_global_identifiability,
     differentiate_output,
-    var_to_str,
     switch_ring,
-    eval_at_dict,
     assess_local_identifiability,
     assess_identifiability,
     monomial_compress,
@@ -62,7 +56,6 @@ using StructuralIdentifiability:
     extract_coefficients_ratfunc,
     lie_derivative,
     states_generators,
-    RationalFunctionField,
     replace_with_ic,
     x_vars,
     y_vars,
@@ -70,10 +63,7 @@ using StructuralIdentifiability:
     y_equations,
     inputs,
     quotient_basis,
-    rational_function_cmp,
-    update_trbasis_info!,
-    poly_ring,
-    simplified_generating_set
+    poly_ring
 
 const GROUP = get(ENV, "GROUP", "All")
 

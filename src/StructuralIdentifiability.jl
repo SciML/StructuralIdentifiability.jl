@@ -19,6 +19,21 @@ using Groebner
 using ParamPunPam
 using ParamPunPam: reduce_mod_p!, specialize_mod_p, AbstractBlackboxIdeal
 ParamPunPam.enable_progressbar(false)
+using RationalFunctionFields
+using RationalFunctionFields:
+    eval_at_dict,
+    unpack_fraction,
+    parent_ring_change,
+    total_degree_frac,
+    select_pivots,
+    gen_tag_name,
+    gen_tag_names,
+    str_to_var,
+    var_to_str,
+    _reduce_mod_p,
+    is_rational_func_const,
+    fractions_to_dennums,
+    check_constructive_field_membership
 
 # defining a model
 export ODE, @ODEmodel, @DDSmodel
@@ -60,12 +75,6 @@ include("elimination.jl")
 include("primality_check.jl")
 include("io_equation.jl")
 include("states.jl")
-include("RationalFunctionFields/util.jl")
-include("RationalFunctionFields/IdealMQS.jl")
-include("RationalFunctionFields/RationalFunctionField.jl")
-include("RationalFunctionFields/rankings.jl")
-include("RationalFunctionFields/normalforms.jl")
-include("RationalFunctionFields/constructive_membership.jl")
 include("global_identifiability.jl")
 include("identifiable_functions.jl")
 include("parametrizations.jl")

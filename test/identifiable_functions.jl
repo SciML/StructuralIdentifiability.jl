@@ -1079,7 +1079,8 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = tr
     for case in test_cases
         for simplify in (:weak, :standard) #:strong?
             for sat_factorization in (:none, :lazy, :full)
-                StructuralIdentifiability.SAT_FACTORIZATION_DEFAULT = sat_factorization
+                StructuralIdentifiability.RationalFunctionFields.SAT_FACTORIZATION_DEFAULT =
+                    sat_factorization
                 ode = case.ode
                 true_ident_funcs = case.ident_funcs
                 with_states = false
@@ -1104,15 +1105,12 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = tr
                 @info "Test, result_funcs = \n$result_funcs" case simplify R with_states
 
                 true_ident_funcs = map(f -> f // one(f), true_ident_funcs)
-                true_ident_funcs = map(
-                    f -> StructuralIdentifiability.parent_ring_change(f, R),
-                    true_ident_funcs,
-                )
+                true_ident_funcs = map(f -> parent_ring_change(f, R), true_ident_funcs)
 
                 # Check inclusion <true funcs> in <result funcs>
-                @test StructuralIdentifiability.fields_equal(
-                    StructuralIdentifiability.RationalFunctionField(result_funcs),
-                    StructuralIdentifiability.RationalFunctionField(true_ident_funcs),
+                @test fields_equal(
+                    RationalFunctionField(result_funcs),
+                    RationalFunctionField(true_ident_funcs),
                     p,
                 )
                 if simplify != :weak
@@ -1126,4 +1124,4 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = tr
 end
 
 # restoring the default
-StructuralIdentifiability.SAT_FACTORIZATION_DEFAULT = :none
+StructuralIdentifiability.RationalFunctionFields.SAT_FACTORIZATION_DEFAULT = :none

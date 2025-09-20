@@ -10,7 +10,6 @@ pages = [
     "Basics" => Any["input/input.md", "identifiability/identifiability.md"],
     "Library" => Any[
         "Local Identifiability Tools" => "utils/local_identifiability.md",
-        "Global Identifiability Tools" => "utils/global_identifiability.md",
         "Elimination" => "utils/elimination.md",
         "ODE Tools" => "utils/ode.md",
         "Power Series Tools" => "utils/power_series_utils.md",
