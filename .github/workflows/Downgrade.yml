@@ -26,7 +26,7 @@ jobs:
         with:
           version: ${{ matrix.julia-version }}
       - run: julia --project=. -e 'using Pkg; Pkg.Registry.add("General"); Pkg.resolve(); Pkg.update()'
-      - uses: julia-actions/julia-downgrade-compat@v2
+      - uses: julia-actions/julia-downgrade-compat@v1
         with:
           mode: ${{ matrix.downgrade_mode }}
           skip: Pkg, TOML, Dates, Logging, Random, RationalFunctionFields
