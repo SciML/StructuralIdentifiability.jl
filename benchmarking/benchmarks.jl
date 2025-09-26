@@ -1266,6 +1266,19 @@ benchmarks = Dict(
             y2(t) = T(t)
         )
     ),
+    :EAIHRD => Dict(
+        :name => "EIHRD epidemiological model (from https://arxiv.org/pdf/2406.17827)",
+        :ode => @ODEmodel(
+            A'(t) = a * E(t) - r1 * A(t),
+            I'(t) = s * E(t) - (h + r2) * I(t),
+            H'(t) = h * I(t) - (r3 + d) * H(t),
+            R'(t) = r1 * A(t) + r2 * I(t) + r3 * H(t),
+            D'(t) = d * H(t),
+            E'(t) =
+                (N - A(t) - I(t) - H(t) - R(t) - D(t) - E(t)) * (c1 * A(t) + c2 * I(t)) - (a + s) * E(t),
+            y(t) = D(t)
+        )
+    ),
 )
 
 # the NFkB example

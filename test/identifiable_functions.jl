@@ -173,22 +173,19 @@ ode = StructuralIdentifiability.@ODEmodel(
     x4'(t) = k41 * x1(t) - k14 * x4(t),
     y1(t) = x1(t)
 )
-ident_funcs = [
-    k01 // one(k01),
-    k12 * k13 * k14 // one(k01),
-    k31 * k21 * k41 // one(k01),
-    k12 + k13 + k14 // one(k01),
-    k31 + k21 + k41 // one(k01),
-    k12 * k13 + k12 * k14 + k13 * k14 // one(k01),
-    k31 * k21 + k31 * k41 + k21 * k41 // one(k01),
-    k31 * k12 - 2 * k31 * k13 + k31 * k14 - 2 * k21 * k12 +
-    k21 * k13 +
-    k21 * k14 +
-    k12 * k41 +
-    k13 * k41 - 2 * k14 * k41 // one(k01),
-]
+ident_funcs =
+    [
+        k12 * k13 + k12 * k14 + k13 * k14,
+        k01,
+        k21 + k31 + k41,
+        k12 + k13 + k14,
+        k21 * k31 * k41,
+        k12 * k31 + k12 * k41 + k13 * k21 + k13 * k41 + k14 * k21 + k14 * k31,
+        k21 * k31 + k21 * k41 + k31 * k41,
+        k12 * k13 * k14,
+    ] .// one(k01)
 # Too slow with hybrid strategy :(
-# push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
 # Biohydrogenation_io
 ode = StructuralIdentifiability.@ODEmodel(
@@ -1073,6 +1070,28 @@ ident_funcs_states = [
 ]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
+
+# EAIHRD model from https://arxiv.org/pdf/2406.17827
+ode = @ODEmodel(
+    A'(t) = a * E(t) - r1 * A(t),
+    I'(t) = s * E(t) - (h + r2) * I(t),
+    H'(t) = h * I(t) - (r3 + d) * H(t),
+    R'(t) = r1 * A(t) + r2 * I(t) + r3 * H(t),
+    D'(t) = d * H(t),
+    E'(t) =
+        (N - A(t) - I(t) - H(t) - R(t) - D(t) - E(t)) * (c1 * A(t) + c2 * I(t)) -
+        (a + s) * E(t),
+    y(t) = D(t)
+)
+ident_funcs = [
+    r1,
+    d + r3,
+    a + h + r2 + s,
+    a * h + a * r2 + h * s + r2 * s,
+    (d * h * s) // (a * c1 + c2 * s),
+    (a * c1 * h + a * c1 * r2 + c2 * r1 * s)//(a * c1 + c2 * s),
+]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
 
 @testset "Identifiable functions of parameters" begin
     p = 0.99
