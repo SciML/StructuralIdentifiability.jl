@@ -15,6 +15,16 @@
         y(t) = x1,
         y(t) = x1
     )
+
+    # output appearing in rhs
+    @test_throws ArgumentError StructuralIdentifiability.@ODEmodel(
+        x1'(t) = a + y(t),
+        y(t) = x1(t)
+    )
+    @test_throws ArgumentError StructuralIdentifiability.@ODEmodel(
+        x1'(t) = a,
+        y(t) = x1(t) + y(t)
+    )
 end
 
 @testset "ODE/DDE unicode" begin
