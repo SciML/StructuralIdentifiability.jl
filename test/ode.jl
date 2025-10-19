@@ -52,4 +52,8 @@ end
     )
     println(dde)
     StructuralIdentifiability.assess_local_identifiability(dde)
+
+    # baseod on https://github.com/SciML/StructuralIdentifiability.jl/issues/455
+    ode = @ODEmodel(x₂'(t) = x₂(t) + a₂, y₂(t) = x₂(t) * u₂(t))
+    StructuralIdentifiability.assess_identifiability(ode)
 end

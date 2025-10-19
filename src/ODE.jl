@@ -27,6 +27,15 @@ struct ODE{P} # P is the type of polynomials in the rhs of the ODE system
         if isempty(y_eqs)
             @info "Could not find output variables in the model."
         end
+        for e in vcat(collect(values(x_eqs)), collect(values(y_eqs)))
+            if !isempty(intersect(vars(e), y_vars))
+                throw(
+                    Base.ArgumentError(
+                        "Output variable $(first(intersect(vars(e), y_vars))) appears in the right-hand side $e. Output variables may appear only on the left-hand side of their equations",
+                    ),
+                )
+            end
+        end
         poly_ring = parent(first(vcat(y_vars, x_vars)))
         u_vars = inputs
         parameters = filter(
