@@ -89,3 +89,16 @@ assess_identifiability(ode_mtk, measured_quantities = measured_quantities)
 ```
 
 [^1]: > D. H. Wright, [*A Simple, Stable Model of Mutualism Incorporating Handling Time*](https://doi.org/10.1086/285003), The American Naturalist, 1989, 134(4).
+
+
+## Intermediate Expressions with `where` clause
+
+To enhance readability and modularity, especially for complex models or when certain sub-expressions are reused or represent meaningful biological/physical quantities, `StructuralIdentifiability.jl`'s `@ODEmodel` macro supports an optional `where` clause. This clause allows you to define intermediate expressions as observed variables within the system.
+
+The syntax is straightforward: after the main system equations, you can add a `where { ... }` block containing `symbol = expression` definitions. These intermediate `symbol`s will be treated as observed variables, and any new parameters introduced in their `expression`s will be automatically registered as system parameters. This can simplify your main ODE definitions and provide named representations for key components of your model.
+
+Let's revisit the Wright's population model and demonstrate how to use the `where` clause.
+
+### Defining scalar intermediate expressions
+
+We can define the growth and interaction terms for each species separately to make the main differential equations cleaner:
