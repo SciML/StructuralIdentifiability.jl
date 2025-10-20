@@ -15,6 +15,16 @@
         y(t) = x1,
         y(t) = x1
     )
+
+    # output appearing in rhs
+    @test_throws ArgumentError StructuralIdentifiability.@ODEmodel(
+        x1'(t) = a + y(t),
+        y(t) = x1(t)
+    )
+    @test_throws ArgumentError StructuralIdentifiability.@ODEmodel(
+        x1'(t) = a,
+        y(t) = x1(t) + y(t)
+    )
 end
 
 @testset "ODE/DDE unicode" begin
@@ -52,4 +62,8 @@ end
     )
     println(dde)
     StructuralIdentifiability.assess_local_identifiability(dde)
+
+    # baseod on https://github.com/SciML/StructuralIdentifiability.jl/issues/455
+    ode = @ODEmodel(x₂'(t) = x₂(t) + a₂, y₂(t) = x₂(t) * u₂(t))
+    StructuralIdentifiability.assess_identifiability(ode)
 end

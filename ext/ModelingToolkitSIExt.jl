@@ -78,10 +78,14 @@ function StructuralIdentifiability.eval_at_nemo(
 end
 
 function get_measured_quantities(ode::ModelingToolkit.System)
-    outputs = filter(eq -> ModelingToolkit.isoutput(eq.lhs), ModelingToolkit.equations(ode))
+    outputs = filter(
+        eq -> ModelingToolkit.isoutput(eq.lhs),
+        vcat(ModelingToolkit.equations(ode), ModelingToolkit.observed(ode)),
+    )
     if !isempty(outputs)
         return outputs
     elseif !isempty(ModelingToolkit.observed(ode))
+        @warn "All `observed` variables from the MTK model are taken as outputs, make sure this is what you wanted"
         return ModelingToolkit.observed(ode)
     else
         throw(

@@ -197,7 +197,7 @@ Output:
                 next_y_equation = eliminate_var(
                     next_y_equation,
                     eq,
-                    str_to_var(var_to_str(y)[1:(end - 2)] * "_$(y_orders[y])", ring),
+                    str_to_var(var_to_str(y)[1:(end - 1)] * "$(y_orders[y])", ring),
                     point_generator,
                 )
             end
@@ -318,7 +318,7 @@ Output:
     end
 
     io_projections = Dict(
-        str_to_var(var_to_str(y)[1:(end - 2)] * "_$(y_orders[y])", ring) => p for
+        str_to_var(var_to_str(y)[1:(end - 1)] * "$(y_orders[y])", ring) => p for
         (y, p) in y_equations
     )
 

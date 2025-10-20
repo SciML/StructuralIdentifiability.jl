@@ -868,6 +868,33 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         @test sym_dict(local_id_1) == sym_dict(local_id_2)
         @test sym_dict(global_id_1) == sym_dict(global_id_2)
         @test length(ifs_1) == length(ifs_2)
+
+        # Does not take `observables` as outputs if there is something else
+        @mtkmodel mdl begin
+            @variables begin
+                X(t)
+                μ₁(t)
+                yX(t), [output = true]
+            end
+            @parameters begin
+                k₁
+                k₂
+                μ₁max
+                μ₂max
+            end
+            @equations begin
+                μ₁ ~ k₁ + μ₁max
+
+                D(X) ~ (μ₁ + μ₂max) * X
+
+                yX ~ X
+            end
+        end
+
+        @mtkcompile ode = mdl()
+
+        id_res = assess_identifiability(ode)
+        @test 1 == count(v -> v == :globally, values(id_res))
     end
 
     @testset "Identifiability of MTK models with known generic initial conditions" begin
