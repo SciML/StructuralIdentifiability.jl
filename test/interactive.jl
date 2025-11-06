@@ -1,9 +1,10 @@
 using Logging
 
 # Adapted from https://github.com/JuliaLang/julia/blob/5023ee21d70b734edf206aab3cac7c202ee0235a/stdlib/REPL/test/TerminalMenus/runtests.jl#L7
+# The licence is MIT.
 function simulate_input(keys...; kwargs...)
     keydict = Dict(:up => "\e[A", :down => "\e[B", :enter => "\r", :newline => "\n")
-
+	
     new_stdin = Base.BufferStream()
     for key in keys
         if isa(key, Symbol)
@@ -18,7 +19,11 @@ end
 
 @testset "Interactive reparametrizations" begin
     ode = @ODEmodel(x'(t) = x*u(t), y(t) = x*a)
-    new_stdin = simulate_input(:down, :enter, "d", "X", :enter, "\n")
+    new_stdin = simulate_input(:down, :enter, "d", "X", :enter, :newline)
+    # Sasha: simulating input this way generates warnings in the Julia
+    # standard library (which we do not see because of `output = devnull`).
+    # We still use this method of testing, because it is used in the Julia
+    # standard library.
     res = reparametrize_interactive(
         ode,
         input = new_stdin,
