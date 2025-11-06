@@ -33,7 +33,7 @@ const _si_logger =
 function restart_logging(; loglevel = Logging.Info, stream = nothing)
     @assert loglevel isa Base.CoreLogging.LogLevel
     if stream !== nothing
-    	_si_logger[] = Logging.ConsoleLogger(stream, loglevel, show_limited = false)
+        _si_logger[] = Logging.ConsoleLogger(stream, loglevel, show_limited = false)
     else
         _si_logger[] = Logging.ConsoleLogger(loglevel, show_limited = false)
     end
