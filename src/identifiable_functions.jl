@@ -55,6 +55,7 @@ function find_identifiable_functions(
     simplify = :standard,
     rational_interpolator = :VanDerHoevenLecerf,
     loglevel = Logging.Info,
+    return_all = false,
 ) where {T <: MPolyRingElem{QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
@@ -67,6 +68,7 @@ function find_identifiable_functions(
                 with_states = with_states,
                 simplify = simplify,
                 rational_interpolator = rational_interpolator,
+                return_all = return_all
             )
         else
             id_funcs = _find_identifiable_functions_kic(
@@ -76,6 +78,7 @@ function find_identifiable_functions(
                 seed = seed,
                 simplify = simplify,
                 rational_interpolator = rational_interpolator,
+                return_all = return_all
             )
             # renaming variables from `x(t)` to `x(0)`
             return replace_with_ic(ode, id_funcs)
@@ -90,6 +93,7 @@ function _find_identifiable_functions(
     with_states = false,
     simplify = :standard,
     rational_interpolator = :VanDerHoevenLecerf,
+    return_all = false
 ) where {T <: MPolyRingElem{QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
@@ -124,7 +128,8 @@ function _find_identifiable_functions(
             simplify = simplify,
             rational_interpolator = rational_interpolator,
             priority_variables = [parent_ring_change(p, bring) for p in ode.parameters],
-        )
+            return_all = return_all        
+          )
     else
         id_funcs_fracs = dennums_to_fractions(id_funcs)
     end

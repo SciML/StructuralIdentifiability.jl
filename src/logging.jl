@@ -30,9 +30,13 @@ const _runtime_logger = Dict(
 const _si_logger =
     Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(Logging.Info, show_limited = false))
 
-function restart_logging(; loglevel = Logging.Info)
+function restart_logging(; loglevel = Logging.Info, stream = nothing)
     @assert loglevel isa Base.CoreLogging.LogLevel
-    _si_logger[] = Logging.ConsoleLogger(loglevel, show_limited = false)
+    if stream !== nothing
+    	_si_logger[] = Logging.ConsoleLogger(stream, loglevel, show_limited = false)
+    else
+        _si_logger[] = Logging.ConsoleLogger(loglevel, show_limited = false)
+    end
     for r in _runtime_rubrics
         _runtime_logger[r] = 0
     end
