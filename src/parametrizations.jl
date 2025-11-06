@@ -278,12 +278,14 @@ function _reparametrize_interactive(
         simplify = :strong,
         prob_threshold = prob_threshold,
         return_all = true,
+	loglevel = Logging.Warn,
     )
     id_funcs_simple = find_identifiable_functions(
         ode,
         with_states = true,
         simplify = :strong,
         prob_threshold = prob_threshold,
+    	loglevel = Logging.Warn,
     )
     state = Dict(
         :counter => 0,
