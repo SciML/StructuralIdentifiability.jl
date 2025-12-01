@@ -11,6 +11,7 @@ using MacroTools
 using Primes
 using Random
 using TimerOutputs
+using REPL, REPL.TerminalMenus
 
 # Algebra packages
 using AbstractAlgebra
@@ -60,7 +61,7 @@ export PBRepresentation, diffreduce, io_switch!, pseudodivision
 export find_submodels
 
 # finding identifiabile reparametrizations
-export reparametrize_global
+export reparametrize_global, reparametrize_interactive
 
 ExtendedFraction{P} = Union{P, Generic.FracFieldElem{P}}
 

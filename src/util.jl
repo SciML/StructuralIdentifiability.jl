@@ -301,3 +301,130 @@ function replace_with_ic(ode, funcs)
 end
 
 # -----------------------------------------------------------------------------
+# Parsing polynomials
+#
+# Adapted from https://discourse.julialang.org/t/expression-parser/41880/7
+# code by Alan R. Rogers, Professor of Anthropology, University of Utah
+#
+# Adapted from https://github.com/x3042/ExactODEReduction.jl/blob/5539e2d81cd7a223b814ae7d3213f382fa650ab4/src/parser/myeval.jl
+# code by Elizaveta Demitraki, Alexander Demin, Gleb Pogudin
+
+function myeval(e::Union{Expr, Symbol, Number}, map::Dict{Symbol, P}) where {P}
+    try
+        return _myeval(e, map)
+    catch ex
+        println("Can't parse \"$e\"")
+        rethrow(ex)
+    end
+end
+
+function _myeval(s::Symbol, map::Dict{Symbol, P}) where {P}
+    if haskey(map, s)
+        return map[s]
+    else
+        @info "Can not find $s in $map while parsing.."
+        throw("$s")
+    end
+end
+
+function _myeval(x::Number, map::Dict{Symbol, P}) where {P}
+    k = base_ring(first(values(map)))
+    k(x)
+end
+
+# a helper definition for floats
+function _myeval(x::Float64, map::Dict{Symbol, P}) where {P}
+    k = base_ring(first(values(map)))
+    result = k(0)
+
+    # Getting the result from the string representation in order
+    # to avoid approximations caused by the float representation
+    s = string(x)
+    denom = 1
+    extra_num = 1
+    if occursin(r"[eE]", s)
+        s, exp = split(s, r"[eE]")
+        if exp[1] == "-"
+            denom = k(10)^(-parse(Int, exp))
+        else
+            extra_num = k(10)^(parse(Int, exp))
+        end
+    end
+    frac = split(s, ".")
+    if length(frac) == 1
+        result = k(parse(fmpz, s)) * extra_num // denom
+    else
+        result =
+            k(parse(fmpz, frac[1] * frac[2])) * extra_num // (denom * 10^(length(frac[2])))
+    end
+
+    # too verbose for now
+    # @warn "a possibility of inexact float conversion" from=x to=result
+    return result
+end
+
+# To parse an expression, convert the head to a singleton
+# type, so that Julia can dispatch on that type.
+function _myeval(e::Expr, map::Dict{Symbol, P}) where {P}
+    return _myeval(Val(e.head), e.args, map)
+end
+
+# Call the function named in args[1]
+function _myeval(::Val{:call}, args, map::Dict{Symbol, P}) where {P}
+    return _myeval(Val(args[1]), args[2:end], map)
+end
+
+# Addition
+function _myeval(::Val{:+}, args, map::Dict{Symbol, P}) where {P}
+    x = 0
+    for arg in args
+        x += _myeval(arg, map)
+    end
+    return x
+end
+
+# Subtraction and negation
+function _myeval(::Val{:-}, args, map::Dict{Symbol, P}) where {P}
+    len = length(args)
+    if len == 1
+        return -_myeval(args[1], map)
+    else
+        return _myeval(args[1], map) - _myeval(args[2], map)
+    end
+end
+
+# Multiplication
+function _myeval(::Val{:*}, args, map::Dict{Symbol, P}) where {P}
+    x = 1
+    for arg in args
+        x *= _myeval(arg, map)
+    end
+    return x
+end
+
+# Division
+function _myeval(::Val{:/}, args, map::Dict{Symbol, P}) where {P}
+    # note // instead of /
+    return _myeval(args[1], map) // _myeval(args[2], map)
+end
+
+function _myeval(::Val{://}, args, map::Dict{Symbol, P}) where {P}
+    return _myeval(args[1], map) // _myeval(args[2], map)
+end
+
+# Exponentiation
+function _myeval(::Val{:^}, args, map::Dict{Symbol, P}) where {P}
+    if typeof(_myeval(args[2], map)) <: P
+        @warn "We can not parse polynomial fractions, sorry"
+        throw(ParseException("Polynomial fractions are not supported"))
+    end
+
+    if _myeval(args[2], map) < 0
+        @warn "Negative exponent encountered while parsing"
+        throw(ParseException("Negative exponents are not supported"))
+    end
+
+    return _myeval(args[1], map) ^ Int(numerator(_myeval(args[2], map)))
+end
+
+# -----------------------------------------------------------------------------
