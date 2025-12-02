@@ -486,6 +486,7 @@ benchmarks = Dict(
             x4'(t) = k41 * x1(t) - k14 * x4(t),
             y1(t) = x1(t)
         ),
+        :cite => "bib/Bilirubin2_io.bib"
     ),
     :HIV2 => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Virology/HIV2_io.jl
@@ -511,6 +512,7 @@ benchmarks = Dict(
             y1(t) = x4(t),
             y2(t) = x5(t)
         ),
+        :cite => "bib/Biohydrogenation_io.bib"
     ),
     :Treatment => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/Treatment_io.jl
@@ -536,6 +538,7 @@ benchmarks = Dict(
             Q'(t) = -gamma * Q(t) + psi * I(t),
             y1(t) = Q(t)
         ),
+        :cite => "bib/SEIR_1_io.bib"
     ),
     :JAK_STAT => Dict(
         # https://arxiv.org/pdf/2207.09745.pdf
