@@ -62,8 +62,7 @@ using StructuralIdentifiability:
     x_equations,
     y_equations,
     inputs,
-    quotient_basis,
-    poly_ring
+    quotient_basis
 
 const GROUP = get(ENV, "GROUP", "All")
 
