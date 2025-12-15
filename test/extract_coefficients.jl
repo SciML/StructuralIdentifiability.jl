@@ -21,7 +21,7 @@
 
     R, (x, y, u, v) = polynomial_ring(QQ, ["x", "y", "u", "v"])
     C = extract_coefficients_ratfunc(
-        (x + (y + 3) * u * v + y^2 * v^3) // (u + 3 * v - (x^2 + y^2) * u^2),
+        (x + (y + 3) * u * v + y^2 * v^3) // (u + 3 * y * v - (x^2 + y^2) * u^2),
         [u, v],
     )
     @test Set(C) == Set([
@@ -29,7 +29,7 @@
         (y + 3) // 1,
         y^2 // 1,
         one(R) // 1,
-        3 * one(R) // 1,
+        3 * y // 1,
         -(x^2 + y^2) // 1,
     ])
 end
