@@ -55,7 +55,9 @@ function StructuralIdentifiability.eval_at_nemo(e::SymbolicUtils.BasicSymbolic, 
                 "operator $(Symbolics.operation(e)) is not an arithmetic one",
             ),
         )
-    elseif e isa Symbolics.Symbolic
+    elseif SymbolicUtils.isconst(e)
+        return eval_at_nemo(e.val, vals)
+    elseif e isa SymbolicUtils.BasicSymbolic
         return get(vals, e, e)
     end
 end
@@ -261,7 +263,7 @@ function __mtk_to_si(
     out_eqn_dict = Dict{polytype, Union{polytype, fractype}}()
 
     for i in 1:length(diff_eqs)
-        x = substitute(state_vars[i], symb2gens)
+        x = symb2gens[state_vars[i]]
         push!(x_vars, x)
         if !(diff_eqs[i].rhs isa Number)
             state_eqn_dict[x] = eval_at_nemo(diff_eqs[i].rhs, symb2gens)
@@ -273,7 +275,7 @@ function __mtk_to_si(
         out_eqn_dict[y_vars[i]] = eval_at_nemo(measured_quantities[i][2], symb2gens)
     end
 
-    inputs_ = [substitute(each, symb2gens) for each in inputs]
+    inputs_ = [symb2gens[each] for each in inputs]
     if isequal(length(inputs_), 0)
         inputs_ = Vector{polytype}()
     end
