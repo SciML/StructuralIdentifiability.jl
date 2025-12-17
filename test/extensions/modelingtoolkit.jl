@@ -1,6 +1,6 @@
 if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
     @testset "eval_at_nemo" begin
-        using ModelingToolkit, Symbolics
+        using ModelingToolkitBase, Symbolics
         using Nemo
 
         @independent_variables t
@@ -17,8 +17,8 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
     end
 
     @testset "Check identifiability of `System` object" begin
-        using ModelingToolkit
-        using ModelingToolkit: parameters
+        using ModelingToolkitBase
+        using ModelingToolkitBase: parameters
         using Symbolics
 
         @independent_variables t
@@ -380,7 +380,11 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             eqs =
                 [rabbits.z ~ -β * wolves.y * rabbits.x, wolves.q ~ γ * wolves.y * rabbits.x]
 
-            ModelingToolkit.compose(System(eqs, t, [], ps; name = name), wolves, rabbits)
+            ModelingToolkitBase.compose(
+                System(eqs, t, [], ps; name = name),
+                wolves,
+                rabbits,
+            )
         end
 
         function getbyname(sys, name)
@@ -458,116 +462,74 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             k[2] => :globally,
             a => :globally,
         )
-        @test assess_identifiability(osys) == correct
+        res = assess_identifiability(osys)
+        println(res)
+        @test res == correct
 
         #------------------------------------
         # system from the SciML tutorial
         # https://docs.sciml.ai/ModelingToolkit/stable/tutorials/parameter_identifiability/
 
-        @mtkmodel Biohydrogenation begin
-            @variables begin
-                x4(t)
-                x5(t)
-                x6(t)
-                x7(t)
-                y1(t), [output = true]
-                y2(t), [output = true]
-            end
-            @parameters begin
-                k5
-                k6
-                k7
-                k8
-                k9
-                k10
-            end
-            # define equations
-            @equations begin
-                D(x4) ~ -k5 * x4 / (k6 + x4)
-                D(x5) ~ k5 * x4 / (k6 + x4) - k7 * x5 / (k8 + x5 + x6)
-                D(x6) ~ k7 * x5 / (k8 + x5 + x6) - k9 * x6 * (k10 - x6) / k10
-                D(x7) ~ k9 * x6 * (k10 - x6) / k10
-                y1 ~ x4
-                y2 ~ x5
-            end
-        end
+        @variables x4(t) x5(t) x6(t) x7(t) y1(t) [output = true] y2(t) [output = true]
+        @parameters k5, k6, k7, k8, k9, k10
+        eqs = [
+            D(x4) ~ -k5 * x4 / (k6 + x4),
+            D(x5) ~ k5 * x4 / (k6 + x4) - k7 * x5 / (k8 + x5 + x6),
+            D(x6) ~ k7 * x5 / (k8 + x5 + x6) - k9 * x6 * (k10 - x6) / k10,
+            D(x7) ~ k9 * x6 * (k10 - x6) / k10,
+            y1 ~ x4,
+            y2 ~ x5,
+        ]
 
         # define the system
-        @mtkbuild de = Biohydrogenation()
+        de = System(eqs, t, name = :Biohydrogenation)
 
         local_id_all = assess_local_identifiability(de, prob_threshold = 0.99)
         @test local_id_all == OrderedDict(
-            de.x4 => true,
-            de.x5 => true,
-            de.x6 => true,
-            de.x7 => false,
-            de.k5 => true,
-            de.k6 => true,
-            de.k7 => true,
-            de.k8 => true,
-            de.k9 => true,
-            de.k10 => true,
+            x4 => true,
+            x5 => true,
+            x6 => true,
+            x7 => false,
+            k5 => true,
+            k6 => true,
+            k7 => true,
+            k8 => true,
+            k9 => true,
+            k10 => true,
         )
 
         #------------------------------------
         # system from the SciML tutorial
         # https://docs.sciml.ai/ModelingToolkit/stable/tutorials/parameter_identifiability/
-        @mtkmodel GoodwinOsc begin
-            @parameters begin
-                b
-                c
-                α
-                β
-                γ
-                δ
-                σ
-            end
-            @variables begin
-                x1(t)
-                x2(t)
-                x3(t)
-                x4(t)
-                y(t), [output = true]
-                y2(t), [output = true]
-            end
-            @equations begin
-                D(x1) ~ -b * x1 + 1 / (c + x4)
-                D(x2) ~ α * x1 - β * x2
-                D(x3) ~ γ * x2 - δ * x3
-                D(x4) ~ σ * x4 * (γ * x2 - δ * x3) / x3
-                y ~ x1 + x2
-                y2 ~ x2
-            end
-        end
+        @parameters b, c, α, β, γ, δ, σ
+        @variables x1(t) x2(t) x3(t) x4(t) y(t) [output = true] y2(t) [output = true]
+        eqs = [
+            D(x1) ~ -b * x1 + 1 / (c + x4),
+            D(x2) ~ α * x1 - β * x2,
+            D(x3) ~ γ * x2 - δ * x3,
+            D(x4) ~ σ * x4 * (γ * x2 - δ * x3) / x3,
+            y ~ x1 + x2,
+            y2 ~ x2,
+        ]
 
-        @mtkbuild ode = GoodwinOsc()
+        ode = System(eqs, t, name = :GoodwinOsc)
 
         global_id = assess_identifiability(ode)
         @test global_id == OrderedDict(
-            ode.x1 => :globally,
-            ode.x2 => :globally,
-            ode.x3 => :nonidentifiable,
-            ode.x4 => :globally,
-            ode.b => :globally,
-            ode.c => :globally,
-            ode.α => :globally,
-            ode.β => :globally,
-            ode.γ => :nonidentifiable,
-            ode.δ => :globally,
-            ode.σ => :globally,
+            x1 => :globally,
+            x2 => :globally,
+            x3 => :nonidentifiable,
+            x4 => :globally,
+            b => :globally,
+            c => :globally,
+            α => :globally,
+            β => :globally,
+            γ => :nonidentifiable,
+            δ => :globally,
+            σ => :globally,
         )
-        @test Set(find_identifiable_functions(ode, with_states = true)) == Set([
-            ode.x4,
-            ode.x2,
-            ode.x1,
-            ode.σ,
-            ode.δ,
-            ode.β,
-            ode.α,
-            ode.c,
-            ode.b,
-            ode.x3 / ode.γ,
-        ])
+        @test Set(find_identifiable_functions(ode, with_states = true)) ==
+              Set([x4, x2, x1, σ, δ, β, α, c, b, x3 / γ])
     end
 
     @testset "Discrete local identifiability, ModelingToolkit interface" begin
@@ -870,28 +832,11 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         @test length(ifs_1) == length(ifs_2)
 
         # Does not take `observables` as outputs if there is something else
-        @mtkmodel mdl begin
-            @variables begin
-                X(t)
-                μ₁(t)
-                yX(t), [output = true]
-            end
-            @parameters begin
-                k₁
-                k₂
-                μ₁max
-                μ₂max
-            end
-            @equations begin
-                μ₁ ~ k₁ + μ₁max
+        @variables X(t) μ₁(t) yX(t) [output = true]
+        @parameters k₁ k₂ μ₁max μ₂max
+        eqs = [μ₁ ~ k₁ + μ₁max, D(X) ~ (μ₁ + μ₂max) * X, yX ~ X]
 
-                D(X) ~ (μ₁ + μ₂max) * X
-
-                yX ~ X
-            end
-        end
-
-        @mtkcompile ode = mdl()
+        ode = System(eqs, t, name = :output_definition_case)
 
         id_res = assess_identifiability(ode)
         @test 1 == count(v -> v == :globally, values(id_res))
@@ -1002,7 +947,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
                     beta * delta,
                     alpha * gama,
                     beta + delta,
-                    beta * x3_0 + gama * x2_0,
+                    -delta * x3_0 + gama * x2_0,
                 ],
                 :correct_ident => OrderedDict(alpha => :locally, alpha * gama => :globally),
             ),
