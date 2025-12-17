@@ -72,11 +72,11 @@ assess_local_identifiability(dds; funcs_to_check = [β * S])
 As other main functions in the package, `assess_local_identifiability` accepts an optional parameter `loglevel` (default: `Logging.Info`)
 to adjust the verbosity of logging.
 
-Another way to defined a discrete-time system and its assess identifiability is to use the [`System`](https://docs.sciml.ai/ModelingToolkit/dev/tutorials/discrete_system/) object from `ModelingToolkit`.
+Another way to defined a discrete-time system and its assess identifiability is to use the [`System`](https://docs.sciml.ai/ModelingToolkit/dev/tutorials/discrete_system/) object from `ModelingToolkitBase`.
 The following code will perform the same computation as above (note that `ModelingToolkit` requires the shifts to be negative):
 
 ```@example mtk
-using ModelingToolkit
+using ModelingToolkitBase
 using StructuralIdentifiability
 
 @independent_variables t

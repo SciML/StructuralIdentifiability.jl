@@ -55,12 +55,12 @@ assess_identifiability(ode)
 ## Defining using `ModelingToolkit`
 
 `StructuralIdentifiability` has an extension `ModelingToolkitSIExt` which allows to use `System` from `ModelingToolkit` to describe
-a model. The extension is loaded automatically once `ModelingToolkit` is loaded via `using ModelingToolkit`.
+a model. The extension is loaded automatically once `ModelingToolkitBase` is loaded via `using ModelingToolkitBase`.
 In this case, one should encode the equations for the states as `System` and specify the outputs separately.
 In order to do this, we first introduce all functions and scalars:
 
 ```@example 2; continued = true
-using StructuralIdentifiability, ModelingToolkit
+using StructuralIdentifiability, ModelingToolkitBase
 
 @independent_variables t
 @parameters r1, r2, c1, c2, beta1, beta2, chi1, chi2

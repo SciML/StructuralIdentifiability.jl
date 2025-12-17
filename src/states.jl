@@ -25,7 +25,9 @@ function extract_coefficients_ratfunc(
         )
         append!(total_coeffs, coeffs)
     end
-    divisor = total_coeffs[argmin(map(c -> (total_degree(c), length(c)), total_coeffs))]
+    divisor = total_coeffs[argmin(
+        map(c -> (total_degree(c), length(c), leading_monomial(c)), total_coeffs),
+    )]
     return [x // divisor for x in total_coeffs]
 end
 
