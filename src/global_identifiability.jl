@@ -43,6 +43,7 @@ are identifiable functions containing or not the state variables
         for eq in values(io_equations)
             eq_coefs = collect(values(extract_coefficients(eq, nonparameters)))
             eq_coefs = [parent_ring_change(c, bring) for c in eq_coefs]
+            sort!(eq_coefs, by = (p -> (total_degree(p), length(p))))
             push!(coeff_lists[:no_states], eq_coefs)
         end
     end
