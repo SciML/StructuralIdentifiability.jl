@@ -158,6 +158,7 @@ The function accepts the following optional arguments.
 
 - `seed`: A float in the range from 0 to 1, random seed (default is `seed = 42`). 
 - `prob_threshold`: The probability of correctness (default is `prob_threshold = 0.99`).
+- `loglevel`: the level of logs to be displayed (default is `Logging.Info`).
 
 ## Example
 
@@ -208,7 +209,7 @@ end
 
 function _reparametrize_global(ode::ODE{P}; prob_threshold = 0.99, seed = 42) where {P}
     Random.seed!(seed)
-    id_funcs = find_identifiable_functions(
+    id_funcs = _find_identifiable_functions(
         ode,
         with_states = true,
         simplify = :strong,
