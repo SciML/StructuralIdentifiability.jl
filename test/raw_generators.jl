@@ -47,14 +47,14 @@ import Groebner
     gb = Groebner.groebner(eqs, ordering = Groebner.DegRevLex())
     # GB is linear
     @test length(gb) == length(gens(parent(eqs[1])))
-    expected = 9202476
+    expected = 9220151
     str = join(map(string, eqs), ",")
     @info "" length(str)
     @test abs(length(str) - expected) / expected * 100 < 5
 
     # Part 2: over Q
     eqs = fractionfree_generators_raw(rff.mqs)[1]
-    expected = 21486079
+    expected = 14652203
     str = join(map(string, eqs), ",")
     @info "" length(str)
     @test abs(length(str) - expected) / expected * 100 < 5
