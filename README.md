@@ -183,8 +183,7 @@ Ruiwen Dong, Christian Goodbrake, Heather Harrington, and Gleb Pogudin,
 SIAM Journal on Applied Algebra and Geometry, 2023.
 
 <a id="epidem">[2]</a>
-Yuganthi R. Liyanage, Omar Saucedo, Necibe Tuncer, and Gerardo Chowell
-Hongyu Miao, Xiaohua Xia, Alan S. Perelson, and Hulin Wu,
+Yuganthi R. Liyanage, Omar Saucedo, Necibe Tuncer, and Gerardo Chowell,
 [*A Tutorial on Structural Identifiability of Epidemic Models Using StructuralIdentifiability.jl*](https://arxiv.org/abs/2505.10517),
 preprint, 2025.
 

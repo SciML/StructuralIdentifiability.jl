@@ -19,7 +19,7 @@ Pkg.add("StructuralIdentifiability")
   title   = {Differential Elimination for Dynamical Models via Projections with Applications to Structural Identifiability},
   journal = {SIAM Journal on Applied Algebra and Geometry},
   url     = {https://doi.org/10.1137/22M1469067},
-  year    = {2023}
+  year    = {2023},
   volume  = {7},
   number  = {1},
   pages   = {194-235}

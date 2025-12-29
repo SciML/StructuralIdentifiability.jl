@@ -9,7 +9,7 @@ $\begin{cases}
 
 where $\mathbf{x}(t), \mathbf{y}(t)$, and $\mathbf{u}(t)$ are time-dependent states, outputs, and inputs, respectively,
 and $\mathbf{p}$ are scalar parameters.
-We will call that a parameter or a states (or a function of them) is **identifiable** if its value can be recovered from
+We will call a parameter or a state (or a function of them) **identifiable** if its value can be recovered from
 time series for inputs and outputs.
 Typically, two types of identifiability are distinguished
 
@@ -112,7 +112,7 @@ Similarly to `assess_local_identifiability`, this function has optional paramete
   - `loglevel` (default `Logging.Info`). The minimal level of logging messages to be displayed. Available options: `Logging.Debug`,
     `Logging.Info`, `Logging.Warn`, and `Logging.Error`.
 
-Using `funcs_to_check` parameter, one can further inverstigate the nature of the lack of identifiability in the model at hand.
+Using `funcs_to_check` parameter, one can further investigate the nature of the lack of identifiability in the model at hand.
 For example, for the Goodwin oscillator, we can check if `beta + delta` and `beta * delta` are identifiable:
 
 ```@example global
@@ -125,7 +125,7 @@ can be exchanged. One may wonder how could we guess these functions `beta + delt
 
 ## Assuming known initial conditions
 
-An experimental feature allows to provide an additional keyword argument `known_ic` to inidcate functions of states and parameters for which the
+An experimental feature allows to provide an additional keyword argument `known_ic` to indicate functions of states and parameters for which the
 initial conditions are assumed to be known (while the initial conditions of the system are still assumed to be generic). In this case,
 the identifiability will be assessed for parameters and all the initial conditions or for the initial conditions of `funcs_to_check`.
 Let us add an assumption that the initial conditions $x_2(0)$ and $x_3(0)$ are known:

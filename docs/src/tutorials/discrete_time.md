@@ -9,7 +9,7 @@ $\begin{cases}
 
 where $\mathbf{x}(t), \mathbf{y}(t)$, and $\mathbf{u}(t)$ are time-dependent states, outputs, and inputs, respectively,
 and $\mathbf{p}$ are scalar parameters.
-As in the ODE case, we will call that a parameter or a states (or a function of them) is **identifiable** if its value can be recovered from
+As in the ODE case, we will call a parameter or a state (or a function of them) **identifiable** if its value can be recovered from
 time series for inputs and outputs (in the generic case, see Definition 3 in [^1] for details).
 Again, we will distinguish two types of identifiability
 
