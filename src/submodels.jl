@@ -29,10 +29,10 @@ end
 # ------------------------------------------------------------------------------
 
 function dfs(
-    graph::Dict{QQMPolyRingElem, Set{QQMPolyRingElem}},
-    start::QQMPolyRingElem,
-    visited::Set{QQMPolyRingElem},
-)
+        graph::Dict{QQMPolyRingElem, Set{QQMPolyRingElem}},
+        start::QQMPolyRingElem,
+        visited::Set{QQMPolyRingElem},
+    )
     push!(visited, start)
     if start in keys(graph)
         for node in graph[start]
@@ -47,9 +47,9 @@ end
 # ------------------------------------------------------------------------------
 
 function traverse_outputs(
-    graph::Dict{QQMPolyRingElem, Set{QQMPolyRingElem}},
-    ys::Array{QQMPolyRingElem, 1},
-)
+        graph::Dict{QQMPolyRingElem, Set{QQMPolyRingElem}},
+        ys::Array{QQMPolyRingElem, 1},
+    )
     raw_models = Dict{QQMPolyRingElem, Set{QQMPolyRingElem}}()
     for y in ys
         model = dfs(graph, y, Set{QQMPolyRingElem}())
@@ -61,11 +61,11 @@ end
 # ------------------------------------------------------------------------------
 
 function saturate_ys(
-    unions::Array{Set{QQMPolyRingElem}, 1},
-    Y::Array{QQMPolyRingElem, 1},
-    graph::Dict{QQMPolyRingElem, Set{QQMPolyRingElem}},
-    X::Array{QQMPolyRingElem, 1},
-)
+        unions::Array{Set{QQMPolyRingElem}, 1},
+        Y::Array{QQMPolyRingElem, 1},
+        graph::Dict{QQMPolyRingElem, Set{QQMPolyRingElem}},
+        X::Array{QQMPolyRingElem, 1},
+    )
     for element in unions
         for y in Y
             states = [x for x in graph[y] if x in X]
@@ -74,6 +74,7 @@ function saturate_ys(
             end
         end
     end
+    return
 end
 
 # ------------------------------------------------------------------------------
@@ -92,9 +93,9 @@ end
 
 # filters the models containing all states or no states
 function filter_max_empty(
-    ode::ODE{P},
-    submodels::Array{Set{QQMPolyRingElem}, 1},
-) where {P <: MPolyRingElem}
+        ode::ODE{P},
+        submodels::Array{Set{QQMPolyRingElem}, 1},
+    ) where {P <: MPolyRingElem}
     n = length(ode.x_vars)
     new_sub = Array{Set{QQMPolyRingElem}, 1}([])
     for submodel in submodels
@@ -135,11 +136,11 @@ function ode_aux(ode::ODE{P}, submodel::Set{QQMPolyRingElem}) where {P <: MPolyR
 
     new_x_vars = [
         parent_ring_change(x, S) for
-        x in ode.x_vars if var_to_str(x) in map(var_to_str, collect(keys(fin_x)))
+            x in ode.x_vars if var_to_str(x) in map(var_to_str, collect(keys(fin_x)))
     ]
     new_y_vars = [
         parent_ring_change(y, S) for
-        y in ode.y_vars if var_to_str(y) in map(var_to_str, collect(keys(fin_y)))
+            y in ode.y_vars if var_to_str(y) in map(var_to_str, collect(keys(fin_y)))
     ]
 
     return ODE{QQMPolyRingElem}(new_x_vars, new_y_vars, fin_x, fin_y, fin_u)
@@ -162,9 +163,9 @@ Output:
 """
 
 function submodel2ode(
-    ode::ODE{P},
-    submodels::Array{Set{QQMPolyRingElem}, 1},
-) where {P <: MPolyRingElem}
+        ode::ODE{P},
+        submodels::Array{Set{QQMPolyRingElem}, 1},
+    ) where {P <: MPolyRingElem}
     return [ode_aux(ode, submodel) for submodel in submodels]
 end
 

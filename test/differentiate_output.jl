@@ -40,7 +40,7 @@ function diff_sol_Lie_derivatives(ode::ODE, params, ic, inputs, prec::Int)
                 Lie_derivatives[y],
                 sum(
                     derivative(Lie_derivatives[y][end], v) * get(derivation, v, 0) for
-                    v in gens(new_ring)
+                        v in gens(new_ring)
                 ),
             )
         end
@@ -296,7 +296,7 @@ end
             for v in vcat(ode.x_vars, ode.parameters)
                 @test sol2[y][v] == [
                     base_ring(ode.poly_ring)(coeff(sol1[y][v], j) * factorial(j)) for
-                    j in 0:(prec - 1)
+                        j in 0:(prec - 1)
                 ]
             end
         end

@@ -7,11 +7,11 @@
         for case in 1:20
             M = S([random_ps(T) for i in 1:d, j in 1:d])
             while isequal(
-                StructuralIdentifiability.LinearAlgebra.det(
-                    StructuralIdentifiability.ps_matrix_const_term(M),
-                ),
-                0,
-            )
+                    StructuralIdentifiability.LinearAlgebra.det(
+                        StructuralIdentifiability.ps_matrix_const_term(M),
+                    ),
+                    0,
+                )
                 M = S([random_ps(T) for i in 1:d, j in 1:d])
             end
             invM = ps_matrix_inv(M)

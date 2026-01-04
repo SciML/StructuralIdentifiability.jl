@@ -63,7 +63,7 @@ function enable_timer(flag::Bool)
     else
         disable_timer!(_to)
     end
-    nothing
+    return nothing
 end
 
 # By default, the timer is disabled
@@ -76,7 +76,7 @@ Resets the global timer.
 """
 function reset_timings()
     TimerOutputs.reset_timer!(_to)
-    nothing
+    return nothing
 end
 
 """
@@ -86,7 +86,7 @@ Prints the table with collected timings data to `stdout`.
 """
 function print_timings_table()
     iostream = stdout
-    TimerOutputs.print_timer(
+    return TimerOutputs.print_timer(
         iostream,
         _to,
         allocations = true,
@@ -100,12 +100,12 @@ end
 function nonrational_error(precision::String)
     return Base.ArgumentError(
         """
-The system does not seem to have rational (polynomial divided by polynomial) right-hand side.
-More precisely: $precision.
-For the moment, such systems cannot be handled directly. We advise to try a variable transformation,
-for an example and some guidelines, we refer to pages 4-5 of https://doi.org/10.3390/v17040496
-(in particular the discussion after Proposition 1). Further examples of transformations can be found
-in Sections A.2 and A.3 of the Supplementary Material of https://doi.org/10.1093/bioinformatics/bty1069
-""",
+        The system does not seem to have rational (polynomial divided by polynomial) right-hand side.
+        More precisely: $precision.
+        For the moment, such systems cannot be handled directly. We advise to try a variable transformation,
+        for an example and some guidelines, we refer to pages 4-5 of https://doi.org/10.3390/v17040496
+        (in particular the discussion after Proposition 1). Further examples of transformations can be found
+        in Sections A.2 and A.3 of the Supplementary Material of https://doi.org/10.1093/bioinformatics/bty1069
+        """,
     )
 end

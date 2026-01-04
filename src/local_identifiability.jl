@@ -25,12 +25,12 @@ Output:
   the function `u` w.r.t. `v` evaluated at the solution
 """
 function differentiate_solution(
-    ode::ODE{P},
-    params::Dict{P, T},
-    ic::Dict{P, T},
-    inputs::Dict{P, Array{T, 1}},
-    prec::Int,
-) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
+        ode::ODE{P},
+        params::Dict{P, T},
+        ic::Dict{P, T},
+        inputs::Dict{P, Array{T, 1}},
+        prec::Int,
+    ) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing the power series solution of the system"
     ps_sol = power_series_solution(ode, params, ic, inputs, prec)
     ps_ring = parent(first(values(ps_sol)))
@@ -42,10 +42,12 @@ function differentiate_solution(
     # Y' = AY + B
     vars = vcat(ode.x_vars, ode.parameters)
     SA = AbstractAlgebra.matrix_space(ps_ring, length(ode.x_vars), length(ode.x_vars))
-    A = SA([
-        eval_at_dict(derivative(ode.x_equations[vars[i]], vars[j]), ps_sol) for
-        i in 1:length(ode.x_vars), j in 1:length(ode.x_vars)
-    ])
+    A = SA(
+        [
+            eval_at_dict(derivative(ode.x_equations[vars[i]], vars[j]), ps_sol) for
+                i in 1:length(ode.x_vars), j in 1:length(ode.x_vars)
+        ]
+    )
     SB = AbstractAlgebra.matrix_space(ps_ring, length(ode.x_vars), length(vars))
     B = zero(SB)
     for i in 1:length(ode.x_vars)
@@ -66,7 +68,7 @@ function differentiate_solution(
         ps_sol,
         Dict(
             (vars[i], vars[j]) => sol_var_system[i, j] for
-            i in 1:length(ode.x_vars), j in 1:length(vars)
+                i in 1:length(ode.x_vars), j in 1:length(vars)
         ),
     )
 end
@@ -81,12 +83,12 @@ returns a dictionary of the form `y_function => Dict(var => dy/dvar)` where `dy/
 of `y_function` with respect to `var`.
 """
 function differentiate_output(
-    ode::ODE{P},
-    params::Dict{P, T},
-    ic::Dict{P, T},
-    inputs::Dict{P, Array{T, 1}},
-    prec::Int,
-) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
+        ode::ODE{P},
+        params::Dict{P, T},
+        ic::Dict{P, T},
+        inputs::Dict{P, Array{T, 1}},
+        prec::Int,
+    ) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing partial derivatives of the solution"
     ps_sol, sol_diff = differentiate_solution(ode, params, ic, inputs, prec)
     ps_ring = parent(first(values(ps_sol)))
@@ -101,13 +103,13 @@ function differentiate_output(
         for x in ode.x_vars
             result[y][x] = sum(
                 eval_at_dict(derivative(g, xx), ps_sol) * sol_diff[(xx, x)] for
-                xx in ode.x_vars
+                    xx in ode.x_vars
             )
         end
         for p in ode.parameters
             result[y][p] = sum(
                 eval_at_dict(derivative(g, xx), ps_sol) * sol_diff[(xx, p)] for
-                xx in ode.x_vars
+                    xx in ode.x_vars
             )
             result[y][p] += eval_at_dict(derivative(g, p), ps_sol)
         end
@@ -136,8 +138,8 @@ function get_degree_and_coeffsize(f::MPolyRingElem{Nemo.QQFieldElem})
 end
 
 function get_degree_and_coeffsize(
-    f::Generic.FracFieldElem{<:MPolyRingElem{Nemo.QQFieldElem}},
-)
+        f::Generic.FracFieldElem{<:MPolyRingElem{Nemo.QQFieldElem}},
+    )
     num_deg, num_coef = get_degree_and_coeffsize(numerator(f))
     den_deg, den_coef = get_degree_and_coeffsize(denominator(f))
     return (max(num_deg, den_deg), max(num_coef, den_coef))
@@ -156,16 +158,16 @@ Call this function if you have a specific collection of parameters of which you 
 If the type is `:ME`, states are not allowed to appear in the `funcs_to_check`.
 """
 function assess_local_identifiability(
-    ode::ODE{P};
-    funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
-    prob_threshold::Float64 = 0.99,
-    type = :SE,
-    trbasis = nothing,
-    loglevel = Logging.Info,
-) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
+        ode::ODE{P};
+        funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
+        prob_threshold::Float64 = 0.99,
+        type = :SE,
+        trbasis = nothing,
+        loglevel = Logging.Info,
+    ) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
-    with_logger(_si_logger[]) do
+    return with_logger(_si_logger[]) do
         return _assess_local_identifiability(
             ode,
             funcs_to_check = funcs_to_check,
@@ -177,13 +179,13 @@ function assess_local_identifiability(
 end
 
 function _assess_local_identifiability(
-    ode::ODE{P};
-    funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
-    prob_threshold::Float64 = 0.99,
-    type = :SE,
-    trbasis = nothing,
-    known_ic::Array{<:Any, 1} = Array{Any, 1}(),
-) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
+        ode::ODE{P};
+        funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
+        prob_threshold::Float64 = 0.99,
+        type = :SE,
+        trbasis = nothing,
+        known_ic::Array{<:Any, 1} = Array{Any, 1}(),
+    ) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
     if isempty(funcs_to_check)
         funcs_to_check = ode.parameters
         if type == :SE
@@ -316,7 +318,7 @@ function _assess_local_identifiability(
         # selecting the trbasis of polynomials
         trbasis_indices_param = [
             size(Jac)[1] - i + 1 for
-            i in nonpivots if i > size(Jac)[1] - length(ode.parameters)
+                i in nonpivots if i > size(Jac)[1] - length(ode.parameters)
         ]
         for i in trbasis_indices_param
             push!(trbasis, ode.parameters[i])

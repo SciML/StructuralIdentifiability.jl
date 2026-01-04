@@ -318,7 +318,7 @@ benchmarks = Dict(
             g(t) = x(t)
         ),
     ),
-    # Gleb: 
+    # Gleb:
     # The most simplified version of the result I could get by hand is
     # Ninv, b, s, g + a,  (1 - e) * g * (a - s), a * e * g
     # but I have no idea how I did this...
@@ -351,76 +351,76 @@ benchmarks = Dict(
             P3'(t) = P4(t),
             P4'(t) =
                 -(
-                    Ks * M * siga1 * siga2 * P1(t) +
+                Ks * M * siga1 * siga2 * P1(t) +
                     (
-                        Ks * M * siga1 +
+                    Ks * M * siga1 +
                         Ks * M * siga2 +
                         Ks * siga1 * siga2 +
                         siga1 * siga2 * M
-                    ) * P2(t) +
+                ) * P2(t) +
                     (
-                        Ks * M +
+                    Ks * M +
                         Ks * siga1 +
                         Ks * siga2 +
                         M * siga1 +
                         M * siga2 +
                         siga1 * siga2
-                    ) * P3(t) +
+                ) * P3(t) +
                     (Ks + M + siga1 + siga2) * P4(t)
-                ) -
+            ) -
                 (
-                    Mar * P5(t) +
+                Mar * P5(t) +
                     beta +
                     beta_SA / (siga2 * M) * (
-                        P3(t) +
+                    P3(t) +
                         P2(t) * (Ks + M + Mar) +
                         P1(t) * (Ks * M + Ks * Mar + M * Mar) +
                         P0(t) * Ks * M * Mar
-                    ) +
+                ) +
                     beta_SI / M * (P2(t) + P1(t) * (Ks + Mar) + P0(t) * Ks * Mar) +
                     beta_SA * phi / ((1 - phi) * siga2 * M) * (
-                        P3(t) +
+                    P3(t) +
                         P2(t) * (Ks + M + siga2) +
                         P1(t) * (Ks * M + Ks * siga2 + M * siga2) +
                         P0(t) * Ks * M * siga2
-                    )
-                ) * (
-                    alpa +
+                )
+            ) * (
+                alpa +
                     Ks * M * siga1 * siga2 * P0(t) +
                     (
-                        Ks * M * siga1 +
+                    Ks * M * siga1 +
                         Ks * M * siga2 +
                         Ks * siga1 * siga2 +
                         siga1 * siga2 * M
-                    ) * P1(t) +
+                ) * P1(t) +
                     (
-                        Ks * M +
+                    Ks * M +
                         Ks * siga1 +
                         Ks * siga2 +
                         M * siga1 +
                         M * siga2 +
                         siga1 * siga2
-                    ) * P2(t) +
+                ) * P2(t) +
                     (Ks + M + siga1 + siga2) * P3(t) +
                     P4(t)
-                ),
+            ),
             P5'(t) =
                 -Mar * P5(t) - (
-                    beta +
+                beta +
                     beta_SA / (siga2 * M) * (
-                        P3(t) +
+                    P3(t) +
                         P2(t) * (Ks + M + Mar) +
                         P1(t) * (Ks * M + Ks * Mar + M * Mar) +
                         P0(t) * Ks * M * Mar
-                    ) +
+                ) +
                     beta_SI / M * (P2(t) + P1(t) * (Ks + Mar) + P0(t) * Ks * Mar) +
                     beta_SA * phi / ((1 - phi) * siga2 * M) * (
-                        P3(t) +
+                    P3(t) +
                         P2(t) * (Ks + M + siga2) +
                         P1(t) * (Ks * M + Ks * siga2 + M * siga2) +
                         P0(t) * Ks * M * siga2
-                    )
-                ),
+                )
+            ),
             y(t) = P0(t)
         ),
     ),
@@ -761,8 +761,8 @@ benchmarks = Dict(
             x2'(t) =
                 p8 - (p9 * x2(t)) -
                 p10 * (
-                    (x1(t) * x2(t) / (p11 + x2(t))) * (1 + (p12 * u1(t) / (p13 + u1(t))))
-                ),
+                (x1(t) * x2(t) / (p11 + x2(t))) * (1 + (p12 * u1(t) / (p13 + u1(t))))
+            ),
             x3'(t) =
                 p14 - (p15 * x3(t)) -
                 p16 * x1(t) * x3(t) * (1 - p18 * u1(t)) / (p17 + x3(t)),
@@ -853,9 +853,9 @@ benchmarks = Dict(
             Tj'(t) = u2(t) * (Th - Tj(t)) / Vh - UA / (roh * cph) * (Tj(t) - T(t)) / Vh,
             Arr'(t) =
                 E * Arr(t) / (R * T(t)^2) * (
-                    u1(t) * (Ta - T(t)) / V -
+                u1(t) * (Ta - T(t)) / V -
                     (k0 * Arr(t) * Ca(t) * DH + UA * (Tj(t) - T(t)) / V) / (ro * cp)
-                ),
+            ),
             y1(t) = Cb(t),
             y2(t) = T(t)
         ),
@@ -887,7 +887,7 @@ benchmarks = Dict(
                 rhoi * (2 * ai * (1 / (1 + ks * (P(t) + I(t)))) - 1) * I(t) - I(t) / taoi + P(t) / taop - alpha * beta * I(t) * C(t), # number of cells of CD19+ B cell progenitors
             y1(t) = C(t),
             y2(t) = L(t),
-            y3(t) = P(t) + B(t) + I(t) #células B totales 
+            y3(t) = P(t) + B(t) + I(t) #células B totales
         ),
     ),
     :Lipolysis => Dict(
@@ -910,34 +910,34 @@ benchmarks = Dict(
         :ode => @ODEmodel(
             pi1'(t) =
                 pi1(t) * (
-                    (g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)) -
+                (g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)) -
                     pi1(t) * (
-                        g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
-                    ) +
+                    g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
+                ) +
                     pi2(t) * (
-                        g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
-                    )
-                ),
+                    g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
+                )
+            ),
             pi2'(t) =
                 pi2(t) * (
-                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)) -
+                (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)) -
                     pi1(t) * (
-                        g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
-                    ) +
+                    g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
+                ) +
                     pi2(t) * (
-                        g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
-                    )
-                ),
+                    g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
+                )
+            ),
             pi3'(t) =
                 pi3(t) * (
-                    (g3 + A31 * pi1(t) + A32 * pi2(t) + A33 * pi3(t) + B31 * u1(t)) -
+                (g3 + A31 * pi1(t) + A32 * pi2(t) + A33 * pi3(t) + B31 * u1(t)) -
                     pi1(t) * (
-                        g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
-                    ) +
+                    g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
+                ) +
                     pi2(t) * (
-                        g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
-                    )
-                ),
+                    g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
+                )
+            ),
             y1(t) = pi1(t),
             y2(t) = pi2(t)
         ),
@@ -948,34 +948,34 @@ benchmarks = Dict(
         :ode => @ODEmodel(
             pi1'(t) =
                 pi1(t) * (
-                    (g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)) -
+                (g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)) -
                     pi1(t) * (
-                        g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
-                    ) +
+                    g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
+                ) +
                     pi2(t) * (
-                        g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
-                    )
-                ),
+                    g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
+                )
+            ),
             pi2'(t) =
                 pi2(t) * (
-                    (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)) -
+                (g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)) -
                     pi1(t) * (
-                        g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
-                    ) +
+                    g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
+                ) +
                     pi2(t) * (
-                        g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
-                    )
-                ),
+                    g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
+                )
+            ),
             pi3'(t) =
                 pi3(t) * (
-                    (g3 + A31 * pi1(t) + A32 * pi2(t) + A33 * pi3(t) + B31 * u1(t)) -
+                (g3 + A31 * pi1(t) + A32 * pi2(t) + A33 * pi3(t) + B31 * u1(t)) -
                     pi1(t) * (
-                        g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
-                    ) +
+                    g1 + A11 * pi1(t) + A12 * pi2(t) + A13 * pi3(t) + B11 * u1(t)
+                ) +
                     pi2(t) * (
-                        g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
-                    )
-                ),
+                    g2 + A21 * pi1(t) + A22 * pi2(t) + A23 * pi3(t) + B21 * u1(t)
+                )
+            ),
             y1(t) = pi1(t)
         ),
     ),
@@ -1087,38 +1087,38 @@ benchmarks = Dict(
                 w1(t) *
                 (1 - w1(t)) *
                 (
-                    m2*Y2(t) + (m3-D3)*Y3(t) - D4*Y4(t) +
-                    n2*Z2(t) +
-                    (n3-E3)*Z3(t)-E4*(
-                        -E0*Y2(t)*D1*E2*m2*E4*D0*m3*E3 - E0*n3*D2*E1*D1*I1(t)*n2*D4*D0*D3 -
-                        E0*n3*D2*E1*Y1(t)*n2*D4*D0*D3 -
-                        E0*n3*D2*E1*Y0(t)*n2*D4*D3 -
-                        E0*n3*D2*D1*Z2(t)*n2*D4*D0*D3 -
-                        E0*n3*D2*D1*Z1(t)*n2*D4*D0*D3 -
-                        E0*n3*D2*D1*Z3(t)*E2*D4*D0*D3 -
-                        E0*D2*D1*I4(t)*E2*E4*D4*D0*D3*E3 -
-                        E0*D2*D1*Y3(t)*E2*E4*D0*m3*E3 +
-                        E0*D2*D1*E2*J3*E4*D4*D0*D3*E3 -
-                        E0*D2*D1*E2*E4*Y4(t)*D0*D3*E3 -
-                        E0*Y1(t)*m1*E2*m2*E4*D0*m3*E3 -
-                        E0*Y0(t)*m1*E2*m2*E4*m3*E3 - n3*D2*D1*Z0(t)*n2*D4*D0*D3
-                    )//(E0*D2*D1*E2*D4*D0*D3*E3)
-                )/(
-                    Y3(t)+Y4(t)+Z3(t)+(
-                        -E0*Y2(t)*D1*E2*m2*E4*D0*m3*E3 - E0*n3*D2*E1*D1*I1(t)*n2*D4*D0*D3 -
-                        E0*n3*D2*E1*Y1(t)*n2*D4*D0*D3 -
-                        E0*n3*D2*E1*Y0(t)*n2*D4*D3 -
-                        E0*n3*D2*D1*Z2(t)*n2*D4*D0*D3 -
-                        E0*n3*D2*D1*Z1(t)*n2*D4*D0*D3 -
-                        E0*n3*D2*D1*Z3(t)*E2*D4*D0*D3 -
-                        E0*D2*D1*I4(t)*E2*E4*D4*D0*D3*E3 -
-                        E0*D2*D1*Y3(t)*E2*E4*D0*m3*E3 +
-                        E0*D2*D1*E2*J3*E4*D4*D0*D3*E3 -
-                        E0*D2*D1*E2*E4*Y4(t)*D0*D3*E3 -
-                        E0*Y1(t)*m1*E2*m2*E4*D0*m3*E3 -
-                        E0*Y0(t)*m1*E2*m2*E4*m3*E3 - n3*D2*D1*Z0(t)*n2*D4*D0*D3
-                    )//(E0*D2*D1*E2*D4*D0*D3*E3)
-                ),
+                m2 * Y2(t) + (m3 - D3) * Y3(t) - D4 * Y4(t) +
+                    n2 * Z2(t) +
+                    (n3 - E3) * Z3(t) - E4 * (
+                    -E0 * Y2(t) * D1 * E2 * m2 * E4 * D0 * m3 * E3 - E0 * n3 * D2 * E1 * D1 * I1(t) * n2 * D4 * D0 * D3 -
+                        E0 * n3 * D2 * E1 * Y1(t) * n2 * D4 * D0 * D3 -
+                        E0 * n3 * D2 * E1 * Y0(t) * n2 * D4 * D3 -
+                        E0 * n3 * D2 * D1 * Z2(t) * n2 * D4 * D0 * D3 -
+                        E0 * n3 * D2 * D1 * Z1(t) * n2 * D4 * D0 * D3 -
+                        E0 * n3 * D2 * D1 * Z3(t) * E2 * D4 * D0 * D3 -
+                        E0 * D2 * D1 * I4(t) * E2 * E4 * D4 * D0 * D3 * E3 -
+                        E0 * D2 * D1 * Y3(t) * E2 * E4 * D0 * m3 * E3 +
+                        E0 * D2 * D1 * E2 * J3 * E4 * D4 * D0 * D3 * E3 -
+                        E0 * D2 * D1 * E2 * E4 * Y4(t) * D0 * D3 * E3 -
+                        E0 * Y1(t) * m1 * E2 * m2 * E4 * D0 * m3 * E3 -
+                        E0 * Y0(t) * m1 * E2 * m2 * E4 * m3 * E3 - n3 * D2 * D1 * Z0(t) * n2 * D4 * D0 * D3
+                ) // (E0 * D2 * D1 * E2 * D4 * D0 * D3 * E3)
+            ) / (
+                Y3(t) + Y4(t) + Z3(t) + (
+                    -E0 * Y2(t) * D1 * E2 * m2 * E4 * D0 * m3 * E3 - E0 * n3 * D2 * E1 * D1 * I1(t) * n2 * D4 * D0 * D3 -
+                        E0 * n3 * D2 * E1 * Y1(t) * n2 * D4 * D0 * D3 -
+                        E0 * n3 * D2 * E1 * Y0(t) * n2 * D4 * D3 -
+                        E0 * n3 * D2 * D1 * Z2(t) * n2 * D4 * D0 * D3 -
+                        E0 * n3 * D2 * D1 * Z1(t) * n2 * D4 * D0 * D3 -
+                        E0 * n3 * D2 * D1 * Z3(t) * E2 * D4 * D0 * D3 -
+                        E0 * D2 * D1 * I4(t) * E2 * E4 * D4 * D0 * D3 * E3 -
+                        E0 * D2 * D1 * Y3(t) * E2 * E4 * D0 * m3 * E3 +
+                        E0 * D2 * D1 * E2 * J3 * E4 * D4 * D0 * D3 * E3 -
+                        E0 * D2 * D1 * E2 * E4 * Y4(t) * D0 * D3 * E3 -
+                        E0 * Y1(t) * m1 * E2 * m2 * E4 * D0 * m3 * E3 -
+                        E0 * Y0(t) * m1 * E2 * m2 * E4 * m3 * E3 - n3 * D2 * D1 * Z0(t) * n2 * D4 * D0 * D3
+                ) // (E0 * D2 * D1 * E2 * D4 * D0 * D3 * E3)
+            ),
             w2'(t) = 1,
             O1(t) = Y1(t) + Z1(t),
             O2(t) = Y2(t) + Z2(t),
@@ -1126,52 +1126,52 @@ benchmarks = Dict(
             O4(t) =
                 Y4(t) +
                 (
-                    -E0*Y2(t)*D1*E2*m2*E4*D0*m3*E3 - E0*n3*D2*E1*D1*I1(t)*n2*D4*D0*D3 -
-                    E0*n3*D2*E1*Y1(t)*n2*D4*D0*D3 - E0*n3*D2*E1*Y0(t)*n2*D4*D3 -
-                    E0*n3*D2*D1*Z2(t)*n2*D4*D0*D3 -
-                    E0*n3*D2*D1*Z1(t)*n2*D4*D0*D3 -
-                    E0*n3*D2*D1*Z3(t)*E2*D4*D0*D3 -
-                    E0*D2*D1*I4(t)*E2*E4*D4*D0*D3*E3 -
-                    E0*D2*D1*Y3(t)*E2*E4*D0*m3*E3 +
-                    E0*D2*D1*E2*J3*E4*D4*D0*D3*E3 -
-                    E0*D2*D1*E2*E4*Y4(t)*D0*D3*E3 -
-                    E0*Y1(t)*m1*E2*m2*E4*D0*m3*E3 - E0*Y0(t)*m1*E2*m2*E4*m3*E3 -
-                    n3*D2*D1*Z0(t)*n2*D4*D0*D3
-                )//(E0*D2*D1*E2*D4*D0*D3*E3),
+                -E0 * Y2(t) * D1 * E2 * m2 * E4 * D0 * m3 * E3 - E0 * n3 * D2 * E1 * D1 * I1(t) * n2 * D4 * D0 * D3 -
+                    E0 * n3 * D2 * E1 * Y1(t) * n2 * D4 * D0 * D3 - E0 * n3 * D2 * E1 * Y0(t) * n2 * D4 * D3 -
+                    E0 * n3 * D2 * D1 * Z2(t) * n2 * D4 * D0 * D3 -
+                    E0 * n3 * D2 * D1 * Z1(t) * n2 * D4 * D0 * D3 -
+                    E0 * n3 * D2 * D1 * Z3(t) * E2 * D4 * D0 * D3 -
+                    E0 * D2 * D1 * I4(t) * E2 * E4 * D4 * D0 * D3 * E3 -
+                    E0 * D2 * D1 * Y3(t) * E2 * E4 * D0 * m3 * E3 +
+                    E0 * D2 * D1 * E2 * J3 * E4 * D4 * D0 * D3 * E3 -
+                    E0 * D2 * D1 * E2 * E4 * Y4(t) * D0 * D3 * E3 -
+                    E0 * Y1(t) * m1 * E2 * m2 * E4 * D0 * m3 * E3 - E0 * Y0(t) * m1 * E2 * m2 * E4 * m3 * E3 -
+                    n3 * D2 * D1 * Z0(t) * n2 * D4 * D0 * D3
+            ) // (E0 * D2 * D1 * E2 * D4 * D0 * D3 * E3),
             O6(t) = w2(t),
             I1'(t) = Y1(t) + Z1(t),
             I4'(t) =
                 Y4(t) +
                 (
-                    -E0*Y2(t)*D1*E2*m2*E4*D0*m3*E3 - E0*n3*D2*E1*D1*I1(t)*n2*D4*D0*D3 -
-                    E0*n3*D2*E1*Y1(t)*n2*D4*D0*D3 - E0*n3*D2*E1*Y0(t)*n2*D4*D3 -
-                    E0*n3*D2*D1*Z2(t)*n2*D4*D0*D3 -
-                    E0*n3*D2*D1*Z1(t)*n2*D4*D0*D3 -
-                    E0*n3*D2*D1*Z3(t)*E2*D4*D0*D3 -
-                    E0*D2*D1*I4(t)*E2*E4*D4*D0*D3*E3 -
-                    E0*D2*D1*Y3(t)*E2*E4*D0*m3*E3 +
-                    E0*D2*D1*E2*J3*E4*D4*D0*D3*E3 -
-                    E0*D2*D1*E2*E4*Y4(t)*D0*D3*E3 -
-                    E0*Y1(t)*m1*E2*m2*E4*D0*m3*E3 - E0*Y0(t)*m1*E2*m2*E4*m3*E3 -
-                    n3*D2*D1*Z0(t)*n2*D4*D0*D3
-                )//(E0*D2*D1*E2*D4*D0*D3*E3),
+                -E0 * Y2(t) * D1 * E2 * m2 * E4 * D0 * m3 * E3 - E0 * n3 * D2 * E1 * D1 * I1(t) * n2 * D4 * D0 * D3 -
+                    E0 * n3 * D2 * E1 * Y1(t) * n2 * D4 * D0 * D3 - E0 * n3 * D2 * E1 * Y0(t) * n2 * D4 * D3 -
+                    E0 * n3 * D2 * D1 * Z2(t) * n2 * D4 * D0 * D3 -
+                    E0 * n3 * D2 * D1 * Z1(t) * n2 * D4 * D0 * D3 -
+                    E0 * n3 * D2 * D1 * Z3(t) * E2 * D4 * D0 * D3 -
+                    E0 * D2 * D1 * I4(t) * E2 * E4 * D4 * D0 * D3 * E3 -
+                    E0 * D2 * D1 * Y3(t) * E2 * E4 * D0 * m3 * E3 +
+                    E0 * D2 * D1 * E2 * J3 * E4 * D4 * D0 * D3 * E3 -
+                    E0 * D2 * D1 * E2 * E4 * Y4(t) * D0 * D3 * E3 -
+                    E0 * Y1(t) * m1 * E2 * m2 * E4 * D0 * m3 * E3 - E0 * Y0(t) * m1 * E2 * m2 * E4 * m3 * E3 -
+                    n3 * D2 * D1 * Z0(t) * n2 * D4 * D0 * D3
+            ) // (E0 * D2 * D1 * E2 * D4 * D0 * D3 * E3),
             O7(t) = I1(t),
             O8(t) =
                 J1 -
                 (
-                    E1*D1*D2*I1(t) +
-                    D1*D2*(Z1(t) + Z2(t) + Z0(t) // E0) +
-                    D1*E2*Y2(t) +
-                    (D2*E1+m1*E2)*(Y1(t) + Y0(t) // D0)
-                ) // (D1*E2*D2),
+                E1 * D1 * D2 * I1(t) +
+                    D1 * D2 * (Z1(t) + Z2(t) + Z0(t) // E0) +
+                    D1 * E2 * Y2(t) +
+                    (D2 * E1 + m1 * E2) * (Y1(t) + Y0(t) // D0)
+            ) // (D1 * E2 * D2),
             O9(t) =
                 J2 -
                 (
-                    E1*n2*D1*D2*D3*I1(t) +
-                    n2*D1*D2*D3*(Z0(t) // E0+Z1(t)+Z2(t)+E2*Z3(t) // n2) +
-                    (n2*E1*D2*D3+m1*m2*E2*E3)*(Y1(t)+Y0(t) // D0) +
-                    (m2*D1*E2*E3)*(Y2(t)+D2*Y3(t) // m2)
-                ) // (D1*E2*D2*E3*D3),
+                E1 * n2 * D1 * D2 * D3 * I1(t) +
+                    n2 * D1 * D2 * D3 * (Z0(t) // E0 + Z1(t) + Z2(t) + E2 * Z3(t) // n2) +
+                    (n2 * E1 * D2 * D3 + m1 * m2 * E2 * E3) * (Y1(t) + Y0(t) // D0) +
+                    (m2 * D1 * E2 * E3) * (Y2(t) + D2 * Y3(t) // m2)
+            ) // (D1 * E2 * D2 * E3 * D3),
             O10(t) = I4(t),
         )
     ),
@@ -1180,10 +1180,10 @@ benchmarks = Dict(
     :Influenza_MB1 => Dict(
         :name => "Immune response to influenza (MB1 model)",
         :ode => @ODEmodel(
-            U'(t) = -beta*U(t)*V(t),
-            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
-            V'(t) = p*I(t)-c*V(t),
-            T'(t) = s_T - 0.011*T(t) + r*T(t)*(V(t)/(V(t)+k_T)),
+            U'(t) = -beta * U(t) * V(t),
+            I'(t) = beta * U(t) * V(t) - d_I * T(t) * I(t),
+            V'(t) = p * I(t) - c * V(t),
+            T'(t) = s_T - 0.011 * T(t) + r * T(t) * (V(t) / (V(t) + k_T)),
             # commenting out the first state yields a ratio of states
             y1(t) = V(t),
             y2(t) = T(t)
@@ -1192,10 +1192,10 @@ benchmarks = Dict(
     :Influenza_MB2 => Dict(
         :name => "Immune response to influenza (MB2 model)",
         :ode => @ODEmodel(
-            U'(t) = -beta*U(t)*V(t),
-            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
-            V'(t) = p*I(t)-c*V(t),
-            T'(t) = s_T - 0.011*T(t) + r*T(t)*(V(t)/(V(t)+k_T)) - c_T*(1/(1+V(t)^2)),
+            U'(t) = -beta * U(t) * V(t),
+            I'(t) = beta * U(t) * V(t) - d_I * T(t) * I(t),
+            V'(t) = p * I(t) - c * V(t),
+            T'(t) = s_T - 0.011 * T(t) + r * T(t) * (V(t) / (V(t) + k_T)) - c_T * (1 / (1 + V(t)^2)),
             y1(t) = V(t),
             y2(t) = T(t)
         )
@@ -1203,10 +1203,10 @@ benchmarks = Dict(
     :Influenza_MB3 => Dict(
         :name => "Immune response to influenza (MB3 model)",
         :ode => @ODEmodel(
-            U'(t) = -beta*U(t)*V(t),
-            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
-            V'(t) = p*I(t)-c*V(t),
-            T'(t) = s_T - d_T*T(t) + r*T(t)*(V(t)/(V(t)+k_T)),
+            U'(t) = -beta * U(t) * V(t),
+            I'(t) = beta * U(t) * V(t) - d_I * T(t) * I(t),
+            V'(t) = p * I(t) - c * V(t),
+            T'(t) = s_T - d_T * T(t) + r * T(t) * (V(t) / (V(t) + k_T)),
             y1(t) = V(t),
             y2(t) = T(t)
         )
@@ -1214,10 +1214,10 @@ benchmarks = Dict(
     :Influenza_MB4 => Dict(
         :name => "Immune response to influenza (MB4 model)",
         :ode => @ODEmodel(
-            U'(t) = -beta*U(t)*V(t),
-            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
-            V'(t) = p*I(t)-c*V(t),
-            T'(t) = s_T - d_T*T(t) + r*T(t)*(V(t)/(V(t)+k_T)) - c_T*(1/(1+V(t)^2)),
+            U'(t) = -beta * U(t) * V(t),
+            I'(t) = beta * U(t) * V(t) - d_I * T(t) * I(t),
+            V'(t) = p * I(t) - c * V(t),
+            T'(t) = s_T - d_T * T(t) + r * T(t) * (V(t) / (V(t) + k_T)) - c_T * (1 / (1 + V(t)^2)),
             y1(t) = V(t),
             y2(t) = T(t)
         )
@@ -1225,10 +1225,10 @@ benchmarks = Dict(
     :Influenza_MD1 => Dict(
         :name => "Immune response to influenza (MD1 model)",
         :ode => @ODEmodel(
-            U'(t) = -beta*U(t)*V(t),
-            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
-            V'(t) = p*I(t)-c*V(t),
-            T'(t) = s_T - 0.011*T(t) + r*T(t)*V(t),
+            U'(t) = -beta * U(t) * V(t),
+            I'(t) = beta * U(t) * V(t) - d_I * T(t) * I(t),
+            V'(t) = p * I(t) - c * V(t),
+            T'(t) = s_T - 0.011 * T(t) + r * T(t) * V(t),
             y1(t) = V(t),
             y2(t) = T(t)
         )
@@ -1236,10 +1236,10 @@ benchmarks = Dict(
     :Influenza_MD2 => Dict(
         :name => "Immune response to influenza (MD2 model)",
         :ode => @ODEmodel(
-            U'(t) = -beta*U(t)*V(t),
-            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
-            V'(t) = p*I(t)-c*V(t),
-            T'(t) = s_T - 0.011*T(t) + r*T(t)*V(t) - c_T*(1/(1+V(t)^2)),
+            U'(t) = -beta * U(t) * V(t),
+            I'(t) = beta * U(t) * V(t) - d_I * T(t) * I(t),
+            V'(t) = p * I(t) - c * V(t),
+            T'(t) = s_T - 0.011 * T(t) + r * T(t) * V(t) - c_T * (1 / (1 + V(t)^2)),
             y1(t) = V(t),
             y2(t) = T(t)
         )
@@ -1247,10 +1247,10 @@ benchmarks = Dict(
     :Influenza_MD3 => Dict(
         :name => "Immune response to influenza (MD3 model)",
         :ode => @ODEmodel(
-            U'(t) = -beta*U(t)*V(t),
-            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
-            V'(t) = p*I(t)-c*V(t),
-            T'(t) = s_T - d_T*T(t) + r*T(t)*V(t),
+            U'(t) = -beta * U(t) * V(t),
+            I'(t) = beta * U(t) * V(t) - d_I * T(t) * I(t),
+            V'(t) = p * I(t) - c * V(t),
+            T'(t) = s_T - d_T * T(t) + r * T(t) * V(t),
             y1(t) = V(t),
             y2(t) = T(t)
         )
@@ -1258,10 +1258,10 @@ benchmarks = Dict(
     :Influenza_MD4 => Dict(
         :name => "Immune response to influenza (MD4 model)",
         :ode => @ODEmodel(
-            U'(t) = -beta*U(t)*V(t),
-            I'(t) = beta*U(t)*V(t)-d_I*T(t)*I(t),
-            V'(t) = p*I(t)-c*V(t),
-            T'(t) = s_T - d_T*T(t) + r*T(t)*V(t) - c_T*(1/(1+V(t)^2)),
+            U'(t) = -beta * U(t) * V(t),
+            I'(t) = beta * U(t) * V(t) - d_I * T(t) * I(t),
+            V'(t) = p * I(t) - c * V(t),
+            T'(t) = s_T - d_T * T(t) + r * T(t) * V(t) - c_T * (1 / (1 + V(t)^2)),
             y1(t) = V(t),
             y2(t) = T(t)
         )

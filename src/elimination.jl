@@ -3,10 +3,10 @@
 PairIntTuples = Tuple{Tuple{Vararg{Int}}, Tuple{Vararg{Int}}}
 
 function det_minor_expansion_inner(
-    m::MatElem{<:T},
-    discarded::PairIntTuples,
-    cache::Dict{PairIntTuples, T},
-) where {T <: RingElem}
+        m::MatElem{<:T},
+        discarded::PairIntTuples,
+        cache::Dict{PairIntTuples, T},
+    ) where {T <: RingElem}
     n = size(m, 1)
     if length(discarded[1]) == n
         return 1
@@ -71,7 +71,7 @@ function Bezout_matrix(f::P, g::P, var_elim::P) where {P <: MPolyRingElem}
         for j in 1:n
             M[i, j] = sum(
                 coeffs_f[j + k + 1] * coeffs_g[i - k] -
-                coeffs_g[j + k + 1] * coeffs_f[i - k] for k in 0:min(i - 1, n - j)
+                    coeffs_g[j + k + 1] * coeffs_f[i - k] for k in 0:min(i - 1, n - j)
             )
         end
     end
@@ -189,9 +189,9 @@ mutable struct ODEPointGenerator{P} <: PointGenerator{P}
     number_type::Type
 
     function ODEPointGenerator{P}(
-        ode::ODE{P},
-        big_ring::MPolyRing,
-    ) where {P <: MPolyRingElem}
+            ode::ODE{P},
+            big_ring::MPolyRing,
+        ) where {P <: MPolyRingElem}
         prec = length(ode.x_vars) + 1
         number_type = typeof(one(base_ring(big_ring)))
         return new(ode, big_ring, prec, Array{Dict{P, number_type}}[], number_type)
@@ -201,9 +201,9 @@ end
 # ------------------------------------------------------------------------------
 
 function Base.iterate(
-    gpg::ODEPointGenerator{P},
-    i::Int = 1,
-) where {P <: MPolyRingElem{<:FieldElem}}
+        gpg::ODEPointGenerator{P},
+        i::Int = 1,
+    ) where {P <: MPolyRingElem{<:FieldElem}}
     if i > length(gpg.cached_points)
         @debug "Generating new point on the variety"
         sample_max = i * 50
@@ -216,7 +216,7 @@ function Base.iterate(
                 Dict{P, Int}(x => rand(1:sample_max) for x in gpg.ode.x_vars)
             input_values = Dict{P, Array{Int, 1}}(
                 u => [rand(1:sample_max) for _ in 1:(gpg.precision)] for
-                u in gpg.ode.u_vars
+                    u in gpg.ode.u_vars
             )
             @debug "Computing a power series solution"
             ps_solution = undef
@@ -274,9 +274,9 @@ Output:
 - the polynomial that vanishes at the `generic_point_generator`
 """
 function choose(
-    polys::Array{P, 1},
-    generic_point_generator,
-) where {P <: MPolyRingElem{<:FieldElem}}
+        polys::Array{P, 1},
+        generic_point_generator,
+    ) where {P <: MPolyRingElem{<:FieldElem}}
     vars = gens(parent(polys[1]))
     for p in generic_point_generator
         # get accounts for the fact that the big ring may contain some auxiliary variables, e.g. rand_proj_var
@@ -306,11 +306,11 @@ Output:
 - `polynomial` - the desired factor of the resultant of `f` and `g`
 """
 @timeit _to function eliminate_var(
-    f::P,
-    g::P,
-    var_elim::P,
-    generic_point_generator,
-) where {P <: MPolyRingElem{<:FieldElem}}
+        f::P,
+        g::P,
+        var_elim::P,
+        generic_point_generator,
+    ) where {P <: MPolyRingElem{<:FieldElem}}
     # Linear comb
     while f != 0 && g != 0
         if Nemo.degree(f, var_elim) > Nemo.degree(g, var_elim)
@@ -358,11 +358,11 @@ Output:
     if gcd_deg > 1
         f = sum(
             coeff(f, [var_elim], [gcd_deg * i]) * (var_elim^i) for
-            i in 0:(Nemo.degree(f, var_elim) ÷ gcd_deg)
+                i in 0:(Nemo.degree(f, var_elim) ÷ gcd_deg)
         )
         g = sum(
             coeff(g, [var_elim], [gcd_deg * i]) * (var_elim^i) for
-            i in 0:(Nemo.degree(g, var_elim) ÷ gcd_deg)
+                i in 0:(Nemo.degree(g, var_elim) ÷ gcd_deg)
         )
     end
 

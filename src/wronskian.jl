@@ -24,7 +24,7 @@ function monomial_compress(io_equation, params::Array{<:MPolyRingElem, 1})
     params_xs = isempty(params) ? empty(params) : gens(parent(first(params)))
     other_vars = [
         v for v in gens(parent(io_equation)) if
-        !(var_to_str(v) in map(p -> var_to_str(p, xs = params_xs), params))
+            !(var_to_str(v) in map(p -> var_to_str(p, xs = params_xs), params))
     ]
     coeffdict = extract_coefficients(io_equation, other_vars)
     expvect = collect(keys(coeffdict))
@@ -198,9 +198,9 @@ Output:
 Computes the Wronskians of `io_equations`
 """
 @timeit _to function wronskian(
-    io_equations::Dict{P, P},
-    ode::ODE{P},
-) where {P <: MPolyRingElem}
+        io_equations::Dict{P, P},
+        ode::ODE{P},
+    ) where {P <: MPolyRingElem}
     @debug "Compressing monomials"
     termlists = [monomial_compress(ioeq, ode)[2] for ioeq in values(io_equations)]
     @debug "Matrix sizes $(map(length, termlists))"
@@ -227,7 +227,7 @@ Computes the Wronskians of `io_equations`
     )
 
     @debug "Computing the derivatives of the solution"
-    ps_ext = Dict{MPolyRingElem, Nemo.fpAbsPowerSeriesRingElem}()# Generic.AbsSeries}()
+    ps_ext = Dict{MPolyRingElem, Nemo.fpAbsPowerSeriesRingElem}() # Generic.AbsSeries}()
     for v in vcat(ode_red.y_vars, ode_red.u_vars)
         cur_ps = ps[v]
         for i in 0:length(ode_red.x_vars)

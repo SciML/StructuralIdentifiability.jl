@@ -1,4 +1,4 @@
-# K. Roosa and G. Chowell. 
+# K. Roosa and G. Chowell.
 # Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models
 # https://doi.org/10.1186/s12976-018-0097-6
 # Model 2

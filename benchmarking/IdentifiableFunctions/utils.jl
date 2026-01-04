@@ -69,7 +69,7 @@ function parse_keywords(keywords)
         nt = eval(Meta.parse(kwset))
         push!(kws_named_tuples, nt)
     end
-    kws_named_tuples
+    return kws_named_tuples
 end
 
 function keywords_to_global_id(keywords)
@@ -99,19 +99,19 @@ function keywords_to_global_id(keywords)
             end
         end
     end
-    id
+    return id
 end
 
 function timings_filename(kwid)
-    generic_filename("timings", kwid)
+    return generic_filename("timings", kwid)
 end
 
 function result_filename(kwid)
-    generic_filename("result", kwid)
+    return generic_filename("result", kwid)
 end
 
 function data_filename(kwid)
-    generic_filename("data", kwid)
+    return generic_filename("data", kwid)
 end
 
 function generic_filename(name, kwid)
@@ -121,5 +121,5 @@ function generic_filename(name, kwid)
         "$(name)_$kwid"
     end
     str = replace(str, ":" => "")
-    str
+    return str
 end

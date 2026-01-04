@@ -39,9 +39,9 @@ over rationals.
 The `extra_relations` allows adding more polynomials to the generators (not affecting the saturation).
 """
 function check_primality(
-    polys::Dict{QQMPolyRingElem, QQMPolyRingElem},
-    extra_relations::Array{QQMPolyRingElem, 1},
-)
+        polys::Dict{QQMPolyRingElem, QQMPolyRingElem},
+        extra_relations::Array{QQMPolyRingElem, 1},
+    )
     leaders = collect(keys(polys))
     ring = parent(leaders[1])
 

@@ -27,13 +27,13 @@ This functions takes the following optional arguments:
 
 """
 function _find_identifiable_functions_kic(
-    ode::ODE{T},
-    known_ic::Vector{<:ExtendedFraction{T}};
-    prob_threshold::Float64 = 0.99,
-    seed = 42,
-    simplify = :standard,
-    rational_interpolator = :VanDerHoevenLecerf,
-) where {T <: MPolyRingElem{Nemo.QQFieldElem}}
+        ode::ODE{T},
+        known_ic::Vector{<:ExtendedFraction{T}};
+        prob_threshold::Float64 = 0.99,
+        seed = 42,
+        simplify = :standard,
+        rational_interpolator = :VanDerHoevenLecerf,
+    ) where {T <: MPolyRingElem{Nemo.QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
     half_p = 0.5 + prob_threshold / 2
@@ -57,7 +57,7 @@ function _find_identifiable_functions_kic(
         rational_interpolator = rational_interpolator,
     )
 
-    @info "The search for identifiable functions with known initial conditions concluded in $((time_ns() - runtime_start) / 1e9) seconds"
+    @info "The search for identifiable functions with known initial conditions concluded in $((time_ns() - runtime_start) / 1.0e9) seconds"
 
     return id_funcs
 end
@@ -79,11 +79,11 @@ The function returns an (ordered) dictionary from the functions to check to thei
 (one of `:nonidentifiable`, `:locally`, `:globally`).
 """
 function _assess_identifiability_kic(
-    ode::ODE{P},
-    known_ic::Vector{<:ExtendedFraction{P}};
-    funcs_to_check = Vector(),
-    prob_threshold::Float64 = 0.99,
-) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
+        ode::ODE{P},
+        known_ic::Vector{<:ExtendedFraction{P}};
+        funcs_to_check = Vector(),
+        prob_threshold::Float64 = 0.99,
+    ) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
     runtime_start = time_ns()
     if length(funcs_to_check) == 0
         funcs_to_check = vcat(ode.x_vars, ode.parameters)
@@ -111,6 +111,6 @@ function _assess_identifiability_kic(
             result[f] = :locally
         end
     end
-    @info "Assessing identifiability with known initial conditions concluded in $((time_ns() - runtime_start) / 1e9) seconds"
+    @info "Assessing identifiability with known initial conditions concluded in $((time_ns() - runtime_start) / 1.0e9) seconds"
     return result
 end

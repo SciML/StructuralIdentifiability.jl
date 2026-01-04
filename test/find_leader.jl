@@ -19,6 +19,6 @@
     @test find_leader([y1_0, y1_1, y2_0, y2_1], pbr) == y2_1
     l = find_leader([y1_2, y2_1], pbr)
     @test (pbr.y_names[1] == "y1(t)" && l == y2_1) ||
-          (pbr.y_names[1] == "y2(t)" && l == y1_2)
+        (pbr.y_names[1] == "y2(t)" && l == y1_2)
     @test find_leader([y1_2, y2_0], pbr) == y1_2
 end

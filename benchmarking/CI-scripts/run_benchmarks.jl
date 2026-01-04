@@ -25,7 +25,7 @@ import Primes
 import Nemo
 
 function nemo_make_prime_finite_field(p)
-    if p < typemax(UInt)
+    return if p < typemax(UInt)
         Nemo.fpField(convert(UInt, p), false)
     else
         Nemo.FpField(Nemo.ZZRingElem(p), false)
@@ -33,11 +33,11 @@ function nemo_make_prime_finite_field(p)
 end
 
 function perform_operation(
-    ode,
-    fun = StructuralIdentifiability.assess_identifiability,
-    trials = 3;
-    kws...,
-)
+        ode,
+        fun = StructuralIdentifiability.assess_identifiability,
+        trials = 3;
+        kws...,
+    )
     @assert fun in [
         StructuralIdentifiability.assess_identifiability,
         StructuralIdentifiability.assess_local_identifiability,
@@ -50,7 +50,7 @@ function perform_operation(
         time = @elapsed fun(ode; kws...)
         push!(times, time)
     end
-    times
+    return times
 end
 
 fun_name = "assess_identifiability"
@@ -124,4 +124,4 @@ for m in [:Goodwin, :SEAIJRC, :SEUIR]
 end
 
 stopwatch = time_ns() - stopwatch
-push!(suite, (problem_name = "total", type = :time, result = [stopwatch / 1e9]))
+push!(suite, (problem_name = "total", type = :time, result = [stopwatch / 1.0e9]))

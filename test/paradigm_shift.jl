@@ -37,19 +37,19 @@ function test_reparametrization(old_ode, new_ode, var_mapping, implicit_relation
     new_inputs = new_ode.u_vars
     new_param_spec = Dict(
         new_param => StructuralIdentifiability.eval_at_dict(
-            var_mapping[new_param],
-            old_param_spec,
-        ) for new_param in new_params
+                var_mapping[new_param],
+                old_param_spec,
+            ) for new_param in new_params
     )
     new_var_ic = Dict(
         new_var => StructuralIdentifiability.eval_at_dict(
-            var_mapping[new_var],
-            merge(old_param_spec, old_var_ic),
-        ) for new_var in new_vars
+                var_mapping[new_var],
+                merge(old_param_spec, old_var_ic),
+            ) for new_var in new_vars
     )
     new_input_ts = Dict{eltype(new_vars), Vector{Nemo.QQFieldElem}}(
         new_input => old_input_ts[numerator(var_mapping[new_input])] for
-        new_input in new_inputs
+            new_input in new_inputs
     )
 
     new_solutions = StructuralIdentifiability.power_series_solution(
@@ -63,7 +63,7 @@ function test_reparametrization(old_ode, new_ode, var_mapping, implicit_relation
     # NOTE: test that y's are mapped one to one!
     @test map(string, [var_mapping[output] for output in new_ode.y_vars]) ≡ map(string, old_ode.y_vars)
 
-    # Test IO behavior 
+    # Test IO behavior
     for var in vcat(new_ode.y_vars)
         new_solution = new_solutions[var]
         old_solution = old_solutions[numerator(var_mapping[var])]
@@ -73,7 +73,7 @@ function test_reparametrization(old_ode, new_ode, var_mapping, implicit_relation
     # Test state dynamics
     projected_solutions = Dict(
         var => StructuralIdentifiability.eval_at_dict(var_mapping[var], old_solutions)
-        for var in new_ode.x_vars
+            for var in new_ode.x_vars
     )
     for var in vcat(new_ode.x_vars)
         new_solution = new_solutions[var]
@@ -185,7 +185,7 @@ cases = [
     (
         # Pivastatin
         # Reparametrizes into a 4-dimensional nonlinear model with no algebraic
-        # relations -- how is this even legal?? 
+        # relations -- how is this even legal??
         ode = StructuralIdentifiability.@ODEmodel(
             x1'(t) = k3 * x3(t) - r3 * x1(t) - k1 * x1(t) * (T0 - x2(t)) + r1 * x2(t),
             x2'(t) = k1 * x1(t) * (T0 - x2(t)) - (r1 + k2) * x2(t),

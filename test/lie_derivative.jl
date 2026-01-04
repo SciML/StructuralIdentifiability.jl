@@ -5,7 +5,7 @@
         y(t) = x1(t)
     )
     @test lie_derivative(x1 + x2, ode) ==
-          ((a * x1 + b * u) * (1 - x1 - x2) + 1) // (1 - x1 - x2)
+        ((a * x1 + b * u) * (1 - x1 - x2) + 1) // (1 - x1 - x2)
     @test lie_derivative(one(x1), ode) == zero(x1)
     @test lie_derivative(zero(x1), ode) == zero(x1)
 

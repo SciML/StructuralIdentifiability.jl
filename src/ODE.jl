@@ -15,12 +15,12 @@ struct ODE{P} # P is the type of polynomials in the rhs of the ODE system
     y_equations::Dict{P, <:ExtendedFraction{P}}
 
     function ODE{P}(
-        x_vars::Array{P, 1},
-        y_vars::Array{P, 1},
-        x_eqs::Dict{P, <:ExtendedFraction{P}},
-        y_eqs::Dict{P, <:ExtendedFraction{P}},
-        inputs::Array{P, 1},
-    ) where {P <: MPolyRingElem{<:FieldElem}}
+            x_vars::Array{P, 1},
+            y_vars::Array{P, 1},
+            x_eqs::Dict{P, <:ExtendedFraction{P}},
+            y_eqs::Dict{P, <:ExtendedFraction{P}},
+            inputs::Array{P, 1},
+        ) where {P <: MPolyRingElem{<:FieldElem}}
         # Initialize ODE
         # x_eqs is a dictionary x_i => f_i(x, u, params)
         # y_eqs is a dictionary y_i => g_i(x, u, params)
@@ -42,14 +42,14 @@ struct ODE{P} # P is the type of polynomials in the rhs of the ODE system
             v -> (!(v in x_vars) && !(v in u_vars) && !(v in y_vars)),
             gens(poly_ring),
         )
-        new{P}(poly_ring, x_vars, y_vars, u_vars, parameters, x_eqs, y_eqs)
+        return new{P}(poly_ring, x_vars, y_vars, u_vars, parameters, x_eqs, y_eqs)
     end
 
     function ODE{P}(
-        x_eqs::Dict{P, <:ExtendedFraction{P}},
-        y_eqs::Dict{P, <:ExtendedFraction{P}},
-        inputs::Array{P, 1},
-    ) where {P <: MPolyRingElem{<:FieldElem}}
+            x_eqs::Dict{P, <:ExtendedFraction{P}},
+            y_eqs::Dict{P, <:ExtendedFraction{P}},
+            inputs::Array{P, 1},
+        ) where {P <: MPolyRingElem{<:FieldElem}}
         x_vars = collect(keys(x_eqs))
         y_vars = collect(keys(y_eqs))
         return ODE{P}(x_vars, y_vars, x_eqs, y_eqs, inputs)
@@ -63,9 +63,9 @@ end
 #------------------------------------------------------------------------------
 
 function add_outputs(
-    ode::ODE{P},
-    extra_y::Dict{String, <:RingElem},
-) where {P <: MPolyRingElem}
+        ode::ODE{P},
+        extra_y::Dict{String, <:RingElem},
+    ) where {P <: MPolyRingElem}
     new_var_names =
         vcat(collect(map(var_to_str, gens(ode.poly_ring))), collect(keys(extra_y)))
     new_ring, new_vars = Nemo.polynomial_ring(base_ring(ode.poly_ring), new_var_names)
@@ -73,7 +73,7 @@ function add_outputs(
     new_x = Array{P, 1}([parent_ring_change(x, new_ring) for x in ode.x_vars])
     new_x_eqs = Dict{P, ExtendedFraction{P}}(
         parent_ring_change(x, new_ring) => parent_ring_change(f, new_ring) for
-        (x, f) in ode.x_equations
+            (x, f) in ode.x_equations
     )
     new_y = Array{P, 1}([parent_ring_change(y, new_ring) for y in ode.y_vars])
     for y in keys(extra_y)
@@ -81,7 +81,7 @@ function add_outputs(
     end
     new_y_eqs = Dict{P, ExtendedFraction{P}}(
         parent_ring_change(y, new_ring) => parent_ring_change(g, new_ring) for
-        (y, g) in ode.y_equations
+            (y, g) in ode.y_equations
     )
     extra_y_eqs = Dict{P, ExtendedFraction{P}}(
         str_to_var(y, new_ring) => parent_ring_change(g, new_ring) for (y, g) in extra_y
@@ -104,9 +104,9 @@ Output:
 - new ode with the parameters in param_values plugged with the given numbers
 """
 function set_parameter_values(
-    ode::ODE{P},
-    param_values::Dict{P, T},
-) where {T <: FieldElem, P <: MPolyRingElem{T}}
+        ode::ODE{P},
+        param_values::Dict{P, T},
+    ) where {T <: FieldElem, P <: MPolyRingElem{T}}
     new_vars =
         map(var_to_str, [v for v in gens(ode.poly_ring) if !(v in keys(param_values))])
     small_ring, small_vars = Nemo.polynomial_ring(base_ring(ode.poly_ring), new_vars)
@@ -117,11 +117,11 @@ function set_parameter_values(
     return ODE{P}(
         Dict{P, ExtendedFraction{P}}(
             eval_at_dict(v, eval_dict) => eval_at_dict(f, eval_dict) for
-            (v, f) in ode.x_equations
+                (v, f) in ode.x_equations
         ),
         Dict{P, ExtendedFraction{P}}(
             eval_at_dict(v, eval_dict) => eval_at_dict(f, eval_dict) for
-            (v, f) in ode.y_equations
+                (v, f) in ode.y_equations
         ),
         [eval_at_dict(u, eval_dict) for u in ode.u_vars],
     )
@@ -140,9 +140,9 @@ function _to_rational(x)
 end
 
 function set_parameter_values(
-    ode::ODE{P},
-    param_values::Dict{P, <:Number},
-) where {P <: MPolyRingElem}
+        ode::ODE{P},
+        param_values::Dict{P, <:Number},
+    ) where {P <: MPolyRingElem}
     new_values = Dict{P, QQFieldElem}(x => _to_rational(v) for (x, v) in param_values)
     return set_parameter_values(ode, new_values)
 end
@@ -163,12 +163,12 @@ Output:
 - computes a power series solution with precision prec presented as a dictionary variable => corresponding coordinate of the solution
 """
 function power_series_solution(
-    ode::ODE{P},
-    param_values::Dict{P, T},
-    initial_conditions::Dict{P, T},
-    input_values::Dict{P, Array{T, 1}},
-    prec::Int,
-) where {T <: FieldElem, P <: MPolyRingElem{T}}
+        ode::ODE{P},
+        param_values::Dict{P, T},
+        initial_conditions::Dict{P, T},
+        input_values::Dict{P, Array{T, 1}},
+        prec::Int,
+    ) where {T <: FieldElem, P <: MPolyRingElem{T}}
     new_varnames = map(var_to_str, vcat(ode.x_vars, ode.u_vars))
     append!(new_varnames, map(v -> var_to_str(v) * "_dot", ode.x_vars))
 
@@ -203,12 +203,12 @@ end
 #------------------------------------------------------------------------------
 
 function power_series_solution(
-    ode::ODE{P},
-    param_values::Dict{P, Int},
-    initial_conditions::Dict{P, Int},
-    input_values::Dict{P, Array{Int, 1}},
-    prec::Int,
-) where {P <: MPolyRingElem{<:FieldElem}}
+        ode::ODE{P},
+        param_values::Dict{P, Int},
+        initial_conditions::Dict{P, Int},
+        input_values::Dict{P, Array{Int, 1}},
+        prec::Int,
+    ) where {P <: MPolyRingElem{<:FieldElem}}
     bring = base_ring(ode.poly_ring)
     return power_series_solution(
         ode,
@@ -254,9 +254,9 @@ Output: variables and parameters are renamed according to the correspondce given
 if a variable is not given any new name, it keeps the name it had.
 """
 function rename_variables(
-    ode::ODE{P},
-    transform::Dict{String, String},
-) where {P <: MPolyRingElem{<:FieldElem}}
+        ode::ODE{P},
+        transform::Dict{String, String},
+    ) where {P <: MPolyRingElem{<:FieldElem}}
     new_varnames = map(var_to_str, gens(parent(ode)))
     for (i, old_name) in enumerate(new_varnames)
         if old_name in keys(transform)
@@ -295,6 +295,7 @@ function Base.show(io::IO, ode::ODE)
         print(io, ode.y_equations[y])
         print(io, "\n")
     end
+    return
 end
 
 #------------------------------------------------------------------------------

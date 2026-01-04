@@ -1,4 +1,4 @@
-# Demignot, S., D., D., 
+# Demignot, S., D., D.,
 # Effect of prosthetic sugar groups on the pharmacokinetics of glucose-oxidase
 # https://pubmed.ncbi.nlm.nih.gov/2855567/
 using StructuralIdentifiability

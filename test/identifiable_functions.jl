@@ -24,14 +24,14 @@ ident_funcs =
 
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
-# Example 2 from 
+# Example 2 from
 # "On Global Identifiability for Arbitrary Model Parametrizations",
 # DOI: 10.1016/0005-1098(94)90029-9
 ode = StructuralIdentifiability.@ODEmodel(x1'(t) = Θ * x2(t)^2, x2'(t) = u(t), y(t) = x1(t))
 ident_funcs = [Θ]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
-# Example 4 from 
+# Example 4 from
 # "On Global Identifiability for Arbitrary Model Parametrizations",
 # DOI: 10.1016/0005-1098(94)90029-9
 ode = StructuralIdentifiability.@ODEmodel(
@@ -55,7 +55,7 @@ ode = StructuralIdentifiability.@ODEmodel(
 ident_funcs = [(a01 * a12), (a01 + a12 + a21)]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
-# TODO: uncomment when identifiability can handle models with no states 
+# TODO: uncomment when identifiability can handle models with no states
 # ode = StructuralIdentifiability.@ODEmodel(
 #     y(t) = a*u(t)
 # )
@@ -100,7 +100,7 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 # Example 3 from
 # "On Structural Identifiability",
 # DOI: https://doi.org/10.1016/0025-5564(70)90132-X
-# 
+#
 # 3 compartments:
 #   x1 <--> x2 <--> x3
 # If we observe x1 and control x3, then only some functions of parameters
@@ -175,15 +175,15 @@ ode = StructuralIdentifiability.@ODEmodel(
 )
 ident_funcs =
     [
-        k12 * k13 + k12 * k14 + k13 * k14,
-        k01,
-        k21 + k31 + k41,
-        k12 + k13 + k14,
-        k21 * k31 * k41,
-        k12 * k31 + k12 * k41 + k13 * k21 + k13 * k41 + k14 * k21 + k14 * k31,
-        k21 * k31 + k21 * k41 + k31 * k41,
-        k12 * k13 * k14,
-    ] .// one(k01)
+    k12 * k13 + k12 * k14 + k13 * k14,
+    k01,
+    k21 + k31 + k41,
+    k12 + k13 + k14,
+    k21 * k31 * k41,
+    k12 * k31 + k12 * k41 + k13 * k21 + k13 * k41 + k14 * k21 + k14 * k31,
+    k21 * k31 + k21 * k41 + k31 * k41,
+    k12 * k13 * k14,
+] .// one(k01)
 # Too slow with hybrid strategy :(
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
@@ -191,20 +191,20 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 ode = StructuralIdentifiability.@ODEmodel(
     x5'(t) =
         (
-            k5 * k8 * x4(t) + k5 * x6(t) * x4(t) + k5 * x5(t) * x4(t) - k6 * x5(t) * k7 - x5(t) * k7 * x4(t)
-        ) // (
-            k8 * k6 + k8 * x4(t) + k6 * x6(t) + k6 * x5(t) + x6(t) * x4(t) + x5(t) * x4(t)
-        ),
+        k5 * k8 * x4(t) + k5 * x6(t) * x4(t) + k5 * x5(t) * x4(t) - k6 * x5(t) * k7 - x5(t) * k7 * x4(t)
+    ) // (
+        k8 * k6 + k8 * x4(t) + k6 * x6(t) + k6 * x5(t) + x6(t) * x4(t) + x5(t) * x4(t)
+    ),
     x7'(t) = (k9 * k10 * x6(t) - k9 * x6(t)^2) // k10,
     x4'(t) = (-k5 * x4(t)) // (k6 + x4(t)),
     x6'(t) =
         (
-            -k8 * k9 * k10 * x6(t) + k8 * k9 * x6(t)^2 - k9 * k10 * x6(t)^2 -
+        -k8 * k9 * k10 * x6(t) + k8 * k9 * x6(t)^2 - k9 * k10 * x6(t)^2 -
             k9 * k10 * x6(t) * x5(t) +
             k9 * x6(t)^3 +
             k9 * x6(t)^2 * x5(t) +
             k10 * x5(t) * k7
-        ) // (k8 * k10 + k10 * x6(t) + k10 * x5(t)),
+    ) // (k8 * k10 + k10 * x6(t) + k10 * x5(t)),
     y1(t) = x4(t),
     y2(t) = x5(t)
 )
@@ -241,7 +241,7 @@ ident_funcs = [
     (dr^2 + d^2 + 2 * d * a + a^2) // (dr * d + dr * a),
     (e * dr - e * d + rR * a + dr * g - d * g - r * a) // (dr - d),
     (e * dr^2 - e * dr * d + rR * dr * a + dr * d * g - dr * r * a - d^2 * g) //
-    (dr^2 + dr * a - d^2 - d * a),
+        (dr^2 + dr * a - d^2 - d * a),
 ]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs))
 
@@ -252,7 +252,7 @@ ode = StructuralIdentifiability.@ODEmodel(
     P0'(t) = P1(t),
     P5'(t) =
         (
-            -P0(t) * beta_SI * phi * Mar * Ks * siga2 + P0(t) * beta_SI * Mar * Ks * siga2 - P0(t) * phi * M * Mar * Ks * beta_SA +
+        -P0(t) * beta_SI * phi * Mar * Ks * siga2 + P0(t) * beta_SI * Mar * Ks * siga2 - P0(t) * phi * M * Mar * Ks * beta_SA +
             P0(t) * phi * M * Ks * siga2 * beta_SA +
             P0(t) * M * Mar * Ks * beta_SA - P1(t) * beta_SI * phi * Mar * siga2 -
             P1(t) * beta_SI * phi * Ks * siga2 +
@@ -272,10 +272,10 @@ ode = StructuralIdentifiability.@ODEmodel(
             M * beta * siga2 +
             P2(t) * Mar * beta_SA +
             P2(t) * Ks * beta_SA
-        ) // (phi * M * siga2 - M * siga2),
+    ) // (phi * M * siga2 - M * siga2),
     P4'(t) =
         (
-            -siga1 * P0(t)^2 * beta_SI * phi * M * Mar * Ks^2 * siga2^2 +
+        -siga1 * P0(t)^2 * beta_SI * phi * M * Mar * Ks^2 * siga2^2 +
             siga1 * P0(t)^2 * beta_SI * M * Mar * Ks^2 * siga2^2 -
             siga1 * P0(t)^2 * phi * M^2 * Mar * Ks^2 * siga2 * beta_SA +
             siga1 * P0(t)^2 * phi * M^2 * Ks^2 * siga2^2 * beta_SA +
@@ -709,7 +709,7 @@ ode = StructuralIdentifiability.@ODEmodel(
             P4(t) * P2(t) * Ks * beta_SA +
             P2(t)^2 * Mar * Ks * siga2 * beta_SA +
             P2(t)^2 * Ks^2 * siga2 * beta_SA
-        ) // (phi * M * siga2 - M * siga2),
+    ) // (phi * M * siga2 - M * siga2),
     P1'(t) = P2(t),
     P2'(t) = P3(t),
     y(t) = P0(t)
@@ -722,27 +722,27 @@ ident_funcs = [
     (siga1 * phi - siga1 - phi * Mar + Mar) // (siga1 * phi * beta_SA),
     (
         siga1 * beta_SA + beta_SI * phi * siga2 + phi * Mar * beta_SA -
-        phi * siga2 * beta_SA - Mar * beta_SA
+            phi * siga2 * beta_SA - Mar * beta_SA
     ) // (phi * M * siga2),
     (
         siga1 * phi * M * siga2 - siga1 * M * siga2 - phi * M * Mar * siga2 +
-        M * Mar * siga2
+            M * Mar * siga2
     ) // (siga1 * beta_SA + phi * Mar * beta_SA - Mar * beta_SA),
     (
         siga1 * beta_SI * phi * siga2 - siga1 * beta_SI * siga2 -
-        siga1 * phi * siga2 * beta_SA - siga1 * M * beta_SA -
-        beta_SI * phi * Mar * siga2 + beta_SI * Mar * siga2 - phi * M * Mar * beta_SA +
-        M * Mar * beta_SA
+            siga1 * phi * siga2 * beta_SA - siga1 * M * beta_SA -
+            beta_SI * phi * Mar * siga2 + beta_SI * Mar * siga2 - phi * M * Mar * beta_SA +
+            M * Mar * beta_SA
     ) // (siga1 * beta_SA + phi * Mar * beta_SA - Mar * beta_SA),
     (
         siga1^2 * beta_SA + siga1 * beta_SI * phi * siga2 - siga1 * beta_SI * siga2 +
-        siga1 * phi * Mar * beta_SA - siga1 * phi * siga2 * beta_SA -
-        siga1 * Mar * beta_SA +
-        siga1 * siga2 * beta_SA +
-        beta_SI * phi * M * siga2 - beta_SI * phi * Mar * siga2 +
-        beta_SI * phi * siga2^2 +
-        beta_SI * Mar * siga2 +
-        phi * Mar * siga2 * beta_SA - phi * siga2^2 * beta_SA - Mar * siga2 * beta_SA
+            siga1 * phi * Mar * beta_SA - siga1 * phi * siga2 * beta_SA -
+            siga1 * Mar * beta_SA +
+            siga1 * siga2 * beta_SA +
+            beta_SI * phi * M * siga2 - beta_SI * phi * Mar * siga2 +
+            beta_SI * phi * siga2^2 +
+            beta_SI * Mar * siga2 +
+            phi * Mar * siga2 * beta_SA - phi * siga2^2 * beta_SA - Mar * siga2 * beta_SA
     ) // (phi * M * siga2),
 ]
 # Really large and takes a lot of time, so commented
@@ -894,7 +894,7 @@ ident_funcs = [
 ]
 push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
 
-# Bruno2016 model 
+# Bruno2016 model
 ode = StructuralIdentifiability.@ODEmodel(
     beta'(t) = -kbeta * beta(t),
     cry'(t) = -cry(t) * kcrybeta - cry(t) * kcryOH,
@@ -909,7 +909,7 @@ ode = StructuralIdentifiability.@ODEmodel(
 ident_funcs = [beta10, beta, kbeta, kbeta10, cry * kcryOH, kcrybeta + kcryOH]
 push!(test_cases, (ode = ode, with_states = true, ident_funcs = ident_funcs))
 
-# STAT-5 model from 
+# STAT-5 model from
 # MODELING THE NONLINEAR DYNAMICS OF CELLULAR SIGNAL TRANSDUCTION
 # DOI: https://doi.org/10.1142/S0218127404010461
 ode = StructuralIdentifiability.@ODEmodel(
@@ -980,20 +980,20 @@ ident_funcs = [
     v,
     k12 + k31,
     k02 + k03 + k13 - k31,
-    k12*k21 + k13*k31,
-    k02*k03 + k02*k13 + k03*k12 + k12*k13,
-    k02*k13*k31 + k03*k12*k21 + k12*k13*k21 + k12*k13*k31,
+    k12 * k21 + k13 * k31,
+    k02 * k03 + k02 * k13 + k03 * k12 + k12 * k13,
+    k02 * k13 * k31 + k03 * k12 * k21 + k12 * k13 * k21 + k12 * k13 * k31,
 ]
 ident_funcs_states = [
     v,
     x1,
     k12 + k31,
     k02 + k03 + k13 - k31,
-    k12*k21 + k13*k31,
-    x2*k12 + x3*k13,
-    k02*k03 + k02*k13 + k03*k12 + k12*k13,
-    k02*k13*k31 + k03*k12*k21 + k12*k13*k21 + k12*k13*k31,
-    x2*k03*k12 + x2*k12*k13 + x3*k02*k13 + x3*k12*k13,
+    k12 * k21 + k13 * k31,
+    x2 * k12 + x3 * k13,
+    k02 * k03 + k02 * k13 + k03 * k12 + k12 * k13,
+    k02 * k13 * k31 + k03 * k12 * k21 + k12 * k13 * k21 + k12 * k13 * k31,
+    x2 * k03 * k12 + x2 * k12 * k13 + x3 * k02 * k13 + x3 * k12 * k13,
 ]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
@@ -1007,9 +1007,9 @@ ode = @ODEmodel(
     y1(t) = x1(t),
     y2(t) = x2(t)
 )
-ident_funcs = [a31, a13, a03 + a43, a04 + a24 + a42, a24*a43, a04*a42]
+ident_funcs = [a31, a13, a03 + a43, a04 + a24 + a42, a24 * a43, a04 * a42]
 ident_funcs_states =
-    [a31, a13, x3, x2, x1, a03 + a43, a04 + a24 + a42, a24*a43, a04*a42, x2*a42 - x4*a24]
+    [a31, a13, x3, x2, x1, a03 + a43, a04 + a24 + a42, a24 * a43, a04 * a42, x2 * a42 - x4 * a24]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
 
@@ -1019,8 +1019,8 @@ ode = @ODEmodel(
     I'(t) = I(t) * (beta / N * S(t) - mu - nu),
     y(t) = k * I(t)
 )
-ident_funcs = [nu, mu, beta, N*k]
-ident_funcs_states = [nu, mu, beta, N*k, I*k, S*k]
+ident_funcs = [nu, mu, beta, N * k]
+ident_funcs_states = [nu, mu, beta, N * k, I * k, S * k]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
 
@@ -1030,8 +1030,8 @@ ode = @ODEmodel(
     x2'(t) = p3 * x2(t) * (1 - p4 * x2(t)) + p5 * x1(t) * x2(t),
     y(t) = x1(t)
 )
-ident_funcs = [p5, p3, p1, p2//p4]
-ident_funcs_states = [p5, p3, p1, x1, x2*p4, p2//p4]
+ident_funcs = [p5, p3, p1, p2 // p4]
+ident_funcs_states = [p5, p3, p1, x1, x2 * p4, p2 // p4]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
 
@@ -1049,10 +1049,10 @@ ident_funcs = [
     d,
     beta,
     c + k1 + mu1 + mu2,
-    k2*q2,
-    c*k1 + c*mu1 + c*mu2 + k1*mu2 + mu1*mu2,
-    c*k1*mu2 + c*mu1*mu2,
-    k1*k2*q1 + k1*k2*q2 + k2*mu1*q2,
+    k2 * q2,
+    c * k1 + c * mu1 + c * mu2 + k1 * mu2 + mu1 * mu2,
+    c * k1 * mu2 + c * mu1 * mu2,
+    k1 * k2 * q1 + k1 * k2 * q2 + k2 * mu1 * q2,
 ]
 ident_funcs_states = [
     s,
@@ -1061,12 +1061,12 @@ ident_funcs_states = [
     x4,
     x1,
     c + k1 + mu1 + mu2,
-    k2*q2,
-    x3*k2 - x4*c,
-    c*k1 + c*mu1 + c*mu2 + k1*mu2 + mu1*mu2,
-    c*k1*mu2 + c*mu1*mu2,
-    k1*k2*q1 + k1*k2*q2 + k2*mu1*q2,
-    x2*k1*k2 + x3*k1*k2 + x3*k2*mu1 + x4*k1*mu2 + x4*mu1*mu2,
+    k2 * q2,
+    x3 * k2 - x4 * c,
+    c * k1 + c * mu1 + c * mu2 + k1 * mu2 + mu1 * mu2,
+    c * k1 * mu2 + c * mu1 * mu2,
+    k1 * k2 * q1 + k1 * k2 * q2 + k2 * mu1 * q2,
+    x2 * k1 * k2 + x3 * k1 * k2 + x3 * k2 * mu1 + x4 * k1 * mu2 + x4 * mu1 * mu2,
 ]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
@@ -1089,7 +1089,7 @@ ident_funcs = [
     a + h + r2 + s,
     a * h + a * r2 + h * s + r2 * s,
     (d * h * s) // (a * c1 + c2 * s),
-    (a * c1 * h + a * c1 * r2 + c2 * r1 * s)//(a * c1 + c2 * s),
+    (a * c1 * h + a * c1 * r2 + c2 * r1 * s) // (a * c1 + c2 * s),
 ]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
 

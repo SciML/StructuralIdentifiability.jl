@@ -1,6 +1,5 @@
-
 function dump_results(file, key)
-    open(file, "w") do out
+    return open(file, "w") do out
         println(out, key)
         for problem in suite
             problem_name = problem.problem_name

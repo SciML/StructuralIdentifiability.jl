@@ -2,12 +2,12 @@ if GROUP == "All" || GROUP == "Core"
     @testset "Computing variations around a sequence solution" begin
         # Computing sensitivities directly be explicitly writing down Lie derivatives
         function use_lie_derivatives(
-            dds::StructuralIdentifiability.DDS{P},
-            params::Dict{P, T},
-            ic::Dict{P, T},
-            input_values::Dict{P, Array{T, 1}},
-            num_terms::Int,
-        ) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
+                dds::StructuralIdentifiability.DDS{P},
+                params::Dict{P, T},
+                ic::Dict{P, T},
+                input_values::Dict{P, Array{T, 1}},
+                num_terms::Int,
+            ) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
             newvars = [var_to_str(v) for v in gens(parent(dds))]
             append!(
                 newvars,
@@ -20,30 +20,30 @@ if GROUP == "All" || GROUP == "Core"
             explicit_sol = merge(
                 Dict(
                     parent_ring_change(x, R) => Vector{Any}([parent_ring_change(x, R)])
-                    for (x, eq) in x_equations(dds)
+                        for (x, eq) in x_equations(dds)
                 ),
                 Dict(
                     parent_ring_change(y, R) =>
                         Vector{Any}([parent_ring_change(eq, R)]) for
-                    (y, eq) in y_equations(dds)
+                        (y, eq) in y_equations(dds)
                 ),
             )
             time_step = merge(
                 Dict(
                     parent_ring_change(x, R) => parent_ring_change(eq, R) for
-                    (x, eq) in x_equations(dds)
+                        (x, eq) in x_equations(dds)
                 ),
                 Dict(
                     parent_ring_change(p, R) => parent_ring_change(p, R) for
-                    p in StructuralIdentifiability.parameters(dds)
+                        p in StructuralIdentifiability.parameters(dds)
                 ),
                 Dict(
                     parent_ring_change(u, R) => str_to_var(var_to_str(u) * "1", R) for
-                    u in inputs(dds)
+                        u in inputs(dds)
                 ),
                 Dict(
                     str_to_var(s * "$i", R) => str_to_var(s * "$(i + 1)", R) for
-                    s in map(var_to_str, inputs(dds)) for i in 1:(num_terms - 1)
+                        s in map(var_to_str, inputs(dds)) for i in 1:(num_terms - 1)
                 ),
             )
             eval_dict = merge(
@@ -52,12 +52,12 @@ if GROUP == "All" || GROUP == "Core"
                 Dict(parent_ring_change(u, R) => val[1] for (u, val) in input_values),
                 Dict(
                     str_to_var(var_to_str(u) * "$i", R) => input_values[u][i + 1] for
-                    u in inputs(dds) for i in 1:(num_terms - 1)
+                        u in inputs(dds) for i in 1:(num_terms - 1)
                 ),
             )
             generalized_parameters = [
                 parent_ring_change(p, R) for
-                p in vcat(x_vars(dds), StructuralIdentifiability.parameters(dds))
+                    p in vcat(x_vars(dds), StructuralIdentifiability.parameters(dds))
             ]
             for i in 2:num_terms
                 for (k, v) in explicit_sol
@@ -79,9 +79,9 @@ if GROUP == "All" || GROUP == "Core"
             end
             return Dict(
                 (
-                    parent_ring_change(k[1], parent(dds)),
-                    parent_ring_change(k[2], parent(dds)),
-                ) => res for (k, res) in part_diffs
+                        parent_ring_change(k[1], parent(dds)),
+                        parent_ring_change(k[2], parent(dds)),
+                    ) => res for (k, res) in part_diffs
             )
         end
 

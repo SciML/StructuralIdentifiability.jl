@@ -67,9 +67,9 @@ function StructuralIdentifiability.eval_at_nemo(e::Union{Integer, Rational}, val
 end
 
 function StructuralIdentifiability.eval_at_nemo(
-    e::Union{Float16, Float32, Float64},
-    vals::Dict,
-)
+        e::Union{Float16, Float32, Float64},
+        vals::Dict,
+    )
     if isequal(e % 1, 0)
         out = Int(e)
     else
@@ -112,9 +112,9 @@ Output:
   involved in the produced `ODE` object
 """
 function StructuralIdentifiability.mtk_to_si(
-    de::ModelingToolkitBase.System,
-    measured_quantities::Array{ModelingToolkitBase.Equation},
-)
+        de::ModelingToolkitBase.System,
+        measured_quantities::Array{ModelingToolkitBase.Equation},
+    )
     if isempty(measured_quantities)
         measured_quantities = get_measured_quantities(de)
     end
@@ -125,9 +125,9 @@ function StructuralIdentifiability.mtk_to_si(
 end
 
 function StructuralIdentifiability.mtk_to_si(
-    de::ModelingToolkitBase.System,
-    measured_quantities::Array{<:Symbolics.Num},
-)
+        de::ModelingToolkitBase.System,
+        measured_quantities::Array{<:Symbolics.Num},
+    )
     return __mtk_to_si(
         de,
         [("y$i", Symbolics.value(e)) for (i, e) in enumerate(measured_quantities)],
@@ -135,9 +135,9 @@ function StructuralIdentifiability.mtk_to_si(
 end
 
 function StructuralIdentifiability.mtk_to_si(
-    de::ModelingToolkitBase.System,
-    measured_quantities::Array{<:SymbolicUtils.BasicSymbolic},
-)
+        de::ModelingToolkitBase.System,
+        measured_quantities::Array{<:SymbolicUtils.BasicSymbolic},
+    )
     return __mtk_to_si(de, [("y$i", e) for (i, e) in enumerate(measured_quantities)])
 end
 
@@ -145,25 +145,25 @@ end
 # old name kept for compatibility purposes
 
 function preprocess_ode(
-    de::ModelingToolkitBase.System,
-    measured_quantities::Array{ModelingToolkitBase.Equation},
-)
+        de::ModelingToolkitBase.System,
+        measured_quantities::Array{ModelingToolkitBase.Equation},
+    )
     @warn "Function `preprocess_ode` has been renamed to `mtk_to_si`. The old name can be still used but will disappear in the future releases."
     return mtk_to_si(de, measured_quantities)
 end
 
 function preprocess_ode(
-    de::ModelingToolkitBase.System,
-    measured_quantities::Array{<:Symbolics.Num},
-)
+        de::ModelingToolkitBase.System,
+        measured_quantities::Array{<:Symbolics.Num},
+    )
     @warn "Function `preprocess_ode` has been renamed to `mtk_to_si`. The old name can be still used but will disappear in the future releases."
     return mtk_to_si(de, measured_quantities)
 end
 
 function preprocess_ode(
-    de::ModelingToolkitBase.System,
-    measured_quantities::Array{<:SymbolicUtils.BasicSymbolic},
-)
+        de::ModelingToolkitBase.System,
+        measured_quantities::Array{<:SymbolicUtils.BasicSymbolic},
+    )
     @warn "Function `preprocess_ode` has been renamed to `mtk_to_si`. The old name can be still used but will disappear in the future releases."
     return mtk_to_si(de, measured_quantities)
 end
@@ -173,7 +173,7 @@ function clean_calls(funcs)
     res = []
     for f in funcs
         if length(Symbolics.arguments(f)) == 1 &&
-           !Symbolics.iscall(first(Symbolics.arguments(f)))
+                !Symbolics.iscall(first(Symbolics.arguments(f)))
             push!(res, f)
         else
             push!(res, first(Symbolics.arguments(f)))
@@ -210,9 +210,9 @@ Output:
   involved in the produced `ODE` object
 """
 function __mtk_to_si(
-    de::ModelingToolkitBase.System,
-    measured_quantities::Array{<:Tuple{String, <:SymbolicUtils.BasicSymbolic}},
-)
+        de::ModelingToolkitBase.System,
+        measured_quantities::Array{<:Tuple{String, <:SymbolicUtils.BasicSymbolic}},
+    )
     polytype = StructuralIdentifiability.Nemo.QQMPolyRingElem
     fractype = StructuralIdentifiability.Nemo.Generic.FracFieldElem{polytype}
     diff_eqs = filter(
@@ -222,9 +222,11 @@ function __mtk_to_si(
     # performing full structural simplification
     if length(observed(de)) > 0
         rules = Dict(s.lhs => s.rhs for s in observed(de))
-        while any([
-            length(intersect(get_variables(r), keys(rules))) > 0 for r in values(rules)
-        ])
+        while any(
+                [
+                    length(intersect(get_variables(r), keys(rules))) > 0 for r in values(rules)
+                ]
+            )
             rules = Dict(k => SymbolicUtils.substitute(v, rules) for (k, v) in rules)
         end
         diff_eqs = [SymbolicUtils.substitute(eq, rules) for eq in diff_eqs]
@@ -243,13 +245,13 @@ function __mtk_to_si(
     params_from_measured_quantities = union(
         [
             filter(
-                s ->
+                    s ->
                     !iscall(s) &&
                     !(string(s) in string.(state_vars)) &&
                     !(string(s) * "(t)" in string.(state_vars)) &&
                     (string(s) != string(t)),
-                get_variables(y[2]),
-            ) for y in measured_quantities
+                    get_variables(y[2]),
+                ) for y in measured_quantities
         ]...,
     )
     params = union(params, params_from_measured_quantities)
@@ -317,16 +319,16 @@ The function determines local identifiability of parameters in `funcs_to_check` 
 The result is correct with probability at least `prob_threshold`.
 """
 function StructuralIdentifiability.assess_local_identifiability(
-    sys::ModelingToolkitBase.System;
-    measured_quantities = ModelingToolkitBase.Equation[],
-    funcs_to_check = Array{}[],
-    known_ic = [],
-    prob_threshold::Float64 = 0.99,
-    type = :SE,
-    loglevel = Logging.Info,
-)
+        sys::ModelingToolkitBase.System;
+        measured_quantities = ModelingToolkitBase.Equation[],
+        funcs_to_check = Array{}[],
+        known_ic = [],
+        prob_threshold::Float64 = 0.99,
+        type = :SE,
+        loglevel = Logging.Info,
+    )
     restart_logging(loglevel = loglevel)
-    with_logger(_si_logger[]) do
+    return with_logger(_si_logger[]) do
         if any(ModelingToolkitBase.hasshift, equations(sys))
             if type == :ME
                 throw(
@@ -355,13 +357,13 @@ function StructuralIdentifiability.assess_local_identifiability(
 end
 
 @timeit _to function _assess_local_identifiability_ode(
-    ode::ModelingToolkitBase.System;
-    measured_quantities = Array{ModelingToolkitBase.Equation}[],
-    funcs_to_check = Array{}[],
-    known_ic = [],
-    prob_threshold::Float64 = 0.99,
-    type = :SE,
-)
+        ode::ModelingToolkitBase.System;
+        measured_quantities = Array{ModelingToolkitBase.Equation}[],
+        funcs_to_check = Array{}[],
+        known_ic = [],
+        prob_threshold::Float64 = 0.99,
+        type = :SE,
+    )
     ode, conversion = mtk_to_si(ode, measured_quantities)
     @info "System parsed into $ode"
     conversion_back = Dict(v => k for (k, v) in conversion)
@@ -434,15 +436,15 @@ at least `prob_threshold`.
 If known initial conditions are provided, the identifiability results for the states will also hold at `t = 0`
 """
 function StructuralIdentifiability.assess_identifiability(
-    ode::ModelingToolkitBase.System;
-    measured_quantities = ModelingToolkitBase.Equation[],
-    funcs_to_check = [],
-    known_ic = [],
-    prob_threshold = 0.99,
-    loglevel = Logging.Info,
-)
+        ode::ModelingToolkitBase.System;
+        measured_quantities = ModelingToolkitBase.Equation[],
+        funcs_to_check = [],
+        known_ic = [],
+        prob_threshold = 0.99,
+        loglevel = Logging.Info,
+    )
     restart_logging(loglevel = loglevel)
-    with_logger(_si_logger[]) do
+    return with_logger(_si_logger[]) do
         return _assess_identifiability(
             ode,
             measured_quantities = measured_quantities,
@@ -454,12 +456,12 @@ function StructuralIdentifiability.assess_identifiability(
 end
 
 function _assess_identifiability(
-    ode::ModelingToolkitBase.System;
-    measured_quantities = ModelingToolkitBase.Equation[],
-    funcs_to_check = [],
-    known_ic = [],
-    prob_threshold = 0.99,
-)
+        ode::ModelingToolkitBase.System;
+        measured_quantities = ModelingToolkitBase.Equation[],
+        funcs_to_check = [],
+        known_ic = [],
+        prob_threshold = 0.99,
+    )
     ode, conversion = mtk_to_si(ode, measured_quantities)
     @info "System parsed into $ode"
     conversion_back = Dict(v => k for (k, v) in conversion)
@@ -500,12 +502,12 @@ end
 # ------------------------------------------------------------------------------
 
 function _assess_local_identifiability_dds(
-    dds::ModelingToolkitBase.System;
-    measured_quantities = Array{ModelingToolkitBase.Equation}[],
-    funcs_to_check = Array{}[],
-    known_ic = Array{}[],
-    prob_threshold::Float64 = 0.99,
-)
+        dds::ModelingToolkitBase.System;
+        measured_quantities = Array{ModelingToolkitBase.Equation}[],
+        funcs_to_check = Array{}[],
+        known_ic = Array{}[],
+        prob_threshold::Float64 = 0.99,
+    )
     # Converting the finite difference operator in the right-hand side to
     # the corresponding shift operator
     eqs = filter(
@@ -524,7 +526,7 @@ function _assess_local_identifiability_dds(
         funcs_to_check = vcat(
             [
                 x for x in clean_calls(unknowns(dds)) if
-                conversion[x] in StructuralIdentifiability.x_vars(dds_aux)
+                    conversion[x] in StructuralIdentifiability.x_vars(dds_aux)
             ],
             union(params, params_from_measured_quantities),
         )
@@ -592,19 +594,19 @@ find_identifiable_functions(de, measured_quantities = [y1 ~ x0])
 ```
 """
 function StructuralIdentifiability.find_identifiable_functions(
-    ode::ModelingToolkitBase.System;
-    measured_quantities = ModelingToolkitBase.Equation[],
-    known_ic = [],
-    prob_threshold::Float64 = 0.99,
-    seed = 42,
-    with_states = false,
-    simplify = :standard,
-    rational_interpolator = :VanDerHoevenLecerf,
-    loglevel = Logging.Info,
-)
+        ode::ModelingToolkitBase.System;
+        measured_quantities = ModelingToolkitBase.Equation[],
+        known_ic = [],
+        prob_threshold::Float64 = 0.99,
+        seed = 42,
+        with_states = false,
+        simplify = :standard,
+        rational_interpolator = :VanDerHoevenLecerf,
+        loglevel = Logging.Info,
+    )
     restart_logging(loglevel = loglevel)
     reset_timings()
-    with_logger(_si_logger[]) do
+    return with_logger(_si_logger[]) do
         return _find_identifiable_functions(
             ode,
             measured_quantities = measured_quantities,
@@ -619,15 +621,15 @@ function StructuralIdentifiability.find_identifiable_functions(
 end
 
 function _find_identifiable_functions(
-    ode::ModelingToolkitBase.System;
-    measured_quantities = ModelingToolkitBase.Equation[],
-    known_ic = Symbolics.Num[],
-    prob_threshold::Float64 = 0.99,
-    seed = 42,
-    with_states = false,
-    simplify = :standard,
-    rational_interpolator = :VanDerHoevenLecerf,
-)
+        ode::ModelingToolkitBase.System;
+        measured_quantities = ModelingToolkitBase.Equation[],
+        known_ic = Symbolics.Num[],
+        prob_threshold::Float64 = 0.99,
+        seed = 42,
+        with_states = false,
+        simplify = :standard,
+        rational_interpolator = :VanDerHoevenLecerf,
+    )
     Random.seed!(seed)
     ode, conversion = mtk_to_si(ode, measured_quantities)
     known_ic_ = [eval_at_nemo(each, conversion) for each in known_ic]

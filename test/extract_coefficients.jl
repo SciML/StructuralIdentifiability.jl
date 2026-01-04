@@ -5,19 +5,21 @@
         [z],
     )
 
-    @test Set(C) == Set([
-        one(R) // 1,
-        (3 * x - y^2) // 1,
-        y // 1,
-        x^2 // 1,
-        (x + y) // 1,
-        (x^2 + 1) // 1,
-    ])
+    @test Set(C) == Set(
+        [
+            one(R) // 1,
+            (3 * x - y^2) // 1,
+            y // 1,
+            x^2 // 1,
+            (x + y) // 1,
+            (x^2 + 1) // 1,
+        ]
+    )
 
     R, (x, y) = polynomial_ring(QQ, ["x", "y"])
     f = (x^2 + y^2) // (1 - x - 3 * y)
     @test Set(extract_coefficients_ratfunc(f, Vector{Nemo.QQMPolyRingElem}())) ==
-          Set([f, one(R) // 1])
+        Set([f, one(R) // 1])
 
     R, (x, y, u, v) = polynomial_ring(QQ, ["x", "y", "u", "v"])
     C = extract_coefficients_ratfunc(
@@ -25,7 +27,7 @@
         [u, v],
     )
     @test Set(C) ==
-          Set([x // 1, (y + 3) // 1, y^2 // 1, one(R) // 1, 3 * y // 1, -(x^2 + y^2) // 1])
+        Set([x // 1, (y + 3) // 1, y^2 // 1, one(R) // 1, 3 * y // 1, -(x^2 + y^2) // 1])
 end
 
 @testset "Coefficient extraction for polynomials" begin

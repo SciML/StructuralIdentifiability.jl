@@ -35,7 +35,7 @@
         )
         @test f == 2z + 5x^3 + 3y^2
         @test f__ ==
-              StructuralIdentifiability.parent_ring_change(f, R__, matching = :byindex)
+            StructuralIdentifiability.parent_ring_change(f, R__, matching = :byindex)
 
         R, (x,) = polynomial_ring(field, ["x"])
         R2, (x2,) = polynomial_ring(Nemo.fraction_field(R), ["x"])

@@ -62,10 +62,10 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     """
     membership, new_dynamics_all, implicit_relations, new_vars =
         check_constructive_field_membership(
-            RationalFunctionField(generating_funcs),
-            to_be_reduced_funcs;
-            tag_names = tag_names,
-        )
+        RationalFunctionField(generating_funcs),
+        to_be_reduced_funcs;
+        tag_names = tag_names,
+    )
     @assert all(membership)
     ring_of_tags = parent(first(keys(new_vars)))
     tags = gens(ring_of_tags)
@@ -113,7 +113,7 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     new_vars_vector_field = Dict(
         parent_ring_change(var_old, ring_output, matching = :byindex) =>
             parent_ring_change(var_expr, ring_output, matching = :byindex) for
-        (var_old, var_expr) in new_vars_vector_field
+            (var_old, var_expr) in new_vars_vector_field
     )
     new_inputs = map(
         var_old -> parent_ring_change(var_old, ring_output, matching = :byindex),
@@ -122,23 +122,23 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     new_outputs = Dict(
         parent_ring_change(var_old, ring_output, matching = :byindex) =>
             parent_ring_change(var_expr, ring_output, matching = :byindex) for
-        (var_old, var_expr) in new_outputs
+            (var_old, var_expr) in new_outputs
     )
     new_vars = Dict(
         parent_ring_change(var_old, ring_output, matching = :byindex) => var_expr for
-        (var_old, var_expr) in new_vars
+            (var_old, var_expr) in new_vars
     )
     implicit_relations = map(
         var_old -> parent_ring_change(var_old, ring_output, matching = :byindex),
         implicit_relations,
     )
     @assert parent(first(keys(new_vars_vector_field))) ==
-            base_ring(parent(first(values(new_vars_vector_field)))) ==
-            parent(first(keys(new_outputs))) ==
-            base_ring(parent(first(values(new_outputs)))) ==
-            parent(first(keys(new_vars)))
+        base_ring(parent(first(values(new_vars_vector_field)))) ==
+        parent(first(keys(new_outputs))) ==
+        base_ring(parent(first(values(new_outputs)))) ==
+        parent(first(keys(new_vars)))
     @assert base_ring(parent(first(values(new_vars)))) == parent(ode)
-    new_vars_vector_field, new_inputs, new_outputs, new_vars, implicit_relations
+    return new_vars_vector_field, new_inputs, new_outputs, new_vars, implicit_relations
 end
 
 """
@@ -196,13 +196,13 @@ Notice that the `new_ode` is fully identifiabile, and has `1` less parameter
 compared to the original one.
 """
 function reparametrize_global(
-    ode::ODE{P};
-    prob_threshold = 0.99,
-    seed = 42,
-    loglevel = Logging.Info,
-) where {P}
+        ode::ODE{P};
+        prob_threshold = 0.99,
+        seed = 42,
+        loglevel = Logging.Info,
+    ) where {P}
     restart_logging(loglevel = loglevel)
-    with_logger(_si_logger[]) do
+    return with_logger(_si_logger[]) do
         return _reparametrize_global(ode, prob_threshold = prob_threshold, seed = seed)
     end
 end

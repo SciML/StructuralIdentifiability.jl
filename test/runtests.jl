@@ -120,12 +120,12 @@ function get_test_files(group)
         for fname in files
             if fname != "runtests.jl" && endswith(fname, ".jl")
                 if group == "All" ||
-                   (group == "Core" && dir != "./extensions") ||
-                   (
-                       group == "ModelingToolkitSIExt" &&
-                       dir == "./extensions" &&
-                       VERSION >= v"1.10.0"
-                   )
+                        (group == "Core" && dir != "./extensions") ||
+                        (
+                        group == "ModelingToolkitSIExt" &&
+                            dir == "./extensions" &&
+                            VERSION >= v"1.10.0"
+                    )
                     push!(result, dir * "/" * fname)
                 end
             end
