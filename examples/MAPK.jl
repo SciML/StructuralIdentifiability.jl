@@ -1,4 +1,4 @@
-# A. K. Manrai and J. Gunawardena. 
+# A. K. Manrai and J. Gunawardena.
 # The geometry of multisite phosphorylation
 # https://dx.doi.org/10.1529%2Fbiophysj.108.140632
 using StructuralIdentifiability

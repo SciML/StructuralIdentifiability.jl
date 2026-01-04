@@ -76,16 +76,18 @@
         y(t) = x1(t)
     )
     funcs_to_test = [b, c, alpha, beta, delta, gama, beta + delta, beta * delta]
-    correct = OrderedDict([
-        b => true,
-        c => true,
-        alpha => false,
-        beta => true,
-        delta => true,
-        gama => false,
-        beta + delta => true,
-        beta * delta => true,
-    ])
+    correct = OrderedDict(
+        [
+            b => true,
+            c => true,
+            alpha => false,
+            beta => true,
+            delta => true,
+            gama => false,
+            beta + delta => true,
+            beta * delta => true,
+        ]
+    )
     push!(test_cases, Dict(:ode => ode, :funcs => funcs_to_test, :correct => correct))
 
     #--------------------------------------------------------------------------

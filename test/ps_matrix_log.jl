@@ -13,30 +13,38 @@
     for c in 1:5
         f = random_ps(T) * t
         S = Nemo.matrix_space(T, 2, 2)
-        m = S([
-            T(1) f
-            T(0) T(1)
-        ])
-        correct = S([
-            T(0) f
-            T(0) T(0)
-        ])
+        m = S(
+            [
+                T(1) f
+                T(0) T(1)
+            ]
+        )
+        correct = S(
+            [
+                T(0) f
+                T(0) T(0)
+            ]
+        )
         @test ps_matrix_log(m) == correct
     end
 
     for c in 1:5
         f, g = random_ps(T) * t, random_ps(T) * t
         S = Nemo.matrix_space(T, 3, 3)
-        m = S([
-            T(1) f g
-            T(0) T(1) f
-            T(0) T(0) T(1)
-        ])
-        correct = S([
-            T(0) f (-1 // 2) * f^2+g
-            T(0) T(0) f
-            T(0) T(0) T(0)
-        ])
+        m = S(
+            [
+                T(1) f g
+                T(0) T(1) f
+                T(0) T(0) T(1)
+            ]
+        )
+        correct = S(
+            [
+                T(0) f (-1 // 2) * f^2 + g
+                T(0) T(0) f
+                T(0) T(0) T(0)
+            ]
+        )
         @test ps_matrix_log(m) == correct
     end
 end

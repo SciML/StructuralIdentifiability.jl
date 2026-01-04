@@ -13,11 +13,11 @@ are identifiable functions containing or not the state variables
 (parameters or parameters + states)
 """
 @timeit _to function extract_identifiable_functions_raw(
-    io_equations::Dict{P, P},
-    ode::ODE{P},
-    known::Array{P, 1},
-    with_states::Bool,
-) where {P <: MPolyRingElem{QQFieldElem}}
+        io_equations::Dict{P, P},
+        ode::ODE{P},
+        known::Array{P, 1},
+        with_states::Bool,
+    ) where {P <: MPolyRingElem{QQFieldElem}}
     coeff_lists =
         Dict(:with_states => Array{Array{P, 1}, 1}(), :no_states => Array{Array{P, 1}, 1}())
     varnames = [var_to_str(p) for p in ode.parameters]
@@ -85,13 +85,13 @@ The function returns a tuple containing the following:
 - the ring containing all these functuons (either parameters only of with states)
 """
 @timeit _to function initial_identifiable_functions(
-    ode::ODE{T};
-    prob_threshold::Float64,
-    known::Array{T, 1} = Array{T, 1}(),
-    with_states::Bool = false,
-    var_change_policy = :default,
-    rational_interpolator = :VanDerHoevenLecerf,
-) where {T}
+        ode::ODE{T};
+        prob_threshold::Float64,
+        known::Array{T, 1} = Array{T, 1}(),
+        with_states::Bool = false,
+        var_change_policy = :default,
+        rational_interpolator = :VanDerHoevenLecerf,
+    ) where {T}
     @info "Computing IO-equations"
     ioeq_time = @elapsed io_equations =
         _find_ioequations(ode; var_change_policy = var_change_policy)
@@ -143,12 +143,12 @@ The function returns a tuple containing the following:
         )
         _runtime_logger[:check_time] =
             @elapsed no_states_simplified = simplified_generating_set(
-                RationalFunctionField(id_funcs_no_states_param),
-                prob_threshold = prob_threshold,
-                seed = 42,
-                simplify = :standard,
-                rational_interpolator = rational_interpolator,
-            )
+            RationalFunctionField(id_funcs_no_states_param),
+            prob_threshold = prob_threshold,
+            seed = 42,
+            simplify = :standard,
+            rational_interpolator = rational_interpolator,
+        )
         dennums_simplified = fractions_to_dennums(no_states_simplified)
         # switch back the ring
         id_funcs[:no_states] = map(
@@ -177,12 +177,12 @@ Input:
 Output: a list L of booleans with L[i] being the identifiability status of the i-th function to check
 """
 @timeit _to function check_identifiability(
-    ode::ODE{P},
-    funcs_to_check::Array{<:Any, 1};
-    known::Array{P, 1} = Array{P, 1}(),
-    prob_threshold::Float64 = 0.99,
-    var_change_policy = :default,
-) where {P <: MPolyRingElem{QQFieldElem}}
+        ode::ODE{P},
+        funcs_to_check::Array{<:Any, 1};
+        known::Array{P, 1} = Array{P, 1}(),
+        prob_threshold::Float64 = 0.99,
+        var_change_policy = :default,
+    ) where {P <: MPolyRingElem{QQFieldElem}}
     states_needed = false
     for f in funcs_to_check
         num, den = unpack_fraction(f)
@@ -211,19 +211,19 @@ Output: a list L of booleans with L[i] being the identifiability status of the i
 
     _runtime_logger[:check_time] =
         get(_runtime_logger, :check_time, 0.0) + @elapsed result = field_contains(
-            RationalFunctionField(identifiable_functions_raw),
-            funcs_to_check,
-            half_p,
-        )
+        RationalFunctionField(identifiable_functions_raw),
+        funcs_to_check,
+        half_p,
+    )
     return result
 end
 
 function check_identifiability(
-    ode::ODE{P};
-    known::Array{P, 1} = Array{P, 1}(),
-    prob_threshold::Float64 = 0.99,
-    var_change_policy = :default,
-) where {P <: MPolyRingElem{QQFieldElem}}
+        ode::ODE{P};
+        known::Array{P, 1} = Array{P, 1}(),
+        prob_threshold::Float64 = 0.99,
+        var_change_policy = :default,
+    ) where {P <: MPolyRingElem{QQFieldElem}}
     return check_identifiability(
         ode,
         ode.parameters,
@@ -249,11 +249,11 @@ Output:
 Checks global identifiability for parameters of the model provided in `ode`. Call this function to check global identifiability of all parameters automatically.
 """
 function assess_global_identifiability(
-    ode::ODE{P},
-    known::Array{P, 1} = Array{P, 1}(),
-    prob_threshold::Float64 = 0.99;
-    var_change = :default,
-) where {P <: MPolyRingElem{QQFieldElem}}
+        ode::ODE{P},
+        known::Array{P, 1} = Array{P, 1}(),
+        prob_threshold::Float64 = 0.99;
+        var_change = :default,
+    ) where {P <: MPolyRingElem{QQFieldElem}}
     result_list = assess_global_identifiability(
         ode,
         ode.parameters,
@@ -285,12 +285,12 @@ Output:
 Checks global identifiability of functions of parameters specified in `funcs_to_check`.
 """
 @timeit _to function assess_global_identifiability(
-    ode::ODE{P},
-    funcs_to_check::Array{<:Any, 1},
-    known::Array{P, 1} = Array{P, 1}(),
-    prob_threshold::Float64 = 0.99;
-    var_change = :default,
-) where {P <: MPolyRingElem{QQFieldElem}}
+        ode::ODE{P},
+        funcs_to_check::Array{<:Any, 1},
+        known::Array{P, 1} = Array{P, 1}(),
+        prob_threshold::Float64 = 0.99;
+        var_change = :default,
+    ) where {P <: MPolyRingElem{QQFieldElem}}
     submodels = find_submodels(ode)
     if length(submodels) > 0
         @info "Note: the input model has nontrivial submodels. If the computation for the full model will be too heavy, you may want to try to first analyze one of the submodels. They can be produced using function `find_submodels`"

@@ -5,23 +5,27 @@ begin
     import Nemo, Profile
 
     macro my_profview(ex)
-        :((VSCodeServer.Profile).clear();
-        VSCodeServer.Profile.init(n = 10^8, delay = 0.0001);
-        VSCodeServer.Profile.start_timer();
-        $ex;
-        VSCodeServer.Profile.stop_timer();
-        VSCodeServer.view_profile(;))
+        return :(
+            (VSCodeServer.Profile).clear();
+            VSCodeServer.Profile.init(n = 10^8, delay = 0.0001);
+            VSCodeServer.Profile.start_timer();
+            $ex;
+            VSCodeServer.Profile.stop_timer();
+            VSCodeServer.view_profile()
+        )
     end
 
     macro my_profview_allocs(ex)
-        :((VSCodeServer.Profile).clear();
-        VSCodeServer.Profile.Allocs.start(sample_rate = 1.0);
-        try
-            $ex
-        finally
-            VSCodeServer.Profile.Allocs.stop()
-        end;
-        VSCodeServer.view_profile_allocs(;))
+        return :(
+            (VSCodeServer.Profile).clear();
+            VSCodeServer.Profile.Allocs.start(sample_rate = 1.0);
+            try
+                $ex
+            finally
+                VSCodeServer.Profile.Allocs.stop()
+            end;
+            VSCodeServer.view_profile_allocs()
+        )
     end
 
     mapk_6_out = StructuralIdentifiability.@ODEmodel(
@@ -225,7 +229,7 @@ begin
         y1(t) = x1(t)
     )
 
-    # PK1 
+    # PK1
     pk1 = StructuralIdentifiability.@ODEmodel(
         x1'(t) = u1(t) - (k1 + k2) * x1(t),
         x2'(t) = k1 * x1(t) - (k3 + k6 + k7) * x2(t) + k5 * x4(t),
@@ -373,7 +377,7 @@ begin
         P0'(t) = P1(t),
         P5'(t) =
             (
-                -P0(t) * beta_SI * phi * Mar * Ks * siga2 +
+            -P0(t) * beta_SI * phi * Mar * Ks * siga2 +
                 P0(t) * beta_SI * Mar * Ks * siga2 -
                 P0(t) * phi * M * Mar * Ks * beta_SA +
                 P0(t) * phi * M * Ks * siga2 * beta_SA +
@@ -395,10 +399,10 @@ begin
                 M * beta * siga2 +
                 P2(t) * Mar * beta_SA +
                 P2(t) * Ks * beta_SA
-            ) // (phi * M * siga2 - M * siga2),
+        ) // (phi * M * siga2 - M * siga2),
         P4'(t) =
             (
-                -siga1 * P0(t)^2 * beta_SI * phi * M * Mar * Ks^2 * siga2^2 +
+            -siga1 * P0(t)^2 * beta_SI * phi * M * Mar * Ks^2 * siga2^2 +
                 siga1 * P0(t)^2 * beta_SI * M * Mar * Ks^2 * siga2^2 -
                 siga1 * P0(t)^2 * phi * M^2 * Mar * Ks^2 * siga2 * beta_SA +
                 siga1 * P0(t)^2 * phi * M^2 * Ks^2 * siga2^2 * beta_SA +
@@ -836,7 +840,7 @@ begin
                 P4(t) * P2(t) * Ks * beta_SA +
                 P2(t)^2 * Mar * Ks * siga2 * beta_SA +
                 P2(t)^2 * Ks^2 * siga2 * beta_SA
-            ) // (phi * M * siga2 - M * siga2),
+        ) // (phi * M * siga2 - M * siga2),
         P1'(t) = P2(t),
         P2'(t) = P3(t),
         y(t) = P0(t)

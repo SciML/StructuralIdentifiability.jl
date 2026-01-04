@@ -1,6 +1,6 @@
 function _extract_aux!(funcs, all_symb, eq; ders_ok = false, type = :ode)
     aux_symb = Set([:(+), :(-), :(=), :(*), :(^), :t, :(/), :(//)])
-    MacroTools.postwalk(
+    return MacroTools.postwalk(
         x -> begin
             if @capture(x, f_'(t))
                 if !ders_ok
@@ -100,13 +100,15 @@ end
 #------------------------------------------------------------------------------
 
 function macrohelper_check(ex::Expr)
-    MacroTools.postwalk(x -> begin
-        if @capture(x, f_^g_) && !isa(g, Integer)
-            throw(nonrational_error("noninteger exponent $g"))
-        end
-        x
-    end, ex)
     MacroTools.postwalk(
+        x -> begin
+            if @capture(x, f_^g_) && !isa(g, Integer)
+                throw(nonrational_error("noninteger exponent $g"))
+            end
+            x
+        end, ex
+    )
+    return MacroTools.postwalk(
         x -> begin
             if @capture(x, f_(g_)) && (g != :t) && !(f in (:-, :+, :*, :(//)))
                 throw(nonrational_error("function $f is nonarithmetic one"))
@@ -233,15 +235,17 @@ function generate_model_code(type, ex::Expr...)
     ]
     # creating the ode/dds object
     obj_type = Dict(:ode => :ODE, :dds => :DDS)
-    ds_expr = :(StructuralIdentifiability.$(obj_type[type]){
-        StructuralIdentifiability.Nemo.QQMPolyRingElem,
-    }(
-        $vx,
-        $vy,
-        $x_dict,
-        $y_dict,
-        Array{StructuralIdentifiability.Nemo.QQMPolyRingElem}([$(u_vars...)]),
-    ))
+    ds_expr = :(
+        StructuralIdentifiability.$(obj_type[type]){
+            StructuralIdentifiability.Nemo.QQMPolyRingElem,
+        }(
+            $vx,
+            $vy,
+            $x_dict,
+            $y_dict,
+            Array{StructuralIdentifiability.Nemo.QQMPolyRingElem}([$(u_vars...)]),
+        )
+    )
 
     result = Expr(
         :block,

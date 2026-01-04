@@ -28,7 +28,7 @@ function check_constructive_field_membership(generators::AbstractVector, to_be_r
     sat_string = "t"
     @info """
     Tags:
-    $(join(map(x -> string(x[1]) * " -> " * string(x[2]),  zip(fracs_gen, tag_strings)), "\t\n"))
+    $(join(map(x -> string(x[1]) * " -> " * string(x[2]), zip(fracs_gen, tag_strings)), "\t\n"))
     """
     var_strings = vcat(sat_string, map(string, gens(ring)), tag_strings)
     ring_tag, xs_tag = polynomial_ring(K, var_strings, ordering = Nemo.ordering(ring))
@@ -81,20 +81,20 @@ function check_constructive_field_membership(generators::AbstractVector, to_be_r
     _, den_rem = divrem(to_be_reduced_tag[2], tagged_mqs_gb)
     remainder = num_rem // den_rem
     if !all(orig_var -> degree(numerator(remainder), orig_var) == 0, orig_vars) ||
-       !all(orig_var -> degree(denominator(remainder), orig_var) == 0, orig_vars)
+            !all(orig_var -> degree(denominator(remainder), orig_var) == 0, orig_vars)
         @warn """
         The fraction ($(frac_to_be_reduced)) is not a function of the generators ($(fracs_gen)).
         Normal form: $remainder
         """
     end
-    remainder, tag_to_gen
+    return remainder, tag_to_gen
 end
 
 # Same as above, but reduces multiple fractions at once.
 function check_constructive_field_membership(
-    generators::AbstractVector,
-    to_be_reduced::AbstractVector,
-)
+        generators::AbstractVector,
+        to_be_reduced::AbstractVector,
+    )
     fracs_gen = to_fractions(generators)
     fracs_to_be_reduced = to_fractions(to_be_reduced)
     T = elem_type(base_ring(parent(first(fracs_to_be_reduced))))
@@ -106,7 +106,7 @@ function check_constructive_field_membership(
         remainders[i] = remainder
     end
     @assert length(unique(parent, remainders)) == 1
-    remainders, tag_to_gen
+    return remainders, tag_to_gen
 end
 
 #####################
@@ -145,7 +145,7 @@ function vector_field_along(derivation, directions::AbstractVector)
         df = StructuralIdentifiability.diff_frac(func, derivation)
         new_vector_field[func] = df
     end
-    new_vector_field
+    return new_vector_field
 end
 
 """
@@ -184,7 +184,7 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
         state = states[i]
         new_vars_vector_field[state_to_new_var[state]] = new_vars_dynamics[i]
     end
-    new_vars_vector_field, new_outputs, new_vars
+    return new_vars_vector_field, new_outputs, new_vars
 end
 
 #####################

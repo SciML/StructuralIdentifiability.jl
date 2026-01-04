@@ -8,17 +8,17 @@ struct DDS{P} # P is the type of polynomials in the rhs of the DDS system
     ode::ODE{P}
 
     function DDS{P}(
-        x_vars::Array{P, 1},
-        y_vars::Array{P, 1},
-        x_eqs::Dict{P, <:ExtendedFraction{P}},
-        y_eqs::Dict{P, <:ExtendedFraction{P}},
-        u_vars::Array{P, 1},
-    ) where {P <: MPolyRingElem{<:FieldElem}}
-        new{P}(ODE{P}(x_vars, y_vars, x_eqs, y_eqs, u_vars))
+            x_vars::Array{P, 1},
+            y_vars::Array{P, 1},
+            x_eqs::Dict{P, <:ExtendedFraction{P}},
+            y_eqs::Dict{P, <:ExtendedFraction{P}},
+            u_vars::Array{P, 1},
+        ) where {P <: MPolyRingElem{<:FieldElem}}
+        return new{P}(ODE{P}(x_vars, y_vars, x_eqs, y_eqs, u_vars))
     end
 
     function DDS{P}(ode::ODE{P}) where {P <: MPolyRingElem{<:FieldElem}}
-        new{P}(ode)
+        return new{P}(ode)
     end
 end
 
@@ -58,9 +58,9 @@ end
 # Some functions to transform DDS's
 
 function add_outputs(
-    dds::DDS{P},
-    extra_y::Dict{String, <:RingElem},
-) where {P <: MPolyRingElem}
+        dds::DDS{P},
+        extra_y::Dict{String, <:RingElem},
+    ) where {P <: MPolyRingElem}
     return DDS{P}(add_outputs(dds.ode, extra_y))
 end
 
@@ -81,6 +81,7 @@ function Base.show(io::IO, dds::DDS)
         print(io, y_equations(dds)[y])
         print(io, "\n")
     end
+    return
 end
 
 #------------------------------------------------------------------------------
@@ -100,12 +101,12 @@ Output:
 - computes a sequence solution with the required number of terms prec presented as a dictionary state_variable => corresponding sequence
 """
 function sequence_solution(
-    dds::DDS{P},
-    param_values::Dict{P, T},
-    initial_conditions::Dict{P, T},
-    input_values::Dict{P, Array{T, 1}},
-    num_terms::Int,
-) where {T <: FieldElem, P <: MPolyRingElem{T}}
+        dds::DDS{P},
+        param_values::Dict{P, T},
+        initial_conditions::Dict{P, T},
+        input_values::Dict{P, Array{T, 1}},
+        num_terms::Int,
+    ) where {T <: FieldElem, P <: MPolyRingElem{T}}
     result = Dict(x => [initial_conditions[x]] for x in x_vars(dds))
     for i in 2:num_terms
         eval_dict = merge(
@@ -123,12 +124,12 @@ end
 #------------------------------------------------------------------------------
 
 function sequence_solution(
-    dds::DDS{P},
-    param_values::Dict{P, Int},
-    initial_conditions::Dict{P, Int},
-    input_values::Dict{P, Array{Int, 1}},
-    num_terms::Int,
-) where {P <: MPolyRingElem{<:FieldElem}}
+        dds::DDS{P},
+        param_values::Dict{P, Int},
+        initial_conditions::Dict{P, Int},
+        input_values::Dict{P, Array{Int, 1}},
+        num_terms::Int,
+    ) where {P <: MPolyRingElem{<:FieldElem}}
     bring = base_ring(parent(dds))
     return sequence_solution(
         dds,
@@ -153,12 +154,12 @@ Output:
   the function `u` w.r.t. `v` evaluated at the solution
 """
 function differentiate_sequence_solution(
-    dds::DDS{P},
-    params::Dict{P, T},
-    ic::Dict{P, T},
-    input_values::Dict{P, Array{T, 1}},
-    num_terms::Int,
-) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
+        dds::DDS{P},
+        params::Dict{P, T},
+        ic::Dict{P, T},
+        input_values::Dict{P, Array{T, 1}},
+        num_terms::Int,
+    ) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing the power series solution of the system"
     seq_sol = sequence_solution(dds, params, ic, input_values, num_terms)
     generalized_params = vcat(x_vars(dds), parameters(dds))
@@ -167,11 +168,11 @@ function differentiate_sequence_solution(
     @debug "Solving the variational system at the solution"
     part_diffs = Dict(
         (x, p) => derivative(x_equations(dds)[x], p) for x in x_vars(dds) for
-        p in generalized_params
+            p in generalized_params
     )
     result = Dict(
         (x, p) => [x == p ? one(bring) : zero(bring)] for x in x_vars(dds) for
-        p in generalized_params
+            p in generalized_params
     )
     for i in 2:num_terms
         eval_dict = merge(
@@ -182,10 +183,12 @@ function differentiate_sequence_solution(
         for p in generalized_params
             local_eval = Dict(x => result[(x, p)][end] for x in x_vars(dds))
             for x in x_vars(dds)
-                res = sum([
-                    eval_at_dict(part_diffs[(x, x2)], eval_dict) * local_eval[x2] for
-                    x2 in x_vars(dds)
-                ])
+                res = sum(
+                    [
+                        eval_at_dict(part_diffs[(x, x2)], eval_dict) * local_eval[x2] for
+                            x2 in x_vars(dds)
+                    ]
+                )
                 if p in parameters(dds)
                     res += eval_at_dict(part_diffs[(x, p)], eval_dict)
                 end
@@ -207,12 +210,12 @@ returns a dictionary of the form `y_function => Dict(var => dy/dvar)` where `dy/
 of `y_function` with respect to `var`.
 """
 function differentiate_sequence_output(
-    dds::DDS{P},
-    params::Dict{P, T},
-    ic::Dict{P, T},
-    input_values::Dict{P, Array{T, 1}},
-    num_terms::Int,
-) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
+        dds::DDS{P},
+        params::Dict{P, T},
+        ic::Dict{P, T},
+        input_values::Dict{P, Array{T, 1}},
+        num_terms::Int,
+    ) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing partial derivatives of the solution"
     seq_sol, sol_diff =
         differentiate_sequence_solution(dds, params, ic, input_values, num_terms)
@@ -221,7 +224,7 @@ function differentiate_sequence_output(
     generalized_params = vcat(x_vars(dds), parameters(dds))
     part_diffs = Dict(
         (y, p) => derivative(y_equations(dds)[y], p) for y in y_vars(dds) for
-        p in generalized_params
+            p in generalized_params
     )
 
     result = Dict((y, p) => [] for y in y_vars(dds) for p in generalized_params)
@@ -235,10 +238,12 @@ function differentiate_sequence_output(
         for p in generalized_params
             local_eval = Dict(x => sol_diff[(x, p)][i] for x in x_vars(dds))
             for (y, y_eq) in y_equations(dds)
-                res = sum([
-                    eval_at_dict(part_diffs[(y, x)], eval_dict) * local_eval[x] for
-                    x in x_vars(dds)
-                ])
+                res = sum(
+                    [
+                        eval_at_dict(part_diffs[(y, x)], eval_dict) * local_eval[x] for
+                            x in x_vars(dds)
+                    ]
+                )
                 if p in parameters(dds)
                     res += eval_at_dict(part_diffs[(y, p)], eval_dict)
                 end
@@ -258,7 +263,7 @@ function _degree_with_common_denom(polys)
         max(
             [
                 total_degree(pair[1]) + total_degree(common_denom) - total_degree(pair[2])
-                for pair in map(unpack_fraction, polys)
+                    for pair in map(unpack_fraction, polys)
             ]...,
         ),
         total_degree(common_denom),
@@ -276,11 +281,11 @@ The result is correct with probability at least `prob_threshold`.
  * a list of rational functions in states and parameters assumed to be known at t = 0
 """
 function _assess_local_identifiability_discrete_aux(
-    dds::DDS{P},
-    funcs_to_check::Array{<:Any, 1},
-    known_ic = :none,
-    prob_threshold::Float64 = 0.99,
-) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
+        dds::DDS{P},
+        funcs_to_check::Array{<:Any, 1},
+        known_ic = :none,
+        prob_threshold::Float64 = 0.99,
+    ) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
     bring = base_ring(parent(dds))
 
     @debug "Extending the model"
@@ -318,7 +323,7 @@ function _assess_local_identifiability_discrete_aux(
     # TODO: parametric type instead of QQFieldElem
     input_values = Dict{P, Array{QQFieldElem, 1}}(
         u => [bring(rand(1:D)) for i in 1:prec] for
-        u in StructuralIdentifiability.inputs(dds_ext)
+            u in StructuralIdentifiability.inputs(dds_ext)
     )
 
     @debug "Computing the output derivatives"
@@ -382,15 +387,15 @@ Checks the local identifiability/observability of the functions in `funcs_to_che
 A list of quantities can be provided as `known_ic` for which the initial conditions can be assumed to be known and generic.
 """
 function assess_local_identifiability(
-    dds::DDS{P};
-    funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
-    known_ic = :none,
-    prob_threshold::Float64 = 0.99,
-    loglevel = Logging.Info,
-) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
+        dds::DDS{P};
+        funcs_to_check::Array{<:Any, 1} = Array{Any, 1}(),
+        known_ic = :none,
+        prob_threshold::Float64 = 0.99,
+        loglevel = Logging.Info,
+    ) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
-    with_logger(_si_logger[]) do
+    return with_logger(_si_logger[]) do
         if isempty(funcs_to_check)
             funcs_to_check = vcat(parameters(dds), x_vars(dds))
         end

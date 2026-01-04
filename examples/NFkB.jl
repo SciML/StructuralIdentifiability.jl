@@ -1,4 +1,4 @@
-# Balsa-Canto, E., Alonso, A. A., Banga, J. R., 
+# Balsa-Canto, E., Alonso, A. A., Banga, J. R.,
 # An iterative identification procedure for dynamic modeling of biochemical networks
 # https://doi.org/10.1186/1752-0509-4-11
 # The model is out of reach at the moment but can be analyzed by SIAN (https://github.com/pogudingleb/SIAN)

@@ -86,7 +86,7 @@ include("known_ic.jl")
 include("input_macro.jl")
 
 function __init__()
-    _si_logger[] = Logging.ConsoleLogger(Logging.Info, show_limited = false)
+    return _si_logger[] = Logging.ConsoleLogger(Logging.Info, show_limited = false)
 end
 
 """
@@ -108,15 +108,15 @@ The function returns an (ordered) dictionary from the functions to check to thei
 (one of `:nonidentifiable`, `:locally`, `:globally`).
 """
 function assess_identifiability(
-    ode::ODE{P};
-    funcs_to_check = Vector(),
-    known_ic::Vector{<:ExtendedFraction{P}} = Vector{ExtendedFraction{P}}(),
-    prob_threshold::Float64 = 0.99,
-    loglevel = Logging.Info,
-) where {P <: MPolyRingElem{QQFieldElem}}
+        ode::ODE{P};
+        funcs_to_check = Vector(),
+        known_ic::Vector{<:ExtendedFraction{P}} = Vector{ExtendedFraction{P}}(),
+        prob_threshold::Float64 = 0.99,
+        loglevel = Logging.Info,
+    ) where {P <: MPolyRingElem{QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
-    with_logger(_si_logger[]) do
+    return with_logger(_si_logger[]) do
         if isempty(known_ic)
             return _assess_identifiability(
                 ode,
@@ -138,10 +138,10 @@ function assess_identifiability(
 end
 
 function _assess_identifiability(
-    ode::ODE{P};
-    funcs_to_check = Vector(),
-    prob_threshold::Float64 = 0.99,
-) where {P <: MPolyRingElem{QQFieldElem}}
+        ode::ODE{P};
+        funcs_to_check = Vector(),
+        prob_threshold::Float64 = 0.99,
+    ) where {P <: MPolyRingElem{QQFieldElem}}
     p_glob = 1 - (1 - prob_threshold) * 0.9
     p_loc = 1 - (1 - prob_threshold) * 0.1
 

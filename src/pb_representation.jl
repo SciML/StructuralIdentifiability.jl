@@ -29,7 +29,7 @@ struct PBRepresentation
         old_ring = parent(first(values(io_equations)))
         new_varnames = filter(
             v ->
-                (v in param_names) ||
+            (v in param_names) ||
                 decompose_derivative(v, vcat(y_names, u_names)) != nothing,
             map(var_to_str, gens(old_ring)),
         )
@@ -42,12 +42,12 @@ struct PBRepresentation
             profile[name] = ord
             projections[name] = parent_ring_change(eq, newring)
         end
-        new(y_names, u_names, param_names, profile, projections)
+        return new(y_names, u_names, param_names, profile, projections)
     end
 
     # for testing
     function PBRepresentation(y_names, u_names, param_names, profile, projections)
-        new(y_names, u_names, param_names, profile, projections)
+        return new(y_names, u_names, param_names, profile, projections)
     end
 end
 
@@ -70,7 +70,7 @@ function find_leader(vars::Array{<:MPolyRingElem}, pbr::PBRepresentation)
         y_ders_ext,
         rev = true,
         by = p ->
-            (p[1][2] - pbr.profile[p[1][1]], findfirst(n -> n == p[1][1], pbr.y_names)),
+        (p[1][2] - pbr.profile[p[1][1]], findfirst(n -> n == p[1][1], pbr.y_names)),
     )[1][2]
 end
 
@@ -107,10 +107,10 @@ function common_ring(poly::MPolyRingElem, pbr::PBRepresentation)
             varnames,
             [
                 "$(u)_$h" for h in
-                0:max(
-                    max_ords[u],
-                    max_offset + max([difforder(p, u) for p in values(pbr.projections)]...),
-                )
+                    0:max(
+                        max_ords[u],
+                        max_offset + max([difforder(p, u) for p in values(pbr.projections)]...),
+                    )
             ],
         )
     end
@@ -229,12 +229,13 @@ function diffreduce(diffpoly::MPolyRingElem, pbr::PBRepresentation)
             return result
         end
         if ord == pbr.profile[var] &&
-           Nemo.degree(result, lead) < Nemo.degree(ext_projections[var], lead)
+                Nemo.degree(result, lead) < Nemo.degree(ext_projections[var], lead)
             return result
         end
         reducer = diff(ext_projections[var], der, ord - pbr.profile[var])
         result = pseudodivision(result, reducer, lead)
     end
+    return
 end
 
 # -----------------------------------------------------------------------------
@@ -263,5 +264,5 @@ function io_switch!(pbr::PBRepresentation)
     pbr.projections[u] = diffpoly
     delete!(pbr.projections, y)
     pbr.profile[u] = ordu
-    delete!(pbr.profile, y)
+    return delete!(pbr.profile, y)
 end

@@ -11,7 +11,7 @@ using Test, TestSetExtensions, InteractiveUtils, PrettyTables
 using Base.Threads, Statistics
 
 const MAX_DEVIATION = 0.2
-const IGNORE_SMALL = 1e-3
+const IGNORE_SMALL = 1.0e-3
 const SAMPLES = length(ARGS) > 0 ? parse(Int, ARGS[1]) : 1
 
 const dir_master = (@__DIR__) * "/run-on-master"
@@ -37,19 +37,20 @@ function runbench()
             wait = true,
         )
     end
+    return
 end
 
 # Adapted from https://github.com/MakieOrg/Makie.jl/blob/v0.21.0/metrics/ttfp/run-benchmark.jl.
 # License is MIT.
 function best_unit(m)
-    if m < 1e3
+    if m < 1.0e3
         return 1, "ns"
-    elseif m < 1e6
-        return 1e3, "μs"
-    elseif m < 1e9
-        return 1e6, "ms"
+    elseif m < 1.0e6
+        return 1.0e3, "μs"
+    elseif m < 1.0e9
+        return 1.0e6, "ms"
     else
-        return 1e9, "s"
+        return 1.0e9, "s"
     end
 end
 
@@ -82,7 +83,7 @@ function load_data()
         results_nightly_i = results_nightly_i[2:end]
         push!(results, (master = results_master_i, nightly = results_nightly_i))
     end
-    results
+    return results
 end
 
 function clean_data(results)
@@ -112,7 +113,7 @@ function clean_data(results)
             results_types[j] = type
         end
     end
-    results_problems, results_types, results_master, results_nightly
+    return results_problems, results_types, results_master, results_nightly
 end
 
 # Compare results
@@ -124,8 +125,8 @@ function compare()
     tolerance = 0.02
     for (i, (master, nightly)) in enumerate(zip(results_master, results_nightly))
         if results_types[i] == "time"
-            master = 1e9 .* master
-            nightly = 1e9 .* nightly
+            master = 1.0e9 .* master
+            nightly = 1.0e9 .* nightly
             f, unit = best_unit(maximum(master))
             m1 = round(mean(master) / f, digits = 2)
             d1 = round(std(master) / f, digits = 2)
@@ -133,7 +134,7 @@ function compare()
             m2 = round(mean(nightly) / f, digits = 2)
             d2 = round(std(nightly) / f, digits = 2)
             label_nightly = "$m2 ± $d2 $unit"
-            indicator = if mean(master) < 1e9 * IGNORE_SMALL
+            indicator = if mean(master) < 1.0e9 * IGNORE_SMALL
                 0, "insignificant"
             elseif (1 + MAX_DEVIATION) * m1 < m2
                 fail = true
@@ -162,7 +163,7 @@ function compare()
         table[i, 3] = label_nightly
         table[i, 4] = indicator[2]
     end
-    fail, table
+    return fail, table
 end
 
 function post(fail, table)
@@ -182,7 +183,7 @@ function post(fail, table)
     table_header = ["Problem", "Master", "This commit", "Result"]
     pretty_table(io, table, header = table_header, alignment = [:l, :r, :r, :r])
     comment_str = String(take!(io))
-    println(comment_str)
+    return println(comment_str)
 end
 
 function main()
@@ -190,7 +191,7 @@ function main()
     fail, table = compare()
     post(fail, table)
     versioninfo(verbose = true)
-    @testset "Benchmarks" begin
+    return @testset "Benchmarks" begin
         @test !fail
         if fail
             exit(1)

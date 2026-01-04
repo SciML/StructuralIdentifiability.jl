@@ -389,10 +389,12 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
 
         function getbyname(sys, name)
             println(name)
-            return first([
-                v for v in vcat(unknowns(sys), parameters(sys)) if
-                replace(string(v), "(t)" => "") == name
-            ])
+            return first(
+                [
+                    v for v in vcat(unknowns(sys), parameters(sys)) if
+                        replace(string(v), "(t)" => "") == name
+                ]
+            )
         end
 
         @named ltk_mtk = lotka_volterra_creator()
@@ -443,7 +445,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         sys = System(eqs, t, name = :example_vector)
         correct = OrderedDict(x[1] => true, x[2] => true, k1 => true, k2 => true)
         @test assess_local_identifiability(sys, measured_quantities = [x[1], x[2]]) ==
-              correct
+            correct
 
         # Extension of https://github.com/SciML/StructuralIdentifiability.jl/issues/398
         @parameters k[1:2] a
@@ -529,7 +531,7 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             σ => :globally,
         )
         @test Set(find_identifiable_functions(ode, with_states = true)) ==
-              Set([x4, x2, x1, σ, δ, β, α, c, b, x3 / γ])
+            Set([x4, x2, x1, σ, δ, β, α, c, b, x3 / γ])
     end
 
     @testset "Discrete local identifiability, ModelingToolkit interface" begin

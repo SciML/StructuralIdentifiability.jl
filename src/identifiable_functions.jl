@@ -1,4 +1,3 @@
-
 """
     find_identifiable_functions(ode::ODE; options...)
 
@@ -47,18 +46,18 @@ find_identifiable_functions(ode)
 
 """
 function find_identifiable_functions(
-    ode::ODE{T};
-    known_ic::Vector{<:ExtendedFraction{T}} = Vector{ExtendedFraction{T}}(),
-    prob_threshold::Float64 = 0.99,
-    seed = 42,
-    with_states = false,
-    simplify = :standard,
-    rational_interpolator = :VanDerHoevenLecerf,
-    loglevel = Logging.Info,
-) where {T <: MPolyRingElem{QQFieldElem}}
+        ode::ODE{T};
+        known_ic::Vector{<:ExtendedFraction{T}} = Vector{ExtendedFraction{T}}(),
+        prob_threshold::Float64 = 0.99,
+        seed = 42,
+        with_states = false,
+        simplify = :standard,
+        rational_interpolator = :VanDerHoevenLecerf,
+        loglevel = Logging.Info,
+    ) where {T <: MPolyRingElem{QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
-    with_logger(_si_logger[]) do
+    return with_logger(_si_logger[]) do
         if isempty(known_ic)
             return _find_identifiable_functions(
                 ode,
@@ -84,13 +83,13 @@ function find_identifiable_functions(
 end
 
 function _find_identifiable_functions(
-    ode::ODE{T};
-    prob_threshold::Float64 = 0.99,
-    seed = 42,
-    with_states = false,
-    simplify = :standard,
-    rational_interpolator = :VanDerHoevenLecerf,
-) where {T <: MPolyRingElem{QQFieldElem}}
+        ode::ODE{T};
+        prob_threshold::Float64 = 0.99,
+        seed = 42,
+        with_states = false,
+        simplify = :standard,
+        rational_interpolator = :VanDerHoevenLecerf,
+    ) where {T <: MPolyRingElem{QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
     runtime_start = time_ns()
@@ -129,7 +128,7 @@ function _find_identifiable_functions(
         id_funcs_fracs = dennums_to_fractions(id_funcs)
     end
     id_funcs_fracs = [parent_ring_change(f, parent(ode)) for f in id_funcs_fracs]
-    _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1e9
+    _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1.0e9
     _runtime_logger[:are_id_funcs_polynomial] = all(isone ∘ denominator, id_funcs_fracs)
     @info "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds"
 

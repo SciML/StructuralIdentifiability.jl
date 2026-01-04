@@ -3,7 +3,7 @@
 function append_at_index(vec::Vector{T}, idx::Integer, val::T) where {T}
     # NOTE: could also just use insert!
     @assert (idx == 1) || (idx == length(vec) + 1)
-    if idx == 1
+    return if idx == 1
         vcat(val, vec)
     else
         vcat(vec, val)
@@ -12,7 +12,7 @@ end
 
 function cut_at_index(vec::Vector{T}, idx::Integer) where {T}
     @assert (idx == 1) || (idx == length(vec))
-    if idx == 1
+    return if idx == 1
         vec[2:end]
     else
         vec[1:(end - 1)]
@@ -45,11 +45,11 @@ Output:
 - `polynomial` - result of substitution
 """
 function make_substitution(
-    f::P,
-    var_sub::P,
-    val_numer::P,
-    val_denom::P,
-) where {P <: MPolyRingElem}
+        f::P,
+        var_sub::P,
+        val_numer::P,
+        val_denom::P,
+    ) where {P <: MPolyRingElem}
     d = Nemo.degree(f, var_sub)
 
     result = 0
@@ -249,11 +249,12 @@ function decompose_derivative(varname::String, prefixes::Array{String})
     for pr in prefixes
         if startswith(varname, pr) && length(varname) > length(pr) + 1
             if varname[nextind(varname, ncodeunits(pr))] == '_' &&
-               all(isdigit, varname[(nextind(varname, ncodeunits(pr)) + 1):end])
+                    all(isdigit, varname[(nextind(varname, ncodeunits(pr)) + 1):end])
                 return (pr, parse(Int, varname[(nextind(varname, ncodeunits(pr)) + 1):end]))
             end
         end
     end
+    return
 end
 
 # -----------------------------------------------------------------------------

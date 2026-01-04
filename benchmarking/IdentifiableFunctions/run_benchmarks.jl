@@ -119,7 +119,7 @@ function parse_commandline()
     end
     #! format: on
 
-    parse_args(s)
+    return parse_args(s)
 end
 
 function populate_benchmarks(args, kwargs)
@@ -160,7 +160,7 @@ function populate_benchmarks(args, kwargs)
         close(fd)
     end
     finish!(prog)
-    true
+    return true
 end
 
 function run_benchmarks(args, kwargs)
@@ -195,28 +195,30 @@ function run_benchmarks(args, kwargs)
     Benchmark systems:
     $to_run_names"""
 
-    seconds_passed(from_t) = round((time_ns() - from_t) / 1e9, digits = 2)
+    seconds_passed(from_t) = round((time_ns() - from_t) / 1.0e9, digits = 2)
 
     queue = [
         (problem_id = problem, function_kwargs = kw) for kw in kwargs for
-        problem in to_run_indices
+            problem in to_run_indices
     ]
     processes = []
     running = []
     errored = []
 
     generate_showvalues(processes) =
-        () -> [(
+        () -> [
+        (
             :Active,
             join(
                 map(
                     proc ->
-                        string(proc.problem_name) * " / " * string(proc.global_run_id),
+                    string(proc.problem_name) * " / " * string(proc.global_run_id),
                     filter(proc -> process_running(proc.julia_process), processes),
                 ),
                 ", ",
             ),
-        )]
+        ),
+    ]
 
     prog = Progress(
         length(queue),
@@ -238,13 +240,15 @@ function run_benchmarks(args, kwargs)
             logs = open((@__DIR__) * "/$BENCHMARK_RESULTS/$problem_name/$logfn", "w")
             # escaping ':' for Windows
             function_kwargs_esc = replace(string(function_kwargs), ":" => "\\:")
-            cmd = Cmd([
-                "julia",
-                (@__DIR__) * "/run_single_benchmark.jl",
-                "$function_name",
-                "$problem_name",
-                "$function_kwargs_esc",
-            ])
+            cmd = Cmd(
+                [
+                    "julia",
+                    (@__DIR__) * "/run_single_benchmark.jl",
+                    "$function_name",
+                    "$problem_name",
+                    "$function_kwargs_esc",
+                ]
+            )
             cmd = Cmd(cmd, ignorestatus = true, detach = false, env = copy(ENV))
             proc = run(pipeline(cmd, stdout = logs, stderr = logs), wait = false)
             push!(
@@ -323,7 +327,7 @@ function run_benchmarks(args, kwargs)
         end
     end
 
-    to_run_names
+    return to_run_names
 end
 
 function collect_timings(args, kwargs, names; content = :compare)
@@ -464,7 +468,7 @@ function collect_timings(args, kwargs, names; content = :compare)
         end
     end
 
-    open((@__DIR__) * "/$BENCHMARK_TABLE", "w") do io
+    return open((@__DIR__) * "/$BENCHMARK_TABLE", "w") do io
         write(io, resulting_md)
     end
 end
@@ -493,14 +497,14 @@ function main()
         problems = run_benchmarks(args, kwargs)
         printstyled(
             """
-            Benchmarking had finished in $(round((time_ns() - timestamp) / 1e9, digits=2)) seconds.
+            Benchmarking had finished in $(round((time_ns() - timestamp) / 1.0e9, digits = 2)) seconds.
             Results are written to /$BENCHMARK_RESULTS
             """,
             color = :light_green,
         )
     end
     collect_timings(args, kwargs, problems)
-    printstyled(
+    return printstyled(
         """
         Table with results is written to /$BENCHMARK_TABLE
         """,

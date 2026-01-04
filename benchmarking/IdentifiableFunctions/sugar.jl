@@ -8,13 +8,13 @@ function spolynomial(f, g)
     c = gcd(cf, cg)
     co_cf, co_cg = divexact(cg, c), divexact(cf, c)
     spoly = co_cf * co_mf * f - co_cg * co_mg * g
-    spoly
+    return spoly
 end
 
 function buchberger_criterion(basis, critical_pairs, i, j)
     fi, fj = basis[i], basis[j]
     m = gcd(leading_monomial(fi), leading_monomial(fj))
-    isone(m)
+    return isone(m)
 end
 
 ext(i, j) = (min(i, j), max(i, j))
@@ -28,7 +28,7 @@ function staircase_criterion(basis, critical_pairs, i, j)
             return true
         end
     end
-    false
+    return false
 end
 
 lcm_deg(i, j, basis) = total_degree(lcm(basis[i], basis[j]))
@@ -37,7 +37,7 @@ function sugar_deg(i, j, basis, sugar_cubes)
     mf, mg = leading_monomial(f), leading_monomial(g)
     m = lcm(mf, mg)
     co_mf, co_mg = divexact(m, mf), divexact(m, mg)
-    max(total_degree(co_mf) + sugar_cubes[i], total_degree(co_mg) + sugar_cubes[j])
+    return max(total_degree(co_mf) + sugar_cubes[i], total_degree(co_mg) + sugar_cubes[j])
 end
 
 function select_critical_pair!(basis, critical_pairs, sugar_cubes, use_sugar)
@@ -51,7 +51,7 @@ function select_critical_pair!(basis, critical_pairs, sugar_cubes, use_sugar)
     deg =
         use_sugar ? sugar_deg(pair[1], pair[2], basis, sugar_cubes) :
         lcm_deg(pair[1], pair[2], basis)
-    pair, deg
+    return pair, deg
 end
 
 function update!(critical_pairs, basis, sugar_cubes, j)
@@ -60,14 +60,14 @@ function update!(critical_pairs, basis, sugar_cubes, j)
             push!(critical_pairs, (i, j))
         end
     end
-    nothing
+    return nothing
 end
 
 function normalform(p, basis, sugar_cubes)
     q, r = divrem(p, basis)
     @assert length(basis) == length(sugar_cubes)
     sugar = maximum(map(i -> total_degree(q[i]) + sugar_cubes[i], 1:length(sugar_cubes)))
-    r, sugar
+    return r, sugar
 end
 
 function gb(polys; use_sugar = true)
@@ -104,5 +104,5 @@ function gb(polys; use_sugar = true)
         update!(critical_pairs, basis, sugar_cubes, length(basis))
         d += 1
     end
-    basis
+    return basis
 end

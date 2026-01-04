@@ -66,6 +66,7 @@ function process_system()
             data[PROBLEM_NAME][cat] = data[PROBLEM_NAME][cat] / NUM_RUNS
         end
     end
+    return
 end
 
 function dump_timings()
@@ -78,7 +79,7 @@ function dump_timings()
         end
     end
     filename = timings_filename(GLOBAL_ID)
-    open((@__DIR__) * "/$BENCHMARK_RESULTS/$PROBLEM_NAME/$filename", "w") do io
+    return open((@__DIR__) * "/$BENCHMARK_RESULTS/$PROBLEM_NAME/$filename", "w") do io
         write(io, timings)
     end
 end
@@ -113,6 +114,7 @@ function dump_results()
             write(io, "\n")
         end
     end
+    return
 end
 
 process_system()

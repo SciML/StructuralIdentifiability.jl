@@ -3,11 +3,11 @@ const PROJECTION_VARNAME = "rand_proj_var"
 # ------------------------------------------------------------------------------
 
 function generator_var_change(
-    generator,
-    var::P,
-    numer::P,
-    denom::P,
-) where {P <: MPolyRingElem}
+        generator,
+        var::P,
+        numer::P,
+        denom::P,
+    ) where {P <: MPolyRingElem}
     return IterTools.imap(
         point -> begin
             result = copy(point)
@@ -107,10 +107,10 @@ Output:
 - an extra projection (if `extra_projection` was provided)
 """
 @timeit _to function find_ioprojections(
-    ode::ODE{P},
-    auto_var_change::Bool,
-    extra_projection = nothing,
-) where {P <: MPolyRingElem{<:FieldElem}}
+        ode::ODE{P},
+        auto_var_change::Bool,
+        extra_projection = nothing,
+    ) where {P <: MPolyRingElem{<:FieldElem}}
     # Initialization
     ring, derivation, x_equations, y_equations, point_generator =
         generate_io_equation_problem(ode)
@@ -170,12 +170,12 @@ Output:
         # choosing the output to prolong
         outputs_with_scores = [
             (
-                min(d[2]...) * length(y_equations[d[1]]),
-                min(d[2]...),
-                -count(x -> x == min(d[2]...), d[2]) + length(y_equations[d[1]]) // 30,
-                length(y_equations[d[1]]),
-                d[1],
-            ) for d in var_degs
+                    min(d[2]...) * length(y_equations[d[1]]),
+                    min(d[2]...),
+                    -count(x -> x == min(d[2]...), d[2]) + length(y_equations[d[1]]) // 30,
+                    length(y_equations[d[1]]),
+                    d[1],
+                ) for d in var_degs
         ]
         @debug "Scores: $outputs_with_scores"
         y_prolong = sort(outputs_with_scores)[1][end]
@@ -319,7 +319,7 @@ Output:
 
     io_projections = Dict(
         str_to_var(var_to_str(y)[1:(end - 1)] * "$(y_orders[y])", ring) => p for
-        (y, p) in y_equations
+            (y, p) in y_equations
     )
 
     if projection_equation != proj_var
@@ -345,10 +345,10 @@ Output:
   it will be the value corresponding to `rand_proj_var`
 """
 @timeit _to function find_ioequations(
-    ode::ODE{P};
-    var_change_policy = :default,
-    loglevel = Logging.Info,
-) where {P <: MPolyRingElem{<:FieldElem}}
+        ode::ODE{P};
+        var_change_policy = :default,
+        loglevel = Logging.Info,
+    ) where {P <: MPolyRingElem{<:FieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
@@ -357,15 +357,15 @@ Output:
 end
 
 @timeit _to function _find_ioequations(
-    ode::ODE{P};
-    var_change_policy = :default,
-) where {P <: MPolyRingElem{<:FieldElem}}
+        ode::ODE{P};
+        var_change_policy = :default,
+    ) where {P <: MPolyRingElem{<:FieldElem}}
     # Setting the var_change policy
     if (var_change_policy == :yes) ||
-       (var_change_policy == :default && length(ode.y_vars) < 3)
+            (var_change_policy == :default && length(ode.y_vars) < 3)
         auto_var_change = true
     elseif (var_change_policy == :no) ||
-           (var_change_policy == :default && length(ode.y_vars) >= 3)
+            (var_change_policy == :default && length(ode.y_vars) >= 3)
         auto_var_change = false
     else
         @error "Unknown var_change policy $var_change_policy"
