@@ -1093,6 +1093,59 @@ ident_funcs = [
 ]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
 
+# Examples from https://doi.org/10.1016/j.mbs.2011.06.001
+# From Section 6
+ode = @ODEmodel(
+    x1'(t) = -(a1 + a2) * x1(t) * Vm / (Km + x1(t)) + k21 * x2(t) + b1 * u(t),
+    x2'(t) = a2 * x1(t) * Vm / (Km + x1(t)) - (k02 + k12) * x2(t),
+    y(t) = c * x1(t)
+)
+ident_funcs = [
+    k02 + k12,
+    b1 * c,
+    Km * c,
+    Vm * a1 * c + Vm * a2 * c,
+    (a2 * k21) // (a1 + a2), # this one is different
+]
+ident_funcs_states = [
+    k02 + k12,
+    b1 * c,
+    Km * c,
+    x1 * c,
+    x2 * c * k21,
+    (Vm * a2) // x2,
+    Vm * a1 * c + Vm * a2 * c,
+]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
+
+# From Section 11
+ode = @ODEmodel(
+    T'(t) = lambda - rho * T(t) - beta * T(t) * V(t),
+    Tast'(t) = beta * T(t) * V(t) - delta * Tast(t),
+    V'(t) = N * delta * Tast(t) - c * V(t),
+    y(t) = V(t)
+)
+ident_funcs = [
+    rho,
+    beta,
+    c + delta,
+    c * delta,
+    N * delta * lambda,
+]
+ident_funcs_states = [
+    rho,
+    beta,
+    V,
+    c + delta,
+    c * delta,
+    T // lambda,
+    N * delta * lambda,
+    Tast * N * delta + V * delta,
+]
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
+push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
+
 @testset "Identifiable functions of parameters" begin
     p = 0.99
     for case in test_cases
