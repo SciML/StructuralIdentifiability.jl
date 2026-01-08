@@ -22,38 +22,38 @@ end
 
 function monomial_compress(io_equation, params::Array{<:MPolyRingElem, 1})
     params_xs = isempty(params) ? empty(params) : gens(parent(first(params)))
+    # Pre-compute param string names for faster lookup
+    param_names = Set(var_to_str(p, xs = params_xs) for p in params)
     other_vars = [
-        v for v in gens(parent(io_equation)) if
-            !(var_to_str(v) in map(p -> var_to_str(p, xs = params_xs), params))
+        v for v in gens(parent(io_equation)) if !(var_to_str(v) in param_names)
     ]
     coeffdict = extract_coefficients(io_equation, other_vars)
     expvect = collect(keys(coeffdict))
     coeffs = collect(values(coeffdict))
     termlist = map(x -> prod(other_vars .^ x), expvect)
 
-    echelon_form = Array{Any, 1}()
+    # Use typed arrays instead of Array{Any, 1}
+    P = eltype(coeffs)
+    T = eltype(termlist)
+    echelon_form = Vector{Tuple{P, T}}()
+    sizehint!(echelon_form, length(coeffs))
     for (c, p) in zip(coeffs, termlist)
         for i in 1:length(echelon_form)
             basis_c = echelon_form[i][1]
-            coef = coeff(c, leading_monomial(basis_c)) // leading_coefficient(basis_c)
+            lm = leading_monomial(basis_c)
+            coef = coeff(c, lm) // leading_coefficient(basis_c)
             if coef != 0
                 c = c - coef * basis_c
-                echelon_form[i][2] += coef * p
+                # Update in place by creating new tuple
+                echelon_form[i] = (echelon_form[i][1], echelon_form[i][2] + coef * p)
             end
         end
         if c != 0
-            push!(echelon_form, [c, p])
+            push!(echelon_form, (c, p))
         end
     end
 
     result = ([a[1] for a in echelon_form], [a[2] for a in echelon_form])
-    #s = 0
-    #for (a, b) in zip(result[1], result[2])
-    #    s += parent_ring_change(a, parent(io_equation)) * parent_ring_change(b, parent(io_equation))
-    #end
-    #println("====================")
-    #println(s - io_equation)
-
     return result
 end
 
@@ -136,49 +136,65 @@ of lower degree are cached and used to compute the values of the monomials of hi
 """
 function massive_eval(polys, eval_dict)
     R = parent(first(values(eval_dict)))
-    point = [get(eval_dict, v, zero(R)) for v in gens(parent(first(polys)))]
+    poly_ring = parent(first(polys))
+    poly_gens = gens(poly_ring)
+    point = [get(eval_dict, v, zero(R)) for v in poly_gens]
     n = length(point)
 
-    monomials = Set()
+    # Use typed Set for better performance
+    monomials = Set{Vector{Int}}()
     for p in polys
         for exp in exponent_vectors(p)
             push!(monomials, exp)
         end
     end
 
-    cache = Dict()
-    cache[[0 for i in 1:n]] = one(R)
+    # Pre-allocate the zero vector once
+    zero_vec = zeros(Int, n)
+    cache = Dict{Vector{Int}, typeof(one(R))}()
+    cache[zero_vec] = one(R)
     cached_monoms = ExpVectTrie(n)
-    push!(cached_monoms, [0 for _ in 1:n])
+    push!(cached_monoms, zero_vec)
 
+    # Cache unit vectors
     for i in 1:n
-        var_exp = [(i != j) ? 0 : 1 for j in 1:n]
+        var_exp = zeros(Int, n)
+        var_exp[i] = 1
         cache[var_exp] = point[i]
         push!(cached_monoms, var_exp)
     end
 
+    # Pre-allocate working arrays
+    computed = zeros(Int, n)
+    exp_work = zeros(Int, n)
     for exp in sort!(collect(monomials), by = sum)
-        if !(exp in keys(cache))
+        if !haskey(cache, exp)
             monom_val = one(R)
-            computed = [0 for i in 1:n]
-            while sum(exp) > 0
-                _, below = get_max_below(cached_monoms, exp)
+            # Use in-place operations on working arrays
+            fill!(computed, 0)
+            copyto!(exp_work, exp)
+            while sum(exp_work) > 0
+                _, below = get_max_below(cached_monoms, exp_work)
                 monom_val = monom_val * cache[below]
-                exp = exp .- below
-                computed = computed .+ below
-                cache[computed] = monom_val
-                push!(cached_monoms, computed)
+                @inbounds for k in 1:n
+                    exp_work[k] -= below[k]
+                    computed[k] += below[k]
+                end
+                computed_copy = copy(computed)
+                cache[computed_copy] = monom_val
+                push!(cached_monoms, computed_copy)
             end
         end
     end
 
-    results = []
-    for p in polys
+    # Pre-size results array with correct type
+    results = Vector{typeof(zero(R))}(undef, length(polys))
+    for (pidx, p) in enumerate(polys)
         res = zero(R)
         for (exp, coef) in zip(exponent_vectors(p), coefficients(p))
             res += coef * cache[exp]
         end
-        push!(results, res)
+        results[pidx] = res
     end
     return results
 end
