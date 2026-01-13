@@ -11,7 +11,7 @@ function det_minor_expansion_inner(
     if length(discarded[1]) == n
         return 1
     end
-    if discarded in keys(cache)
+    if haskey(cache, discarded)
         return cache[discarded]
     end
     result = 0
@@ -25,7 +25,7 @@ function det_minor_expansion_inner(
                 sign *
                 m[row, col] *
                 det_minor_expansion_inner(m, (dis_rows, dis_cols), cache)
-            sign = -1 * sign
+            sign = -sign
         end
     end
     if length(discarded[1]) > 1
