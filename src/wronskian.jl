@@ -44,7 +44,6 @@ function monomial_compress(io_equation, params::Array{<:MPolyRingElem, 1})
             coef = coeff(c, lm) // leading_coefficient(basis_c)
             if coef != 0
                 c = c - coef * basis_c
-                # Update in place by creating new tuple
                 echelon_form[i] = (echelon_form[i][1], echelon_form[i][2] + coef * p)
             end
         end
@@ -136,12 +135,9 @@ of lower degree are cached and used to compute the values of the monomials of hi
 """
 function massive_eval(polys, eval_dict)
     R = parent(first(values(eval_dict)))
-    poly_ring = parent(first(polys))
-    poly_gens = gens(poly_ring)
-    point = [get(eval_dict, v, zero(R)) for v in poly_gens]
+    point = [get(eval_dict, v, zero(R)) for v in gens(parent(first(polys)))]
     n = length(point)
 
-    # Use typed Set for better performance
     monomials = Set{Vector{Int}}()
     for p in polys
         for exp in exponent_vectors(p)
@@ -149,52 +145,39 @@ function massive_eval(polys, eval_dict)
         end
     end
 
-    # Pre-allocate the zero vector once
-    zero_vec = zeros(Int, n)
     cache = Dict{Vector{Int}, typeof(one(R))}()
-    cache[zero_vec] = one(R)
+    cache[[0 for i in 1:n]] = one(R)
     cached_monoms = ExpVectTrie(n)
-    push!(cached_monoms, zero_vec)
+    push!(cached_monoms, [0 for _ in 1:n])
 
-    # Cache unit vectors
     for i in 1:n
-        var_exp = zeros(Int, n)
-        var_exp[i] = 1
+        var_exp = [(i != j) ? 0 : 1 for j in 1:n]
         cache[var_exp] = point[i]
         push!(cached_monoms, var_exp)
     end
 
-    # Pre-allocate working arrays
-    computed = zeros(Int, n)
-    exp_work = zeros(Int, n)
     for exp in sort!(collect(monomials), by = sum)
         if !haskey(cache, exp)
             monom_val = one(R)
-            # Use in-place operations on working arrays
-            fill!(computed, 0)
-            copyto!(exp_work, exp)
-            while sum(exp_work) > 0
-                _, below = get_max_below(cached_monoms, exp_work)
+            computed = [0 for i in 1:n]
+            while sum(exp) > 0
+                _, below = get_max_below(cached_monoms, exp)
                 monom_val = monom_val * cache[below]
-                @inbounds for k in 1:n
-                    exp_work[k] -= below[k]
-                    computed[k] += below[k]
-                end
-                computed_copy = copy(computed)
-                cache[computed_copy] = monom_val
-                push!(cached_monoms, computed_copy)
+                exp = exp .- below
+                computed = computed .+ below
+                cache[computed] = monom_val
+                push!(cached_monoms, computed)
             end
         end
     end
 
-    # Pre-size results array with correct type
-    results = Vector{typeof(zero(R))}(undef, length(polys))
-    for (pidx, p) in enumerate(polys)
+    results = []
+    for p in polys
         res = zero(R)
         for (exp, coef) in zip(exponent_vectors(p), coefficients(p))
             res += coef * cache[exp]
         end
-        results[pidx] = res
+        push!(results, res)
     end
     return results
 end

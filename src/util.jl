@@ -192,12 +192,7 @@ Output:
 function extract_coefficients(poly::P, variables::Array{P, 1}) where {P <: MPolyRingElem}
     xs = gens(parent(poly))
     @assert all(in(xs), variables)
-    # Use a type-stable version by converting to Int explicitly
-    cut_indices = Vector{Int}(undef, length(variables))
-    for (j, v) in enumerate(variables)
-        idx = findfirst(x -> x == v, xs)
-        cut_indices[j] = idx::Int  # Assert non-nothing for type stability
-    end
+    cut_indices = map(v -> findfirst(x -> x == v, xs), variables)
     coeff_indices = setdiff(collect(1:length(xs)), cut_indices)
     coeff_vars = xs[coeff_indices]
 
@@ -207,15 +202,10 @@ function extract_coefficients(poly::P, variables::Array{P, 1}) where {P <: MPoly
 
     result = Dict{Vector{Int}, Tuple{Vector{Vector{Int}}, Vector{FieldType}}}()
 
-    n_cut = length(cut_indices)
-    n_coeff = length(coeff_indices)
     @inbounds for i in 1:length(poly)
         coef = coeff(poly, i)
         evec = exponent_vector(poly, i)
-        var_slice = Vector{Int}(undef, n_cut)
-        for j in 1:n_cut
-            var_slice[j] = evec[cut_indices[j]]
-        end
+        var_slice = [evec[i] for i in cut_indices]
         if !haskey(result, var_slice)
             monom_vect, coef_vect = Vector{Vector{Int}}(), Vector{FieldType}()
             sizehint!(monom_vect, 8)
@@ -223,9 +213,9 @@ function extract_coefficients(poly::P, variables::Array{P, 1}) where {P <: MPoly
             result[var_slice] = (monom_vect, coef_vect)
         end
         monom_vect, coef_vect = result[var_slice]
-        new_monom = Vector{Int}(undef, n_coeff)
-        for j in 1:n_coeff
-            new_monom[j] = evec[coeff_indices[j]]
+        new_monom = Vector{Int}(undef, length(coeff_vars))
+        for i in 1:length(new_monom)
+            new_monom[i] = evec[coeff_indices[i]]
         end
         push!(monom_vect, new_monom)
         push!(coef_vect, coef)

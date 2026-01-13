@@ -15,21 +15,12 @@ function det_minor_expansion_inner(
         return cache[discarded]
     end
     result = 0
-    # Use pre-allocated Set for better performance
-    discarded_rows_set = Set(discarded[1])
-    row = 0
-    @inbounds for i in 1:n
-        if !(i in discarded_rows_set)
-            row = i
-            break
-        end
-    end
-    dis_rows = Tuple(sort!([discarded[1]..., row]))
+    row = minimum(setdiff(Set(1:n), Set(discarded[1])))
+    dis_rows = Tuple(sort([[i for i in discarded[1]]; row]))
     sign = 1
-    discarded_cols_set = Set(discarded[2])
     for col in 1:n
-        if !(col in discarded_cols_set)
-            dis_cols = Tuple(sort!([discarded[2]..., col]))
+        if !(col in discarded[2])
+            dis_cols = Tuple(sort([[i for i in discarded[2]]; col]))
             result +=
                 sign *
                 m[row, col] *
