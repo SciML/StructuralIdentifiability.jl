@@ -1279,6 +1279,18 @@ benchmarks = Dict(
             y(t) = D(t)
         )
     ),
+    # equations (1) - (5) from https://doi.org/10.3389/fimmu.2020.01376
+    :TranAlRadhawi => Dict(
+        :name => "Chemotherapy model",
+        :ode => @ODEmodel(
+            C'(t) = u(t) - k1 * C(t) / (k2 + C(t)),
+            T'(t) = ka * T(t) - kb * C(t) * T(t) / (kc + T(t)) - kd * T(t) * I(t),
+            I'(t) = X(t) - ke * T(t) * I(t) - kf * C(t)  * I(t) - kg * I(t) * Y(t) - kh * I(t),
+            X'(t) = C(t) / (1 + C(t) * ki_inv) - kj * X(t) - kk * X(t) * Y(t),
+            Y'(t) = I(t) / (1 + C(t) * kl_inv) - km * Y(t) * C(t),
+            y(t) = T(t)
+        )
+    )
 )
 
 # the NFkB example
