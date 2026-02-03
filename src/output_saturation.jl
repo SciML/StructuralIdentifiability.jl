@@ -2,7 +2,7 @@
     saturate_outputs(ode, orders, max_deg = 5)
 
 Adds extra outputs extracted from the Lie derivatives of the existing outputs up to the prescribed order.
-Adds only the outputs which are algebraically independent over the existing outputs, paramaters, and inputs
+Adds only the outputs which are algebraically independent over the existing outputs, parameters, and inputs
 (and, thus, may be useful in the differential elimination process).
 
 Inputs:
@@ -13,10 +13,10 @@ Inputs:
 Output: a new ode model with inputs inserted
 """
 function saturate_outputs(
-    ode::ODE{P},
-    orders::Dict{P, Int},
-    max_deg = 5,
-) where {P <: MPolyRingElem}
+        ode::ODE{P},
+        orders::Dict{P, Int},
+        max_deg = 5,
+    ) where {P <: MPolyRingElem}
     lie_ders = lie_derivatives_up_to(ode, Dict(ode.y_equations[y] => ord for (y, ord) in orders))
     @info "Degrees: $([(total_degree(numerator(f)), total_degree(denominator(f))) for f in lie_ders])"
 
@@ -28,7 +28,7 @@ function saturate_outputs(
             current_y = RationalFunctionField([generators(current_y)..., f])
         end
     end
-    new_outputs = generators(current_y)[length(ode.y_vars) + length(ode.u_vars) + length(ode.parameters) + 1 : end]
+    new_outputs = generators(current_y)[(length(ode.y_vars) + length(ode.u_vars) + length(ode.parameters) + 1):end]
 
     idx = 1
     old_y_names = map(var_to_str, ode.y_vars)

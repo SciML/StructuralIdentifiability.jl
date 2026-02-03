@@ -18,7 +18,7 @@ function check_primality_zerodim(J::Array{QQMPolyRingElem, 1})
         push!(matrices, M)
     end
     generic_multiplication = sum(Nemo.QQ(rand(1:100)) * M for M in matrices)
-    @debug "Generic mulitplication matrix computed"
+    @debug "Generic multiplication matrix computed"
     @debug "Trying reductions over primed first"
     NUM_PRIMES = 10
     p = 2^31 - 1
