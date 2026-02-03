@@ -6,7 +6,6 @@ function check_primality_zerodim(J::Array{QQMPolyRingElem, 1})
     dim = length(basis)
     S = Nemo.matrix_space(Nemo.QQ, dim, dim)
     matrices = []
-    @debug "$J $basis"
     @debug "Dim is $dim"
     for v in gens(parent(first(J)))
         M = zero(S)
@@ -17,15 +16,31 @@ function check_primality_zerodim(J::Array{QQMPolyRingElem, 1})
             end
         end
         push!(matrices, M)
-        @debug "Multiplication by $v: $M"
     end
     generic_multiplication = sum(Nemo.QQ(rand(1:100)) * M for M in matrices)
-    @debug generic_multiplication
+    @debug "Generic multiplication matrix computed"
+    @debug "Trying reductions over primed first"
+    NUM_PRIMES = 10
+    p = 2^31 - 1
+    for _ in 1:NUM_PRIMES
+        @debug "Prime is $p"
+        F = Nemo.GF(p)
+        S_F = Nemo.matrix_space(F, dim, dim)
+        generic_multiplication_modp = S_F([generic_multiplication[i, j] for i in 1:dim for j in 1:dim])
+        R, t = Nemo.polynomial_ring(F, "t")
+        chpoly = Nemo.charpoly(R, generic_multiplication_modp)
+        @debug "Charpoly computed"
+        if Nemo.is_irreducible(chpoly)
+            return true
+        end
+        p = Primes.nextprime(p + 1)
+    end
 
+    @debug "No conclusion modulo primes, computing over Q"
     R, t = Nemo.polynomial_ring(Nemo.QQ, "t")
-    @debug "$(Nemo.charpoly(R, generic_multiplication))"
+    chpoly = Nemo.charpoly(R, generic_multiplication)
 
-    return Nemo.is_irreducible(Nemo.charpoly(R, generic_multiplication))
+    return Nemo.is_irreducible(chpoly)
 end
 
 #------------------------------------------------------------------------------
