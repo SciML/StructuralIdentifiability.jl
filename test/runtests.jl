@@ -146,6 +146,11 @@ if GROUP == "QA"
 end
 
 if GROUP == "All" || GROUP == "Core"
+    @testset "Benchmarks are valid" verbose = true begin
+        # https://github.com/pogudingleb/RationalFunctionFields.jl uses this
+        include(joinpath(dirname(dirname(pathof(StructuralIdentifiability))), "benchmarking", "benchmarks.jl"))
+    end
+
     @time @testset "All the tests" verbose = true begin
         for test_file in all_tests
             if !contains(test_file, "qa.jl")
