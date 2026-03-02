@@ -602,7 +602,7 @@ benchmarks = Dict(
         # https://arxiv.org/pdf/2006.14295.pdf
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SIR_21.jl
         :name => "SIR 21",
-        :cite => "\\cite{}",
+        :cite => "\\cite[Figure 1]{Castro2020}",
         :ode => @ODEmodel(
             S'(t) = -beta * S(t) * I(t) / N - pp * S(t) + q * C(t),
             I'(t) = beta * S(t) * I(t) / N - (r + mu) * I(t),
