@@ -38,12 +38,12 @@ import Groebner
 
     # Part 1: mod p and specialized
     p = Nemo.Native.GF(2^62 + 135)
-    StructuralIdentifiability.ParamPunPam.reduce_mod_p!(rff.mqs, p)
+    StructuralIdentifiability.ParamPunPam.reduce_mod_p!(rff.oms, p)
     point = rand(
         p,
-        length(Nemo.gens(StructuralIdentifiability.ParamPunPam.parent_params(rff.mqs))),
+        length(Nemo.gens(StructuralIdentifiability.ParamPunPam.parent_params(rff.oms))),
     )
-    eqs = StructuralIdentifiability.ParamPunPam.specialize_mod_p(rff.mqs, point)
+    eqs = StructuralIdentifiability.ParamPunPam.specialize_mod_p(rff.oms, point)
     gb = Groebner.groebner(eqs, ordering = Groebner.DegRevLex())
     # GB is linear
     @test length(gb) == length(gens(parent(eqs[1])))
@@ -53,7 +53,7 @@ import Groebner
     @test abs(length(str) - expected) / expected * 100 < 5
 
     # Part 2: over Q
-    eqs = fractionfree_generators_raw(rff.mqs)[1]
+    eqs = fractionfree_generators_raw(rff.oms)[1]
     expected = 14652203
     str = join(map(string, eqs), ",")
     @info "" length(str)
