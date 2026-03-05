@@ -566,11 +566,11 @@ benchmarks = Dict(
         :name => "SIR 19",
         :cite => "\\cite[Eq (3.1)]{Gaeta2021}",
         :ode => @ODEmodel(
-            S'(t) = -alpha*(I(t)+J(t))*S(t),
-            I'(t) = alpha*xi*S(t)*(I(t)+J(t))-beta*I(t),
-            J'(t) = alpha*(1-xi)*S(t)*(I(t)+J(t))-eta*J(t),
-            R'(t) = beta*I(t),
-            U'(t) = eta*J(t),
+            S'(t) = -alpha * (I(t) + J(t)) * S(t),
+            I'(t) = alpha * xi * S(t) * (I(t) + J(t)) - beta * I(t),
+            J'(t) = alpha * (1 - xi) * S(t) * (I(t) + J(t)) - eta * J(t),
+            R'(t) = beta * I(t),
+            U'(t) = eta * J(t),
             y1(t) = R(t)
         ),
     ),
@@ -1031,7 +1031,7 @@ benchmarks = Dict(
     :Covid2 => Dict(
         :name => "Covid model (Gallina)",
         :cite => "\\cite[Eq (2.17)-(2.22)]{Gallina}"
-        :ode => @ODEmodel(
+            :ode => @ODEmodel(
             S'(t) =
                 b * (S(t) + I(t) + A(t) + Q(t) + J(t) + R(t)) -
                 S(t) * (l * I(t) + l * ea * eq * Q(t) + l * ea * A(t) + l * ej * J(t) + d1),
@@ -1337,8 +1337,8 @@ ode = set_parameter_values(
 )
 
 benchmarks[:NFkB] = Dict(
-    :name => "NFkB", 
+    :name => "NFkB",
     :cite => "\\cite[Eq (9)-(23)]{Lipniacki2004}",
-    :ode => ode, 
+    :ode => ode,
     :skip => false
 )
