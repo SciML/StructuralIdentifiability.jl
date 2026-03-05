@@ -1030,8 +1030,8 @@ benchmarks = Dict(
     ),
     :Covid2 => Dict(
         :name => "Covid model (Gallina)",
-        :cite => "\\cite[Eq (2.17)-(2.22)]{Gallina}"
-            :ode => @ODEmodel(
+        :cite => "\\cite[Eq (2.17)-(2.22)]{Gallina}",
+        :ode => @ODEmodel(
             S'(t) =
                 b * (S(t) + I(t) + A(t) + Q(t) + J(t) + R(t)) -
                 S(t) * (l * I(t) + l * ea * eq * Q(t) + l * ea * A(t) + l * ej * J(t) + d1),
