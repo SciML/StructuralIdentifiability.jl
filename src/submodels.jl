@@ -53,6 +53,7 @@ function traverse_outputs(
     raw_models = Dict{QQMPolyRingElem, Set{QQMPolyRingElem}}()
     for y in ys
         model = dfs(graph, y, Set{QQMPolyRingElem}())
+        delete!(model, y)
         raw_models[y] = model
     end
     return raw_models
@@ -79,11 +80,14 @@ end
 
 # ------------------------------------------------------------------------------
 
-function search_add_unions(submodels::Array{Set{QQMPolyRingElem}, 1})
+function search_add_unions(submodels::Set{Set{QQMPolyRingElem}})
     result = Array{Set{QQMPolyRingElem}, 1}([Set{QQMPolyRingElem}()])
     for model in submodels
         for index in 1:length(result)
-            push!(result, union(result[index], model))
+            uni = union(result[index], model)
+            if !(uni in result)
+                push!(result, uni)
+            end
         end
     end
     return result
@@ -200,8 +204,9 @@ function find_submodels(ode::ODE{P}) where {P <: MPolyRingElem}
     ys = ode.y_vars
     xs = ode.x_vars
     raw_models = traverse_outputs(graph, ys)
-    input_unions = [raw_models[y] for y in ys]
-    unions = (search_add_unions(input_unions))
+    input_unions = Set([raw_models[y] for y in ys])
+    unions = search_add_unions(input_unions)
+    @debug "We have $(length(unions)) candidate submodels to check"
     saturate_ys(unions, ys, graph, xs)
     result = filter_max_empty(ode, union(unions))
     back2ode = submodel2ode(ode, result)
