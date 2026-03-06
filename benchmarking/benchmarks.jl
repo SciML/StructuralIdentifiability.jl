@@ -48,6 +48,7 @@ benchmarks = Dict(
             y1(t) = x0(t)
         ),
         :skip => false,
+        :cite => "bib/Pharm.bib"
     ),
     :SEAIJRC => Dict(
         :name => "SEAIJRC Covid model",
@@ -421,6 +422,7 @@ benchmarks = Dict(
             y2(t) = a2 * (pAkt(t) + pAkt_S6(t)),
             y3(t) = a3 * pS6(t)
         ),
+        :cite => "bib/Fujita.bib"
     ),
     :LLW => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/General/LLW1987_io.jl
@@ -449,6 +451,7 @@ benchmarks = Dict(
             x4'(t) = k41 * x1(t) - k14 * x4(t),
             y1(t) = x1(t)
         ),
+        :cite => "bib/Bilirubin2_io.bib"
     ),
     :HIV2 => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Virology/HIV2_io.jl
@@ -476,6 +479,7 @@ benchmarks = Dict(
             y1(t) = x4(t),
             y2(t) = x5(t)
         ),
+        :cite => "bib/Biohydrogenation_io.bib"
     ),
     :Treatment => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/Treatment_io.jl
@@ -503,6 +507,7 @@ benchmarks = Dict(
             Q'(t) = -gamma * Q(t) + psi * I(t),
             y1(t) = Q(t)
         ),
+        :cite => "bib/SEIR_1_io.bib"
     ),
     :JAK_STAT => Dict(
         # https://arxiv.org/pdf/2207.09745.pdf
@@ -532,6 +537,7 @@ benchmarks = Dict(
             y7(t) = x10(t),
             y8(t) = -x7(t) + 165
         ),
+        :cite => "bib/JAK_STAT_1.bib"
     ),
     :SIR24 => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Epidemiology/SIR_24.jl
@@ -857,6 +863,7 @@ benchmarks = Dict(
             q7'(t) = k7 * q1(t),
             y1(t) = q7(t)
         ),
+        :cite => "bib/CGV1990.bib",
     ),
     :LeukaemiaLeon2021 => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Immunology/LeukaemiaLeon2021.jl
@@ -975,6 +982,7 @@ benchmarks = Dict(
             x2'(t) = r2 * x2(t) + beta21 * x1(t) * x2(t) + beta22 * x2(t)^2,
             y1(t) = x1(t)
         ),
+        :cite => "bib/genLV.bib"
     ),
     :Pivastatin => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Pharmacokinetics/Pivastatin.jl
