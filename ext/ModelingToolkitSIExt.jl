@@ -236,8 +236,11 @@ function __mtk_to_si(
     output_eqs = [e[2] for e in measured_quantities]
 
     # performing full structural simplification
-    if length(observed(de)) > 0
-        rules = Dict(s.lhs => s.rhs for s in observed(de))
+    if length(observed(de)) > 0 || length(bindings(de) > 0)
+        rules = merge(
+            Dict(s.lhs => s.rhs for s in observed(de)),
+            Dict(k => v for (k, v) in bindings(de) if ModelingToolkitBase.isparameter(k))
+        )
         while any(
                 [
                     length(intersect(get_variables(r), keys(rules))) > 0 for r in values(rules)
