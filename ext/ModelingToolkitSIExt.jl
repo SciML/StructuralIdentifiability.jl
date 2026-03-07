@@ -14,6 +14,11 @@ using ModelingToolkitBase
 
 # ------------------------------------------------------------------------------
 
+# checking if it is a function of the form x(t), a bit dirty
+function isfunction(e::SymbolicUtils.BasicSymbolic)
+    return length(Symbolics.arguments(e)) == 1 && "$(first(Symbolics.arguments(e)))" == "t"
+end
+
 function StructuralIdentifiability.eval_at_nemo(e::Num, vals::Dict)
     e = Symbolics.value(e)
     return eval_at_nemo(e, vals)
@@ -21,8 +26,7 @@ end
 
 function StructuralIdentifiability.eval_at_nemo(e::SymbolicUtils.BasicSymbolic, vals::Dict)
     if Symbolics.iscall(e)
-        # checking if it is a function of the form x(t), a bit dirty
-        if length(Symbolics.arguments(e)) == 1 && "$(first(Symbolics.arguments(e)))" == "t"
+        if isfunction(e)
             return vals[e]
         end
         # checking if this is a vector entry like x(t)[1]
@@ -213,12 +217,24 @@ function __mtk_to_si(
         de::ModelingToolkitBase.System,
         measured_quantities::Array{<:Tuple{String, <:SymbolicUtils.BasicSymbolic}},
     )
+
+    # checking if all the functions in the lhs are either states of outputs
+    ufo_functions = filter(
+        f -> !(ModelingToolkitBase.isoutput(f)) && isfunction(f),
+        map(e -> e.lhs, ModelingToolkitBase.equations(de))
+    )
+    if !isempty(ufo_functions)
+        throw(DomainError("The following functions on the lhs of the equations are neither states not outputs: $ufo_functions. Did you mean to compile the model?"))
+    end
+
     polytype = StructuralIdentifiability.Nemo.QQMPolyRingElem
     fractype = StructuralIdentifiability.Nemo.Generic.FracFieldElem{polytype}
     diff_eqs = filter(
         eq -> !(ModelingToolkitBase.isoutput(eq.lhs)),
         ModelingToolkitBase.equations(de),
     )
+    output_eqs = [e[2] for e in measured_quantities]
+
     # performing full structural simplification
     if length(observed(de)) > 0
         rules = Dict(s.lhs => s.rhs for s in observed(de))
@@ -230,6 +246,7 @@ function __mtk_to_si(
             rules = Dict(k => SymbolicUtils.substitute(v, rules) for (k, v) in rules)
         end
         diff_eqs = [SymbolicUtils.substitute(eq, rules) for eq in diff_eqs]
+        output_eqs = [SymbolicUtils.substitute(eq, rules) for eq in output_eqs]
     end
 
     y_functions = [each[2] for each in measured_quantities]
@@ -279,7 +296,7 @@ function __mtk_to_si(
         end
     end
     for i in 1:length(measured_quantities)
-        out_eqn_dict[y_vars[i]] = eval_at_nemo(measured_quantities[i][2], symb2gens)
+        out_eqn_dict[y_vars[i]] = eval_at_nemo(output_eqs[i], symb2gens)
     end
 
     inputs_ = [symb2gens[each] for each in inputs]
