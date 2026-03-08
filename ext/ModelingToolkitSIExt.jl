@@ -84,15 +84,17 @@ function StructuralIdentifiability.eval_at_nemo(
 end
 
 function get_measured_quantities(ode::ModelingToolkitBase.System)
+    # filterings is to discard vectorial entities (with tearing and alike)
+    scalar_observed = filter(e -> length(Symbolics.shape(e.rhs)) == 0, ModelingToolkitBase.observed(ode))
     outputs = filter(
         eq -> ModelingToolkitBase.isoutput(eq.lhs),
-        vcat(ModelingToolkitBase.equations(ode), ModelingToolkitBase.observed(ode)),
+        vcat(ModelingToolkitBase.equations(ode), scalar_observed),
     )
     if !isempty(outputs)
         return outputs
     elseif !isempty(ModelingToolkitBase.observed(ode))
         @warn "All `observed` variables from the MTK model are taken as outputs, make sure this is what you wanted"
-        return ModelingToolkitBase.observed(ode)
+        return scalar_observed
     else
         throw(
             error(
@@ -188,6 +190,45 @@ end
 
 #------------------------------------------------------------------------------
 
+function extract_shifts_and_derivatives(exs_list)
+    result = Dict(
+        :vars => [],
+        :shifts => [],
+        :derivatives => []
+    )
+    function _walk(ex)
+        !Symbolics.iscall(ex) && return
+        op = Symbolics.operation(ex)
+        args = Symbolics.arguments(ex)
+
+        if op isa Shift
+            push!(result[:shifts], first(args))
+            return
+        end
+
+        if op isa Differential
+            push!(result[:derivatives], first(args))
+            return
+        end
+
+        if length(args) == 1
+            push!(result[:vars], ex)
+            return
+        end
+
+        for arg in args
+            _walk(arg)
+        end
+        return
+    end
+    for ex in exs_list
+        _walk(ex)
+    end
+    return result
+end
+
+#------------------------------------------------------------------------------
+
 function scalarize(arr)
     result = []
     for a in arr
@@ -218,29 +259,22 @@ function __mtk_to_si(
         measured_quantities::Array{<:Tuple{String, <:SymbolicUtils.BasicSymbolic}},
     )
 
-    # checking if all the functions in the lhs are either states of outputs
-    ufo_functions = filter(
-        f -> !(ModelingToolkitBase.isoutput(f)) && isfunction(f),
-        map(e -> e.lhs, ModelingToolkitBase.equations(de))
-    )
-    if !isempty(ufo_functions)
-        throw(DomainError("The following functions on the lhs of the equations are neither states not outputs: $ufo_functions. Did you mean to compile the model?"))
-    end
-
     polytype = StructuralIdentifiability.Nemo.QQMPolyRingElem
     fractype = StructuralIdentifiability.Nemo.Generic.FracFieldElem{polytype}
     diff_eqs = filter(
         eq -> !(ModelingToolkitBase.isoutput(eq.lhs)),
         ModelingToolkitBase.equations(de),
     )
-    output_eqs = [e[2] for e in measured_quantities]
+    output_funcs = [e[2] for e in measured_quantities]
 
     # performing full structural simplification
-    if length(observed(de)) > 0 || length(bindings(de) > 0)
-        rules = merge(
-            Dict(s.lhs => s.rhs for s in observed(de)),
-            Dict(k => v for (k, v) in bindings(de) if ModelingToolkitBase.isparameter(k))
-        )
+    if (length(observed(de)) > 0) || (length(bindings(de)) > 0)
+        rules = Dict(s.lhs => s.rhs for s in observed(de))
+        for (k, v) in bindings(de)
+            if ModelingToolkitBase.isparameter(k)
+                rules = merge(rules, Dict(scalarize(k) .=> scalarize(v)))
+            end
+        end
         while any(
                 [
                     length(intersect(get_variables(r), keys(rules))) > 0 for r in values(rules)
@@ -249,7 +283,21 @@ function __mtk_to_si(
             rules = Dict(k => SymbolicUtils.substitute(v, rules) for (k, v) in rules)
         end
         diff_eqs = [SymbolicUtils.substitute(eq, rules) for eq in diff_eqs]
-        output_eqs = [SymbolicUtils.substitute(eq, rules) for eq in output_eqs]
+        output_funcs = [SymbolicUtils.substitute(f, rules) for f in output_funcs]
+    end
+
+    de_lhs = extract_shifts_and_derivatives([e.lhs for e in diff_eqs])
+    de_rhs = extract_shifts_and_derivatives([e.rhs for e in diff_eqs])
+    out_rhs = extract_shifts_and_derivatives(output_funcs)
+
+    (isempty(out_rhs[:shifts]) && isempty(out_rhs[:derivatives])) || throw(DomainError("Output expressions cannot contain neither shifts nor derivatives"))
+    isempty(de_lhs[:shifts]) || throw(DomainError("Shifts are not allowed on the left-hand side"))
+
+    if !isempty(de_rhs[:shifts])
+        (is_empty(de_rhs[:derivatives]) && is_empty(de_lhs[:derivatives])) || throw(DomainError("Derivatives and shifts cannot appear at the same time"))
+        isempty(intersect(de_lhs[:vars], de_rhs[:vars])) || throw(DomainError("States in the right-hand side of the dynamics equations can appear only as shifts"))
+    else
+        isempty(de_lhs[:vars]) || throw(DomainError("States on the left-hand side must appear with derivations (and this is not the case for $(de_lhs[:vars])). Did you mean to mtkcompile the model?"))
     end
 
     y_functions = [each[2] for each in measured_quantities]
@@ -257,7 +305,7 @@ function __mtk_to_si(
         s -> !ModelingToolkitBase.isoutput(s),
         clean_calls(map(e -> e.lhs, diff_eqs)),
     )
-    all_funcs = collect(Set(clean_calls(ModelingToolkitBase.unknowns(de))))
+    all_funcs = collect(scalarize(ModelingToolkitBase.unknowns(de)))
     inputs = filter(s -> !ModelingToolkitBase.isoutput(s), setdiff(all_funcs, state_vars))
     params = reduce(vcat, SymbolicUtils.scalarize(ModelingToolkitBase.parameters(de)))
     t = ModelingToolkitBase.arguments(clean_calls([diff_eqs[1].lhs])[1])[1]
@@ -299,7 +347,7 @@ function __mtk_to_si(
         end
     end
     for i in 1:length(measured_quantities)
-        out_eqn_dict[y_vars[i]] = eval_at_nemo(output_eqs[i], symb2gens)
+        out_eqn_dict[y_vars[i]] = eval_at_nemo(output_funcs[i], symb2gens)
     end
 
     inputs_ = [symb2gens[each] for each in inputs]
