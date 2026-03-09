@@ -838,10 +838,46 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
         @parameters k₁ k₂ μ₁max μ₂max
         eqs = [μ₁ ~ k₁ + μ₁max, D(X) ~ (μ₁ + μ₂max) * X, yX ~ X]
 
-        ode = System(eqs, t, name = :output_definition_case)
+        @mtkcompile ode = System(eqs, t)
 
         id_res = assess_identifiability(ode)
         @test 1 == count(v -> v == :globally, values(id_res))
+
+        # Examples from https://github.com/SciML/StructuralIdentifiability.jl/issues/496
+        @variables x(t)[1:2] y(t)[1:2] [output = true]
+        @parameters p[1:2] q[1:2]
+        eqs = [
+            D(x) ~ p .* x + y,
+            y ~ q .* x,
+        ]
+
+        @mtkcompile sys = System(eqs, t; bindings = [y => x, q => 2 .* p])
+
+        res = mtk_to_si(sys, Equation[])
+
+        @test length(res[1].parameters) == 2
+        @test length(res[1].x_vars) == 2
+        @test length(res[1].y_vars) == 2
+        @test length(res[1].u_vars) == 0
+
+        @variables x(t) y(t) z(t) [output = true]
+        @parameters p q
+        eqs = [
+            D(x) ~ p * x + y
+            y ~ q * x
+            z ~ x + y
+        ]
+
+        @named sys_model = System(eqs, t)
+
+        @test_throws DomainError mtk_to_si(sys_model, Equation[])
+
+        @mtkcompile sys = System(eqs, t)
+        res = mtk_to_si(sys, Equation[])
+        @test length(res[1].parameters) == 2
+        @test length(res[1].x_vars) == 1
+        @test length(res[1].y_vars) == 1
+        @test length(res[1].u_vars) == 0
     end
 
     @testset "Identifiability of MTK models with known generic initial conditions" begin
