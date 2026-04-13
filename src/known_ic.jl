@@ -42,15 +42,18 @@ function _find_identifiable_functions_kic(
         ode,
         prob_threshold = half_p,
         with_states = true,
-        simplify = simplify,
+        simplify = :absent,
         rational_interpolator = rational_interpolator,
         seed = seed,
     )
 
+    rff = RationalFunctionField(
+        vcat(id_funcs_general, [f // one(parent(ode)) for f in known_ic]),
+    )
+    @debug generators(rff)
+
     id_funcs = simplified_generating_set(
-        RationalFunctionField(
-            vcat(id_funcs_general, [f // one(parent(ode)) for f in known_ic]),
-        ),
+        rff,
         prob_threshold = half_p,
         seed = seed,
         simplify = simplify,

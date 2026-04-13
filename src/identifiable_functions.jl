@@ -125,7 +125,7 @@ function _find_identifiable_functions(
             priority_variables = [parent_ring_change(p, bring) for p in ode.parameters],
         )
     else
-        id_funcs_fracs = dennums_to_fractions(id_funcs)
+        id_funcs_fracs = RationalFunctionFields.dennums_to_fractions(id_funcs)
     end
     id_funcs_fracs = [parent_ring_change(f, parent(ode)) for f in id_funcs_fracs]
     _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1.0e9
