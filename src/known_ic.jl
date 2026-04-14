@@ -47,18 +47,17 @@ function _find_identifiable_functions_kic(
         seed = seed,
     )
 
-    rff = RationalFunctionField(
-        vcat(id_funcs_general, [f // one(parent(ode)) for f in known_ic]),
-    )
-    @debug generators(rff)
+    id_funcs = vcat(id_funcs_general, [f // one(parent(ode)) for f in known_ic])
 
-    id_funcs = simplified_generating_set(
-        rff,
-        prob_threshold = half_p,
-        seed = seed,
-        simplify = simplify,
-        rational_interpolator = rational_interpolator,
-    )
+    if (simplify != :absent)
+        id_funcs = simplified_generating_set(
+            RationalFunctionField(id_funcs),
+            prob_threshold = half_p,
+            seed = seed,
+            simplify = simplify,
+            rational_interpolator = rational_interpolator,
+        )
+    end
 
     @info "The search for identifiable functions with known initial conditions concluded in $((time_ns() - runtime_start) / 1.0e9) seconds"
 
@@ -92,7 +91,7 @@ function _assess_identifiability_kic(
         funcs_to_check = vcat(ode.x_vars, ode.parameters)
     end
     half_p = 0.5 + prob_threshold / 2
-    id_funcs = _find_identifiable_functions_kic(ode, known_ic, prob_threshold = half_p)
+    id_funcs = _find_identifiable_functions_kic(ode, known_ic, prob_threshold = half_p, simplify = :absent)
     #funcs_to_check = replace_with_ic(ode, funcs_to_check)
     result = OrderedDict(f => :globally for f in funcs_to_check)
 
