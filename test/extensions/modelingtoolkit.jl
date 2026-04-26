@@ -851,7 +851,8 @@ if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
             y ~ q .* x,
         ]
 
-        @mtkcompile sys = System(eqs, t; bindings = [y => x, q => 2 .* p])
+        # Missing binding added as a test for https://github.com/SciML/StructuralIdentifiability.jl/issues/507
+        @mtkcompile sys = System(eqs, t; bindings = [y => x, q => 2 .* p, p => missing])
 
         res = mtk_to_si(sys, Equation[])
 

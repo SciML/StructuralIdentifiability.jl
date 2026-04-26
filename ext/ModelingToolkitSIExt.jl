@@ -271,7 +271,7 @@ function __mtk_to_si(
     if (length(observed(de)) > 0) || (length(bindings(de)) > 0)
         rules = Dict(s.lhs => s.rhs for s in observed(de))
         for (k, v) in bindings(de)
-            if ModelingToolkitBase.isparameter(k)
+            if ModelingToolkitBase.isparameter(k) && Symbolics.value(v) !== missing
                 rules = merge(rules, Dict(scalarize(k) .=> scalarize(v)))
             end
         end
