@@ -25,7 +25,7 @@ function saturate_outputs(
     sort!(lie_ders, lt = RationalFunctionFields.rational_function_cmp)
     for f in lie_ders
         if !first(RationalFunctionFields.check_algebraicity_modp(current_y, [f]))
-            current_y = RationalFunctionField([generators(current_y)..., f])
+            current_y = RationalFunctionField(vcat(generators(current_y), [f]))
         end
     end
     new_outputs = generators(current_y)[(length(ode.y_vars) + length(ode.u_vars) + length(ode.parameters) + 1):end]
@@ -51,7 +51,7 @@ end
     propose_orders(ode)
 
 For a given ode, proposes (using a heuristic) the orders for the outputs to consider in the saturation process.
-The order is defined a the highest order of differentiation at which a new output may occur plus two.
+The order is defined as the highest order of differentiation at which a new output may occur plus two.
 
 Inputs:
 - `ode` - ode model
