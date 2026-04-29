@@ -68,6 +68,28 @@ function lie_derivative(f::P, ode::ODE{<:P}) where {P <: MPolyRingElem{<:FieldEl
 end
 
 #------------------------------------------------------------------------------
+
+function lie_derivatives_up_to(ode::ODE, orders::Dict{P, Int}) where {P <: AbstractAlgebra.RingElem}
+    result = Array{Generic.FracFieldElem, 1}()
+    for (f, ord) in orders
+        curr = extract_coefficients_ratfunc(f, ode.u_vars)
+        for _ in 0:ord
+            filter!(!is_rational_func_const, curr)
+            append!(result, curr)
+            curr = reduce(
+                vcat,
+                [
+                    extract_coefficients_ratfunc(lie_derivative(g, ode), ode.u_vars) for
+                        g in curr
+                ],
+                init = empty(curr),
+            )
+        end
+    end
+    return result
+end
+
+#------------------------------------------------------------------------------
 """
     states_generators(ode, io_equations)
 
@@ -95,22 +117,5 @@ identifiable functions of parameters only
         end
     end
 
-    result = Array{Generic.FracFieldElem{P}, 1}()
-    for (y, ord) in y_to_ord
-        curr = extract_coefficients_ratfunc(ode.y_equations[y], ode.u_vars)
-        for _ in 0:ord
-            filter!(!is_rational_func_const, curr)
-            append!(result, curr)
-            curr = reduce(
-                vcat,
-                [
-                    extract_coefficients_ratfunc(lie_derivative(f, ode), ode.u_vars) for
-                        f in curr
-                ],
-                init = empty(curr),
-            )
-        end
-    end
-
-    return result
+    return lie_derivatives_up_to(ode, Dict(ode.y_equations[y] => ord for (y, ord) in y_to_ord))
 end
