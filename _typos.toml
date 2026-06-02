@@ -1,0 +1,17 @@
+# The centralized SpellCheck scans the whole repository; the previous workflow
+# only scanned src/ and docs/ with an older typos dictionary. The entries below
+# are domain vocabulary, model parameter/variable names, and public API names
+# (e.g. `reparametrize_global` is an exported function), not English-prose typos.
+[default.extend-words]
+numer = "numer"             # numerator (abbreviation used as an identifier)
+gam = "gam"                 # gamma rate parameter in epidemiological models
+reparametrize = "reparametrize"
+reparametrized = "reparametrized"
+reparametrization = "reparametrization"
+
+[default.extend-identifiers]
+Tast = "Tast"               # state variable in a viral-dynamics test model
+
+[files]
+# Generated benchmark results and a BibTeX bibliography of author names.
+extend-exclude = ["benchmarking/"]
