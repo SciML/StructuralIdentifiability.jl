@@ -1,0 +1,47 @@
+name: "Tests"
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+jobs:
+  tests:
+    name: "Tests"
+    strategy:
+      fail-fast: false
+      matrix:
+        group:
+          - "Core"
+          - "QA"
+        version:
+          - "1"
+          - "lts"
+          - "pre"
+    uses: "SciML/.github/.github/workflows/tests.yml@v1"
+    with:
+      group: "${{ matrix.group }}"
+      julia-version: "${{ matrix.version }}"
+    secrets: "inherit"
+
+  tests-extensions:
+    name: "Tests Extensions"
+    strategy:
+      fail-fast: false
+      matrix:
+        group:
+          - "ModelingToolkitSIExt"
+        version:
+          - "1"
+    uses: "SciML/.github/.github/workflows/tests.yml@v1"
+    with:
+      group: "${{ matrix.group }}"
+      julia-version: "${{ matrix.version }}"
+    secrets: "inherit"

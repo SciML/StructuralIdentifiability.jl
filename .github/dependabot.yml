@@ -3,12 +3,15 @@ version: 2
 updates:
   - package-ecosystem: "github-actions"
     directory: "/" # Location of package manifests
-    ignore:
-      update-types:
-        - "version-update:semver-minor"
-        - "version-update:semver-patch"
     schedule:
       interval: "weekly"
-    ignore:
-      - dependency-name: "crate-ci/typos"
-        update-types: ["version-update:semver-patch", "version-update:semver-minor"]
+  - package-ecosystem: "julia"
+    directories:
+      - "/"
+      - "/docs"
+    schedule:
+      interval: "daily"
+    groups:
+      all-julia-packages:
+        patterns:
+          - "*"

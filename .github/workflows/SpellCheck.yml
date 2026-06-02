@@ -1,15 +1,13 @@
-name: Spell Check
+name: "Spell Check"
 
 on: [pull_request]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
 jobs:
-   typos-check:
-     name: Spell Check with Typos
-     runs-on: ubuntu-latest
-     steps:
-       - name: Checkout Actions Repository
-         uses: actions/checkout@v6
-       - name: Check spelling
-         uses: crate-ci/typos@v1.33.1
-         with:
-           files: ./src ./docs
+  spellcheck:
+    name: "Spell Check"
+    uses: "SciML/.github/.github/workflows/spellcheck.yml@v1"
+    secrets: "inherit"
