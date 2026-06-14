@@ -1,3 +1,7 @@
+include(joinpath(@__DIR__, "..", "..", "shared", "test_setup.jl"))
+
+using ModelingToolkitBase, Symbolics
+
 if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
     @testset "eval_at_nemo" begin
         using ModelingToolkitBase, Symbolics

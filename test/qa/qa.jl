@@ -1,5 +1,5 @@
-using StructuralIdentifiability, Aqua
-@testset "Aqua" begin
+@safetestset "Aqua" begin
+    using StructuralIdentifiability, Aqua
     #Aqua.find_persistent_tasks_deps(StructuralIdentifiability)
     Aqua.test_ambiguities(StructuralIdentifiability, recursive = false)
     Aqua.test_deps_compat(StructuralIdentifiability)
