@@ -1,16 +1,3 @@
-if GROUP == "All" || GROUP == "Core"
-    @testset "Primality check (zerodim subroutine)" begin
-        R, (x, y) = Nemo.polynomial_ring(Nemo.QQ, ["x", "y"])
-
-        @test check_primality_zerodim([x^2 - 1, y^2 - 4]) == false
-
-        @test check_primality_zerodim([(x + 5) * (x^3 - 7), y - 3]) == false
-
-        @test check_primality_zerodim([x^3 - 5, y - 1]) == true
-
-        @test check_primality_zerodim([x^2 + 1, y^3 - 3 * x + x + 5]) == true
-
-        # not prime over any modulous but prime over Q
-        @test check_primality_zerodim([x, y^4 + 1]) == true
-    end
+@safetestset "Primality check (zerodim subroutine)" begin
+    include(joinpath(@__DIR__, "bodies", "check_primality_zerodim.jl"))
 end

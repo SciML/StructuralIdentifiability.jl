@@ -1,0 +1,24 @@
+include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
+
+@testset "Power series matrix inverse" begin
+    T, t =
+        Nemo.power_series_ring(Nemo.Native.GF(2^31 - 1), 50, "t"; model = :capped_absolute)
+
+    for d in 1:5
+        S = Nemo.matrix_space(T, d, d)
+        for case in 1:20
+            M = S([random_ps(T) for i in 1:d, j in 1:d])
+            while isequal(
+                    StructuralIdentifiability.LinearAlgebra.det(
+                        StructuralIdentifiability.ps_matrix_const_term(M),
+                    ),
+                    0,
+                )
+                M = S([random_ps(T) for i in 1:d, j in 1:d])
+            end
+            invM = ps_matrix_inv(M)
+            prod = invM * M
+            @test prod == one(S)
+        end
+    end
+end
