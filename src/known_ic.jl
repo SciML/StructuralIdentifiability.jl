@@ -33,6 +33,7 @@ function _find_identifiable_functions_kic(
         seed = 42,
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
+        cmp = RationalFunctionFields.rational_function_cmp
     ) where {T <: MPolyRingElem{Nemo.QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
@@ -45,6 +46,7 @@ function _find_identifiable_functions_kic(
         simplify = :absent,
         rational_interpolator = rational_interpolator,
         seed = seed,
+        cmp = cmp
     )
 
     id_funcs = vcat(id_funcs_general, [f // one(parent(ode)) for f in known_ic])
@@ -56,6 +58,7 @@ function _find_identifiable_functions_kic(
             seed = seed,
             simplify = simplify,
             rational_interpolator = rational_interpolator,
+            cmp = cmp
         )
     end
 

@@ -91,6 +91,7 @@ The function returns a tuple containing the following:
         with_states::Bool = false,
         var_change_policy = :default,
         rational_interpolator = :VanDerHoevenLecerf,
+        cmp = RationalFunctionFields.rational_function_cmp
     ) where {T}
     @info "Computing IO-equations"
     ioeq_time = @elapsed io_equations =
@@ -148,6 +149,7 @@ The function returns a tuple containing the following:
             seed = 42,
             simplify = :standard,
             rational_interpolator = rational_interpolator,
+            cmp = cmp
         )
         dennums_simplified = fractions_to_dennums(no_states_simplified)
         # switch back the ring
@@ -202,7 +204,7 @@ Output: a list L of booleans with L[i] being the identifiability status of the i
         known = known,
         prob_threshold = half_p,
         var_change_policy = var_change_policy,
-        with_states = states_needed,
+        with_states = states_needed
     )
 
     funcs_to_check = Vector{Generic.FracFieldElem{P}}(
