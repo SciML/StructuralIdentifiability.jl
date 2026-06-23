@@ -61,10 +61,25 @@ function check_primality(
     ring = parent(leaders[1])
 
     Rspec, vspec = Nemo.polynomial_ring(Nemo.QQ, [var_to_str(l) for l in leaders])
-    eval_point = [v in keys(polys) ? v : ring(rand(1:100)) for v in gens(ring)]
-    all_polys = vcat(collect(values(polys)), extra_relations)
-    zerodim_ideal =
-        collect(map(p -> parent_ring_change(evaluate(p, eval_point), Rspec), all_polys))
+    leader_degrees = Dict(lead => Nemo.degree(poly, lead) for (lead, poly) in polys)
+
+    local zerodim_ideal
+    attempts = 0
+    while true
+        attempts += 1
+        eval_point = [v in keys(polys) ? v : ring(rand(1:(100 * attempts))) for v in gens(ring)]
+        specialized = Dict(lead => evaluate(polys[lead], eval_point) for lead in leaders)
+        # Checks if the degrees in leaders drop, restarts if they do
+        if all(Nemo.degree(specialized[lead], lead) == leader_degrees[lead] for lead in leaders)
+            all_polys = vcat(
+                [specialized[lead] for lead in leaders],
+                [evaluate(p, eval_point) for p in extra_relations],
+            )
+            zerodim_ideal =
+                collect(map(p -> parent_ring_change(p, Rspec), all_polys))
+            break
+        end
+    end
 
     return check_primality_zerodim(zerodim_ideal)
 end
