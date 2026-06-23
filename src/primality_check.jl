@@ -61,10 +61,35 @@ function check_primality(
     ring = parent(leaders[1])
 
     Rspec, vspec = Nemo.polynomial_ring(Nemo.QQ, [var_to_str(l) for l in leaders])
-    eval_point = [v in keys(polys) ? v : ring(rand(1:100)) for v in gens(ring)]
-    all_polys = vcat(collect(values(polys)), extra_relations)
-    zerodim_ideal =
-        collect(map(p -> parent_ring_change(evaluate(p, eval_point), Rspec), all_polys))
+    # Generic degree of each generator in its leader. Specializing the other
+    # variables must preserve these degrees; the ideal is considered on the
+    # open set where the leading coefficients (w.r.t. the leaders) do not
+    # vanish, so a specialization that drops a degree corresponds to leaving
+    # that set and would collapse the quotient ring, yielding a spurious result.
+    leader_degrees = Dict(l => Nemo.degree(p, l) for (l, p) in polys)
+
+    local zerodim_ideal
+    attempts = 0
+    while true
+        attempts += 1
+        eval_point = [v in keys(polys) ? v : ring(rand(1:100)) for v in gens(ring)]
+        specialized = Dict(l => evaluate(polys[l], eval_point) for l in leaders)
+        if all(Nemo.degree(specialized[l], l) == leader_degrees[l] for l in leaders)
+            all_polys = vcat(
+                [specialized[l] for l in leaders],
+                [evaluate(p, eval_point) for p in extra_relations],
+            )
+            zerodim_ideal =
+                collect(map(p -> parent_ring_change(p, Rspec), all_polys))
+            break
+        end
+        if attempts >= 100
+            error(
+                "Failed to find a generic specialization for the primality check " *
+                    "after $attempts attempts (the leading coefficients keep vanishing).",
+            )
+        end
+    end
 
     return check_primality_zerodim(zerodim_ideal)
 end
