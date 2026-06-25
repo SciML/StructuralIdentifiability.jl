@@ -17,7 +17,6 @@ using AbstractAlgebra
 using Nemo
 using Groebner
 using ParamPunPam
-using ParamPunPam: reduce_mod_p!, specialize_mod_p, AbstractBlackboxIdeal
 ParamPunPam.enable_progressbar(false)
 using RationalFunctionFields
 using RationalFunctionFields:
@@ -26,7 +25,6 @@ using RationalFunctionFields:
     parent_ring_change,
     total_degree_frac,
     select_pivots,
-    gen_tag_name,
     gen_tag_names,
     str_to_var,
     var_to_str,

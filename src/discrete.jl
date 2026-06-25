@@ -159,7 +159,7 @@ function differentiate_sequence_solution(
         ic::Dict{P, T},
         input_values::Dict{P, Array{T, 1}},
         num_terms::Int,
-    ) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
+    ) where {T <: AbstractAlgebra.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing the power series solution of the system"
     seq_sol = sequence_solution(dds, params, ic, input_values, num_terms)
     generalized_params = vcat(x_vars(dds), parameters(dds))
@@ -215,7 +215,7 @@ function differentiate_sequence_output(
         ic::Dict{P, T},
         input_values::Dict{P, Array{T, 1}},
         num_terms::Int,
-    ) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
+    ) where {T <: AbstractAlgebra.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing partial derivatives of the solution"
     seq_sol, sol_diff =
         differentiate_sequence_solution(dds, params, ic, input_values, num_terms)
