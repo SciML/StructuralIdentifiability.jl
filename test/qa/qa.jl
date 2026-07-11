@@ -8,6 +8,7 @@ run_qa(
     # is a large, risky refactor tracked in
     # https://github.com/SciML/StructuralIdentifiability.jl/issues/527.
     ei_broken = (:no_implicit_imports,),
+    api_docs_kwargs = (; rendered = true),
     ei_kwargs = (;
         all_qualified_accesses_are_public = (;
             ignore = (
