@@ -199,7 +199,20 @@ include("precompile.jl")
 ### Extensions ###
 
 # ModelingToolkit extension.
+"""
+    mtk_to_si(system, measured_quantities)
+
+Convert a `ModelingToolkitBase.System` and its measured quantities to a
+StructuralIdentifiability [`ODE`](@ref) plus a symbol-conversion dictionary.
+"""
 function mtk_to_si end
+
+"""
+    eval_at_nemo(expr, vals)
+
+Evaluate a ModelingToolkit/Symbolics expression in the Nemo-valued substitution
+dictionary `vals`.
+"""
 function eval_at_nemo end
 export mtk_to_si, eval_at_nemo
 
