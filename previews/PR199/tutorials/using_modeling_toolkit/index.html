@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Using ModelingToolkit.jl With StructuralIdentifiability.jl · StructuralIdentifiability.jl</title><script async src="https://www.googletagmanager.com/gtag/js?id=UA-90474609-3"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-90474609-3', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://docs.sciml.ai/StructuralIdentifiability/stable/tutorials/using_modeling_toolkit/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="StructuralIdentifiability.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">StructuralIdentifiability.jl</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="../local_identifiability/">Local Identifiability of Differential Models</a></li><li><a class="tocitem" href="../global_identifiability/">Global Identifiability of Differential Models</a></li><li class="is-active"><a class="tocitem" href>Using ModelingToolkit.jl With StructuralIdentifiability.jl</a><ul class="internal"><li><a class="tocitem" href="#Input-System"><span>Input System</span></a></li></ul></li></ul></li><li><span class="tocitem">Basics</span><ul><li><a class="tocitem" href="../../input/input/">Parsing input ODE system</a></li><li><a class="tocitem" href="../../identifiability/identifiability/">ָFunctions to Assess Parameter Identifiability</a></li></ul></li><li><span class="tocitem">Library</span><ul><li><a class="tocitem" href="../../utils/local_identifiability/">Local Identifiability Tools</a></li><li><a class="tocitem" href="../../utils/global_identifiability/">Global Identifiability Tools</a></li><li><a class="tocitem" href="../../utils/elimination/">Elimination</a></li><li><a class="tocitem" href="../../utils/ode/">ODE Tools</a></li><li><a class="tocitem" href="../../utils/power_series_utils/">Power Series Tools</a></li><li><a class="tocitem" href="../../utils/primality/">Primality Checks</a></li><li><a class="tocitem" href="../../utils/wronskian/">Wronskian Tools</a></li><li><a class="tocitem" href="../../ioequations/ioequations/">Input-Output Equation tools</a></li><li><a class="tocitem" href="../../utils/util/">Other Utilities</a></li></ul></li><li><span class="tocitem">Export</span><ul><li><a class="tocitem" href="../../export/export/">Exporting to Other Systems</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Tutorials</a></li><li class="is-active"><a href>Using ModelingToolkit.jl With StructuralIdentifiability.jl</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Using ModelingToolkit.jl With StructuralIdentifiability.jl</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/StructuralIdentifiability.jl/blob/master/docs/src/tutorials/using_modeling_toolkit.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Using-ModelingToolkit.jl-With-StructuralIdentifiability.jl"><a class="docs-heading-anchor" href="#Using-ModelingToolkit.jl-With-StructuralIdentifiability.jl">Using ModelingToolkit.jl With StructuralIdentifiability.jl</a><a id="Using-ModelingToolkit.jl-With-StructuralIdentifiability.jl-1"></a><a class="docs-heading-anchor-permalink" href="#Using-ModelingToolkit.jl-With-StructuralIdentifiability.jl" title="Permalink"></a></h1><p>In this tutorial, we will cover examples of solving identifiability problems for models defined with the syntax of <code>ModelingToolkit.jl</code>.</p><h2 id="Input-System"><a class="docs-heading-anchor" href="#Input-System">Input System</a><a id="Input-System-1"></a><a class="docs-heading-anchor-permalink" href="#Input-System" title="Permalink"></a></h2><p>Let us consider the following ODE model with two outputs:</p><p class="math-container">\[\begin{cases}
+\dot{S} = -b \, S \, (I + J + q \, A) \, N_{inv},\\
+\dot{E} = b \, S \, (I + J + q \, A) \, N_{inv} - k \, E,\\
+\dot{A} = k \, (1 - r) \, E - g_1 \, A,\\
+\dot{I} = k \, r \, E - (\alpha + g_1) \, I,\\
+\dot{J} = \alpha \, I - g_2 \, J,\\
+\dot{C} = \alpha \, I,\\
+y_1 = C,\\
+y_2 = N_{inv}
+\end{cases}\]</p><p>This is an infectious disease model defined in <sup class="footnote-reference"><a id="citeref-1" href="#footnote-1">[1]</a></sup>.</p><p>The main difference between the input formats in <code>ModelingToolkit.jl</code> and <code>StructuralIdentifiability.jl</code> is that the output (measured values/functions) must be specified separately in <code>ModelingToolkit.jl</code>. In this example, measured quantities are presented by <span>$y_1$</span>, <span>$y_2$</span>.</p><p>First, let us define the ODE. We will use <code>@parameters</code> and <code>@variables</code> macro to define parameters and time-depended functions in the ODE.</p><pre><code class="language-julia hljs">using StructuralIdentifiability, ModelingToolkit
+
+@parameters b q N_inv k r alpha g1 g2
+@variables t S(t) E(t) A(t) I(t) J(t) C(t) y1(t) y2(t)</code></pre><p>The actual ODE will be defined using <code>ODESystem</code> structure from <code>ModelingToolkit.jl</code>:</p><pre><code class="language-julia hljs">D = Differential(t)
+
+eqs = [
+    D(S) ~ -b * S * (I + J + q * A) * N_inv,
+    D(E) ~ b * S * (I + J + q * A) * N_inv - k * E,
+    D(A) ~ k * (1 - r) * E - g1 * A,
+    D(I) ~ k * r * E - (alpha + g1) * I,
+    D(J) ~ alpha * I - g2 * J,
+    D(C) ~ alpha * I,
+]
+
+ode = ODESystem(eqs, t, name = :SEIAJRCmodel)</code></pre><p>Finally, let us define the array of measured quantities and call the <code>assess_identifiability</code> function. This is the main function that determines local/global identifiability properties of each parameter and state. We will use the probability of correctness <span>$p=0.99$</span>.</p><p>For <code>ModelingToolkit.jl</code>, both <code>assess_identifiability</code> and <code>assess_local_identifiability</code> functions accept keyword arguments:</p><ul><li><code>measured_quantities</code>, also called “output functions” in identifiability literature; these are crucial for answering identifiability questions.</li><li><code>p</code>, probability of correctness. This value equals 0.99 by default.</li><li><code>funcs_to_check</code>, functions of parameters of which we wish to check identifiability.</li></ul><pre><code class="language-julia hljs">measured_quantities = [y1 ~ C, y2 ~ N_inv]
+@time global_id = assess_identifiability(ode, measured_quantities = measured_quantities)</code></pre><p>Let us put all the code above together:</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using StructuralIdentifiability, ModelingToolkit</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @parameters b q N_inv k r alpha g1 g2</code><code class="nohighlight hljs ansi" style="display:block;">8-element Vector{Symbolics.Num}:
+     b
+     q
+ N_inv
+     k
+     r
+ alpha
+    g1
+    g2</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @variables t S(t) E(t) A(t) I(t) J(t) C(t) y1(t) y2(t)</code><code class="nohighlight hljs ansi" style="display:block;">9-element Vector{Symbolics.Num}:
+     t
+  S(t)
+      E(t)
+  A(t)
+  I(t)
+  J(t)
+  C(t)
+ y1(t)
+ y2(t)</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; D = Differential(t)</code><code class="nohighlight hljs ansi" style="display:block;">(::Symbolics.Differential) (generic function with 3 methods)</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; eqs = [
+           D(S) ~ -b * S * (I + J + q * A) * N_inv,
+           D(E) ~ b * S * (I + J + q * A) * N_inv - k * E,
+           D(A) ~ k * (1 - r) * E - g1 * A,
+           D(I) ~ k * r * E - (alpha + g1) * I,
+           D(J) ~ alpha * I - g2 * J,
+           D(C) ~ alpha * I,
+       ]</code><code class="nohighlight hljs ansi" style="display:block;">6-element Vector{Symbolics.Equation}:
+ Differential(t)(S(t)) ~ -N_inv*b*(q*A(t) + I(t) + J(t))*S(t)
+ Differential(t)(E(t)) ~ N_inv*b*(q*A(t) + I(t) + J(t))*S(t) - k*E(t)
+ Differential(t)(A(t)) ~ k*(1 - r)*E(t) - g1*A(t)
+ Differential(t)(I(t)) ~ k*r*E(t) - (alpha + g1)*I(t)
+ Differential(t)(J(t)) ~ alpha*I(t) - g2*J(t)
+ Differential(t)(C(t)) ~ alpha*I(t)</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; ode = ODESystem(eqs, t, name = :SEIAJRCmodel)</code><code class="nohighlight hljs ansi" style="display:block;">Model SEIAJRCmodel with 6 equations
+States (6):
+  S(t)
+  E(t)
+  A(t)
+  I(t)
+⋮
+Parameters (8):
+  q
+  b
+  N_inv
+  k
+⋮</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; measured_quantities = [y1 ~ C, y2 ~ N_inv]</code><code class="nohighlight hljs ansi" style="display:block;">2-element Vector{Symbolics.Equation}:
+ y1(t) ~ C(t)
+ y2(t) ~ N_inv</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; @time global_id = assess_identifiability(ode, measured_quantities = measured_quantities)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Preproccessing `ModelingToolkit.AbstractTimeDependentSystem` object
+[ Info: Assessing local identifiability
+[ Info: Local identifiability assessed in 0.228449092 seconds
+[ Info: Assessing global identifiability
+[ Info: Computing IO-equations
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Selected tablesize 512
+[ Info: 1: selected lucky prime 2147483647
+[ Info: CRT modulo (1, 2147483647)
+[ Info: Reconstructing modulo 2147483647
+[ Info: Heuristic check failed.
+[ Info: 2: selected lucky prime 2147483659
+[ Info: CRT modulo (2147483647, 2147483659)
+[ Info: Reconstructing modulo 4611686039902224373
+[ Info: Heuristic check failed.
+[ Info: 3: selected lucky prime 2147483693
+[ Info: CRT modulo (4611686039902224373, 2147483693)
+[ Info: Reconstructing modulo 9903520567925774155444649489
+[ Info: 4: selected lucky prime 2147483713
+[ Info: CRT modulo (9903520567925774155444649489, 2147483713)
+[ Info: Reconstructing modulo 21267649120981110191733715050621272657
+[ Info: 5: selected lucky prime 2147483743
+[ Info: CRT modulo (21267649120981110191733715050621272657, 2147483743)
+[ Info: Reconstructing modulo 45671930739135174346839766056203605080877915151
+[ Info: 6: selected lucky prime 2147483777
+[ Info: CRT modulo (45671930739135174346839766056203605080877915151, 2147483777)
+[ Info: Reconstructing modulo 98079730326560405919904968824172512120100095704355005327
+[ Info: 7: selected lucky prime 2147483783
+[ Info: CRT modulo (98079730326560405919904968824172512120100095704355005327, 2147483783)
+[ Info: 8: selected lucky prime 2147483813
+[ Info: CRT modulo (210624630317301765882893117451031048172285903861850336414611112041, 2147483813)
+[ Info: Reconstructing modulo 452312984225514596069828623335196996110407213751397785678981819797976892333
+[ Info: Heuristic check failed.
+[ Info: 9: selected lucky prime 2147483857
+[ Info: CRT modulo (452312984225514596069828623335196996110407213751397785678981819797976892333, 2147483857)
+[ Info: 10: selected lucky prime 2147483867
+[ Info: CRT modulo (971334831935788242577832613368869049061991281227475155931159242212638377544144568381, 2147483867)
+[ Info: 11: selected lucky prime 2147483869
+[ Info: CRT modulo (2085925881037261630864178029036094802896257759330662854505473835259586299281105540913875809327, 2147483869)
+[ Info: 12: selected lucky prime 2147483887
+[ Info: CRT modulo (4479492181457132340213454847299227207974448018628682717127999033421525005319580445599067818799052246163, 2147483887)
+[ Info: Reconstructing modulo 9619637281621671881834996425177135896677125027724171971067756840824299427891388292524278203091200389506200075581
+[ Info: 13: selected lucky prime 2147483893
+[ Info: CRT modulo (9619637281621671881834996425177135896677125027724171971067756840824299427891388292524278203091200389506200075581, 2147483893)
+[ Info: 14: selected lucky prime 2147483929
+[ Info: CRT modulo (20658016118784845285971654106780479009986238218584837754630069827310747864405871311604659752589335646499890885945580116833, 2147483929)
+[ Info: 15: selected lucky prime 2147483951
+[ Info: CRT modulo (44362757620113410260375536343857928604867277085576528201140520294297636327782679774913158020198714437645340777821705269480809876857, 2147483951)
+[ Info: 16: selected lucky prime 2147483993
+[ Info: CRT modulo (95268310011296503334035195531452119103056298026345647894248167227793970831147880232398299267103673085675359550297968805662169313032693822007, 2147483993)
+[ Info: 17: selected lucky prime 2147483999
+[ Info: CRT modulo (204587170789420890086711714502418553819742917389414771138112095891274737061798978614956467676528769422992752228784566390572836365393516268430023633951, 2147483999)
+[ Info: 18: selected lucky prime 2147484007
+[ Info: CRT modulo (439347675670961559937551129419800091128618245387347072993342744994866141553145580730162196416906240199037398104286443541908350538727893524799664605101605650049, 2147484007)
+[ Info: 19: selected lucky prime 2147484037
+[ Info: CRT modulo (943492107016012944277662969173807884835850261977729359411465162345954336091178275160750699321298855245933309223847255653156617041667985469306137618419668743501066266343, 2147484037)
+[ Info: 20: selected lucky prime 2147484041
+[ Info: CRT modulo (2026134238852383501221651721966775511189722802919441848842357150919550408286738322428905735729076025747015490724796841241411843757904162649282884001681435793496387299450782866691, 2147484041)
+[ Info: Reconstructing modulo 4351090942859175723685201076583819542509546642483289579016496306421962976690804699359187424571554264967420869711284739533142562778484656896803273488065100532499663316725644271175152978331
+[ Info: Heuristic check passed!
+[ Info: Randomized check passed!
+[ Info: Success!
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+┌ Info: Computed in 30.788237397 seconds
+│   :ioeq_time = :ioeq_time
+└   ioeq_time = 30.788237397
+[ Info: Computing Wronskians
+┌ Info: Computed in 15.729768571 seconds
+│   :wrnsk_time = :wrnsk_time
+└   wrnsk_time = 15.729768571
+[ Info: Dimensions of the Wronskians [1282, 2]
+┌ Info: Ranks of the Wronskians computed in 0.475904958 seconds
+│   :rank_time = :rank_time
+└   rank_times = 0.475904958
+[ Info: Assessing global identifiability using the coefficients of the io-equations
+[ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
+[ Info: Using fglm: false
+[ Info: Selected tablesize 65536
+[ Info: 1: selected lucky prime 2147483647
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 2 pairs
+[ Info: Selected 5 pairs
+[ Info: Selected 48 pairs
+[ Info: Selected 71 pairs
+[ Info: Selected 82 pairs
+[ Info: Selected 101 pairs
+[ Info: Selected 107 pairs
+[ Info: Selected 116 pairs
+[ Info: Selected 113 pairs
+[ Info: Selected 114 pairs
+[ Info: Selected 106 pairs
+[ Info: Selected 101 pairs
+[ Info: Selected 89 pairs
+[ Info: Selected 79 pairs
+[ Info: Selected 66 pairs
+[ Info: Selected 57 pairs
+[ Info: Selected 44 pairs
+[ Info: Selected 35 pairs
+[ Info: Selected 26 pairs
+[ Info: Selected 19 pairs
+[ Info: Selected 13 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 5 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 2 pairs
+[ Info: Selected 1 pairs
+[ Info: CRT modulo (1, 2147483647)
+[ Info: Reconstructing modulo 2147483647
+[ Info: Heuristic check passed!
+[ Info: Randomized check failed.
+[ Info: 2: selected lucky prime 2147483659
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (2147483647, 2147483659)
+[ Info: Reconstructing modulo 4611686039902224373
+[ Info: 3: selected lucky prime 2147483693
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (4611686039902224373, 2147483693)
+[ Info: Reconstructing modulo 9903520567925774155444649489
+[ Info: 4: selected lucky prime 2147483713
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (9903520567925774155444649489, 2147483713)
+[ Info: Reconstructing modulo 21267649120981110191733715050621272657
+[ Info: 5: selected lucky prime 2147483743
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (21267649120981110191733715050621272657, 2147483743)
+[ Info: Reconstructing modulo 45671930739135174346839766056203605080877915151
+[ Info: Heuristic check failed.
+[ Info: 6: selected lucky prime 2147483777
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (45671930739135174346839766056203605080877915151, 2147483777)
+[ Info: Reconstructing modulo 98079730326560405919904968824172512120100095704355005327
+[ Info: Heuristic check failed.
+[ Info: 7: selected lucky prime 2147483783
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (98079730326560405919904968824172512120100095704355005327, 2147483783)
+[ Info: 8: selected lucky prime 2147483813
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (210624630317301765882893117451031048172285903861850336414611112041, 2147483813)
+[ Info: Reconstructing modulo 452312984225514596069828623335196996110407213751397785678981819797976892333
+[ Info: 9: selected lucky prime 2147483857
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (452312984225514596069828623335196996110407213751397785678981819797976892333, 2147483857)
+[ Info: 10: selected lucky prime 2147483867
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (971334831935788242577832613368869049061991281227475155931159242212638377544144568381, 2147483867)
+[ Info: 11: selected lucky prime 2147483869
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (2085925881037261630864178029036094802896257759330662854505473835259586299281105540913875809327, 2147483869)
+[ Info: 12: selected lucky prime 2147483887
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (4479492181457132340213454847299227207974448018628682717127999033421525005319580445599067818799052246163, 2147483887)
+[ Info: Reconstructing modulo 9619637281621671881834996425177135896677125027724171971067756840824299427891388292524278203091200389506200075581
+[ Info: Heuristic check failed.
+[ Info: 13: selected lucky prime 2147483893
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (9619637281621671881834996425177135896677125027724171971067756840824299427891388292524278203091200389506200075581, 2147483893)
+[ Info: 14: selected lucky prime 2147483929
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (20658016118784845285971654106780479009986238218584837754630069827310747864405871311604659752589335646499890885945580116833, 2147483929)
+[ Info: 15: selected lucky prime 2147483951
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (44362757620113410260375536343857928604867277085576528201140520294297636327782679774913158020198714437645340777821705269480809876857, 2147483951)
+[ Info: 16: selected lucky prime 2147483993
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (95268310011296503334035195531452119103056298026345647894248167227793970831147880232398299267103673085675359550297968805662169313032693822007, 2147483993)
+[ Info: 17: selected lucky prime 2147483999
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (204587170789420890086711714502418553819742917389414771138112095891274737061798978614956467676528769422992752228784566390572836365393516268430023633951, 2147483999)
+[ Info: 18: selected lucky prime 2147484007
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (439347675670961559937551129419800091128618245387347072993342744994866141553145580730162196416906240199037398104286443541908350538727893524799664605101605650049, 2147484007)
+[ Info: 19: selected lucky prime 2147484037
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (943492107016012944277662969173807884835850261977729359411465162345954336091178275160750699321298855245933309223847255653156617041667985469306137618419668743501066266343, 2147484037)
+[ Info: 20: selected lucky prime 2147484041
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (2026134238852383501221651721966775511189722802919441848842357150919550408286738322428905735729076025747015490724796841241411843757904162649282884001681435793496387299450782866691, 2147484041)
+[ Info: Reconstructing modulo 4351090942859175723685201076583819542509546642483289579016496306421962976690804699359187424571554264967420869711284739533142562778484656896803273488065100532499663316725644271175152978331
+[ Info: Heuristic check failed.
+[ Info: 21: selected lucky prime 2147484043
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (4351090942859175723685201076583819542509546642483289579016496306421962976690804699359187424571554264967420869711284739533142562778484656896803273488065100532499663316725644271175152978331, 2147484043)
+[ Info: 22: selected lucky prime 2147484061
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (9343898369431904662746946467210173419530811589897090265086113451809603917180284036703267319713678895726130232570165995176834923210921544406214927525784754338733829875540776081243005879049747272233, 2147484061)
+[ Info: 23: selected lucky prime 2147484083
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (20065872815958904888120648014754106555488283987698069974550693430198816018867824032273005555707316512243945695654654538766455874023612957733850266201892926459231494579209430390039396192988626093198595378213, 2147484083)
+[ Info: 24: selected lucky prime 2147484109
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (43091142483774136629349987395329992986797046156565373080167829217964628925964079790151157741452032016686947994534732886864670443787561992885995196973877924041489183021153034486106085067373870735182458132669782483679, 2147484109)
+[ Info: 25: selected lucky prime 2147484161
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (92537543722559748756723920930821460750228103429363664709316796298604937942589598854157665957720569341594443645972757723101574611555767151575045734151727729985007077233318752416041798970387581765624476055466171628187204357011, 2147484161)
+[ Info: 26: selected lucky prime 2147484167
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (198722909442042038831204062448755463679998029251628252272172489182517530628099090862647336640933818324976266215333588647851055272475737526211496916941452070927287465831455722277730245602853439872770976603037361042839602499551311802771, 2147484167)
+[ Info: 27: selected lucky prime 2147484197
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (426754301646960082538409909654781607107539322409074530724372195212435170223780362934629527141124338947740992348205894244551079771883517229186937122501082388305710841130604654152974879129149132148262166672150176948960655088360066700530949226757, 2147484197)
+[ Info: 28: selected lucky prime 2147484203
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (916448118788617850341050926491841226749703574429575524125780251964903585942573283001041453585147106702345389916870079192426697169406218174456174629403727544281531636179551107848163973467832883344657663941422585008646682377020881885256144973870027059129, 2147484203)
+[ Info: 29: selected lucky prime 2147484221
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (1968057857967624329811225027059743242829129461020148174055558476143990161229728990414584954122261127074442147896353978269095329406764668419616133132453884210660572173340329275735081455575882245626594137757087718653493368813010834049716429940063730884662074439187, 2147484221)
+[ Info: 30: selected lucky prime 2147484223
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (4226373196000532377125305654291096638286926916707002766866273404862023795220088963021581437241564675234040404984768511763459111845824416091422652778980019352554618729080033982585445601998919590637157168804446206721264376054074265623815562820738837809202175775281506568327, 2147484223)
+[ Info: 31: selected lucky prime 2147484233
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (9076069758921229979477279986642822280089513300782323555462669287745687592085723860745276544985924779899220602249320934319218350594500341984517472467666697591845718466479684281906101179717417083938913537578896001186111806188063480297455174219402031398617556694689828739153104004921, 2147484233)
+[ Info: 32: selected lucky prime 2147484239
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (19490716704891452469894372353041911449113339642073826400460583315527204217747827575342369009581988671757571572319181041407349996785955660924859202237325835377667749775322061010211279469945852583243654357100932156093924402364018156741891136660433945116702140998830002042801560623577001910593, 2147484239)
+[ Info: 33: selected lucky prime 2147484259
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (41856006930568408384915786622954848543404547406007443469411205010841035033347783794537322476999360650875929380469889963809890496854540438388963300098770768981050105221099917168425140721732992605933183228637929537419990457734223332313042807032076992038708863452543146827254154843734623405871354643727, 2147484259)
+[ Info: 34: selected lucky prime 2147484271
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (89885116027990562929290264813398305314690343823420266887392910759003047085381905771304190207363016550820052906554710720743819510508814604119258006290803371636130570252605786785396841519781500822204900989262751691960580979914449411732785488494559848479195602948116801329854089719268708537401702276410285593293, 2147484271)
+[ Info: 35: selected lucky prime 2147484277
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (193026872867119729627086528880197610721353218596377024563298404051865715256930036671879871626704306429998735768214074073752425819280598569201198376700319292542357934919731423885219369656810508372458592413554099144663984806388047037321359691559118743677215828063442059926693540397152357206553570847215982654214620594403, 2147484277)
+[ Info: 36: selected lucky prime 2147484331
+[ Info: Selected 18 pairs
+[ Info: Selected 8 pairs
+[ Info: Selected 4 pairs
+[ Info: Selected 37 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 7 pairs
+[ Info: Selected 3 pairs
+[ Info: Selected 5 pairs
+[ Info: CRT modulo (414522174520617529650659394088730785677072665099063669413726113960574716029616269041895432351125911386612286192117240443496672837513928878508269963521858821614477021746312489856330849033851452698231687041658909602065055819885220173384052133884777118022814153901777182193066150600349022674561434752601891973030625510000836701631, 2147484331)
+[ Info: Reconstructing modulo 890179874635073581368718952623503385918832774248649792837340786055854554428375469710150823514513384910844367769659429567368595769194471260844912400581133395411213526959752328996066939452122483251040219329658252616980152615843868540827355202804673020381331096029089011812941775260735769324784393428091424493037942865855680613642294643861
+[ Info: Heuristic check passed!
+[ Info: Randomized check passed!
+[ Info: Success!
+[ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
+[ Info: Using fglm: false
+┌ Info: Computed in 37.465752014 seconds
+│   :check_time = :check_time
+└   check_time = 37.465752014
+[ Info: Global identifiability assessed in 84.460936653 seconds
+ 86.752980 seconds (148.13 M allocations: 16.010 GiB, 9.98% gc time)
+Dict{SymbolicUtils.BasicSymbolic{Real}, Symbol} with 8 entries:
+  g1    =&gt; :globally
+  q     =&gt; :nonidentifiable
+  r     =&gt; :nonidentifiable
+  k     =&gt; :globally
+  b     =&gt; :globally
+  g2    =&gt; :globally
+  alpha =&gt; :globally
+  N_inv =&gt; :globally</code></pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>K. Roosa and G. Chowell. <a href="https://doi.org/10.1186/s12976-018-0097-6"><em>Assessing parameter identifiability in compartmental dynamic models using a computational approach: application to infectious disease transmission models</em></a>, Theor Biol Med Model 16, 1 (2019)</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../global_identifiability/">« Global Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../../input/input/">Parsing input ODE system »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Wednesday 26 July 2023 00:27">Wednesday 26 July 2023</span>. Using Julia version 1.9.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
