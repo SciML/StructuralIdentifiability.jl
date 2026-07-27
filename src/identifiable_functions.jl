@@ -58,7 +58,7 @@ function find_identifiable_functions(
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
         loglevel = Logging.Info,
-        cmp = cmp_prefer_params(ode, RationalFunctionFields.rational_function_cmp)
+        cmp = cmp_prefer_params(ode, RationalFunctionFields.rational_function_cmp),
     ) where {T <: MPolyRingElem{QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
@@ -71,7 +71,7 @@ function find_identifiable_functions(
                 with_states = with_states,
                 simplify = simplify,
                 rational_interpolator = rational_interpolator,
-                cmp = cmp
+                cmp = cmp,
             )
         else
             id_funcs = _find_identifiable_functions_kic(
@@ -81,7 +81,7 @@ function find_identifiable_functions(
                 seed = seed,
                 simplify = simplify,
                 rational_interpolator = rational_interpolator,
-                cmp = cmp
+                cmp = cmp,
             )
             # renaming variables from `x(t)` to `x(0)`
             return replace_with_ic(ode, id_funcs)
@@ -96,7 +96,7 @@ function _find_identifiable_functions(
         with_states = false,
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
-        cmp = cmp_prefer_params(ode, RationalFunctionFields.rational_function_cmp)
+        cmp = cmp_prefer_params(ode, RationalFunctionFields.rational_function_cmp),
     ) where {T <: MPolyRingElem{QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
@@ -117,7 +117,7 @@ function _find_identifiable_functions(
         prob_threshold = half_p,
         with_states = with_states,
         rational_interpolator = rational_interpolator,
-        cmp = cmp
+        cmp = cmp,
     )
     # If simplification is needed
     if simplify !== :absent
@@ -131,7 +131,7 @@ function _find_identifiable_functions(
             seed = seed,
             simplify = simplify,
             rational_interpolator = rational_interpolator,
-            cmp = cmp
+            cmp = cmp,
         )
     else
         id_funcs_fracs = RationalFunctionFields.dennums_to_fractions(id_funcs)

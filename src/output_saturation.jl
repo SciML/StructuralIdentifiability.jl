@@ -17,18 +17,29 @@ function saturate_outputs(
         orders::Dict{P, Int},
         max_deg = 5,
     ) where {P <: MPolyRingElem}
-    lie_ders = lie_derivatives_up_to(ode, Dict(ode.y_equations[y] => ord for (y, ord) in orders))
+    lie_ders =
+        lie_derivatives_up_to(ode, Dict(ode.y_equations[y] => ord for (y, ord) in orders))
     @info "Degrees: $([(total_degree(numerator(f)), total_degree(denominator(f))) for f in lie_ders])"
 
-    current_y = RationalFunctionField(vcat(collect(values(ode.y_equations)), ode.u_vars, ode.parameters))
+    current_y = RationalFunctionField(
+        vcat(collect(values(ode.y_equations)), ode.u_vars, ode.parameters),
+    )
     lie_ders = filter(f -> total_degree_frac(f) <= max_deg, lie_ders)
     sort!(lie_ders, lt = RationalFunctionFields.rational_function_cmp)
     for f in lie_ders
         if !first(RationalFunctionFields.check_algebraicity_modp(current_y, [f]))
-            current_y = RationalFunctionField(vcat(RationalFunctionFields.generators(current_y), [f]))
+            current_y = RationalFunctionField(
+                vcat(RationalFunctionFields.generators(current_y), [f]),
+            )
         end
     end
-    new_outputs = RationalFunctionFields.generators(current_y)[(length(ode.y_vars) + length(ode.u_vars) + length(ode.parameters) + 1):end]
+    new_outputs = RationalFunctionFields.generators(current_y)[
+        (
+            length(ode.y_vars) + length(
+                ode.u_vars,
+            ) + length(ode.parameters) + 1
+        ):end,
+    ]
 
     idx = 1
     old_y_names = map(var_to_str, ode.y_vars)
@@ -59,9 +70,11 @@ Inputs:
 Output: dictionary from outputs to orders
 """
 function propose_orders(ode)
-    x_with_u = filter(x -> length(intersect(vars(ode.x_equations[x]), ode.u_vars)) > 0, ode.x_vars)
+    x_with_u =
+        filter(x -> length(intersect(vars(ode.x_equations[x]), ode.u_vars)) > 0, ode.x_vars)
 
-    graph = Dict(x => Set(intersect(vars(ode.x_equations[x]), ode.x_vars)) for x in ode.x_vars)
+    graph =
+        Dict(x => Set(intersect(vars(ode.x_equations[x]), ode.x_vars)) for x in ode.x_vars)
 
     result = Dict(y => 0 for y in ode.y_vars)
     for y in ode.y_vars

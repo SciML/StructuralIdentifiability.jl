@@ -303,11 +303,12 @@ end
 
 # -----------------------------------------------------------------------------
 
-# Given an ODE and a comparator for rational functions returns a new comparator, 
-# which prefers functions containing only the parameters of the given ODE. 
+# Given an ODE and a comparator for rational functions returns a new comparator,
+# which prefers functions containing only the parameters of the given ODE.
 function cmp_prefer_params(ode, cmp)
     some_vars = ode.parameters
-    new_cmp = (f, g) -> begin
+    new_cmp =
+        (f, g) -> begin
         isempty(some_vars) && return cmp(f, g)
         some_vars = map(x -> parent_ring_change(x, parent(numerator(f))), some_vars)
         prefer_f = issubset(vars(f), some_vars)
@@ -316,10 +317,10 @@ function cmp_prefer_params(ode, cmp)
         (prefer_f == prefer_g) && return cmp(f, g)
         false
     end
-    new_cmp
+    return new_cmp
 end
 
-# Given an ODE and a comparator for rational functions returns a new comparator, 
+# Given an ODE and a comparator for rational functions returns a new comparator,
 # which first compares the Lie derivatives when the latter are not zero.
 function cmp_lie(ode, cmp)
     new_cmp = (f, g) -> begin
@@ -333,7 +334,7 @@ function cmp_lie(ode, cmp)
             cmp(df, dg)
         end
     end
-    new_cmp
+    return new_cmp
 end
 
 # -----------------------------------------------------------------------------

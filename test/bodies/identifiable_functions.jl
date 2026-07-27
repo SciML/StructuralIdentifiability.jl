@@ -1116,7 +1116,7 @@ ident_funcs_states = [
     Vm * a1 * c + Vm * a2 * c,
     (a2 * k21) // (a1 + a2),
     x1 * c,
-    x2 * c * k21
+    x2 * c * k21,
 ]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
@@ -1210,7 +1210,8 @@ end
     end
 
     cmp2 = StructuralIdentifiability.cmp_lie(
-        ode, RationalFunctionFields.rational_function_cmp)
+        ode, RationalFunctionFields.rational_function_cmp
+    )
 
     cmp3 = StructuralIdentifiability.cmp_prefer_params(ode, cmp1)
 

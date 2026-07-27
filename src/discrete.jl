@@ -57,10 +57,7 @@ end
 #------------------------------------------------------------------------------
 # Some functions to transform DDS's
 
-function add_outputs(
-        dds::DDS{P},
-        extra_y::Dict{String, <:RingElem},
-    ) where {P <: MPolyRingElem}
+function add_outputs(dds::DDS{P}, extra_y::Dict{String, <:RingElem}) where {P <: MPolyRingElem}
     return DDS{P}(add_outputs(dds.ode, extra_y))
 end
 
