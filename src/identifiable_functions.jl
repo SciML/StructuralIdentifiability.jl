@@ -22,6 +22,10 @@ This functions takes the following optional arguments:
   initial conditions, not states (this is an experimental functionality).
 - `prob_threshold`: A float in the range from 0 to 1, the probability of correctness. Default
   is `0.99`.
+- `cmp`: Comparator for rational functions.
+    A custom comparator can be provided: for two rational functions `f1` and `f2`,
+    `cmp(f1,f2)` should be `true` if `f1` is simpler than `f2`.
+    Default is `RationalFunctionFields.rational_function_cmp`.
 - `seed`: The rng seed. Default value is `42`.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
@@ -39,7 +43,7 @@ ode = @ODEmodel(
 find_identifiable_functions(ode)
 
 # prints
-3-element Vector{AbstractAlgebra.Generic.FracFieldElem{Nemo.QQMPolyRingElem}}:
+2-element Vector{AbstractAlgebra.Generic.FracFieldElem{Nemo.QQMPolyRingElem}}:
  a12 + a01 + a21
  a12*a01
 ```

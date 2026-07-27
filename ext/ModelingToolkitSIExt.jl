@@ -12,6 +12,8 @@ using TimerOutputs
 
 using ModelingToolkitBase
 
+RationalFunctionFields = StructuralIdentifiability.RationalFunctionFields
+
 # ------------------------------------------------------------------------------
 
 # checking if it is a function of the form x(t), a bit dirty
@@ -671,6 +673,7 @@ function StructuralIdentifiability.find_identifiable_functions(
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
         loglevel = Logging.Info,
+        cmp = RationalFunctionFields.rational_function_cmp
     )
     restart_logging(loglevel = loglevel)
     reset_timings()
@@ -684,6 +687,7 @@ function StructuralIdentifiability.find_identifiable_functions(
             with_states = with_states,
             simplify = simplify,
             rational_interpolator = rational_interpolator,
+            cmp = cmp
         )
     end
 end
@@ -697,6 +701,7 @@ function _find_identifiable_functions(
         with_states = false,
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
+        cmp = RationalFunctionFields.rational_function_cmp
     )
     Random.seed!(seed)
     ode, conversion = mtk_to_si(ode, measured_quantities)
@@ -710,6 +715,7 @@ function _find_identifiable_functions(
             seed = seed,
             with_states = with_states,
             rational_interpolator = rational_interpolator,
+            cmp = cmp
         )
     else
         result = StructuralIdentifiability._find_identifiable_functions_kic(
@@ -719,6 +725,7 @@ function _find_identifiable_functions(
             prob_threshold = prob_threshold,
             seed = seed,
             rational_interpolator = rational_interpolator,
+            cmp = cmp
         )
     end
     result = [parent_ring_change(f, ode.poly_ring) for f in result]
