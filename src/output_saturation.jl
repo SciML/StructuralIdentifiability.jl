@@ -25,10 +25,10 @@ function saturate_outputs(
     sort!(lie_ders, lt = RationalFunctionFields.rational_function_cmp)
     for f in lie_ders
         if !first(RationalFunctionFields.check_algebraicity_modp(current_y, [f]))
-            current_y = RationalFunctionField(vcat(generators(current_y), [f]))
+            current_y = RationalFunctionField(vcat(RationalFunctionFields.generators(current_y), [f]))
         end
     end
-    new_outputs = generators(current_y)[(length(ode.y_vars) + length(ode.u_vars) + length(ode.parameters) + 1):end]
+    new_outputs = RationalFunctionFields.generators(current_y)[(length(ode.y_vars) + length(ode.u_vars) + length(ode.parameters) + 1):end]
 
     idx = 1
     old_y_names = map(var_to_str, ode.y_vars)
