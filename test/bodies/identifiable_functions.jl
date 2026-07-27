@@ -1113,10 +1113,10 @@ ident_funcs_states = [
     k02 + k12,
     b1 * c,
     Km * c,
-    x1 * c,
-    x2 * c * k21,
-    (Vm * a2) // x2,
     Vm * a1 * c + Vm * a2 * c,
+    (a2 * k21) // (a1 + a2),
+    x1 * c,
+    x2 * c * k21
 ]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
@@ -1198,23 +1198,6 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = tr
 end
 
 @testset "Identifiable functions with custom comparator" begin
-    cmp1 = (f, g) -> begin
-        length(string(f)) < length(string(g))
-    end
-
-    cmp2 = (f, g) -> begin
-        f = parent_ring_change(f, parent(ode))
-        g = parent_ring_change(g, parent(ode))
-        df = lie_derivative(f, ode)
-        dg = lie_derivative(g, ode)
-        default_cmp = RationalFunctionFields.rational_function_cmp
-        if iszero(df) && iszero(dg)
-            default_cmp(f, g)
-        else
-            default_cmp(df, dg)
-        end
-    end
-
     ode = @ODEmodel(
         S'(t) = -beta_W * S(t) * W(t) - beta_I * S(t) * I(t),
         I'(t) = beta_W * S(t) * W(t) + beta_I * S(t) * I(t) - gamma * I(t),
@@ -1222,25 +1205,42 @@ end
         y(t) = W(t)
     )
 
+    cmp1 = (f, g) -> begin
+        length(string(f)) < length(string(g))
+    end
+
+    cmp2 = StructuralIdentifiability.cmp_lie(
+        ode, RationalFunctionFields.rational_function_cmp)
+
+    cmp3 = StructuralIdentifiability.cmp_prefer_params(ode, cmp1)
+
     with_cmp1 = find_identifiable_functions(ode, with_states = true, cmp = cmp1)
 
     with_cmp2 = find_identifiable_functions(ode, with_states = true, cmp = cmp2)
 
-    without_cmp = find_identifiable_functions(ode, with_states = true)
+    with_cmp3 = find_identifiable_functions(ode, with_states = true, cmp = cmp3)
+
+    default_cmp = find_identifiable_functions(ode, with_states = true)
 
     @test fields_equal(
         RationalFunctionField(with_cmp1),
-        RationalFunctionField(without_cmp),
+        RationalFunctionField(default_cmp),
         0.99,
     )
     @test fields_equal(
         RationalFunctionField(with_cmp2),
-        RationalFunctionField(without_cmp),
+        RationalFunctionField(default_cmp),
+        0.99,
+    )
+    @test fields_equal(
+        RationalFunctionField(with_cmp3),
+        RationalFunctionField(default_cmp),
         0.99,
     )
 
     @test issorted(with_cmp1, lt = cmp1)
     @test issorted(with_cmp2, lt = cmp2)
+    @test issorted(with_cmp3, lt = cmp3)
 end
 
 # restoring the default

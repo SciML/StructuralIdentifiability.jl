@@ -302,3 +302,38 @@ function replace_with_ic(ode, funcs)
 end
 
 # -----------------------------------------------------------------------------
+
+# Given an ODE and a comparator for rational functions returns a new comparator, 
+# which prefers functions containing only the parameters of the given ODE. 
+function cmp_prefer_params(ode, cmp)
+    some_vars = ode.parameters
+    new_cmp = (f, g) -> begin
+        isempty(some_vars) && return cmp(f, g)
+        some_vars = map(x -> parent_ring_change(x, parent(numerator(f))), some_vars)
+        prefer_f = issubset(vars(f), some_vars)
+        prefer_g = issubset(vars(g), some_vars)
+        (prefer_f && !prefer_g) && return true
+        (prefer_f == prefer_g) && return cmp(f, g)
+        false
+    end
+    new_cmp
+end
+
+# Given an ODE and a comparator for rational functions returns a new comparator, 
+# which first compares the Lie derivatives when the latter are not zero.
+function cmp_lie(ode, cmp)
+    new_cmp = (f, g) -> begin
+        f = parent_ring_change(f, parent(ode))
+        g = parent_ring_change(g, parent(ode))
+        df = lie_derivative(f, ode)
+        dg = lie_derivative(g, ode)
+        if iszero(df) && iszero(dg)
+            cmp(f, g)
+        else
+            cmp(df, dg)
+        end
+    end
+    new_cmp
+end
+
+# -----------------------------------------------------------------------------

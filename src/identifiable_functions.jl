@@ -58,7 +58,7 @@ function find_identifiable_functions(
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
         loglevel = Logging.Info,
-        cmp = RationalFunctionFields.rational_function_cmp,
+        cmp = cmp_prefer_params(ode, RationalFunctionFields.rational_function_cmp)
     ) where {T <: MPolyRingElem{QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
@@ -96,7 +96,7 @@ function _find_identifiable_functions(
         with_states = false,
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
-        cmp = RationalFunctionFields.rational_function_cmp
+        cmp = cmp_prefer_params(ode, RationalFunctionFields.rational_function_cmp)
     ) where {T <: MPolyRingElem{QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
@@ -131,7 +131,6 @@ function _find_identifiable_functions(
             seed = seed,
             simplify = simplify,
             rational_interpolator = rational_interpolator,
-            # priority_variables = [parent_ring_change(p, bring) for p in ode.parameters],
             cmp = cmp
         )
     else
