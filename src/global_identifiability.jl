@@ -91,7 +91,7 @@ The function returns a tuple containing the following:
         with_states::Bool = false,
         var_change_policy = :default,
         rational_interpolator = :VanDerHoevenLecerf,
-        cmp = RationalFunctionFields.rational_function_cmp,
+        cmp = default_cmp(ode),
     ) where {T}
     @info "Computing IO-equations"
     ioeq_time = @elapsed io_equations =

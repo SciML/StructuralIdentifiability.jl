@@ -33,7 +33,7 @@ function _find_identifiable_functions_kic(
         seed = 42,
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
-        cmp = RationalFunctionFields.rational_function_cmp,
+        cmp = default_cmp(ode),
     ) where {T <: MPolyRingElem{Nemo.QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)

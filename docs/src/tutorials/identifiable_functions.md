@@ -40,6 +40,17 @@ By default, `find_identifiable_functions` tries to simplify the output functions
 the degree of simplification. The default value is `:standard` but one could use `:strong` to try to simplify further
 (at the expense of heavier computation) or use `:weak` to simplify less (but compute faster).
 
+When several generating sets describe the same field, the `cmp` keyword can be used to control which rational functions are considered simpler and end up in the final result. 
+It is possible to provide a custom function `cmp(f, g)` that returns `true` when `f` should be preferred to `g`. For example, the following comparator prefers functions with shorter printed representations:
+
+```@example funcs
+find_identifiable_functions(
+    LLW1987,
+    with_states = true,
+    cmp = (f1, f2) -> length(string(f1)) < length(string(f2)),
+)
+```
+
 As `assess_identifiability` and `assess_local_identifiability`, `find_identifiable_functions` accepts an optional parameter `loglevel` (default: `Logging.Info`)
 to adjust the verbosity of logging.
 

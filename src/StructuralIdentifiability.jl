@@ -33,7 +33,8 @@ using RationalFunctionFields:
     _reduce_mod_p,
     is_rational_func_const,
     fractions_to_dennums,
-    check_constructive_field_membership
+    check_constructive_field_membership,
+    rational_function_cmp
 
 # defining a model
 export ODE, @ODEmodel, @DDSmodel

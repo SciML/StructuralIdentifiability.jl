@@ -1206,7 +1206,7 @@ end
     )
 
     cmp1 = (f, g) -> begin
-        length(string(f)) < length(string(g))
+        return length(string(f)) < length(string(g))
     end
 
     cmp2 = StructuralIdentifiability.cmp_lie(
@@ -1214,6 +1214,10 @@ end
     )
 
     cmp3 = StructuralIdentifiability.cmp_prefer_params(ode, cmp1)
+
+    o = one(parent(ode))
+    @test cmp3(beta_W // o, S // o)
+    @test !cmp3(S // o, beta_W // o)
 
     with_cmp1 = find_identifiable_functions(ode, with_states = true, cmp = cmp1)
 

@@ -6,7 +6,7 @@ system.
 
 ## Options
 
-This functions takes the following optional arguments:
+This function takes the following optional arguments:
 - `with_states`: When `true`, also reports the identifiabile functions in the
     ODE states. Default is `false`.
 - `simplify`: The extent to which the output functions are simplified. Stronger
@@ -22,10 +22,9 @@ This functions takes the following optional arguments:
   initial conditions, not states (this is an experimental functionality).
 - `prob_threshold`: A float in the range from 0 to 1, the probability of correctness. Default
   is `0.99`.
-- `cmp`: Comparator for rational functions.
-    A custom comparator can be provided: for two rational functions `f1` and `f2`,
-    `cmp(f1,f2)` should be `true` if `f1` is simpler than `f2`.
-    Default is `RationalFunctionFields.rational_function_cmp`.
+- `cmp`: A comparator for rational functions. For two rational functions `f1`
+    and `f2`, `cmp(f1, f2)` should be `true` if `f1` is simpler than `f2`.
+    By default, `StructuralIdentifiability.default_cmp(ode)` is used.
 - `seed`: The rng seed. Default value is `42`.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
@@ -58,7 +57,7 @@ function find_identifiable_functions(
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
         loglevel = Logging.Info,
-        cmp = cmp_prefer_params(ode, RationalFunctionFields.rational_function_cmp),
+        cmp = default_cmp(ode),
     ) where {T <: MPolyRingElem{QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
@@ -96,7 +95,7 @@ function _find_identifiable_functions(
         with_states = false,
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
-        cmp = cmp_prefer_params(ode, RationalFunctionFields.rational_function_cmp),
+        cmp = default_cmp(ode),
     ) where {T <: MPolyRingElem{QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)

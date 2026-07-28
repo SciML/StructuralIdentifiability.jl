@@ -303,38 +303,44 @@ end
 
 # -----------------------------------------------------------------------------
 
-# Given an ODE and a comparator for rational functions returns a new comparator,
-# which prefers functions containing only the parameters of the given ODE.
+default_cmp(ode) = cmp_prefer_params(ode, rational_function_cmp)
+
+"""
+    cmp_prefer_params(ode, cmp)
+
+Wrap a comparator of rational functions `cmp` so that functions containing
+only parameters of the `ode` are preferred over functions containing states.
+"""
 function cmp_prefer_params(ode, cmp)
-    some_vars = ode.parameters
-    new_cmp =
-        (f, g) -> begin
-        isempty(some_vars) && return cmp(f, g)
-        some_vars = map(x -> parent_ring_change(x, parent(numerator(f))), some_vars)
-        prefer_f = issubset(vars(f), some_vars)
-        prefer_g = issubset(vars(g), some_vars)
-        (prefer_f && !prefer_g) && return true
-        (prefer_f == prefer_g) && return cmp(f, g)
-        false
+    params = ode.parameters
+    return function (f, g)
+        isempty(params) && return cmp(f, g)
+        params = map(p -> parent_ring_change(p, parent(numerator(f))), params)
+        prefer_f = issubset(vars(f), params)
+        prefer_g = issubset(vars(g), params)
+        prefer_f != prefer_g && return prefer_f
+        return cmp(f, g)
     end
-    return new_cmp
 end
 
-# Given an ODE and a comparator for rational functions returns a new comparator,
-# which first compares the Lie derivatives when the latter are not zero.
+"""
+    cmp_lie(ode, cmp)
+
+Wrap a comparator of rational functions `cmp` so Lie derivatives are compared
+when they are nonzero.
+"""
 function cmp_lie(ode, cmp)
-    new_cmp = (f, g) -> begin
+    return function (f, g)
         f = parent_ring_change(f, parent(ode))
         g = parent_ring_change(g, parent(ode))
         df = lie_derivative(f, ode)
         dg = lie_derivative(g, ode)
-        if iszero(df) && iszero(dg)
+        return if iszero(df) && iszero(dg)
             cmp(f, g)
         else
             cmp(df, dg)
         end
     end
-    return new_cmp
 end
 
 # -----------------------------------------------------------------------------
