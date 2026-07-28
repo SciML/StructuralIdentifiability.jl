@@ -12,8 +12,6 @@ using TimerOutputs
 
 using ModelingToolkitBase
 
-RationalFunctionFields = StructuralIdentifiability.RationalFunctionFields
-
 # ------------------------------------------------------------------------------
 
 # checking if it is a function of the form x(t), a bit dirty
@@ -631,11 +629,12 @@ system.
 
 ## Options
 
-This functions takes the following optional arguments:
+This function takes the following optional arguments:
 - `measured_quantities` - the output functions of the model.
 - `known_ic` - a list of functions whose initial conditions are assumed to be known,
   then the returned identifiable functions will be functions of parameters and
   initial conditions, not states (this is an experimental functionality).
+- `cmp` - a comparator for rational functions.
 - `loglevel` - the verbosity of the logging
   (can be Logging.Error, Logging.Warn, Logging.Info, Logging.Debug)
 
@@ -673,7 +672,7 @@ function StructuralIdentifiability.find_identifiable_functions(
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
         loglevel = Logging.Info,
-        cmp = RationalFunctionFields.rational_function_cmp
+        cmp = nothing,
     )
     restart_logging(loglevel = loglevel)
     reset_timings()
@@ -687,7 +686,7 @@ function StructuralIdentifiability.find_identifiable_functions(
             with_states = with_states,
             simplify = simplify,
             rational_interpolator = rational_interpolator,
-            cmp = cmp
+            cmp = cmp,
         )
     end
 end
@@ -701,10 +700,11 @@ function _find_identifiable_functions(
         with_states = false,
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
-        cmp = RationalFunctionFields.rational_function_cmp
+        cmp = nothing,
     )
     Random.seed!(seed)
     ode, conversion = mtk_to_si(ode, measured_quantities)
+    isnothing(cmp) && (cmp = StructuralIdentifiability.default_cmp(ode))
     known_ic_ = [eval_at_nemo(each, conversion) for each in known_ic]
     result = nothing
     if isempty(known_ic)
@@ -715,7 +715,7 @@ function _find_identifiable_functions(
             seed = seed,
             with_states = with_states,
             rational_interpolator = rational_interpolator,
-            cmp = cmp
+            cmp = cmp,
         )
     else
         result = StructuralIdentifiability._find_identifiable_functions_kic(
@@ -725,7 +725,7 @@ function _find_identifiable_functions(
             prob_threshold = prob_threshold,
             seed = seed,
             rational_interpolator = rational_interpolator,
-            cmp = cmp
+            cmp = cmp,
         )
     end
     result = [parent_ring_change(f, ode.poly_ring) for f in result]
