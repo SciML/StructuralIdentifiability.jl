@@ -20,15 +20,22 @@ function saturate_outputs(
     lie_ders = lie_derivatives_up_to(ode, Dict(ode.y_equations[y] => ord for (y, ord) in orders))
     @info "Degrees: $([(total_degree(numerator(f)), total_degree(denominator(f))) for f in lie_ders])"
 
-    current_y = RationalFunctionField(vcat(collect(values(ode.y_equations)), ode.u_vars, ode.parameters))
+    current_generators = [
+        f // 1 for
+            f in vcat(collect(values(ode.y_equations)), ode.u_vars, ode.parameters)
+    ]
+    current_y = RationalFunctionField(current_generators)
     lie_ders = filter(f -> total_degree_frac(f) <= max_deg, lie_ders)
     sort!(lie_ders, lt = RationalFunctionFields.rational_function_cmp)
     for f in lie_ders
         if !first(RationalFunctionFields.check_algebraicity_modp(current_y, [f]))
-            current_y = RationalFunctionField(vcat(generators(current_y), [f]))
+            push!(current_generators, f)
+            current_y = RationalFunctionField(current_generators)
         end
     end
-    new_outputs = generators(current_y)[(length(ode.y_vars) + length(ode.u_vars) + length(ode.parameters) + 1):end]
+    new_outputs = current_generators[
+        (length(ode.y_vars) + length(ode.u_vars) + length(ode.parameters) + 1):end,
+    ]
 
     idx = 1
     old_y_names = map(var_to_str, ode.y_vars)
