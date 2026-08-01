@@ -4,8 +4,8 @@ using DataStructures
 using Logging
 using Nemo
 using Random
+using RationalFunctionFields: str_to_var, parent_ring_change, eval_at_dict
 using StructuralIdentifiability
-using StructuralIdentifiability: str_to_var, parent_ring_change, eval_at_dict
 using StructuralIdentifiability:
     restart_logging, _si_logger, reset_timings, _to, nonrational_error
 using TimerOutputs
@@ -85,7 +85,7 @@ end
 
 function get_measured_quantities(ode::ModelingToolkitBase.System)
     # filterings is to discard vectorial entities (with tearing and alike)
-    scalar_observed = filter(e -> length(Symbolics.shape(e.rhs)) == 0, ModelingToolkitBase.observed(ode))
+    scalar_observed = filter(e -> length(SymbolicUtils.shape(e.rhs)) == 0, ModelingToolkitBase.observed(ode))
     outputs = filter(
         eq -> ModelingToolkitBase.isoutput(eq.lhs),
         vcat(ModelingToolkitBase.equations(ode), scalar_observed),
@@ -259,8 +259,8 @@ function __mtk_to_si(
         measured_quantities::Array{<:Tuple{String, <:SymbolicUtils.BasicSymbolic}},
     )
 
-    polytype = StructuralIdentifiability.Nemo.QQMPolyRingElem
-    fractype = StructuralIdentifiability.Nemo.Generic.FracFieldElem{polytype}
+    polytype = Nemo.QQMPolyRingElem
+    fractype = Generic.FracFieldElem{polytype}
     diff_eqs = filter(
         eq -> !(ModelingToolkitBase.isoutput(eq.lhs)),
         ModelingToolkitBase.equations(de),
