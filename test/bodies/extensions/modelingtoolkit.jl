@@ -5,7 +5,7 @@ using ModelingToolkitBase, Symbolics
 if GROUP == "All" || GROUP == "ModelingToolkitSIExt"
     @testset "eval_at_nemo" begin
         using ModelingToolkitBase, Symbolics
-        using Nemo
+        using StructuralIdentifiability.Nemo
 
         @independent_variables t
         @parameters a01 a21 a12
