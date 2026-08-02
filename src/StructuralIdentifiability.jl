@@ -17,7 +17,6 @@ using AbstractAlgebra
 using Nemo
 using Groebner
 using ParamPunPam
-using ParamPunPam: reduce_mod_p!, specialize_mod_p, AbstractBlackboxIdeal
 ParamPunPam.enable_progressbar(false)
 using RationalFunctionFields
 using RationalFunctionFields:
@@ -26,7 +25,6 @@ using RationalFunctionFields:
     parent_ring_change,
     total_degree_frac,
     select_pivots,
-    gen_tag_name,
     gen_tag_names,
     str_to_var,
     var_to_str,
@@ -202,7 +200,20 @@ include("precompile.jl")
 ### Extensions ###
 
 # ModelingToolkit extension.
+"""
+    mtk_to_si(system, measured_quantities)
+
+Convert a `ModelingToolkitBase.System` and its measured quantities to a
+StructuralIdentifiability [`ODE`](@ref) plus a symbol-conversion dictionary.
+"""
 function mtk_to_si end
+
+"""
+    eval_at_nemo(expr, vals)
+
+Evaluate a ModelingToolkit/Symbolics expression in the Nemo-valued substitution
+dictionary `vals`.
+"""
 function eval_at_nemo end
 export mtk_to_si, eval_at_nemo
 

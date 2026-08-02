@@ -2,6 +2,18 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
 
 if GROUP == "All" || GROUP == "Core"
     @testset "Output saturation" begin
+        ode = @ODEmodel(
+            x'(t) = z(t),
+            z'(t) = 0,
+            y(t) = x(t) // a
+        )
+        saturated = saturate_outputs(
+            ode,
+            Dict(only(ode.y_vars) => 1),
+        )
+        @test length(saturated.y_vars) == 2
+
+
         # full nfkb model from benchmarks
         nfkb = @ODEmodel(
             x1'(t) = k_prod - k_deg * x1(t) - k1 * x1(t) * u(t),

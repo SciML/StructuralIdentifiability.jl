@@ -30,7 +30,7 @@ function differentiate_solution(
         ic::Dict{P, T},
         inputs::Dict{P, Array{T, 1}},
         prec::Int,
-    ) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
+    ) where {T <: AbstractAlgebra.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing the power series solution of the system"
     ps_sol = power_series_solution(ode, params, ic, inputs, prec)
     ps_ring = parent(first(values(ps_sol)))
@@ -88,7 +88,7 @@ function differentiate_output(
         ic::Dict{P, T},
         inputs::Dict{P, Array{T, 1}},
         prec::Int,
-    ) where {T <: Generic.FieldElem, P <: MPolyRingElem{T}}
+    ) where {T <: AbstractAlgebra.FieldElem, P <: MPolyRingElem{T}}
     @debug "Computing partial derivatives of the solution"
     ps_sol, sol_diff = differentiate_solution(ode, params, ic, inputs, prec)
     ps_ring = parent(first(values(ps_sol)))

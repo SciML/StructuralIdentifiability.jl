@@ -17,3 +17,10 @@ linear_compartment_model
 ```@docs
 @DDSmodel
 ```
+
+## ModelingToolkit Extension
+
+```@docs
+StructuralIdentifiability.mtk_to_si
+StructuralIdentifiability.eval_at_nemo
+```
