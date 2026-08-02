@@ -1,7 +1,7 @@
 # shared utilities for benchmarking
-using Printf
 
 const BENCHMARK_RESULTS = "results"
+const BENCHMARK_LOGS = "logs"
 
 const ID_TIME_CATEGORIES = [
     :id_total,
@@ -18,108 +18,63 @@ const ID_TIME_CATEGORIES = [
 const ID_DATA_CATEGORIES =
     [:id_npoints_degree, :id_npoints_interpolation, :are_id_funcs_polynomial]
 const ALL_CATEGORIES = union(ID_TIME_CATEGORIES, ID_DATA_CATEGORIES)
-const ALL_POSSIBLE_CATEGORIES = union(ALL_CATEGORIES, Symbol[])
 
-const HUMAN_READABLE_CATEGORIES = Dict(
-    :id_io_time => "io",
-    :id_primality_evaluate => "io/primality-evaluate",
-    :id_uncertain_factorization => "io/uncertain-factor",
-    :id_global_time => "global id.",
-    :id_ideal_time => "gen. ideal",
-    :id_inclusion_check => "inclusion",
-    :id_inclusion_check_mod_p => "inclusion Zp",
-    :id_groebner_time => "ParamPunPam.jl",
-    :id_total => "Runtime",
-    :id_beautifulization => "beautifulization",
-    :id_normalforms_time => "normal forms",
-    :id_gbfan_time => "GB fan",
-    :id_ranking => "Score",
-    :implicit_relations => "Algebraic relations",
-    :dim_before => "Dim. before",
-    :dim_after => "Dim. after",
-    :are_id_funcs_polynomial => "Polynomial?",
-    :id_npoints_degree => "# Points, degree",
-    :id_npoints_interpolation => "# Points, interpolation",
-)
+function parse_keywords(input)
+    isempty(strip(input)) && return [NamedTuple()]
 
-const CATEGORY_FORMAT = Dict()
-for cat in ALL_POSSIBLE_CATEGORIES
-    CATEGORY_FORMAT[cat] = (val) -> if val isa Real
-        @sprintf("%.2f", val)
-    else
-        string(val)
+    return map(split(input, ";")) do keyword_set
+        expression = Meta.parse(strip(keyword_set))
+        keywords = Core.eval(@__MODULE__, expression)
+        keywords == () && return NamedTuple()
+        keywords isa NamedTuple ||
+            throw(ArgumentError("Expected a named tuple of keyword arguments, got $keywords"))
+        return keywords
     end
 end
-CATEGORY_FORMAT[:are_id_funcs_polynomial] = (val) -> string(val) == "true" ? "yes" : "no"
 
-function parse_keywords(keywords)
-    keywords = replace(keywords, "\\:" => ":")
-    keywords = replace(keywords, "\"" => "")
-    if isempty(keywords)
-        return [[]]
+function benchmark_comparator(label, ode)
+    if label in (:default, :cmp_default)
+        return StructuralIdentifiability.default_cmp(ode)
+    elseif label === :cmp_lie
+        return StructuralIdentifiability.cmp_lie(
+            ode,
+            StructuralIdentifiability.RationalFunctionFields.rational_function_cmp,
+        )
     end
-    if isempty(eval(Meta.parse(keywords)))
-        return [[]]
-    end
-    sets_of_keywords = map(strip, split(keywords, ";"))
-    @assert !isempty(sets_of_keywords)
-    kws_named_tuples = []
-    for kwset in sets_of_keywords
-        @debug "" kwset
-        nt = eval(Meta.parse(kwset))
-        push!(kws_named_tuples, nt)
-    end
-    return kws_named_tuples
+    throw(ArgumentError("Unknown comparator label: $label"))
+end
+
+function benchmark_keyword_label(value)
+    value isa Symbol && return value
+    label = value isa Function ? typeof(value) : value
+    return Symbol(replace(string(label), r"[^A-Za-z0-9_]+" => "_"))
 end
 
 function keywords_to_global_id(keywords)
-    if isempty(keywords)
-        return Symbol()
-    end
-    id = get(keywords, :strategy, Symbol(""))
-    if haskey(keywords, :with_states)
-        if keywords.with_states
-            id = if id !== Symbol("")
-                Symbol(id, :_with_states)
-            else
-                Symbol(id, :with_states)
-            end
-        end
+    isempty(keywords) && return Symbol()
+
+    id = get(keywords, :strategy, Symbol())
+    if get(keywords, :with_states, false)
+        id = isempty(string(id)) ? :with_states : Symbol(id, :_with_states)
     end
     if haskey(keywords, :rational_interpolator)
-        interpolator = keywords.rational_interpolator
-        id = Symbol(id, :_, interpolator)
+        id = Symbol(id, :_, keywords.rational_interpolator)
     end
-    if haskey(keywords, :adjoin_identifiable)
-        if keywords.adjoin_identifiable
-            id = if id !== Symbol("")
-                Symbol(id, :_adjoin_identifiable)
-            else
-                Symbol(id, :adjoin_identifiable)
-            end
-        end
+    if haskey(keywords, :cmp)
+        comparator = benchmark_keyword_label(keywords.cmp)
+        id = isempty(string(id)) ? comparator : Symbol(id, :_, comparator)
+    end
+    if get(keywords, :adjoin_identifiable, false)
+        id = isempty(string(id)) ? :adjoin_identifiable : Symbol(id, :_adjoin_identifiable)
     end
     return id
 end
 
-function timings_filename(kwid)
-    return generic_filename("timings", kwid)
-end
+timings_filename(id) = generic_filename("timings", id)
+result_filename(id) = generic_filename("result", id)
+data_filename(id) = generic_filename("data", id)
 
-function result_filename(kwid)
-    return generic_filename("result", kwid)
-end
-
-function data_filename(kwid)
-    return generic_filename("data", kwid)
-end
-
-function generic_filename(name, kwid)
-    str = if kwid === Symbol("")
-        "$name"
-    else
-        "$(name)_$kwid"
-    end
-    str = replace(str, ":" => "")
-    return str
+function generic_filename(name, id)
+    filename = isempty(string(id)) ? name : "$(name)_$id"
+    return replace(filename, ":" => "")
 end
