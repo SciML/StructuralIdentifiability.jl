@@ -44,7 +44,7 @@ export assess_local_identifiability, assess_identifiability
 export set_parameter_values, rename_variables
 
 # extra functionality
-export find_ioequations, find_identifiable_functions
+export find_ioequations, find_identifiable_functions, default_cmp
 
 # exporting to other formats
 export print_for_maple, print_for_DAISY, print_for_COMBOS, print_for_GenSSI
