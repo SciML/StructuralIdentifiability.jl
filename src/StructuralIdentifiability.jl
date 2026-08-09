@@ -5,7 +5,6 @@ import Combinatorics
 import DataStructures
 using DataStructures: OrderedDict
 import IterTools
-using IterTools: cache
 import LinearAlgebra
 using LinearAlgebra: rank
 import Logging
