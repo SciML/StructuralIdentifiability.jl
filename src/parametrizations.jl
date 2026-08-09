@@ -163,15 +163,23 @@ The function accepts the following optional arguments.
 ## Example
 
 ```jldoctest
-using StructuralIdentifiability
+julia> using StructuralIdentifiability
 
-ode = @ODEmodel(
-    x1'(t) = a * x1(t) - b*x1(t)*x2(t),
-    x2'(t) = -c * x2(t) + d*x1(t)*x2(t),
-    y(t) = x1(t)
-)
+julia> using Logging
 
-new_ode, new_vars, relations = reparametrize_global(ode)
+julia> Logging.disable_logging(Logging.Info);
+
+julia> ode = @ODEmodel(
+           x1'(t) = a * x1(t) - b*x1(t)*x2(t),
+           x2'(t) = -c * x2(t) + d*x1(t)*x2(t),
+           y(t) = x1(t)
+       );
+
+julia> Logging.disable_logging(Logging.BelowMinLevel);
+
+julia> new_ode, new_vars, relations = reparametrize_global(
+           ode; loglevel = Logging.Error
+       );
 ```
 
 Then, we have the following:
