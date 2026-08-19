@@ -303,6 +303,31 @@ end
 
 # -----------------------------------------------------------------------------
 
+"""
+    default_cmp(ode)
+
+Returns a comparator for rational functions.
+Used as a default measure of simplicity in StructuralIdentifiability.jl.
+
+## Example
+
+```jldoctest
+using StructuralIdentifiability
+
+ode = @ODEmodel(
+    x0'(t) = -(a01 + a21) * x0(t) + a12 * x1(t),
+    x1'(t) = a21 * x0(t) - a12 * x1(t),
+    y(t) = x0(t)
+)
+
+f1, f2 = (a01 + a21) // a12, x0 // a12
+
+cmp = default_cmp(ode)
+
+cmp(f1, f2) # returns true, so f1 is considered simpler than f2
+```
+
+"""
 default_cmp(ode) = cmp_prefer_params(ode, rational_function_cmp)
 
 """
