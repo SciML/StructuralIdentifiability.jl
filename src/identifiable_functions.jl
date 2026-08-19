@@ -32,7 +32,7 @@ This function takes the following optional arguments:
 
 ```jldoctest
 using StructuralIdentifiability
-
+  
 ode = @ODEmodel(
     x0'(t) = -(a01 + a21) * x0(t) + a12 * x1(t),
     x1'(t) = a21 * x0(t) - a12 * x1(t),

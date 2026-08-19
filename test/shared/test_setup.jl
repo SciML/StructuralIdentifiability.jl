@@ -3,6 +3,7 @@ using StructuralIdentifiability
 using Test
 using TestSetExtensions
 using SpecialFunctions
+using Groebner: quotient_basis
 
 using StructuralIdentifiability.DataStructures
 using StructuralIdentifiability.Nemo
@@ -62,7 +63,6 @@ using StructuralIdentifiability:
     x_equations,
     y_equations,
     inputs,
-    quotient_basis,
     propose_orders,
     saturate_outputs
 

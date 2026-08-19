@@ -1,16 +1,31 @@
 module ModelingToolkitSIExt
 
-using DataStructures
-using Logging
-using Nemo
-using Random
+import AbstractAlgebra
+using AbstractAlgebra: Generic
+import DataStructures
+using DataStructures: OrderedDict
+import Logging
+using Logging: with_logger
+import ModelingToolkitBase
+using ModelingToolkitBase: Shift, bindings, equations, observed, parameters, unknowns
+import Nemo
+using Nemo: QQMPolyRingElem
+import Random
 using RationalFunctionFields: str_to_var, parent_ring_change, eval_at_dict
-using StructuralIdentifiability
+import StructuralIdentifiability
 using StructuralIdentifiability:
-    restart_logging, _si_logger, reset_timings, _to, nonrational_error
-using TimerOutputs
-
-using ModelingToolkitBase
+    eval_at_nemo,
+    mtk_to_si,
+    restart_logging,
+    _si_logger,
+    reset_timings,
+    _to,
+    nonrational_error
+import Symbolics
+using Symbolics: Differential, Num, get_variables
+import SymbolicUtils
+using SymbolicUtils: SymReal, substitute
+using TimerOutputs: @timeit
 
 # ------------------------------------------------------------------------------
 
@@ -294,7 +309,11 @@ function __mtk_to_si(
     isempty(de_lhs[:shifts]) || throw(DomainError("Shifts are not allowed on the left-hand side"))
 
     if !isempty(de_rhs[:shifts])
-        (is_empty(de_rhs[:derivatives]) && is_empty(de_lhs[:derivatives])) || throw(DomainError("Derivatives and shifts cannot appear at the same time"))
+        (
+            AbstractAlgebra.is_empty(de_rhs[:derivatives]) &&
+                AbstractAlgebra.is_empty(de_lhs[:derivatives])
+        ) ||
+            throw(DomainError("Derivatives and shifts cannot appear at the same time"))
         isempty(intersect(de_lhs[:vars], de_rhs[:vars])) || throw(DomainError("States in the right-hand side of the dynamics equations can appear only as shifts"))
     else
         isempty(de_lhs[:vars]) || throw(DomainError("States on the left-hand side must appear with derivations (and this is not the case for $(de_lhs[:vars])). Did you mean to mtkcompile the model?"))
@@ -314,7 +333,7 @@ function __mtk_to_si(
         [
             filter(
                     s ->
-                    !iscall(s) &&
+                    !Symbolics.iscall(s) &&
                     !(string(s) in string.(state_vars)) &&
                     !(string(s) * "(t)" in string.(state_vars)) &&
                     (string(s) != string(t)),
@@ -589,7 +608,10 @@ function _assess_local_identifiability_dds(
     if length(funcs_to_check) == 0
         params = parameters(dds)
         params_from_measured_quantities = union(
-            [filter(s -> !iscall(s), get_variables(y)) for y in measured_quantities]...,
+            [
+                filter(s -> !Symbolics.iscall(s), get_variables(y)) for
+                    y in measured_quantities
+            ]...,
         )
         funcs_to_check = vcat(
             [

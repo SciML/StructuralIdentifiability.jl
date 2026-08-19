@@ -275,13 +275,19 @@ It also injects all variables into the global scope.
 Creating a simple `ODE`:
 
 ```jldoctest
-using StructuralIdentifiability
+julia> using StructuralIdentifiability
 
-ode = @ODEmodel(
-    x1'(t) = a * x1(t) + u(t),
-    x2'(t) = b * x2(t) + c*x1(t)*x2(t),
-    y(t) = x1(t)
-)
+julia> using Logging
+
+julia> Logging.disable_logging(Logging.Info);
+
+julia> ode = @ODEmodel(
+           x1'(t) = a * x1(t) + u(t),
+           x2'(t) = b * x2(t) + c*x1(t)*x2(t),
+           y(t) = x1(t)
+       );
+
+julia> Logging.disable_logging(Logging.BelowMinLevel);
 ```
 
 Here,
@@ -309,13 +315,19 @@ It also injects all variables into the global scope.
 Creating a simple `DDS`:
 
 ```jldoctest
-using StructuralIdentifiability
+julia> using StructuralIdentifiability
 
-dds = @DDSmodel(
-    x1(t + 1) = a * x1(t) + u(t),
-    x2(t + 1) = b * x2(t) + c*x1(t)*x2(t),
-    y(t) = x1(t)
-)
+julia> using Logging
+
+julia> Logging.disable_logging(Logging.Info);
+
+julia> dds = @DDSmodel(
+           x1(t + 1) = a * x1(t) + u(t),
+           x2(t + 1) = b * x2(t) + c*x1(t)*x2(t),
+           y(t) = x1(t)
+       );
+
+julia> Logging.disable_logging(Logging.BelowMinLevel);
 ```
 
 Here,

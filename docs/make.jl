@@ -11,7 +11,7 @@ makedocs(
     authors = "SciML",
     modules = [StructuralIdentifiability],
     clean = true,
-    doctest = false,
+    doctest = true,
     format = Documenter.HTML(
         analytics = "UA-90474609-3",
         assets = ["assets/favicon.ico"],
