@@ -325,6 +325,10 @@ f1, f2 = (a01 + a21) // a12, x0 // a12
 cmp = default_cmp(ode)
 
 cmp(f1, f2) # returns true, so f1 is considered simpler than f2
+
+# Output
+
+true
 ```
 
 """

@@ -41,7 +41,8 @@ ode = @ODEmodel(
 
 find_identifiable_functions(ode)
 
-# prints
+# Output
+
 2-element Vector{AbstractAlgebra.Generic.FracFieldElem{Nemo.QQMPolyRingElem}}:
  a12 + a01 + a21
  a12*a01
