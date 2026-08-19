@@ -67,7 +67,6 @@ using RationalFunctionFields:
     RationalFunctionField,
     check_algebraicity,
     field_contains,
-    generators,
     simplified_generating_set
 using RationalFunctionFields:
     eval_at_dict,
