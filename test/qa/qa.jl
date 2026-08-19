@@ -13,18 +13,9 @@ end
 
 run_qa(
     StructuralIdentifiability;
-    explicit_imports = true,
-    # Heavy `using AbstractAlgebra`/`using Nemo`/... bring ~70 implicit imports
-    # (core computer-algebra operators used pervasively); making them all explicit
-    # is a large, risky refactor tracked in
-    # https://github.com/SciML/StructuralIdentifiability.jl/issues/527.
-    ei_broken = (:no_implicit_imports,),
-    api_docs_kwargs = (; rendered = true),
     ei_kwargs = (;
         all_qualified_accesses_are_public = (;
             ignore = (
-                :CoreLogging,             # Base internal
-                :filter,                  # Base.Iterators (non-public)
                 :isidentifier,            # Base internal
                 :FracFieldElem,           # AbstractAlgebra.Generic (non-public)
                 :GF,                      # Nemo.Native (non-public)

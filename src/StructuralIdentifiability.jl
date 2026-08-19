@@ -1,24 +1,74 @@
 module StructuralIdentifiability
 
 # General purpose packages
-using Base.Iterators
-using Combinatorics
-using DataStructures
-using IterTools
-using LinearAlgebra
-using Logging
-using MacroTools
-using Primes
-using Random
-using TimerOutputs
+import Combinatorics
+import DataStructures
+using DataStructures: OrderedDict
+import IterTools
+import LinearAlgebra
+using LinearAlgebra: rank
+import Logging
+using Logging: with_logger
+import MacroTools
+using MacroTools: @capture
+import Primes
+import Random
+import TimerOutputs
+using TimerOutputs: @timeit, disable_timer!, enable_timer!
 
 # Algebra packages
-using AbstractAlgebra
-using Nemo
-using Groebner
-using ParamPunPam
+import AbstractAlgebra
+using AbstractAlgebra: FieldElem, Generic, MPolyRing, MPolyRingElem, MatElem, RingElem
+import Groebner
+import Nemo
+using Nemo:
+    AbsPowerSeriesRingElem,
+    MPolyBuildCtx,
+    QQFieldElem,
+    QQMPolyRingElem,
+    base_ring,
+    coeff,
+    coefficients,
+    degree,
+    derivative,
+    dim,
+    divexact,
+    divides,
+    elem_type,
+    evaluate,
+    exponent_vector,
+    exponent_vectors,
+    finish,
+    gen,
+    gens,
+    height_bits,
+    leading_coefficient,
+    leading_monomial,
+    monomial,
+    ncols,
+    nrows,
+    poly,
+    polynomial_ring,
+    power_series_ring,
+    push_term!,
+    set_precision!,
+    setcoeff!,
+    symbols,
+    terms,
+    total_degree,
+    var,
+    vars
+import ParamPunPam
 ParamPunPam.enable_progressbar(false)
-using RationalFunctionFields
+import PrecompileTools
+using PrecompileTools: @setup_workload
+import RationalFunctionFields
+using RationalFunctionFields:
+    RationalFunctionField,
+    check_algebraicity,
+    field_contains,
+    generators,
+    simplified_generating_set
 using RationalFunctionFields:
     eval_at_dict,
     unpack_fraction,
@@ -194,7 +244,6 @@ function _assess_identifiability(
     return result
 end
 
-using PrecompileTools
 include("precompile.jl")
 
 ### Extensions ###

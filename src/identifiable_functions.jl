@@ -32,7 +32,7 @@ This function takes the following optional arguments:
 
 ```jldoctest
 using StructuralIdentifiability
-
+  
 ode = @ODEmodel(
     x0'(t) = -(a01 + a21) * x0(t) + a12 * x1(t),
     x1'(t) = a21 * x0(t) - a12 * x1(t),
@@ -42,9 +42,9 @@ ode = @ODEmodel(
 find_identifiable_functions(ode)
 
 # prints
-2-element Vector{AbstractAlgebra.Generic.FracFieldElem{Nemo.QQMPolyRingElem}}:
- a12 + a01 + a21
- a12*a01
+# 2-element Vector{AbstractAlgebra.Generic.FracFieldElem{Nemo.QQMPolyRingElem}}:
+#  a12 + a01 + a21
+#  a12*a01
 ```
 
 """

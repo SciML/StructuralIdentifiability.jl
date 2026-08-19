@@ -31,7 +31,7 @@ const _si_logger =
     Ref{Logging.ConsoleLogger}(Logging.ConsoleLogger(Logging.Info, show_limited = false))
 
 function restart_logging(; loglevel = Logging.Info)
-    @assert loglevel isa Base.CoreLogging.LogLevel
+    @assert loglevel isa Logging.LogLevel
     _si_logger[] = Logging.ConsoleLogger(loglevel, show_limited = false)
     for r in _runtime_rubrics
         _runtime_logger[r] = 0
