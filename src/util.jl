@@ -311,23 +311,20 @@ Used as a default measure of simplicity in StructuralIdentifiability.jl.
 
 ## Example
 
-```jldoctest
-using StructuralIdentifiability
+```jldoctest; setup = :(using Logging; Logging.disable_logging(Logging.Info);)
+julia> using StructuralIdentifiability
 
-ode = @ODEmodel(
-    x0'(t) = -(a01 + a21) * x0(t) + a12 * x1(t),
-    x1'(t) = a21 * x0(t) - a12 * x1(t),
-    y(t) = x0(t)
-)
+julia> ode = @ODEmodel(
+           x0'(t) = -(a01 + a21) * x0(t) + a12 * x1(t),
+           x1'(t) = a21 * x0(t) - a12 * x1(t),
+           y(t) = x0(t)
+       );
 
-f1, f2 = (a01 + a21) // a12, x0 // a12
+julia> f1, f2 = (a01 + a21) // a12, x0 // a12;
 
-cmp = default_cmp(ode)
+julia> cmp = default_cmp(ode);
 
-cmp(f1, f2) # returns true, so f1 is considered simpler than f2
-
-# output
-
+julia> cmp(f1, f2) # returns true, so f1 is considered simpler than f2
 true
 ```
 
