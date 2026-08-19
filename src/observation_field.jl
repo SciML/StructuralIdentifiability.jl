@@ -16,19 +16,16 @@ This functions takes the following optional arguments:
 
 ## Example
 
-```jldoctest
-using StructuralIdentifiability
+```jldoctest; setup = :(using Logging; Logging.disable_logging(Logging.Info);)
+julia> using StructuralIdentifiability
 
-ode = @ODEmodel(
-    x0'(t) = -(a01 + a21) * x0(t) + a12 * x1(t),
-    x1'(t) = a21 * x0(t) - a12 * x1(t),
-    y(t) = x0(t)
-);
+julia> ode = @ODEmodel(
+           x0'(t) = -(a01 + a21) * x0(t) + a12 * x1(t),
+           x1'(t) = a21 * x0(t) - a12 * x1(t),
+           y(t) = x0(t)
+       );
 
-observation_field(ode)
-
-# Output
-
+julia> observation_field(ode; loglevel=Logging.Warn)
 4-element Vector{AbstractAlgebra.Generic.FracFieldElem{Nemo.QQMPolyRingElem}}:
  x0(t)
  a01 + a12 + a21

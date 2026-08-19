@@ -27,20 +27,14 @@ This functions takes the following optional arguments:
 
 ## Example
 
-```jldoctest
+```jldoctest; setup = :(using Logging; Logging.disable_logging(Logging.Info);)
 julia> using StructuralIdentifiability
-
-julia> using Logging
-
-julia> Logging.disable_logging(Logging.Info);
 
 julia> ode = @ODEmodel(
            x0'(t) = -(a01 + a21) * x0(t) + a12 * x1(t),
            x1'(t) = a21 * x0(t) - a12 * x1(t),
            y(t) = x0(t)
        );
-
-julia> Logging.disable_logging(Logging.BelowMinLevel);
 
 julia> identifiable_functions = find_identifiable_functions(ode; loglevel = Logging.Error);
 

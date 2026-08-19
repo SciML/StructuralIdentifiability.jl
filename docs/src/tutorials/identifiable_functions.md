@@ -1,4 +1,4 @@
-# Globally Identifiable Functions
+# Globally Identifiable Functions (a.k.a. Observation Field)
 
 In addition to assessing identifiability of given functions of parameters or states, `StructuralIdentifiability.jl`
 provides the function `find_identifiable_functions` which finds a set of identifiable functions such that any other
@@ -29,6 +29,17 @@ From these expressions, we see that the values of `p1` and `p3` are not identifi
 of numbers `{p1, p3}` is uniquely determined since `p1 + p3` and `p1 * p3` are known.
 Furthermore, we see that, for fixed input and output, `p2` and `p4` can take infinitely many values but
 knowing one of them, we would also be able to determine the other.
+
+!!! note "Observation field"
+    The field of identifiable functions involving both parameters and states is also called the **observation field**. It can be computed using
+    `observation_field`:
+
+    ```julia
+    observation_field(LLW1987)
+    ```
+
+    This is equivalent to calling
+    `find_identifiable_functions(LLW1987, with_states = true)`.
 
 Moreover, we can find generators of all identifiable functions in parameters and states:
 
