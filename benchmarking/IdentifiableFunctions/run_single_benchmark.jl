@@ -1,22 +1,16 @@
-using CpuId, Logging, Pkg, Printf
-using Statistics
-
+using Logging
 using StructuralIdentifiability
-using StructuralIdentifiability: _runtime_logger, ODE
-using StructuralIdentifiability.ParamPunPam
 
-logger = Logging.ConsoleLogger(stdout, Logging.Info)
-global_logger(logger)
+global_logger(Logging.ConsoleLogger(stdout, Logging.Info))
 
 include("utils.jl")
 
-const data = Dict()
-
-const NUM_RUNS = 5
+const NUM_RUNS = 1
 const FUNCTION_NAME = ARGS[1]
 const PROBLEM_NAME = ARGS[2]
-const KWARGS = parse_keywords(ARGS[3])[1]
+const KWARGS = only(parse_keywords(ARGS[3]))
 const GLOBAL_ID = keywords_to_global_id(KWARGS)
+const RESULT_DIR = joinpath(@__DIR__, BENCHMARK_RESULTS, PROBLEM_NAME)
 
 @info "" FUNCTION_NAME
 @info "" PROBLEM_NAME
@@ -25,98 +19,79 @@ const GLOBAL_ID = keywords_to_global_id(KWARGS)
 flush(stdout)
 flush(stderr)
 
-# Load the system
-path = (@__DIR__) * "/$BENCHMARK_RESULTS/$PROBLEM_NAME/$PROBLEM_NAME.jl"
-include(path)
+include(joinpath(RESULT_DIR, "$PROBLEM_NAME.jl"))
 
-# Compile
-const FUNC_SYM = Symbol(FUNCTION_NAME)
-ode = @ODEmodel(x1'(t) = a * x1(t) + x2, x2'(t) = b * x2(t) + c * d, y(t) = x1(t))
-eval(:($FUNC_SYM($system; ($KWARGS...))))
+const RESOLVED_KWARGS = if haskey(KWARGS, :cmp) && KWARGS.cmp isa Symbol
+    merge(KWARGS, (cmp = benchmark_comparator(KWARGS.cmp, system),))
+else
+    KWARGS
+end
+const BENCHMARK_FUNCTION = getproperty(StructuralIdentifiability, Symbol(FUNCTION_NAME))
+
+# Compile before collecting timings.
+BENCHMARK_FUNCTION(system; RESOLVED_KWARGS...)
 
 function process_system()
     @info "Processing $PROBLEM_NAME"
     @info """
     Averaging over $NUM_RUNS runs.
     Using keyword arguments:
-    $(typeof(KWARGS))
-    $KWARGS
+    $RESOLVED_KWARGS
     ID: $GLOBAL_ID"""
 
-    data[PROBLEM_NAME] = Dict{Any, Any}(c => 0.0 for c in ALL_CATEGORIES)
+    model_data = Dict{Symbol, Any}(category => 0.0 for category in ID_TIME_CATEGORIES)
     for _ in 1:NUM_RUNS
-        timing = @timed result = eval(:($FUNC_SYM($system; ($KWARGS...))))
-        data[PROBLEM_NAME][:return_value] = result
-        @info "Result is" result
-        for cat in ID_TIME_CATEGORIES
-            if haskey(StructuralIdentifiability._runtime_logger, cat)
-                data[PROBLEM_NAME][cat] = StructuralIdentifiability._runtime_logger[cat]
+        timing = @timed BENCHMARK_FUNCTION(system; RESOLVED_KWARGS...)
+        model_data[:return_value] = timing.value
+        @info "Result is" timing.value
+
+        for category in ID_TIME_CATEGORIES
+            category === :id_total && continue
+            if haskey(StructuralIdentifiability._runtime_logger, category)
+                model_data[category] += StructuralIdentifiability._runtime_logger[category]
             end
         end
-        for cat in ID_DATA_CATEGORIES
-            if haskey(StructuralIdentifiability._runtime_logger, cat)
-                data[PROBLEM_NAME][cat] =
-                    deepcopy(StructuralIdentifiability._runtime_logger[cat])
+        for category in ID_DATA_CATEGORIES
+            if haskey(StructuralIdentifiability._runtime_logger, category)
+                model_data[category] =
+                    deepcopy(StructuralIdentifiability._runtime_logger[category])
             end
         end
-        data[PROBLEM_NAME][:id_total] = timing.time
+        model_data[:id_total] += timing.time
     end
-    for cat in ID_TIME_CATEGORIES
-        if haskey(data[PROBLEM_NAME], cat)
-            data[PROBLEM_NAME][cat] = data[PROBLEM_NAME][cat] / NUM_RUNS
-        end
+
+    for category in ID_TIME_CATEGORIES
+        model_data[category] /= NUM_RUNS
     end
-    return
+    return model_data
 end
 
-function dump_timings()
-    timings = ""
-    timings *= "$PROBLEM_NAME\n"
-    for (key, model_data) in data
-        for c in ID_TIME_CATEGORIES
-            timings *= "$c, "
-            timings *= string(model_data[c]) * "\n"
+function dump_timings(model_data)
+    filename = joinpath(RESULT_DIR, timings_filename(GLOBAL_ID))
+    return open(filename, "w") do io
+        println(io, PROBLEM_NAME)
+        for category in ID_TIME_CATEGORIES
+            println(io, "$category, $(model_data[category])")
         end
-    end
-    filename = timings_filename(GLOBAL_ID)
-    return open((@__DIR__) * "/$BENCHMARK_RESULTS/$PROBLEM_NAME/$filename", "w") do io
-        write(io, timings)
     end
 end
 
-function dump_results()
-    filename = result_filename(GLOBAL_ID)
-    open((@__DIR__) * "/$BENCHMARK_RESULTS/$PROBLEM_NAME/$filename", "w") do io
-        if haskey(data, PROBLEM_NAME)
-            println(io, data[PROBLEM_NAME][:return_value])
+function dump_results(model_data)
+    result_path = joinpath(RESULT_DIR, result_filename(GLOBAL_ID))
+    open(result_path, "w") do io
+        println(io, model_data[:return_value])
+    end
+
+    data_path = joinpath(RESULT_DIR, data_filename(GLOBAL_ID))
+    return open(data_path, "w") do io
+        println(io, PROBLEM_NAME)
+        for category in ID_DATA_CATEGORIES
+            haskey(model_data, category) || continue
+            println(io, "$category, $(model_data[category])")
         end
     end
-    filename = data_filename(GLOBAL_ID)
-    open((@__DIR__) * "/$BENCHMARK_RESULTS/$PROBLEM_NAME/$filename", "w") do io
-        write(io, "$PROBLEM_NAME\n")
-    end
-    for cat in ID_DATA_CATEGORIES
-        if !haskey(data[PROBLEM_NAME], cat)
-            continue
-        end
-        if cat === :something_important
-            # make a separate file for it
-            filename_cat = generic_filename(cat, GLOBAL_ID)
-            open((@__DIR__) * "/$BENCHMARK_RESULTS/$PROBLEM_NAME/$filename_cat", "w") do io
-                # print something
-            end
-            continue
-        end
-        # otherwise, print in the data file
-        open((@__DIR__) * "/$BENCHMARK_RESULTS/$PROBLEM_NAME/$filename", "a+") do io
-            write(io, "$cat, ")
-            write(io, string(data[PROBLEM_NAME][cat]))
-            write(io, "\n")
-        end
-    end
-    return
 end
 
-process_system()
-dump_timings()
-dump_results()
+const MODEL_DATA = process_system()
+dump_timings(MODEL_DATA)
+dump_results(MODEL_DATA)

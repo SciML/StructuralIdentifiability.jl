@@ -91,6 +91,7 @@ The function returns a tuple containing the following:
         with_states::Bool = false,
         var_change_policy = :default,
         rational_interpolator = :VanDerHoevenLecerf,
+        cmp = default_cmp(ode),
     ) where {T}
     @info "Computing IO-equations"
     ioeq_time = @elapsed io_equations =
@@ -148,6 +149,7 @@ The function returns a tuple containing the following:
             seed = 42,
             simplify = :standard,
             rational_interpolator = rational_interpolator,
+            cmp = cmp,
         )
         dennums_simplified = fractions_to_dennums(no_states_simplified)
         # switch back the ring
