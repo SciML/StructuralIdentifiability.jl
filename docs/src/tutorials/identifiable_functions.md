@@ -32,7 +32,7 @@ knowing one of them, we would also be able to determine the other.
 
 !!! note "Observation field"
     The field of identifiable functions involving both parameters and states is also called the **observation field**. It can be computed using
-    `observation_field`:
+    [`observation_field`](@ref):
 
     ```julia
     observation_field(LLW1987)

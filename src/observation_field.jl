@@ -5,7 +5,7 @@ Find simple generators of the observation field of the given ODE system.
 
 ## Options
 
-This functions takes the following optional arguments:
+This function takes the following optional arguments:
 - `known_ic`: a list of functions whose initial conditions are assumed to be known,
   then the returned identifiable functions will be functions of parameters and
   initial conditions, not states (this is an experimental functionality).
