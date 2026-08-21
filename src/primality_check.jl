@@ -26,7 +26,8 @@ function check_primality_zerodim(J::Array{QQMPolyRingElem, 1})
         @debug "Prime is $p"
         F = Nemo.GF(p)
         S_F = Nemo.matrix_space(F, dim, dim)
-        generic_multiplication_modp = S_F([generic_multiplication[i, j] for i in 1:dim for j in 1:dim])
+        generic_multiplication_modp =
+            S_F([generic_multiplication[i, j] for i in 1:dim for j in 1:dim])
         R, t = Nemo.polynomial_ring(F, "t")
         chpoly = Nemo.charpoly(R, generic_multiplication_modp)
         @debug "Charpoly computed"

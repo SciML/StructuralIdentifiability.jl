@@ -302,3 +302,71 @@ function replace_with_ic(ode, funcs)
 end
 
 # -----------------------------------------------------------------------------
+
+"""
+    default_cmp(ode)
+
+Returns a comparator for rational functions.
+Used as a default measure of simplicity in StructuralIdentifiability.jl.
+
+## Example
+
+```jldoctest; setup = :(using Logging; Logging.disable_logging(Logging.Info);)
+julia> using StructuralIdentifiability
+
+julia> ode = @ODEmodel(
+           x0'(t) = -(a01 + a21) * x0(t) + a12 * x1(t),
+           x1'(t) = a21 * x0(t) - a12 * x1(t),
+           y(t) = x0(t)
+       );
+
+julia> f1, f2 = (a01 + a21) // a12, x0 // a12;
+
+julia> cmp = default_cmp(ode);
+
+julia> cmp(f1, f2) # returns true, so f1 is considered simpler than f2
+true
+```
+
+"""
+default_cmp(ode) = cmp_prefer_params(ode, rational_function_cmp)
+
+"""
+    cmp_prefer_params(ode, cmp)
+
+Wrap a comparator of rational functions `cmp` so that functions containing
+only parameters of the `ode` are preferred over functions containing states.
+"""
+function cmp_prefer_params(ode, cmp)
+    params = ode.parameters
+    return function (f, g)
+        isempty(params) && return cmp(f, g)
+        params = map(p -> parent_ring_change(p, parent(numerator(f))), params)
+        prefer_f = issubset(vars(f), params)
+        prefer_g = issubset(vars(g), params)
+        prefer_f != prefer_g && return prefer_f
+        return cmp(f, g)
+    end
+end
+
+"""
+    cmp_lie(ode, cmp)
+
+Wrap a comparator of rational functions `cmp` so Lie derivatives are compared
+when they are nonzero.
+"""
+function cmp_lie(ode, cmp)
+    return function (f, g)
+        f = parent_ring_change(f, parent(ode))
+        g = parent_ring_change(g, parent(ode))
+        df = lie_derivative(f, ode)
+        dg = lie_derivative(g, ode)
+        return if iszero(df) && iszero(dg)
+            cmp(f, g)
+        else
+            cmp(df, dg)
+        end
+    end
+end
+
+# -----------------------------------------------------------------------------

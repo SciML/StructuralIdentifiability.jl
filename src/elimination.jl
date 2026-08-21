@@ -70,8 +70,8 @@ function Bezout_matrix(f::P, g::P, var_elim::P) where {P <: MPolyRingElem}
     for i in 1:n
         for j in 1:n
             M[i, j] = sum(
-                coeffs_f[j + k + 1] * coeffs_g[i - k] -
-                    coeffs_g[j + k + 1] * coeffs_f[i - k] for k in 0:min(i - 1, n - j)
+                coeffs_f[j + k + 1] * coeffs_g[i - k] - coeffs_g[j + k + 1] * coeffs_f[i - k] for
+                    k in 0:min(i - 1, n - j)
             )
         end
     end
@@ -188,10 +188,7 @@ mutable struct ODEPointGenerator{P} <: PointGenerator{P}
     cached_points::Array{Dict{P, <:FieldElem}, 1}
     number_type::Type
 
-    function ODEPointGenerator{P}(
-            ode::ODE{P},
-            big_ring::MPolyRing,
-        ) where {P <: MPolyRingElem}
+    function ODEPointGenerator{P}(ode::ODE{P}, big_ring::MPolyRing) where {P <: MPolyRingElem}
         prec = length(ode.x_vars) + 1
         number_type = typeof(one(base_ring(big_ring)))
         return new(ode, big_ring, prec, Array{Dict{P, number_type}}[], number_type)
@@ -215,8 +212,7 @@ function Base.iterate(
             initial_conditions =
                 Dict{P, Int}(x => rand(1:sample_max) for x in gpg.ode.x_vars)
             input_values = Dict{P, Array{Int, 1}}(
-                u => [rand(1:sample_max) for _ in 1:(gpg.precision)] for
-                    u in gpg.ode.u_vars
+                u => [rand(1:sample_max) for _ in 1:(gpg.precision)] for u in gpg.ode.u_vars
             )
             @debug "Computing a power series solution"
             ps_solution = undef

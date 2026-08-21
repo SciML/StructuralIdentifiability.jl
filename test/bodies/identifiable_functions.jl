@@ -1113,10 +1113,10 @@ ident_funcs_states = [
     k02 + k12,
     b1 * c,
     Km * c,
+    Vm * a1 * c + Vm * a2 * c,
+    (a2 * k21) // (a1 + a2),
     x1 * c,
     x2 * c * k21,
-    (Vm * a2) // x2,
-    Vm * a1 * c + Vm * a2 * c,
 ]
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
@@ -1195,6 +1195,57 @@ push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = tr
             end
         end
     end
+end
+
+@testset "Identifiable functions with custom comparator" begin
+    ode = @ODEmodel(
+        S'(t) = -beta_W * S(t) * W(t) - beta_I * S(t) * I(t),
+        I'(t) = beta_W * S(t) * W(t) + beta_I * S(t) * I(t) - gamma * I(t),
+        W'(t) = alpha * I(t) - zeta * W(t),
+        y(t) = W(t)
+    )
+
+    cmp1 = (f, g) -> begin
+        return length(string(f)) < length(string(g))
+    end
+
+    cmp2 = StructuralIdentifiability.cmp_lie(
+        ode, RationalFunctionFields.rational_function_cmp
+    )
+
+    cmp3 = StructuralIdentifiability.cmp_prefer_params(ode, cmp1)
+
+    o = one(parent(ode))
+    @test cmp3(beta_W // o, S // o)
+    @test !cmp3(S // o, beta_W // o)
+
+    with_cmp1 = find_identifiable_functions(ode, with_states = true, cmp = cmp1)
+
+    with_cmp2 = find_identifiable_functions(ode, with_states = true, cmp = cmp2)
+
+    with_cmp3 = find_identifiable_functions(ode, with_states = true, cmp = cmp3)
+
+    default_cmp = find_identifiable_functions(ode, with_states = true)
+
+    @test fields_equal(
+        RationalFunctionField(with_cmp1),
+        RationalFunctionField(default_cmp),
+        0.99,
+    )
+    @test fields_equal(
+        RationalFunctionField(with_cmp2),
+        RationalFunctionField(default_cmp),
+        0.99,
+    )
+    @test fields_equal(
+        RationalFunctionField(with_cmp3),
+        RationalFunctionField(default_cmp),
+        0.99,
+    )
+
+    @test issorted(with_cmp1, lt = cmp1)
+    @test issorted(with_cmp2, lt = cmp2)
+    @test issorted(with_cmp3, lt = cmp3)
 end
 
 # restoring the default

@@ -24,9 +24,7 @@ function monomial_compress(io_equation, params::Array{<:MPolyRingElem, 1})
     params_xs = isempty(params) ? empty(params) : gens(parent(first(params)))
     # Pre-compute param string names for faster lookup
     param_names = Set(var_to_str(p, xs = params_xs) for p in params)
-    other_vars = [
-        v for v in gens(parent(io_equation)) if !(var_to_str(v) in param_names)
-    ]
+    other_vars = [v for v in gens(parent(io_equation)) if !(var_to_str(v) in param_names)]
     coeffdict = extract_coefficients(io_equation, other_vars)
     expvect = collect(keys(coeffdict))
     coeffs = collect(values(coeffdict))

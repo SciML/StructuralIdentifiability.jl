@@ -67,7 +67,6 @@ using RationalFunctionFields:
     RationalFunctionField,
     check_algebraicity,
     field_contains,
-    generators,
     simplified_generating_set
 using RationalFunctionFields:
     eval_at_dict,
@@ -81,7 +80,8 @@ using RationalFunctionFields:
     _reduce_mod_p,
     is_rational_func_const,
     fractions_to_dennums,
-    check_constructive_field_membership
+    check_constructive_field_membership,
+    rational_function_cmp
 
 # defining a model
 export ODE, @ODEmodel, @DDSmodel
@@ -93,7 +93,10 @@ export assess_local_identifiability, assess_identifiability
 export set_parameter_values, rename_variables
 
 # extra functionality
-export find_ioequations, find_identifiable_functions, observation_field
+export find_ioequations, find_identifiable_functions, default_cmp
+
+# observation field!!
+export observation_field
 
 # exporting to other formats
 export print_for_maple, print_for_DAISY, print_for_COMBOS, print_for_GenSSI

@@ -33,6 +33,7 @@ function _find_identifiable_functions_kic(
         seed = 42,
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
+        cmp = default_cmp(ode),
     ) where {T <: MPolyRingElem{Nemo.QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
@@ -45,6 +46,7 @@ function _find_identifiable_functions_kic(
         simplify = :absent,
         rational_interpolator = rational_interpolator,
         seed = seed,
+        cmp = cmp,
     )
 
     id_funcs = vcat(id_funcs_general, [f // one(parent(ode)) for f in known_ic])
@@ -56,6 +58,7 @@ function _find_identifiable_functions_kic(
             seed = seed,
             simplify = simplify,
             rational_interpolator = rational_interpolator,
+            cmp = cmp,
         )
     end
 
@@ -91,7 +94,12 @@ function _assess_identifiability_kic(
         funcs_to_check = vcat(ode.x_vars, ode.parameters)
     end
     half_p = 0.5 + prob_threshold / 2
-    id_funcs = _find_identifiable_functions_kic(ode, known_ic, prob_threshold = half_p, simplify = :absent)
+    id_funcs = _find_identifiable_functions_kic(
+        ode,
+        known_ic,
+        prob_threshold = half_p,
+        simplify = :absent,
+    )
     #funcs_to_check = replace_with_ic(ode, funcs_to_check)
     result = OrderedDict(f => :globally for f in funcs_to_check)
 

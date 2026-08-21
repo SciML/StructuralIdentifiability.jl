@@ -62,10 +62,7 @@ end
 
 #------------------------------------------------------------------------------
 
-function add_outputs(
-        ode::ODE{P},
-        extra_y::Dict{String, <:RingElem},
-    ) where {P <: MPolyRingElem}
+function add_outputs(ode::ODE{P}, extra_y::Dict{String, <:RingElem}) where {P <: MPolyRingElem}
     new_var_names =
         vcat(collect(map(var_to_str, gens(ode.poly_ring))), collect(keys(extra_y)))
     new_ring, new_vars = Nemo.polynomial_ring(base_ring(ode.poly_ring), new_var_names)

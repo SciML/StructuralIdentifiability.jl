@@ -109,7 +109,9 @@ function common_ring(poly::MPolyRingElem, pbr::PBRepresentation)
                 "$(u)_$h" for h in
                     0:max(
                         max_ords[u],
-                        max_offset + max([difforder(p, u) for p in values(pbr.projections)]...),
+                        max_offset + max(
+                            [difforder(p, u) for p in values(pbr.projections)]...,
+                        ),
                     )
             ],
         )

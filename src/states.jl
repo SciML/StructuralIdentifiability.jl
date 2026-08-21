@@ -69,7 +69,10 @@ end
 
 #------------------------------------------------------------------------------
 
-function lie_derivatives_up_to(ode::ODE, orders::Dict{P, Int}) where {P <: AbstractAlgebra.RingElem}
+function lie_derivatives_up_to(
+        ode::ODE,
+        orders::Dict{P, Int},
+    ) where {P <: AbstractAlgebra.RingElem}
     result = Array{Generic.FracFieldElem, 1}()
     for (f, ord) in orders
         curr = extract_coefficients_ratfunc(f, ode.u_vars)
@@ -117,5 +120,8 @@ identifiable functions of parameters only
         end
     end
 
-    return lie_derivatives_up_to(ode, Dict(ode.y_equations[y] => ord for (y, ord) in y_to_ord))
+    return lie_derivatives_up_to(
+        ode,
+        Dict(ode.y_equations[y] => ord for (y, ord) in y_to_ord),
+    )
 end

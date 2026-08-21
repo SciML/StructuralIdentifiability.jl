@@ -6,7 +6,7 @@ system.
 
 ## Options
 
-This functions takes the following optional arguments:
+This function takes the following optional arguments:
 - `with_states`: When `true`, also reports the identifiabile functions in the
     ODE states. Default is `false`.
 - `simplify`: The extent to which the output functions are simplified. Stronger
@@ -22,6 +22,9 @@ This functions takes the following optional arguments:
   initial conditions, not states (this is an experimental functionality).
 - `prob_threshold`: A float in the range from 0 to 1, the probability of correctness. Default
   is `0.99`.
+- `cmp`: A comparator for rational functions. For two rational functions `f1`
+    and `f2`, `cmp(f1, f2)` should be `true` if `f1` is simpler than `f2`.
+    By default, `StructuralIdentifiability.default_cmp(ode)` is used.
 - `seed`: The rng seed. Default value is `42`.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
@@ -52,6 +55,7 @@ function find_identifiable_functions(
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
         loglevel = Logging.Info,
+        cmp = default_cmp(ode),
     ) where {T <: MPolyRingElem{QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
@@ -64,6 +68,7 @@ function find_identifiable_functions(
                 with_states = with_states,
                 simplify = simplify,
                 rational_interpolator = rational_interpolator,
+                cmp = cmp,
             )
         else
             id_funcs = _find_identifiable_functions_kic(
@@ -73,6 +78,7 @@ function find_identifiable_functions(
                 seed = seed,
                 simplify = simplify,
                 rational_interpolator = rational_interpolator,
+                cmp = cmp,
             )
             # renaming variables from `x(t)` to `x(0)`
             return replace_with_ic(ode, id_funcs)
@@ -87,6 +93,7 @@ function _find_identifiable_functions(
         with_states = false,
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
+        cmp = default_cmp(ode),
     ) where {T <: MPolyRingElem{QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
@@ -107,6 +114,7 @@ function _find_identifiable_functions(
         prob_threshold = half_p,
         with_states = with_states,
         rational_interpolator = rational_interpolator,
+        cmp = cmp,
     )
     # If simplification is needed
     if simplify !== :absent
@@ -120,7 +128,7 @@ function _find_identifiable_functions(
             seed = seed,
             simplify = simplify,
             rational_interpolator = rational_interpolator,
-            priority_variables = [parent_ring_change(p, bring) for p in ode.parameters],
+            cmp = cmp,
         )
     else
         id_funcs_fracs = RationalFunctionFields.dennums_to_fractions(id_funcs)
