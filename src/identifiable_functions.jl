@@ -30,7 +30,7 @@ This function takes the following optional arguments:
 
 ## Example
 
-```jldoctest
+```jldoctest; setup = :(using Logging; Logging.disable_logging(Logging.Info);)
 using StructuralIdentifiability
   
 ode = @ODEmodel(
@@ -44,8 +44,8 @@ find_identifiable_functions(ode)
 # output
 
 2-element Vector{AbstractAlgebra.Generic.FracFieldElem{Nemo.QQMPolyRingElem}}:
- a12 + a01 + a21
- a12*a01
+ a01 + a12 + a21
+ a01*a12
 ```
 
 """
