@@ -39,15 +39,15 @@ function test_reparametrization(old_ode, new_ode, var_mapping, implicit_relation
     new_inputs = new_ode.u_vars
     new_param_spec = Dict(
         new_param => StructuralIdentifiability.eval_at_dict(
-                var_mapping[new_param],
-                old_param_spec,
-            ) for new_param in new_params
+            var_mapping[new_param],
+            old_param_spec,
+        ) for new_param in new_params
     )
     new_var_ic = Dict(
         new_var => StructuralIdentifiability.eval_at_dict(
-                var_mapping[new_var],
-                merge(old_param_spec, old_var_ic),
-            ) for new_var in new_vars
+            var_mapping[new_var],
+            merge(old_param_spec, old_var_ic),
+        ) for new_var in new_vars
     )
     new_input_ts = Dict{eltype(new_vars), Vector{Nemo.QQFieldElem}}(
         new_input => old_input_ts[numerator(var_mapping[new_input])] for

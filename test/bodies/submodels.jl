@@ -145,10 +145,10 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
         submodels = Set(
             [
                 (
-                        collect(map(var_to_str, ode.x_vars)),
-                        collect(map(var_to_str, ode.y_vars)),
-                        collect(map(var_to_str, ode.u_vars)),
-                    ) for ode in submodels
+                    collect(map(var_to_str, ode.x_vars)),
+                    collect(map(var_to_str, ode.y_vars)),
+                    collect(map(var_to_str, ode.u_vars)),
+                ) for ode in submodels
             ]
         )
         @test submodels == c[:submodels]

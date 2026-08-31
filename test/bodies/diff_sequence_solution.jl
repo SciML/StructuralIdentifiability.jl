@@ -81,9 +81,9 @@ if GROUP == "All" || GROUP == "Core"
             end
             return Dict(
                 (
-                        parent_ring_change(k[1], parent(dds)),
-                        parent_ring_change(k[2], parent(dds)),
-                    ) => res for (k, res) in part_diffs
+                    parent_ring_change(k[1], parent(dds)),
+                    parent_ring_change(k[2], parent(dds)),
+                ) => res for (k, res) in part_diffs
             )
         end
 
