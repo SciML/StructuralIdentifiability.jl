@@ -170,12 +170,12 @@ Output:
         # choosing the output to prolong
         outputs_with_scores = [
             (
-                    min(d[2]...) * length(y_equations[d[1]]),
-                    min(d[2]...),
-                    -count(x -> x == min(d[2]...), d[2]) + length(y_equations[d[1]]) // 30,
-                    length(y_equations[d[1]]),
-                    d[1],
-                ) for d in var_degs
+                min(d[2]...) * length(y_equations[d[1]]),
+                min(d[2]...),
+                -count(x -> x == min(d[2]...), d[2]) + length(y_equations[d[1]]) // 30,
+                length(y_equations[d[1]]),
+                d[1],
+            ) for d in var_degs
         ]
         @debug "Scores: $outputs_with_scores"
         y_prolong = sort(outputs_with_scores)[1][end]

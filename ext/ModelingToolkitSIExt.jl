@@ -332,13 +332,13 @@ function __mtk_to_si(
     params_from_measured_quantities = union(
         [
             filter(
-                    s ->
-                    !Symbolics.iscall(s) &&
+                s ->
+                !Symbolics.iscall(s) &&
                     !(string(s) in string.(state_vars)) &&
                     !(string(s) * "(t)" in string.(state_vars)) &&
                     (string(s) != string(t)),
-                    get_variables(y[2]),
-                ) for y in measured_quantities
+                get_variables(y[2]),
+            ) for y in measured_quantities
         ]...,
     )
     params = union(params, params_from_measured_quantities)
