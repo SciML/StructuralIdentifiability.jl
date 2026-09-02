@@ -17,3 +17,7 @@ assess_local_identifiability
 ```@docs
 find_identifiable_functions
 ```
+
+```@docs
+observation_field
+```

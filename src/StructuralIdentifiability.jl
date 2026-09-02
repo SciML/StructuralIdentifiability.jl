@@ -95,6 +95,9 @@ export set_parameter_values, rename_variables
 # extra functionality
 export find_ioequations, find_identifiable_functions, default_cmp
 
+# observation field!!
+export observation_field
+
 # exporting to other formats
 export print_for_maple, print_for_DAISY, print_for_COMBOS, print_for_GenSSI
 
@@ -126,6 +129,7 @@ include("states.jl")
 include("output_saturation.jl")
 include("global_identifiability.jl")
 include("identifiable_functions.jl")
+include("observation_field.jl")
 include("parametrizations.jl")
 include("lincomp.jl")
 include("pb_representation.jl")

@@ -11,7 +11,7 @@
 
 ## About
 
-`StructuralIdentifiability.jl` is a Julia package for assessing structural parameter identifiability of parametric ODE models, both local and global.
+`StructuralIdentifiability.jl` is a Julia package for assessing structural identifiability and observability of parametric ODE models, both local and global.
 This includes computation of identifiable functions of states and parameters. The package also offers functionality to assess local identifiability
 in discrete-time models.
 For an introduction to structural identifiability, we refer to [[3]](#review).
@@ -122,7 +122,7 @@ will return
 ```
 
 which are exactly the identifiable functions we have found before. Furthermore, by specifying `with_states = true`, one can compute the generating set for
-all identifiable functions of parameters and states (in other words, all observable functions):
+all identifiable functions of parameters and states (in other words, all observable functions, also known as the observation field):
 
 ```julia
 find_identifiable_functions(ode, with_states = true)

@@ -31,21 +31,18 @@ This function takes the following optional arguments:
 ## Example
 
 ```jldoctest; setup = :(using Logging; Logging.disable_logging(Logging.Info);)
-using StructuralIdentifiability
+julia> using StructuralIdentifiability
   
-ode = @ODEmodel(
-    x0'(t) = -(a01 + a21) * x0(t) + a12 * x1(t),
-    x1'(t) = a21 * x0(t) - a12 * x1(t),
-    y(t) = x0(t)
-)
+julia> ode = @ODEmodel(
+           x0'(t) = -(a01 + a21) * x0(t) + a12 * x1(t),
+           x1'(t) = a21 * x0(t) - a12 * x1(t),
+           y(t) = x0(t)
+       );
 
-find_identifiable_functions(ode)
+julia> identifiable_functions = find_identifiable_functions(ode; loglevel = Logging.Error);
 
-# output
-
-2-element Vector{AbstractAlgebra.Generic.FracFieldElem{Nemo.QQMPolyRingElem}}:
- a01 + a12 + a21
- a01*a12
+julia> length(identifiable_functions)
+2
 ```
 
 """
