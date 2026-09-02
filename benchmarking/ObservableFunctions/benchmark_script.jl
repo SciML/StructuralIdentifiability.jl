@@ -112,7 +112,7 @@ function get_orders_and_degrees(ode)
         ord_low, get_deg_size(ode, ord_low)...,
         ord_high, get_deg_size(ode, ord_high)...,
         max_over_list(id_funcs, total_degree),
-        max_over_list(id_funcs, length)
+        max_over_list(id_funcs, length),
     ]
 end
 
@@ -144,7 +144,7 @@ Returns a vector of rows `[name, time_algo, time_naive, speedup]`, where
 function get_runtimes(models, to_skip)
     result = []
     for (name, ode) in models
-        time_algo = @belapsed find_identifiable_functions($ode, with_states=true)
+        time_algo = @belapsed find_identifiable_functions($ode, with_states = true)
         time_naive = Inf
         if !(name in to_skip)
             time_naive = @belapsed compute_direct($ode)
@@ -159,9 +159,9 @@ end
 ###########################
 
 siwr = @ODEmodel(
-    S'(t) = -beta_W*S(t)*W(t)-beta_I*S(t)*I(t),
-    I'(t) = beta_W*S(t)*W(t)+beta_I*S(t)*I(t) - gamma*I(t),
-    W'(t) = alpha*I(t)-zeta*W(t),
+    S'(t) = -beta_W * S(t) * W(t) - beta_I * S(t) * I(t),
+    I'(t) = beta_W * S(t) * W(t) + beta_I * S(t) * I(t) - gamma * I(t),
+    W'(t) = alpha * I(t) - zeta * W(t),
     y(t) = W(t)
 )
 
@@ -203,7 +203,7 @@ eaihrd = @ODEmodel(
     D'(t) = d * H(t),
     E'(t) =
         (N - A(t) - I(t) - H(t) - R(t) - D(t) - E(t)) * (c1 * A(t) + c2 * I(t)) - (a + s) * E(t),
-    y(t) = D(t) 
+    y(t) = D(t)
 )
 
 models = OrderedDict(
