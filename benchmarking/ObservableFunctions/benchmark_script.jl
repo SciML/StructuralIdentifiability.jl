@@ -106,7 +106,7 @@ function get_orders_and_degrees(ode)
     ord_low = get_prolongation_orders(ode, false)
     ord_high = get_prolongation_orders(ode, true)
 
-    id_funcs = find_identifiable_functions(ode, with_states=true)
+    id_funcs = find_identifiable_functions(ode, with_states = true)
 
     return [
         ord_low, get_deg_size(ode, ord_low)...,
