@@ -32,7 +32,7 @@ This function takes the following optional arguments:
 
 ```jldoctest; setup = :(using Logging; Logging.disable_logging(Logging.Info);)
 julia> using StructuralIdentifiability
-
+  
 julia> ode = @ODEmodel(
            x0'(t) = -(a01 + a21) * x0(t) + a12 * x1(t),
            x1'(t) = a21 * x0(t) - a12 * x1(t),
