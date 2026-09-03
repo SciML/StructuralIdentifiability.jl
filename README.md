@@ -28,8 +28,8 @@ Pkg.add("StructuralIdentifiability")
 ## Tutorials and Documentation
 
 For information on using the package,
-[see the stable documentation](https://docs.sciml.ai/StructuralIdentifiability/stable/). Use the
-[in-development documentation](https://docs.sciml.ai/StructuralIdentifiability/dev/) for the version of
+[see the stable documentation](https://sciml.github.io/StructuralIdentifiability.jl/stable/). Use the
+[in-development documentation](https://sciml.github.io/StructuralIdentifiability.jl/dev/) for the version of
 the documentation, which contains the unreleased features.
 We would like to point out a tutorial paper [[2]](#epidem) describing some of the functionality
 (identifiability assessment and finding identifiable functions)
