@@ -188,31 +188,35 @@ end
         ),
     )
 
-    F = Nemo.Native.GF(2^31 - 1)
-    P = fpMPolyRingElem
-    DType = Union{P, Generic.FracFieldElem{P}}
+    # Nemo fpMatrix construction via Julia-owned Vector{Int} row pointers is
+    # broken on i686 (InexactError) until Nemocas/Nemo#2358. Skip mod-p cases.
+    if Sys.WORD_SIZE == 64
+        F = Nemo.Native.GF(Int64(2)^31 - 1)
+        P = fpMPolyRingElem
+        DType = Union{P, Generic.FracFieldElem{P}}
 
-    varnames = vcat(
-        ["x_$i" for i in 1:3],
-        ["p_$i" for i in 1:3],
-        ["u_$i" for i in 1:2],
-        ["y_$i" for i in 1:3],
-    )
-    R, vars = Nemo.polynomial_ring(F, varnames)
-    push!(
-        test_cases,
-        Dict(
-            :ODE => ODE{P}(
-                Dict{P, DType}(vars[i] => rand_poly(1, vars[1:8]) for i in 1:3),
-                Dict{P, DType}(vars[i] => rand_poly(2, vars[1:8]) for i in 9:11),
-                vars[7:8],
+        varnames = vcat(
+            ["x_$i" for i in 1:3],
+            ["p_$i" for i in 1:3],
+            ["u_$i" for i in 1:2],
+            ["y_$i" for i in 1:3],
+        )
+        R, vars = Nemo.polynomial_ring(F, varnames)
+        push!(
+            test_cases,
+            Dict(
+                :ODE => ODE{P}(
+                    Dict{P, DType}(vars[i] => rand_poly(1, vars[1:8]) for i in 1:3),
+                    Dict{P, DType}(vars[i] => rand_poly(2, vars[1:8]) for i in 9:11),
+                    vars[7:8],
+                ),
+                :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:3),
+                :param_vals => Dict(vars[i + 3] => F(rand(1:50)) for i in 1:3),
+                :inputs => Dict(u => [F(rand(-30:30)) for i in 1:6] for u in vars[7:8]),
+                :prec => 6,
             ),
-            :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:3),
-            :param_vals => Dict(vars[i + 3] => F(rand(1:50)) for i in 1:3),
-            :inputs => Dict(u => [F(rand(-30:30)) for i in 1:6] for u in vars[7:8]),
-            :prec => 6,
-        ),
-    )
+        )
+    end
 
     t = copy(test_cases)
     varnames = vcat(
