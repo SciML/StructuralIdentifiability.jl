@@ -14,5 +14,9 @@ concurrency:
 
 jobs:
   tests:
-    uses: "SciML/.github/.github/workflows/grouped-tests.yml@v1"
+    uses: "SciML/.github/.github/workflows/grouped-tests.yml@refs/pull/137/head"
+    with:
+      # Temporary: pick up develop_sources Pkg.add for URL+[sources] (#136/#137)
+      # until SciML/.github cuts a new v1.x / retags floating v1.
+      dotgithub-ref: master
     secrets: "inherit"
