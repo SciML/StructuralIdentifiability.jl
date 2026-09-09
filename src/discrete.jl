@@ -122,11 +122,11 @@ end
 
 function sequence_solution(
         dds::DDS{P},
-        param_values::Dict{P, Int},
-        initial_conditions::Dict{P, Int},
-        input_values::Dict{P, Array{Int, 1}},
-        num_terms::Int,
-    ) where {P <: MPolyRingElem{<:FieldElem}}
+        param_values::Dict{P, T},
+        initial_conditions::Dict{P, T},
+        input_values::Dict{P, Array{T, 1}},
+        num_terms::Integer,
+    ) where {P <: MPolyRingElem{<:FieldElem}, T <: Integer}
     bring = base_ring(parent(dds))
     return sequence_solution(
         dds,

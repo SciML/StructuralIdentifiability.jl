@@ -290,10 +290,10 @@ end
 
 function ps_ode_solution(
         equations::Array{P, 1},
-        ic::Dict{P, Int},
-        inputs::Dict{P, Array{Int, 1}},
-        prec::Int,
-    ) where {P <: MPolyRingElem{<:AbstractAlgebra.FieldElem}}
+        ic::Dict{P, T},
+        inputs::Dict{P, Array{T, 1}},
+        prec::Integer,
+    ) where {P <: MPolyRingElem{<:AbstractAlgebra.FieldElem}, T <: Integer}
     bring = base_ring(parent(equations[1]))
     return ps_ode_solution(
         equations,
