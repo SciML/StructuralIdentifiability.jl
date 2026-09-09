@@ -201,11 +201,11 @@ end
 
 function power_series_solution(
         ode::ODE{P},
-        param_values::Dict{P, T},
-        initial_conditions::Dict{P, T},
-        input_values::Dict{P, Array{T, 1}},
+        param_values::Dict{P, <:Integer},
+        initial_conditions::Dict{P, <:Integer},
+        input_values::Dict,
         prec::Integer,
-    ) where {P <: MPolyRingElem{<:FieldElem}, T <: Integer}
+    ) where {P <: MPolyRingElem{<:FieldElem}}
     bring = base_ring(ode.poly_ring)
     return power_series_solution(
         ode,
