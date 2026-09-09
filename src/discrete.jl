@@ -101,8 +101,8 @@ function sequence_solution(
         dds::DDS{P},
         param_values::Dict{P, T},
         initial_conditions::Dict{P, T},
-        input_values::Dict{P, Array{T, 1}},
-        num_terms::Int,
+        input_values::Dict,
+        num_terms::Integer,
     ) where {T <: FieldElem, P <: MPolyRingElem{T}}
     result = Dict(x => [initial_conditions[x]] for x in x_vars(dds))
     for i in 2:num_terms

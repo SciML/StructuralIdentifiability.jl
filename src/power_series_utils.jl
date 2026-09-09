@@ -231,8 +231,8 @@ Output:
 function ps_ode_solution(
         equations::Array{P, 1},
         ic::Dict{P, T},
-        inputs::Dict{P, Array{T, 1}},
-        prec::Int,
+        inputs::Dict,
+        prec::Integer,
     ) where {T <: AbstractAlgebra.FieldElem, P <: MPolyRingElem{T}}
     n = length(equations)
     ring = parent(equations[1])

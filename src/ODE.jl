@@ -163,8 +163,8 @@ function power_series_solution(
         ode::ODE{P},
         param_values::Dict{P, T},
         initial_conditions::Dict{P, T},
-        input_values::Dict{P, Array{T, 1}},
-        prec::Int,
+        input_values::Dict,
+        prec::Integer,
     ) where {T <: FieldElem, P <: MPolyRingElem{T}}
     new_varnames = map(var_to_str, vcat(ode.x_vars, ode.u_vars))
     append!(new_varnames, map(v -> var_to_str(v) * "_dot", ode.x_vars))
