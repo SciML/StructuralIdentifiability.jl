@@ -163,8 +163,8 @@ function power_series_solution(
         ode::ODE{P},
         param_values::Dict{P, T},
         initial_conditions::Dict{P, T},
-        input_values::Dict{P, Array{T, 1}},
-        prec::Int,
+        input_values::Dict,
+        prec::Integer,
     ) where {T <: FieldElem, P <: MPolyRingElem{T}}
     new_varnames = map(var_to_str, vcat(ode.x_vars, ode.u_vars))
     append!(new_varnames, map(v -> var_to_str(v) * "_dot", ode.x_vars))
@@ -201,10 +201,10 @@ end
 
 function power_series_solution(
         ode::ODE{P},
-        param_values::Dict{P, Int},
-        initial_conditions::Dict{P, Int},
-        input_values::Dict{P, Array{Int, 1}},
-        prec::Int,
+        param_values::Dict{P, <:Integer},
+        initial_conditions::Dict{P, <:Integer},
+        input_values::Dict,
+        prec::Integer,
     ) where {P <: MPolyRingElem{<:FieldElem}}
     bring = base_ring(ode.poly_ring)
     return power_series_solution(
@@ -223,7 +223,7 @@ end
 Input: ode is an ODE over QQ, p is a prime number
 Output: the reduction mod p, throws an exception if p divides one of the denominators
 """
-function reduce_ode_mod_p(ode::ODE{<:MPolyRingElem{Nemo.QQFieldElem}}, p::Int)
+function reduce_ode_mod_p(ode::ODE{<:MPolyRingElem{Nemo.QQFieldElem}}, p::Integer)
     new_ring, new_vars =
         Nemo.polynomial_ring(Nemo.Native.GF(p), map(var_to_str, gens(ode.poly_ring)))
     new_type = typeof(new_vars[1])

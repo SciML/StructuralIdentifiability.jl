@@ -53,7 +53,7 @@ function diff_sol_Lie_derivatives(ode::ODE, params, ic, inputs, prec::Int)
     for u in ode.u_vars
         for i in 1:prec
             eval_point[str_to_var(var_to_str(u) * "_$(i - 1)", new_ring)] =
-                inputs[u][i] * factorial(i - 1)
+                inputs[u][i] * factorial(big(i - 1))
         end
     end
 
@@ -188,107 +188,110 @@ end
         ),
     )
 
-    F = Nemo.Native.GF(2^31 - 1)
-    P = fpMPolyRingElem
-    DType = Union{P, Generic.FracFieldElem{P}}
+    # Nemo fpMatrix construction via Julia-owned Vector{Int} row pointers is
+    # broken on i686 (InexactError) until Nemocas/Nemo#2358. Skip mod-p cases.
+    if Sys.WORD_SIZE == 64
+        F = Nemo.Native.GF(Int64(2)^31 - 1)
+        P = fpMPolyRingElem
+        DType = Union{P, Generic.FracFieldElem{P}}
 
-    varnames = vcat(
-        ["x_$i" for i in 1:3],
-        ["p_$i" for i in 1:3],
-        ["u_$i" for i in 1:2],
-        ["y_$i" for i in 1:3],
-    )
-    R, vars = Nemo.polynomial_ring(F, varnames)
-    push!(
-        test_cases,
-        Dict(
-            :ODE => ODE{P}(
-                Dict{P, DType}(vars[i] => rand_poly(1, vars[1:8]) for i in 1:3),
-                Dict{P, DType}(vars[i] => rand_poly(2, vars[1:8]) for i in 9:11),
-                vars[7:8],
-            ),
-            :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:3),
-            :param_vals => Dict(vars[i + 3] => F(rand(1:50)) for i in 1:3),
-            :inputs => Dict(u => [F(rand(-30:30)) for i in 1:6] for u in vars[7:8]),
-            :prec => 6,
-        ),
-    )
-
-    t = copy(test_cases)
-    varnames = vcat(
-        ["x_$i" for i in 1:3],
-        ["p_$i" for i in 1:3],
-        ["u_$i" for i in 1:2],
-        ["y_$i" for i in 1:3],
-    )
-    R, vars = Nemo.polynomial_ring(F, varnames)
-    push!(
-        test_cases,
-        Dict(
-            :ODE => ODE{P}(
-                Dict{P, DType}(vars[i] => rand_poly(2, vars[1:8]) for i in 1:3),
-                Dict{P, DType}(vars[i] => rand_poly(2, vars[1:8]) for i in 9:11),
-                vars[7:8],
-            ),
-            :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:3),
-            :param_vals => Dict(vars[i + 3] => F(rand(1:50)) for i in 1:3),
-            :inputs => Dict(u => [F(rand(-30:30)) for i in 1:6] for u in vars[7:8]),
-            :prec => 6,
-        ),
-    )
-
-    varnames = vcat(["x_$i" for i in 1:2], ["p_$i" for i in 1:2], "u", ["y_1", "y_2"])
-    R, vars = Nemo.polynomial_ring(F, varnames)
-    push!(
-        test_cases,
-        Dict(
-            :ODE => ODE{P}(
-                Dict{P, DType}(
-                    vars[i] => rand_poly(1, vars[1:5]) // (vars[1] + vars[3]) for i in 1:2
+        varnames = vcat(
+            ["x_$i" for i in 1:3],
+            ["p_$i" for i in 1:3],
+            ["u_$i" for i in 1:2],
+            ["y_$i" for i in 1:3],
+        )
+        R, vars = Nemo.polynomial_ring(F, varnames)
+        push!(
+            test_cases,
+            Dict(
+                :ODE => ODE{P}(
+                    Dict{P, DType}(vars[i] => rand_poly(1, vars[1:8]) for i in 1:3),
+                    Dict{P, DType}(vars[i] => rand_poly(2, vars[1:8]) for i in 9:11),
+                    vars[7:8],
                 ),
-                Dict{P, DType}(vars[i] => rand_poly(1, vars[1:5]) for i in 6:7),
-                [vars[5]],
+                :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:3),
+                :param_vals => Dict(vars[i + 3] => F(rand(1:50)) for i in 1:3),
+                :inputs => Dict(u => [F(rand(-30:30)) for i in 1:6] for u in vars[7:8]),
+                :prec => 6,
             ),
-            :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:2),
-            :param_vals => Dict(vars[i + 2] => F(rand(1:50)) for i in 1:2),
-            :inputs => Dict(vars[5] => [F(rand(-30:30)) for i in 1:4]),
-            :prec => 4,
-        ),
-    )
-    push!(
-        test_cases,
-        Dict(
-            :ODE => ODE{P}(
-                Dict{P, DType}(
-                    vars[i] => rand_poly(1, vars[1:5]) // (vars[1] + vars[3]) for i in 1:2
-                ),
-                Dict{P, DType}(vars[i] => rand_poly(1, vars[1:5]) for i in 6:7),
-                [vars[5]],
-            ),
-            :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:2),
-            :param_vals => Dict(vars[i + 2] => F(rand(1:50)) for i in 1:2),
-            :inputs => Dict(vars[5] => [F(rand(-30:30)) for i in 1:4]),
-            :prec => 3,
-        ),
-    )
-    push!(
-        test_cases,
-        Dict(
-            :ODE => ODE{P}(
-                Dict{P, DType}(
-                    vars[i] => rand_poly(1, vars[1:5]) // (vars[1] + vars[3]) for i in 1:2
-                ),
-                Dict{P, DType}(vars[i] => rand_poly(1, vars[1:5]) for i in 6:7),
-                [vars[5]],
-            ),
-            :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:2),
-            :param_vals => Dict(vars[i + 2] => F(rand(1:50)) for i in 1:2),
-            :inputs => Dict(vars[5] => [F(rand(-30:30)) for i in 1:5]),
-            :prec => 5,
-        ),
-    )
+        )
 
-    for case in t
+        varnames = vcat(
+            ["x_$i" for i in 1:3],
+            ["p_$i" for i in 1:3],
+            ["u_$i" for i in 1:2],
+            ["y_$i" for i in 1:3],
+        )
+        R, vars = Nemo.polynomial_ring(F, varnames)
+        push!(
+            test_cases,
+            Dict(
+                :ODE => ODE{P}(
+                    Dict{P, DType}(vars[i] => rand_poly(2, vars[1:8]) for i in 1:3),
+                    Dict{P, DType}(vars[i] => rand_poly(2, vars[1:8]) for i in 9:11),
+                    vars[7:8],
+                ),
+                :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:3),
+                :param_vals => Dict(vars[i + 3] => F(rand(1:50)) for i in 1:3),
+                :inputs => Dict(u => [F(rand(-30:30)) for i in 1:6] for u in vars[7:8]),
+                :prec => 6,
+            ),
+        )
+
+        varnames = vcat(["x_$i" for i in 1:2], ["p_$i" for i in 1:2], "u", ["y_1", "y_2"])
+        R, vars = Nemo.polynomial_ring(F, varnames)
+        push!(
+            test_cases,
+            Dict(
+                :ODE => ODE{P}(
+                    Dict{P, DType}(
+                        vars[i] => rand_poly(1, vars[1:5]) // (vars[1] + vars[3]) for i in 1:2
+                    ),
+                    Dict{P, DType}(vars[i] => rand_poly(1, vars[1:5]) for i in 6:7),
+                    [vars[5]],
+                ),
+                :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:2),
+                :param_vals => Dict(vars[i + 2] => F(rand(1:50)) for i in 1:2),
+                :inputs => Dict(vars[5] => [F(rand(-30:30)) for i in 1:4]),
+                :prec => 4,
+            ),
+        )
+        push!(
+            test_cases,
+            Dict(
+                :ODE => ODE{P}(
+                    Dict{P, DType}(
+                        vars[i] => rand_poly(1, vars[1:5]) // (vars[1] + vars[3]) for i in 1:2
+                    ),
+                    Dict{P, DType}(vars[i] => rand_poly(1, vars[1:5]) for i in 6:7),
+                    [vars[5]],
+                ),
+                :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:2),
+                :param_vals => Dict(vars[i + 2] => F(rand(1:50)) for i in 1:2),
+                :inputs => Dict(vars[5] => [F(rand(-30:30)) for i in 1:4]),
+                :prec => 3,
+            ),
+        )
+        push!(
+            test_cases,
+            Dict(
+                :ODE => ODE{P}(
+                    Dict{P, DType}(
+                        vars[i] => rand_poly(1, vars[1:5]) // (vars[1] + vars[3]) for i in 1:2
+                    ),
+                    Dict{P, DType}(vars[i] => rand_poly(1, vars[1:5]) for i in 6:7),
+                    [vars[5]],
+                ),
+                :ic => Dict(vars[i] => F(rand(1:50)) for i in 1:2),
+                :param_vals => Dict(vars[i + 2] => F(rand(1:50)) for i in 1:2),
+                :inputs => Dict(vars[5] => [F(rand(-30:30)) for i in 1:5]),
+                :prec => 5,
+            ),
+        )
+    end
+
+    for case in test_cases
         ode, prec = case[:ODE], case[:prec]
         @time sol1 =
             differentiate_output(ode, case[:param_vals], case[:ic], case[:inputs], prec)
@@ -297,7 +300,7 @@ end
         for y in ode.y_vars
             for v in vcat(ode.x_vars, ode.parameters)
                 @test sol2[y][v] == [
-                    base_ring(ode.poly_ring)(coeff(sol1[y][v], j) * factorial(j)) for
+                    base_ring(ode.poly_ring)(coeff(sol1[y][v], j) * factorial(big(j))) for
                         j in 0:(prec - 1)
                 ]
             end

@@ -1,5 +1,12 @@
 include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
 
+# Local / global identifiability over GF(p) builds Nemo fpMatrix; Julia-owned
+# row-pointer layout raises InexactError on i686 until Nemocas/Nemo#2358.
+if Sys.WORD_SIZE != 64
+    @info "Skipping identifiability body on $(Sys.WORD_SIZE)-bit (Nemo#2358)"
+    return
+end
+
 # Copyright (c) 2021, R. Dong, C. Goodbarke, H. Harrington, G. Pogudin
 # Copyright (c) 2020, A. Ovchinnikov, A. Pillay, G. Pogudin, T. Scanlon
 
