@@ -16,16 +16,16 @@ Pkg.add(&quot;StructuralIdentifiability&quot;)</code></pre><h2 id="Citation"><a 
 }</code></pre><h2 id="Feature-Summary"><a class="docs-heading-anchor" href="#Feature-Summary">Feature Summary</a><a id="Feature-Summary-1"></a><a class="docs-heading-anchor-permalink" href="#Feature-Summary" title="Permalink"></a></h2><p><code>StructuralIdentifiability.jl</code> can assess local and global identifiability of ODE models. In addition to these straightforward identifiability queries on individual parameters, the package can distinguish between single- and multi-experiment identifiability, and can compute identifiable functions of parameters and states.</p><h2 id="Feature-List"><a class="docs-heading-anchor" href="#Feature-List">Feature List</a><a id="Feature-List-1"></a><a class="docs-heading-anchor-permalink" href="#Feature-List" title="Permalink"></a></h2><ul><li>Local identifiability checks</li><li>Global identifiability checks</li><li>Identifiable functions of parameters and states (a.k.a. observation field)</li><li>Model reparametrization (experimental)</li></ul><h2 id="External-tutorials"><a class="docs-heading-anchor" href="#External-tutorials">External tutorials</a><a id="External-tutorials-1"></a><a class="docs-heading-anchor-permalink" href="#External-tutorials" title="Permalink"></a></h2><p>A <a href="https://arxiv.org/abs/2505.10517">tutorial paper</a> describes some of the functionality (identifiability assessment and finding identifiable functions) in the context of epidemiological modeling (tested with the version 0.5.15 of the package).</p><h2 id="Contributing"><a class="docs-heading-anchor" href="#Contributing">Contributing</a><a id="Contributing-1"></a><a class="docs-heading-anchor-permalink" href="#Contributing" title="Permalink"></a></h2><ul><li><p>Please refer to the <a href="https://github.com/SciML/ColPrac/blob/master/README.md">SciML ColPrac: Contributor&#39;s Guide on Collaborative Practices for Community Packages</a> for guidance on PRs, issues, and other matters relating to contributing to StructuralIdentifiability.</p></li><li><p>There are a few community forums:</p><ul><li>The #diffeq-bridged channel in the <a href="https://julialang.org/slack/">Julia Slack</a></li><li><a href="https://gitter.im/JuliaDiffEq/Lobby">JuliaDiffEq</a> on Gitter</li><li>On the Julia Discourse forums</li><li>See also <a href="https://sciml.ai/community/">SciML Community page</a></li></ul></li></ul><h2 id="Reproducibility"><a class="docs-heading-anchor" href="#Reproducibility">Reproducibility</a><a id="Reproducibility-1"></a><a class="docs-heading-anchor-permalink" href="#Reproducibility" title="Permalink"></a></h2><details><summary>The documentation of this SciML package was built using these direct dependencies,</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr32"><span class="sgr1">Status</span></span> `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl/docs/Project.toml`
   <span class="sgr90">[6e4b80f9] </span>BenchmarkTools v1.8.0
   <span class="sgr90">[e30172f5] </span>Documenter v1.19.0
-  <span class="sgr90">[7771a370] </span>ModelingToolkitBase v1.69.0
-  <span class="sgr90">[220ca800] </span>StructuralIdentifiability v0.5.31 `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.12.7
-Commit 6d172b025e4 (2026-08-15 08:05 UTC)
+  <span class="sgr90">[7771a370] </span>ModelingToolkitBase v1.69.1
+  <span class="sgr90">[220ca800] </span>StructuralIdentifiability v0.5.31 `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl`</code></pre></details><details><summary>and using this machine and Julia version.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.13.0
+Commit d1c37793dd2 (2026-09-09 19:00 UTC)
 Build Info:
   Official https://julialang.org release
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
-  CPU: 4 × INTEL(R) XEON(R) PLATINUM 8573C
+  CPU: 4 × AMD EPYC 7763 64-Core Processor
   WORD_SIZE: 64
-  LLVM: libLLVM-18.1.7 (ORCJIT, sapphirerapids)
+  LLVM: libLLVM-20.1.8 (ORCJIT, znver3)
   GC: Built with stock GC
 Threads: 1 default, 1 interactive, 1 GC (on 4 virtual cores)</code></pre></details><details><summary>A more complete overview of all dependencies and their versions is also provided.</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr32"><span class="sgr1">Status</span></span> `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl/docs/Manifest.toml`
   <span class="sgr90">[47edcb42] </span>ADTypes v1.24.0
@@ -39,7 +39,7 @@ Threads: 1 default, 1 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   <span class="sgr90">[ec485272] </span>ArnoldiMethod v0.4.0
   <span class="sgr90">[4fba245c] </span>ArrayInterface v7.30.1
   <span class="sgr90">[4c555306] </span>ArrayLayouts v1.12.2
-  <span class="sgr90">[a9b6321e] </span>Atomix v1.1.3
+  <span class="sgr90">[a9b6321e] </span>Atomix v1.2.1
   <span class="sgr90">[aae01518] </span>BandedMatrices v1.12.0
   <span class="sgr90">[6e4b80f9] </span>BenchmarkTools v1.8.0
   <span class="sgr90">[e2ed5e7c] </span>Bijections v0.2.2
@@ -47,7 +47,7 @@ Threads: 1 default, 1 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   <span class="sgr90">[caf10ac8] </span>BipartiteGraphs v0.1.14
   <span class="sgr90">[c3b6d118] </span>BitIntegers v0.3.7
   <span class="sgr90">[8e7c35d0] </span>BlockArrays v1.10.0
-  <span class="sgr90">[70df07ce] </span>BracketingNonlinearSolve v1.12.6
+  <span class="sgr90">[70df07ce] </span>BracketingNonlinearSolve v1.12.7
   <span class="sgr90">[944b1d66] </span>CodecZlib v0.7.9
 <span class="sgr33">⌅</span> <span class="sgr90">[861a8166] </span>Combinatorics v1.0.2
   <span class="sgr90">[38540f10] </span>CommonSolve v0.2.14
@@ -59,8 +59,11 @@ Threads: 1 default, 1 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   <span class="sgr90">[2569d6c7] </span>ConcreteStructs v0.2.8
   <span class="sgr90">[187b0558] </span>ConstructionBase v1.6.0
   <span class="sgr90">[adafc99b] </span>CpuId v0.3.1
+  <span class="sgr90">[a8cc5b0e] </span>Crayons v4.2.0
+  <span class="sgr90">[9a962f9c] </span>DataAPI v1.16.0
   <span class="sgr90">[864edb3b] </span>DataStructures v0.19.6
-  <span class="sgr90">[2b5f629d] </span>DiffEqBase v7.20.1
+  <span class="sgr90">[e2d170a0] </span>DataValueInterfaces v1.0.0
+  <span class="sgr90">[2b5f629d] </span>DiffEqBase v7.21.0
   <span class="sgr90">[459566f4] </span>DiffEqCallbacks v4.19.3
   <span class="sgr90">[163ba53b] </span>DiffResults v1.1.0
   <span class="sgr90">[b552c78f] </span>DiffRules v1.16.0
@@ -86,7 +89,7 @@ Threads: 1 default, 1 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   <span class="sgr90">[46192b85] </span>GPUArraysCore v0.2.0
   <span class="sgr90">[d7ba0133] </span>Git v1.5.0
   <span class="sgr90">[86223c79] </span>Graphs v1.15.0
-  <span class="sgr90">[0b43b601] </span>Groebner v0.10.6
+  <span class="sgr90">[0b43b601] </span>Groebner v0.10.9
   <span class="sgr90">[b5f81e59] </span>IOCapture v1.0.0
   <span class="sgr90">[3263718b] </span>ImplicitDiscreteSolve v2.3.0
   <span class="sgr90">[d25df0c9] </span>Inflate v0.1.5
@@ -99,26 +102,27 @@ Threads: 1 default, 1 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   <span class="sgr90">[692b3bcd] </span>JLLWrappers v1.8.0
   <span class="sgr90">[682c06a0] </span>JSON v1.8.0
   <span class="sgr90">[ae98c720] </span>Jieko v0.2.1
-  <span class="sgr90">[ccbc3e58] </span>JumpProcesses v9.32.2
+  <span class="sgr90">[ccbc3e58] </span>JumpProcesses v9.32.3
   <span class="sgr90">[ba0b0d4f] </span>Krylov v0.10.9
   <span class="sgr90">[2faa5264] </span>LHLFactorization v2.2.2
+  <span class="sgr90">[b964fa9f] </span>LaTeXStrings v1.4.1
   <span class="sgr90">[0e77f7df] </span>LazilyInitializedFields v1.3.0
-  <span class="sgr90">[87fe0de2] </span>LineSearch v0.1.16
-  <span class="sgr90">[7ed4a6bd] </span>LinearSolve v5.16.0
+  <span class="sgr90">[87fe0de2] </span>LineSearch v0.1.17
+  <span class="sgr90">[7ed4a6bd] </span>LinearSolve v5.17.1
   <span class="sgr90">[2ab3a3ac] </span>LogExpFunctions v1.0.1
   <span class="sgr90">[e6f89c97] </span>LoggingExtras v1.2.0
   <span class="sgr90">[1914dd2f] </span>MacroTools v0.5.16
   <span class="sgr90">[d0879d2d] </span>MarkdownAST v0.1.3
   <span class="sgr90">[bb5d69b7] </span>MaybeInplace v0.1.8
-  <span class="sgr90">[7771a370] </span>ModelingToolkitBase v1.69.0
-  <span class="sgr90">[2e0e35c7] </span>Moshi v0.3.12
+  <span class="sgr90">[7771a370] </span>ModelingToolkitBase v1.69.1
+<span class="sgr33">⌅</span> <span class="sgr90">[2e0e35c7] </span>Moshi v0.3.9
   <span class="sgr90">[46d2c3a1] </span>MuladdMacro v0.2.7
   <span class="sgr90">[102ac46a] </span>MultivariatePolynomials v0.5.19
   <span class="sgr90">[d8a4904e] </span>MutableArithmetics v1.8.0
   <span class="sgr90">[77ba4419] </span>NaNMath v1.1.4
   <span class="sgr90">[2edaba10] </span>Nemo v0.56.1
-<span class="sgr32">⌃</span> <span class="sgr90">[be0214bd] </span>NonlinearSolveBase v2.48.0
-  <span class="sgr90">[5959db7a] </span>NonlinearSolveFirstOrder v2.5.1
+  <span class="sgr90">[be0214bd] </span>NonlinearSolveBase v2.49.5
+  <span class="sgr90">[5959db7a] </span>NonlinearSolveFirstOrder v2.6.1
   <span class="sgr90">[6fe1bfb0] </span>OffsetArrays v1.17.0
   <span class="sgr90">[bac558e1] </span>OrderedCollections v2.0.1
   <span class="sgr90">[bbf590c4] </span>OrdinaryDiffEqCore v4.17.0
@@ -128,11 +132,12 @@ Threads: 1 default, 1 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   <span class="sgr90">[d236fae5] </span>PreallocationTools v1.7.1
   <span class="sgr90">[aea7be01] </span>PrecompileTools v1.3.4
   <span class="sgr90">[21216c6a] </span>Preferences v1.5.2
+  <span class="sgr90">[08abe8d2] </span>PrettyTables v3.4.8
   <span class="sgr90">[27ebfcd6] </span>Primes v0.5.7
   <span class="sgr90">[92933f4c] </span>ProgressMeter v1.11.0
-  <span class="sgr90">[0c0d3e7f] </span>PureKLU v1.4.1
+  <span class="sgr90">[0c0d3e7f] </span>PureKLU v1.4.2
   <span class="sgr90">[fb686558] </span>RandomExtensions v0.4.4
-  <span class="sgr90">[73480bc8] </span>RationalFunctionFields v0.3.4
+  <span class="sgr90">[73480bc8] </span>RationalFunctionFields v0.3.5
   <span class="sgr90">[988b38a3] </span>ReadOnlyArrays v0.2.0
   <span class="sgr90">[795d4caa] </span>ReadOnlyDicts v1.0.1
   <span class="sgr90">[3cdcf5f2] </span>RecipesBase v1.3.4
@@ -141,15 +146,15 @@ Threads: 1 default, 1 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   <span class="sgr90">[2792f1a3] </span>RegistryInstances v0.1.0
   <span class="sgr90">[9fe22ead] </span>RespecializeParams v1.3.0
   <span class="sgr90">[7e49a35a] </span>RuntimeGeneratedFunctions v0.5.26
-  <span class="sgr90">[9dfe8606] </span>SCCNonlinearSolve v1.15.2
-  <span class="sgr90">[0bca4576] </span>SciMLBase v3.53.1
+  <span class="sgr90">[9dfe8606] </span>SCCNonlinearSolve v1.15.3
+  <span class="sgr90">[0bca4576] </span>SciMLBase v3.53.2
   <span class="sgr90">[19f34311] </span>SciMLJacobianOperators v0.1.19
   <span class="sgr90">[a6db7da4] </span>SciMLLogging v2.1.0
   <span class="sgr90">[c0aeaf25] </span>SciMLOperators v1.30.0
   <span class="sgr90">[431bcebd] </span>SciMLPublic v1.3.0
   <span class="sgr90">[53ae85a6] </span>SciMLStructures v1.10.5
   <span class="sgr90">[efcf1570] </span>Setfield v1.1.2
-  <span class="sgr90">[727e6d20] </span>SimpleNonlinearSolve v2.14.2
+  <span class="sgr90">[727e6d20] </span>SimpleNonlinearSolve v2.14.3
   <span class="sgr90">[699a6c99] </span>SimpleTraits v0.9.6
   <span class="sgr90">[2b935e18] </span>SmallCollections v0.6.3
   <span class="sgr90">[a57abbd0] </span>SparseColumnPivotedQR v2.1.8
@@ -158,21 +163,24 @@ Threads: 1 default, 1 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   <span class="sgr90">[90137ffa] </span>StaticArrays v1.9.20
   <span class="sgr90">[1e83bf80] </span>StaticArraysCore v1.4.4
   <span class="sgr90">[10745b16] </span>Statistics v1.11.5
+<span class="sgr33">⌅</span> <span class="sgr90">[892a3eda] </span>StringManipulation v0.5.0
   <span class="sgr90">[ec057cc2] </span>StructUtils v2.8.5
   <span class="sgr90">[220ca800] </span>StructuralIdentifiability v0.5.31 `~/work/StructuralIdentifiability.jl/StructuralIdentifiability.jl`
   <span class="sgr90">[2efcf032] </span>SymbolicIndexingInterface v0.3.55
   <span class="sgr90">[19f23fe9] </span>SymbolicLimits v1.2.1
-<span class="sgr32">⌃</span> <span class="sgr90">[d1185830] </span>SymbolicUtils v4.46.1
-  <span class="sgr90">[0c5d862f] </span>Symbolics v7.39.0
+  <span class="sgr90">[d1185830] </span>SymbolicUtils v4.46.4
+  <span class="sgr90">[0c5d862f] </span>Symbolics v7.39.2
+  <span class="sgr90">[3783bdb8] </span>TableTraits v1.0.1
+  <span class="sgr90">[bd369af6] </span>Tables v1.14.0
   <span class="sgr90">[ed4db957] </span>TaskLocalValues v0.1.3
   <span class="sgr90">[8ea1fca8] </span>TermInterface v2.0.0
-<span class="sgr33">⌅</span> <span class="sgr90">[a759f4b9] </span>TimerOutputs v0.5.29
+  <span class="sgr90">[a759f4b9] </span>TimerOutputs v1.2.1
   <span class="sgr90">[3bb67fe8] </span>TranscodingStreams v0.11.3
   <span class="sgr90">[781d530d] </span>TruncatedStacktraces v1.4.0
   <span class="sgr90">[3a884ed6] </span>UnPack v1.0.2
   <span class="sgr90">[013be700] </span>UnsafeAtomics v0.3.2
   <span class="sgr90">[d30d5f5c] </span>WeakCacheSets v0.1.0
-  <span class="sgr90">[2e619515] </span>Expat_jll v2.8.3+0
+  <span class="sgr90">[2e619515] </span>Expat_jll v2.8.4+0
   <span class="sgr90">[e134572f] </span>FLINT_jll v301.600.0+0
   <span class="sgr90">[020c3dae] </span>Git_LFS_jll v3.7.1+0
   <span class="sgr90">[f8c6e375] </span>Git_jll v2.55.0+0
@@ -194,44 +202,45 @@ Threads: 1 default, 1 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   <span class="sgr90">[b77e0a4c] </span>InteractiveUtils v1.11.0
   <span class="sgr90">[ac6e5ff7] </span>JuliaSyntaxHighlighting v1.12.0
   <span class="sgr90">[4af54fe1] </span>LazyArtifacts v1.11.0
-  <span class="sgr90">[b27032c2] </span>LibCURL v0.6.4
+  <span class="sgr90">[b27032c2] </span>LibCURL v1.0.0
   <span class="sgr90">[76f85450] </span>LibGit2 v1.11.0
   <span class="sgr90">[8f399da3] </span>Libdl v1.11.0
-  <span class="sgr90">[37e2e46d] </span>LinearAlgebra v1.12.0
+  <span class="sgr90">[37e2e46d] </span>LinearAlgebra v1.13.0
   <span class="sgr90">[56ddb016] </span>Logging v1.11.0
   <span class="sgr90">[d6f4376e] </span>Markdown v1.11.0
   <span class="sgr90">[ca575930] </span>NetworkOptions v1.3.0
-  <span class="sgr90">[44cfe95a] </span>Pkg v1.12.1
+  <span class="sgr90">[44cfe95a] </span>Pkg v1.13.0
   <span class="sgr90">[de0858da] </span>Printf v1.11.0
   <span class="sgr90">[9abbd945] </span>Profile v1.11.0
   <span class="sgr90">[3fa0cd96] </span>REPL v1.11.0
   <span class="sgr90">[9a3f8284] </span>Random v1.11.0
-  <span class="sgr90">[ea8e919c] </span>SHA v0.7.0
+  <span class="sgr90">[ea8e919c] </span>SHA v1.0.0
   <span class="sgr90">[9e88b42a] </span>Serialization v1.11.0
   <span class="sgr90">[6462fe0b] </span>Sockets v1.11.0
-  <span class="sgr90">[2f01184e] </span>SparseArrays v1.12.0
+  <span class="sgr90">[2f01184e] </span>SparseArrays v1.13.0
   <span class="sgr90">[f489334b] </span>StyledStrings v1.11.0
   <span class="sgr90">[fa267f1f] </span>TOML v1.0.3
   <span class="sgr90">[a4e569a6] </span>Tar v1.10.0
   <span class="sgr90">[8dfed614] </span>Test v1.11.0
   <span class="sgr90">[cf7118a7] </span>UUIDs v1.11.0
   <span class="sgr90">[4ec0a83e] </span>Unicode v1.11.0
-  <span class="sgr90">[e66e0078] </span>CompilerSupportLibraries_jll v1.3.1+2
+  <span class="sgr90">[e66e0078] </span>CompilerSupportLibraries_jll v1.5.5+2
   <span class="sgr90">[781609d7] </span>GMP_jll v6.3.0+2
-  <span class="sgr90">[deac9b47] </span>LibCURL_jll v8.15.0+0
-  <span class="sgr90">[e37daf67] </span>LibGit2_jll v1.9.0+0
-  <span class="sgr90">[29816b5a] </span>LibSSH2_jll v1.11.3+1
+  <span class="sgr90">[deac9b47] </span>LibCURL_jll v8.18.0+1
+  <span class="sgr90">[e37daf67] </span>LibGit2_jll v1.9.1+0
+  <span class="sgr90">[29816b5a] </span>LibSSH2_jll v1.11.103+0
   <span class="sgr90">[3a97d323] </span>MPFR_jll v4.2.2+0
-  <span class="sgr90">[14a3606d] </span>MozillaCACerts_jll v2025.11.4
-  <span class="sgr90">[4536629a] </span>OpenBLAS_jll v0.3.29+0
+  <span class="sgr90">[14a3606d] </span>MozillaCACerts_jll v2026.8.13
+  <span class="sgr90">[4536629a] </span>OpenBLAS_jll v0.3.30+0
   <span class="sgr90">[05823500] </span>OpenLibm_jll v0.8.7+0
   <span class="sgr90">[458c3c95] </span>OpenSSL_jll v3.5.6+0
-  <span class="sgr90">[efcefdf7] </span>PCRE2_jll v10.44.0+1
-  <span class="sgr90">[bea87d4a] </span>SuiteSparse_jll v7.8.3+2
+  <span class="sgr90">[efcefdf7] </span>PCRE2_jll v10.46.0+0
+  <span class="sgr90">[bea87d4a] </span>SuiteSparse_jll v7.10.1+0
   <span class="sgr90">[83775a58] </span>Zlib_jll v1.3.1+2
+  <span class="sgr90">[3161d3a3] </span>Zstd_jll v1.5.7+1
   <span class="sgr90">[8e850b90] </span>libblastrampoline_jll v5.15.0+0
-  <span class="sgr90">[8e850ede] </span>nghttp2_jll v1.64.0+1
-  <span class="sgr90">[3f19e933] </span>p7zip_jll v17.7.0+0
-<span class="sgr36"><span class="sgr1">Info</span></span> Packages marked with <span class="sgr32">⌃</span> and <span class="sgr33">⌅</span> have new versions available. Those with <span class="sgr32">⌃</span> may be upgradable, but those with <span class="sgr33">⌅</span> are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></details>You can also download the 
+  <span class="sgr90">[8e850ede] </span>nghttp2_jll v1.67.1+0
+  <span class="sgr90">[3f19e933] </span>p7zip_jll v17.8.2+0
+<span class="sgr36"><span class="sgr1">Info</span></span> Packages marked with <span class="sgr33">⌅</span> have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`</code></pre></details>You can also download the 
 <a href="">manifest</a> file and the
-<a href="">project</a> file.</article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/creating_ode/">Creating ODE System »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Monday 7 September 2026 17:18">Monday 7 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+<a href="">project</a> file.</article><nav class="docs-footer"><a class="docs-footer-nextpage" href="tutorials/creating_ode/">Creating ODE System »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 10 September 2026 17:22">Thursday 10 September 2026</span>. Using Julia version 1.13.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
