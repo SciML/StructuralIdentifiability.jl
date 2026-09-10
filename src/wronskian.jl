@@ -215,11 +215,16 @@ Computes the Wronskians of `io_equations`
     ode_red = reduce_ode_mod_p(ode, PRIME)
 
     @debug "Computing power series solution up to order $ord"
+    # Element types are spelled out because TimerOutputs v1's `@timeit` boxes the locals
+    # these comprehensions capture; without them an empty `u_vars` yields `Dict{Any, Any}`.
+    Pred = elem_type(polyring_red)
     ps = power_series_solution(
         ode_red,
-        Dict(p => rand(1:(PRIME - 1)) for p in ode_red.parameters),
-        Dict(x => rand(1:(PRIME - 1)) for x in ode_red.x_vars),
-        Dict(u => [rand(1:(PRIME - 1)) for i in 0:ord] for u in ode_red.u_vars),
+        Dict{Pred, Int}(p => rand(1:(PRIME - 1)) for p in ode_red.parameters),
+        Dict{Pred, Int}(x => rand(1:(PRIME - 1)) for x in ode_red.x_vars),
+        Dict{Pred, Vector{Int}}(
+            u => [rand(1:(PRIME - 1)) for i in 0:ord] for u in ode_red.u_vars
+        ),
         ord,
     )
 
