@@ -215,11 +215,17 @@ Computes the Wronskians of `io_equations`
     ode_red = reduce_ode_mod_p(ode, PRIME)
 
     @debug "Computing power series solution up to order $ord"
+    # Annotate Dict types explicitly: when `u_vars` (or another collection) is
+    # empty, `Dict(k => rand(...) for k in xs)` infers `Dict{Any,Any}` and then
+    # misses the typed `power_series_solution` methods.
+    P_red = eltype(ode_red.x_vars)
     ps = power_series_solution(
         ode_red,
-        Dict(p => rand(1:(PRIME - 1)) for p in ode_red.parameters),
-        Dict(x => rand(1:(PRIME - 1)) for x in ode_red.x_vars),
-        Dict(u => [rand(1:(PRIME - 1)) for i in 0:ord] for u in ode_red.u_vars),
+        Dict{P_red, Int}(p => rand(1:(PRIME - 1)) for p in ode_red.parameters),
+        Dict{P_red, Int}(x => rand(1:(PRIME - 1)) for x in ode_red.x_vars),
+        Dict{P_red, Vector{Int}}(
+            u => [rand(1:(PRIME - 1)) for i in 0:ord] for u in ode_red.u_vars
+        ),
         ord,
     )
 
