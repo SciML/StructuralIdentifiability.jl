@@ -74,9 +74,4 @@ TestSetExtensions = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"
 [targets]
 test = ["Aqua", "CPUSummary", "SafeTestsets", "SciMLTesting", "SpecialFunctions", "Test", "TestSetExtensions"]
 
-# Until Nemocas/Nemo#2358 registers: fpMatrix / zzModMatrix Julia-owned
-# Vector{Int} layout raises InexactError on i686 for heap pointers ≥ 2^31.
-# Drop after a Nemo release includes the nmod_mat_init path.
-[sources]
-Nemo = {url = "https://github.com/ChrisRackauckas-Claude/Nemo.jl.git", rev = "fix-fpmatrix-i686-int-ptr"}
 
