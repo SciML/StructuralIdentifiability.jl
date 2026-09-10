@@ -1,3 +1,8 @@
 @safetestset "Logging" begin
-    include(joinpath(@__DIR__, "bodies", "logging.jl"))
+    # Nemo fpMatrix Julia-owned row pointers raise InexactError on i686 (Nemo#2358).
+    if Sys.WORD_SIZE != 64
+        @info "Skipping logging.jl on $(Sys.WORD_SIZE)-bit (Nemo#2358)"
+    else
+        include(joinpath(@__DIR__, "bodies", "logging.jl"))
+    end
 end
