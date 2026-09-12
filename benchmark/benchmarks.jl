@@ -40,6 +40,3 @@ SUITE["ioequations"] = BenchmarkGroup()
 
 SUITE["ioequations"]["find_3"] = @benchmarkable find_ioequations($ode3)
 SUITE["ioequations"]["find_4"] = @benchmarkable find_ioequations($ode4)
-SUITE["ioequations"]["identifiable_funcs_3"] = @benchmarkable find_identifiable_functions(
-    $ode3
-) seconds = 600
