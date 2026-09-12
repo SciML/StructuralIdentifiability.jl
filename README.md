@@ -196,3 +196,8 @@ SIAM Review, 2011.
 Alexandre Sedoglavic,
 [*A probabilistic algorithm to test local algebraic observability in polynomial time*](https://doi.org/10.1006/jsco.2002.0532),
 Journal of Symbolic Computation, 2002.
+
+<a id="observation">[5]</a>
+Alexander Demin, Gleb Pogudin, and Christopher Rackauckas,
+[*Observable functions of rational ODE models and how to find them*](https://arxiv.org/abs/2609.06134),
+arXiv preprint arXiv:2609.06134, 2026.

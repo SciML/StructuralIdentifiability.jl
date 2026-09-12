@@ -13,9 +13,11 @@ Pkg.add("StructuralIdentifiability")
 
 ## Citation
 
+For IO-equations and parameter identifiability, please cite:
+
 ```latex
 @article{structidjl,
-  author  = {Dong, R. and Goodbrake, C. and Harrington, H. and Pogudin G.},
+  author  = {Dong, R. and Goodbrake, C. and Harrington, H. and Pogudin, G.},
   title   = {Differential Elimination for Dynamical Models via Projections with Applications to Structural Identifiability},
   journal = {SIAM Journal on Applied Algebra and Geometry},
   url     = {https://doi.org/10.1137/22M1469067},
@@ -23,6 +25,19 @@ Pkg.add("StructuralIdentifiability")
   volume  = {7},
   number  = {1},
   pages   = {194-235}
+}
+```
+
+For identifiability of combinations of parameters and states, please also cite:
+
+```bibtex
+@article{demin2026observable,
+  author  = {Demin, Alexander and Pogudin, Gleb and Rackauckas, Christopher},
+  title   = {Observable functions of rational {ODE} models and how to find them},
+  journal = {arXiv preprint arXiv:2609.06134},
+  year    = {2026},
+  doi     = {10.48550/arXiv.2609.06134},
+  url     = {https://arxiv.org/abs/2609.06134}
 }
 ```
 
