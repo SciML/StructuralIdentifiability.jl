@@ -13,11 +13,11 @@ Pkg.add("StructuralIdentifiability")
 
 ## Citation
 
-For IO-equations and parameter identifiability, please cite:
+The original paper introducing the software and its basic functionality is:
 
 ```latex
 @article{structidjl,
-  author  = {Dong, R. and Goodbrake, C. and Harrington, H. and Pogudin, G.},
+  author  = {Dong, Ruiwen and Goodbrake, Christian and Harrington, Heather and Pogudin, Gleb},
   title   = {Differential Elimination for Dynamical Models via Projections with Applications to Structural Identifiability},
   journal = {SIAM Journal on Applied Algebra and Geometry},
   url     = {https://doi.org/10.1137/22M1469067},
@@ -28,7 +28,7 @@ For IO-equations and parameter identifiability, please cite:
 }
 ```
 
-For identifiability of combinations of parameters and states, please also cite:
+For computing identifiable/observable functions, please also cite:
 
 ```bibtex
 @article{demin2026observable,
