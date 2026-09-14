@@ -13,9 +13,11 @@ Pkg.add("StructuralIdentifiability")
 
 ## Citation
 
+The original paper introducing the software and its basic functionality is:
+
 ```latex
 @article{structidjl,
-  author  = {Dong, R. and Goodbrake, C. and Harrington, H. and Pogudin G.},
+  author  = {Dong, Ruiwen and Goodbrake, Christian and Harrington, Heather and Pogudin, Gleb},
   title   = {Differential Elimination for Dynamical Models via Projections with Applications to Structural Identifiability},
   journal = {SIAM Journal on Applied Algebra and Geometry},
   url     = {https://doi.org/10.1137/22M1469067},
@@ -23,6 +25,19 @@ Pkg.add("StructuralIdentifiability")
   volume  = {7},
   number  = {1},
   pages   = {194-235}
+}
+```
+
+For computing identifiable/observable functions, please also cite:
+
+```bibtex
+@article{demin2026observable,
+  author  = {Demin, Alexander and Pogudin, Gleb and Rackauckas, Christopher},
+  title   = {Observable functions of rational {ODE} models and how to find them},
+  journal = {arXiv preprint arXiv:2609.06134},
+  year    = {2026},
+  doi     = {10.48550/arXiv.2609.06134},
+  url     = {https://arxiv.org/abs/2609.06134}
 }
 ```
 

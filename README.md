@@ -143,7 +143,8 @@ This will return
 ### Assessing local identifiability
 
 Local identifiability can be assessed efficiently even for the models for which global identifiability analysis is out of reach.
-This can be done using the `assess_local_identifiability` function, for example:
+To this end, the package implements the algorithm by Sedoglavic [[4]](#local).
+It can be used via the `assess_local_identifiability` function, for example:
 
 ```julia
 assess_local_identifiability(ode)
@@ -196,3 +197,8 @@ SIAM Review, 2011.
 Alexandre Sedoglavic,
 [*A probabilistic algorithm to test local algebraic observability in polynomial time*](https://doi.org/10.1006/jsco.2002.0532),
 Journal of Symbolic Computation, 2002.
+
+<a id="observation">[5]</a>
+Alexander Demin, Gleb Pogudin, and Christopher Rackauckas,
+[*Observable functions of rational ODE models and how to find them*](https://arxiv.org/abs/2609.06134),
+arXiv preprint arXiv:2609.06134, 2026.
