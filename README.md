@@ -143,7 +143,8 @@ This will return
 ### Assessing local identifiability
 
 Local identifiability can be assessed efficiently even for the models for which global identifiability analysis is out of reach.
-This can be done using the `assess_local_identifiability` function, for example:
+To this end, the package implements the algorithm by Sedoglavic [[4]](#local).
+It can be used via the `assess_local_identifiability` function, for example:
 
 ```julia
 assess_local_identifiability(ode)
