@@ -166,4 +166,16 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
         result = assess_identifiability(ode, funcs_to_check = collect(keys(correct)))
         @test correct == result
     end
+
+    ode = linear_compartment_model(
+        [[2, 4], [1, 3], [2, 4], [1, 3]],
+        outputs = [1],
+        inputs = [2],
+        leaks = [2, 3],
+    )
+    @test map(string, ode.x_vars) == ["x1", "x2", "x3", "x4"]
+    @test map(string, ode.y_vars) == ["y1"]
+    printed = sprint(show, ode)
+    @test startswith(printed, "x1'")
+    @test occursin(r"^x1'.*\nx2'.*\nx3'.*\nx4'.*\ny1 ="s, printed)
 end
