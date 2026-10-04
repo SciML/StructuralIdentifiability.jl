@@ -369,4 +369,49 @@ function cmp_lie(ode, cmp)
     end
 end
 
+# Candidates
+function cmp_states(ode, cmp=rational_function_cmp)
+    states = ode.x_vars
+    return function (f, g)
+        if total_degree_wrt(f, states) < total_degree_wrt(g, states)
+            return true
+        elseif total_degree_wrt(f, states) > total_degree_wrt(g, states)
+            return false
+        end
+        return cmp(f, g)
+    end
+end
+
+function cmp_lie_states(ode, cmp=rational_function_cmp)
+    return function (f, g)
+        f = parent_ring_change(f, parent(ode))
+        g = parent_ring_change(g, parent(ode))
+        df = lie_derivative(f, ode)
+        dg = lie_derivative(g, ode)
+        return if iszero(df) && iszero(dg)
+            cmp(f, g)
+        else
+            cmp_states(ode, cmp)(df, dg)
+        end
+    end
+end
+
+# -----------------------------------------------------------------------------
+
+# Total degree of f with respect to the variables whose indices are in `vars`
+function total_degree_wrt(f::MPolyRingElem, vars::Vector{<:Integer})
+    if iszero(f)
+        return -1
+    end
+    return maximum(sum(@view(e[vars])) for e in exponent_vectors(f))
+end
+
+function total_degree_wrt(f::MPolyRingElem, vars::Vector{<:MPolyRingElem})
+    return total_degree_wrt(f, [findfirst(x -> x == v, vars) for v in vars])
+end
+
+function total_degree_wrt(f::AbstractAlgebra.Generic.FracFieldElem, vars::Vector{<:MPolyRingElem})
+        return total_degree_wrt(denominator(f), vars) + total_degree_wrt(numerator(f), vars)
+end
+
 # -----------------------------------------------------------------------------
