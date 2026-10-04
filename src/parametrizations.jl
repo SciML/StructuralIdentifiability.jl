@@ -159,6 +159,9 @@ The function accepts the following optional arguments.
 - `seed`: A float in the range from 0 to 1, random seed (default is `seed = 42`). 
 - `prob_threshold`: The probability of correctness (default is `prob_threshold = 0.99`).
 - `loglevel`: the level of logs to be displayed (default is `Logging.Info`).
+- `cmp`: A comparator for rational functions. For two rational functions `f1`
+    and `f2`, `cmp(f1, f2)` should be `true` if `f1` is simpler than `f2`.
+    By default, `StructuralIdentifiability.default_cmp(ode)` is used.
 
 ## Example
 
@@ -207,21 +210,23 @@ function reparametrize_global(
         ode::ODE{P};
         prob_threshold = 0.99,
         seed = 42,
+        cmp = default_cmp(ode),
         loglevel = Logging.Info,
     ) where {P}
     restart_logging(loglevel = loglevel)
     return with_logger(_si_logger[]) do
-        return _reparametrize_global(ode, prob_threshold = prob_threshold, seed = seed)
+        return _reparametrize_global(ode, prob_threshold = prob_threshold, seed = seed, cmp = cmp)
     end
 end
 
-function _reparametrize_global(ode::ODE{P}; prob_threshold = 0.99, seed = 42) where {P}
+function _reparametrize_global(ode::ODE{P}; prob_threshold = 0.99, seed = 42, cmp = default_cmp(ode)) where {P}
     Random.seed!(seed)
     id_funcs = _find_identifiable_functions(
         ode,
         with_states = true,
         simplify = :strong,
         prob_threshold = prob_threshold,
+        cmp = cmp,
     )
     ode_ring = parent(ode)
     @assert base_ring(parent(first(id_funcs))) == ode_ring
