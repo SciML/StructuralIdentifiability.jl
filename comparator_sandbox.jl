@@ -1,4 +1,5 @@
 using StructuralIdentifiability
+using StructuralIdentifiability: cmp_states, cmp_lie_states
 
 ode = @ODEmodel(
     A'(t) = a * A(t),
