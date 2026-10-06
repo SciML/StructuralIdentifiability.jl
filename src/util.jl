@@ -412,7 +412,14 @@ function total_degree_wrt(f::MPolyRingElem, vars::Vector{<:Integer})
 end
 
 function total_degree_wrt(f::MPolyRingElem, vars::Vector{<:MPolyRingElem})
-    return total_degree_wrt(f, [findfirst(x -> var_to_str(x) == var_to_str(v), gens(parent(f))) for v in vars])
+    indices = Vector{Int}()
+    for v in vars
+        ind = findfirst(x -> var_to_str(x) == var_to_str(v), gens(parent(f)))
+        if !isnothing(ind)
+            push!(indices, ind)
+        end
+    end
+    return total_degree_wrt(f, indices)
 end
 
 function total_degree_wrt(f::AbstractAlgebra.Generic.FracFieldElem, vars::Vector{<:MPolyRingElem})
@@ -426,7 +433,14 @@ function number_of_terms(f::MPolyRingElem, vars::Vector{<:Integer})
 end
 
 function number_of_terms(f::MPolyRingElem, vars::Vector{<:MPolyRingElem})
-    return number_of_terms(f, [findfirst(x -> var_to_str(x) == var_to_str(v), gens(parent(f))) for v in vars])
+    indices = Vector{Int}()
+    for v in vars
+        ind = findfirst(x -> var_to_str(x) == var_to_str(v), gens(parent(f)))
+        if !isnothing(ind)
+            push!(indices, ind)
+        end
+    end
+    return number_of_terms(f, indices)
 end
 
 function number_of_terms(f::AbstractAlgebra.Generic.FracFieldElem, vars::Vector{<:MPolyRingElem})
