@@ -8,5 +8,5 @@ ode = @ODEmodel(
     y(t) = A(t) + B(t) + C(t)
 )
 
-println(observation_field(ode, cmp=cmp_states(ode)))
-println(observation_field(ode, cmp=cmp_lie_states(ode)))
+println(observation_field(ode, cmp = cmp_states(ode)))
+println(observation_field(ode, cmp = cmp_lie_states(ode)))
