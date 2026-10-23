@@ -337,7 +337,7 @@ default_cmp(ode) = cmp_prefer_params(ode, rational_function_cmp)
 Wrap a comparator of rational functions `cmp` so that functions containing
 only parameters of the `ode` are preferred over functions containing states.
 """
-function cmp_prefer_params(ode, cmp=rational_function_cmp)
+function cmp_prefer_params(ode, cmp = rational_function_cmp)
     params = ode.parameters
     return function (f, g)
         isempty(params) && return cmp(f, g)
@@ -355,7 +355,7 @@ end
 Wrap a comparator of rational functions `cmp` so Lie derivatives are compared
 when they are nonzero.
 """
-function cmp_lie(ode, cmp=rational_function_cmp)
+function cmp_lie(ode, cmp = rational_function_cmp)
     return function (f, g)
         f = parent_ring_change(f, parent(ode))
         g = parent_ring_change(g, parent(ode))
@@ -370,7 +370,7 @@ function cmp_lie(ode, cmp=rational_function_cmp)
 end
 
 # Candidates
-function cmp_states(ode, cmp=rational_function_cmp)
+function cmp_states(ode, cmp = rational_function_cmp)
     states = ode.x_vars
     return function (f, g)
         if total_degree_wrt(f, states) != total_degree_wrt(g, states)
@@ -380,13 +380,13 @@ function cmp_states(ode, cmp=rational_function_cmp)
             return total_degree_wrt(denominator(f), states) < total_degree_wrt(denominator(g), states)
         end
         if number_of_terms(f, states) != number_of_terms(g, states)
-            return number_of_terms(f, states) <  number_of_terms(g, states)
+            return number_of_terms(f, states) < number_of_terms(g, states)
         end
         return cmp(f, g)
     end
 end
 
-function cmp_lie_states(ode, cmp=rational_function_cmp)
+function cmp_lie_states(ode, cmp = rational_function_cmp)
     return function (f, g)
         f = parent_ring_change(f, parent(ode))
         g = parent_ring_change(g, parent(ode))
@@ -400,7 +400,7 @@ function cmp_lie_states(ode, cmp=rational_function_cmp)
     end
 end
 
-function cmp_pushka(ode, cmp=rational_function_cmp)
+function cmp_pushka(ode, cmp = rational_function_cmp)
     return function (f, g)
         states = ode.x_vars
         f = parent_ring_change(f, parent(ode))
@@ -413,7 +413,7 @@ function cmp_pushka(ode, cmp=rational_function_cmp)
             return total_degree_wrt(denominator(f), states) < total_degree_wrt(denominator(g), states)
         end
         if number_of_terms(f, states) != number_of_terms(g, states)
-            return number_of_terms(f, states) <  number_of_terms(g, states)
+            return number_of_terms(f, states) < number_of_terms(g, states)
         end
         df = lie_derivative(f, ode)
         dg = lie_derivative(g, ode)

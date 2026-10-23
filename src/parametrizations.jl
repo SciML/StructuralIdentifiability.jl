@@ -17,15 +17,37 @@ function vector_field_along(derivation::Dict{T, U}, directions::AbstractVector) 
 end
 
 """
-    reparametrize_with_respect_to(ode, new_states, new_params)
+    reparametrize_with_respect_to(ode, new_vars)
 
-Reparametrizes the `ode` using the given fractional states and parameters.
+Reparametrizes the `ode` using the given new variables.
 
 ## Input
 
 - `ode`: an ODE model.
-- `new_states`: a vector of new states as fractions in `parent(ode)`.
-- `new_params`: a vector of new parameters as fractions in `parent(ode)`.
+- `new_vars`: a vector of new variables as fractions in `parent(ode)`.
+"""
+function reparametrize_with_respect_to(ode, new_vars)
+    contains_states(poly::MPolyRingElem) = any(x -> degree(poly, x) > 0, ode.x_vars)
+    contains_states(func) = contains_states(numerator(func)) || contains_states(denominator(func))
+    new_vars_contains_states = filter(contains_states, new_vars)
+    @info """
+    Original states: $(ode.x_vars)
+    Original params: $(ode.parameters)
+    New variables that contain states: $(new_vars_contains_states)"""
+    new_states = new_vars_contains_states
+    new_params = setdiff(new_vars, new_vars_contains_states)
+    @info """
+    Reparametrizing with respect to:
+    New states: $new_states
+    New params: $new_params"""
+    return reparametrize_with_respect_to(ode, new_states, new_params)
+end
+
+"""
+    reparametrize_with_respect_to(ode, new_states, new_params)
+
+Same as `reparametrize_with_respect_to(ode, new_vars)`,
+but with the new states and new parameters specified separately.
 """
 function reparametrize_with_respect_to(ode, new_states, new_params)
     @assert length(new_states) > 0
@@ -231,22 +253,8 @@ function _reparametrize_global(ode::ODE{P}; prob_threshold = 0.99, seed = 42, cm
     ode_ring = parent(ode)
     @assert base_ring(parent(first(id_funcs))) == ode_ring
     @info "Constructing a new parametrization"
-    contains_states(poly::MPolyRingElem) = any(x -> degree(poly, x) > 0, ode.x_vars)
-    contains_states(func) =
-        contains_states(numerator(func)) || contains_states(denominator(func))
-    id_funcs_contains_states = filter(contains_states, id_funcs)
-    @info """
-    Original states: $(ode.x_vars)
-    Original params: $(ode.parameters)
-    Identifiable and contain states: $(id_funcs_contains_states)"""
-    new_states = id_funcs_contains_states
-    new_params = setdiff(id_funcs, id_funcs_contains_states)
-    @info """
-    Reparametrizing with respect to:
-    New states: $new_states
-    New params: $new_params"""
     new_vector_field, new_inputs, new_outputs, new_vars, implicit_relations =
-        reparametrize_with_respect_to(ode, new_states, new_params)
+        reparametrize_with_respect_to(ode, id_funcs)
     new_ring = parent(first(keys(new_vector_field)))
     new_ode = ODE{P}(new_vector_field, new_outputs, new_inputs)
     return (new_ode = new_ode, new_vars = new_vars, implicit_relations = implicit_relations)
