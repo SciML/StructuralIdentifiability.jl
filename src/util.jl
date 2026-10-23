@@ -373,15 +373,14 @@ end
 function cmp_states(ode, cmp=rational_function_cmp)
     states = ode.x_vars
     return function (f, g)
-        if total_degree_wrt(f, states) < total_degree_wrt(g, states)
-            return true
-        elseif total_degree_wrt(f, states) > total_degree_wrt(g, states)
-            return false
+        if total_degree_wrt(f, states) != total_degree_wrt(g, states)
+            return total_degree_wrt(f, states) < total_degree_wrt(g, states)
         end
-        if number_of_terms(f, states) < number_of_terms(g, states)
-            return true
-        elseif number_of_terms(f, states) > number_of_terms(g, states)
-            return false
+        if total_degree_wrt(denominator(f), states) != total_degree_wrt(denominator(g), states)
+            return total_degree_wrt(denominator(f), states) < total_degree_wrt(denominator(g), states)
+        end
+        if number_of_terms(f, states) != number_of_terms(g, states)
+            return number_of_terms(f, states) <  number_of_terms(g, states)
         end
         return cmp(f, g)
     end
@@ -398,6 +397,30 @@ function cmp_lie_states(ode, cmp=rational_function_cmp)
         else
             cmp_states(ode, cmp)(df, dg)
         end
+    end
+end
+
+function cmp_pushka(ode, cmp=rational_function_cmp)
+    return function (f, g)
+        states = ode.x_vars
+        f = parent_ring_change(f, parent(ode))
+        g = parent_ring_change(g, parent(ode))
+
+        if total_degree_wrt(f, states) != total_degree_wrt(g, states)
+            return total_degree_wrt(f, states) < total_degree_wrt(g, states)
+        end
+        if total_degree_wrt(denominator(f), states) != total_degree_wrt(denominator(g), states)
+            return total_degree_wrt(denominator(f), states) < total_degree_wrt(denominator(g), states)
+        end
+        if number_of_terms(f, states) != number_of_terms(g, states)
+            return number_of_terms(f, states) <  number_of_terms(g, states)
+        end
+        df = lie_derivative(f, ode)
+        dg = lie_derivative(g, ode)
+        if iszero(df) && iszero(dg)
+            return cmp(f, g)
+        end
+        return cmp_states(ode, cmp)(df, dg)
     end
 end
 
