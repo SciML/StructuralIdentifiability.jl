@@ -183,7 +183,7 @@ The function accepts the following optional arguments.
 - `loglevel`: the level of logs to be displayed (default is `Logging.Info`).
 - `cmp`: A comparator for rational functions. For two rational functions `f1`
     and `f2`, `cmp(f1, f2)` should be `true` if `f1` is simpler than `f2`.
-    By default, `StructuralIdentifiability.default_cmp(ode)` is used.
+    By default, `StructuralIdentifiability.cmp_default(ode)` is used.
 
 ## Example
 
@@ -232,7 +232,7 @@ function reparametrize_global(
         ode::ODE{P};
         prob_threshold = 0.99,
         seed = 42,
-        cmp = default_cmp(ode),
+        cmp = cmp_default(ode),
         loglevel = Logging.Info,
     ) where {P}
     restart_logging(loglevel = loglevel)
@@ -241,7 +241,7 @@ function reparametrize_global(
     end
 end
 
-function _reparametrize_global(ode::ODE{P}; prob_threshold = 0.99, seed = 42, cmp = default_cmp(ode)) where {P}
+function _reparametrize_global(ode::ODE{P}; prob_threshold = 0.99, seed = 42, cmp = cmp_default(ode)) where {P}
     Random.seed!(seed)
     id_funcs = _find_identifiable_functions(
         ode,

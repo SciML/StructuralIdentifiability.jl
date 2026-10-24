@@ -304,7 +304,7 @@ end
 # -----------------------------------------------------------------------------
 
 """
-    default_cmp(ode)
+    cmp_default(ode)
 
 Returns a comparator for rational functions.
 Used as a default measure of simplicity in StructuralIdentifiability.jl.
@@ -322,14 +322,14 @@ julia> ode = @ODEmodel(
 
 julia> f1, f2 = (a01 + a21) // a12, x0 // a12;
 
-julia> cmp = default_cmp(ode);
+julia> cmp = cmp_default(ode);
 
 julia> cmp(f1, f2) # returns true, so f1 is considered simpler than f2
 true
 ```
 
 """
-default_cmp(ode) = cmp_prefer_params(ode, rational_function_cmp)
+cmp_default(ode) = cmp_prefer_params(ode, rational_function_cmp)
 
 """
     cmp_prefer_params(ode, cmp)

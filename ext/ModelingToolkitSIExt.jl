@@ -726,7 +726,7 @@ function _find_identifiable_functions(
     )
     Random.seed!(seed)
     ode, conversion = mtk_to_si(ode, measured_quantities)
-    isnothing(cmp) && (cmp = StructuralIdentifiability.default_cmp(ode))
+    isnothing(cmp) && (cmp = StructuralIdentifiability.cmp_default(ode))
     known_ic_ = [eval_at_nemo(each, conversion) for each in known_ic]
     result = nothing
     if isempty(known_ic)

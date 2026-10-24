@@ -14,7 +14,7 @@ This function takes the following optional arguments:
 - `seed`: The rng seed. Default value is `42`.
 - `cmp`: A comparator for rational functions. For two rational functions `f1`
     and `f2`, `cmp(f1, f2)` should be `true` if `f1` is simpler than `f2`.
-    By default, `StructuralIdentifiability.default_cmp(ode)` is used.
+    By default, `StructuralIdentifiability.cmp_default(ode)` is used.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
 ## Example
@@ -42,7 +42,7 @@ function observation_field(
         known_ic::Vector{<:ExtendedFraction{T}} = Vector{ExtendedFraction{T}}(),
         prob_threshold::Float64 = 0.99,
         seed = 42,
-        cmp = default_cmp(ode),
+        cmp = cmp_default(ode),
         loglevel = Logging.Info,
     ) where {T <: MPolyRingElem{QQFieldElem}}
     return find_identifiable_functions(ode, with_states = true, known_ic = known_ic, prob_threshold = prob_threshold, seed = seed, loglevel = loglevel, cmp = cmp)

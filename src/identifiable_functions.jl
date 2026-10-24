@@ -24,7 +24,7 @@ This function takes the following optional arguments:
   is `0.99`.
 - `cmp`: A comparator for rational functions. For two rational functions `f1`
     and `f2`, `cmp(f1, f2)` should be `true` if `f1` is simpler than `f2`.
-    By default, `StructuralIdentifiability.default_cmp(ode)` is used.
+    By default, `StructuralIdentifiability.cmp_default(ode)` is used.
 - `seed`: The rng seed. Default value is `42`.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
 
@@ -55,7 +55,7 @@ function find_identifiable_functions(
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
         loglevel = Logging.Info,
-        cmp = default_cmp(ode),
+        cmp = cmp_default(ode),
     ) where {T <: MPolyRingElem{QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
@@ -93,7 +93,7 @@ function _find_identifiable_functions(
         with_states = false,
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
-        cmp = default_cmp(ode),
+        cmp = cmp_default(ode),
     ) where {T <: MPolyRingElem{QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
