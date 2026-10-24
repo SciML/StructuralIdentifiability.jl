@@ -34,7 +34,7 @@ end
 
 function benchmark_comparator(label, ode)
     if label in (:default, :cmp_default)
-        return StructuralIdentifiability.default_cmp(ode)
+        return StructuralIdentifiability.cmp_default(ode)
     elseif label === :cmp_lie
         return StructuralIdentifiability.cmp_lie(
             ode,

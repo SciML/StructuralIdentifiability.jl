@@ -1225,21 +1225,21 @@ end
 
     with_cmp3 = find_identifiable_functions(ode, with_states = true, cmp = cmp3)
 
-    default_cmp = find_identifiable_functions(ode, with_states = true)
+    with_cmp_default = find_identifiable_functions(ode, with_states = true)
 
     @test fields_equal(
         RationalFunctionField(with_cmp1),
-        RationalFunctionField(default_cmp),
+        RationalFunctionField(with_cmp_default),
         0.99,
     )
     @test fields_equal(
         RationalFunctionField(with_cmp2),
-        RationalFunctionField(default_cmp),
+        RationalFunctionField(with_cmp_default),
         0.99,
     )
     @test fields_equal(
         RationalFunctionField(with_cmp3),
-        RationalFunctionField(default_cmp),
+        RationalFunctionField(with_cmp_default),
         0.99,
     )
 

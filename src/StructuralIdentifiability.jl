@@ -93,7 +93,7 @@ export assess_local_identifiability, assess_identifiability
 export set_parameter_values, rename_variables
 
 # extra functionality
-export find_ioequations, find_identifiable_functions, default_cmp
+export find_ioequations, find_identifiable_functions, cmp_default
 
 # observation field!!
 export observation_field
