@@ -1,5 +1,5 @@
 """
-    saturate_outputs(ode, orders, max_deg = 5)
+    saturate_outputs(ode, orders, max_deg = (3, 10))
 
 Adds extra outputs extracted from the Lie derivatives of the existing outputs up to the prescribed order.
 Adds only the outputs which are algebraically independent over the existing outputs, parameters, and inputs
@@ -8,23 +8,28 @@ Adds only the outputs which are algebraically independent over the existing outp
 Inputs:
 - `ode` - ode model
 - `orders` - dictionary from outputs to the order of the Lie derivative to consider
-- `max_deg` - the maximal degree (as a rational function) of possible new outputs to consider
+- `max_deg` - the 2-tuple of maximal degrees (as a rational function) of possible new outputs to consider;
+              first element is the degree with respect to the states, and the second the total degree
 
 Output: a new ode model with inputs inserted
 """
 function saturate_outputs(
         ode::ODE{P},
         orders::Dict{P, Int},
-        max_deg = 5,
+        max_deg = (3, 10),
     ) where {P <: MPolyRingElem}
+    @debug "Starting saturation with orders $orders"
     lie_ders =
         lie_derivatives_up_to(ode, Dict(ode.y_equations[y] => ord for (y, ord) in orders))
-    @info "Degrees: $([(total_degree(numerator(f)), total_degree(denominator(f))) for f in lie_ders])"
+    @debug "Degrees of Lie derivatives: $([(total_degree(numerator(f)), total_degree(denominator(f))) for f in lie_ders])"
 
     current_y = RationalFunctionField(
         vcat(collect(values(ode.y_equations)), ode.u_vars, ode.parameters),
     )
-    lie_ders = filter(f -> total_degree_frac(f) <= max_deg, lie_ders)
+    (md_x, md_total) = max_deg
+    lie_ders = filter(
+        f -> (total_degree_frac(f) <= md_total) && (total_degree_wrt(f, ode.x_vars) <= md_x), 
+        lie_ders)
     sort!(lie_ders, lt = RationalFunctionFields.rational_function_cmp)
     for f in lie_ders
         if !first(RationalFunctionFields.check_algebraicity_modp(current_y, [f]))
@@ -44,7 +49,7 @@ function saturate_outputs(
     idx = 1
     old_y_names = map(var_to_str, ode.y_vars)
     new_ys = Dict{String, Generic.FracFieldElem{P}}()
-    @info "New outputs $new_outputs"
+    @debug "New outputs $new_outputs"
     for new_y in new_outputs
         while "y_aux_$idx(t)" in old_y_names
             idx += 1
