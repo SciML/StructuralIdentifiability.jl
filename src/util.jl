@@ -361,7 +361,7 @@ function cmp_lie(ode, cmp = rational_function_cmp)
         g = parent_ring_change(g, parent(ode))
         df = lie_derivative(f, ode)
         dg = lie_derivative(g, ode)
-        return if iszero(df) && iszero(dg)
+        return if df == dg
             cmp(f, g)
         else
             cmp(df, dg)
@@ -392,7 +392,7 @@ function cmp_lie_states(ode, cmp = rational_function_cmp)
         g = parent_ring_change(g, parent(ode))
         df = lie_derivative(f, ode)
         dg = lie_derivative(g, ode)
-        return if iszero(df) && iszero(dg)
+        return if df == dg
             cmp(f, g)
         else
             cmp_states(ode, cmp)(df, dg)
@@ -417,7 +417,7 @@ function cmp_pushka(ode, cmp = rational_function_cmp)
         end
         df = lie_derivative(f, ode)
         dg = lie_derivative(g, ode)
-        if iszero(df) && iszero(dg)
+        if df == dg
             return cmp(f, g)
         end
         return cmp_states(ode, cmp)(df, dg)
