@@ -28,8 +28,9 @@ function saturate_outputs(
     )
     (md_x, md_total) = max_deg
     lie_ders = filter(
-        f -> (total_degree_frac(f) <= md_total) && (total_degree_wrt(f, ode.x_vars) <= md_x), 
-        lie_ders)
+        f -> (total_degree_frac(f) <= md_total) && (total_degree_wrt(f, ode.x_vars) <= md_x),
+        lie_ders
+    )
     sort!(lie_ders, lt = RationalFunctionFields.rational_function_cmp)
     for f in lie_ders
         if !first(RationalFunctionFields.check_algebraicity_modp(current_y, [f]))
