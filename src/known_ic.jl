@@ -20,6 +20,7 @@ This functions takes the following optional arguments:
   is `0.99`.
 - `seed`: The rng seed. Default value is `42`.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
+- `output_saturation` - if the output saturation should be applied to models with inputs (`true` by default)
 
 **This is experimental functionality**
 
@@ -79,6 +80,7 @@ Input:
    and states are taken
 - `prob_threshold` - probability of correctness.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
+- `output_saturation` - if the output saturation should be applied to models with inputs (`true` by default)
 
 Assesses identifiability of parameters and initial conditions of a given ODE model. 
 The result is guaranteed to be correct with the probability at least `prob_threshold`.

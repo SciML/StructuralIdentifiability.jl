@@ -79,6 +79,7 @@ This function takes the following optional arguments:
 - `with_states`: Also report the identifiabile functions in states. Default is
   `false`. If this is `true`, the identifiable functions involving parameters only
    will be simplified
+- `output_saturation` - if the output saturation should be applied to models with inputs (`true` by default)
 
 The function returns a tuple containing the following:
 - a list of identifiable functions (as pairs [num, denum])
