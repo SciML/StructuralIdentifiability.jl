@@ -114,6 +114,5 @@ if GROUP == "All" || GROUP == "Core"
         @test weckel_time < 500
         @test count(x -> x == :globally, values(weckel_results)) == 12
         @test count(x -> x == :nonidentifiable, values(weckel_results)) == 6
-       
     end
 end
