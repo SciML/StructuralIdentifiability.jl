@@ -7,7 +7,7 @@ function preprocess_ode(ode::ODE{P}; output_saturation = true) where {P <: MPoly
     new_ode = ode
 
     if length(ode.u_vars) > 0 && output_saturation
-        @info "Model contains outputs, we preprocess it with output saturation. This typically speeds up computations, in the case you want to turn this off, change `output_saturation` option"
+        @info "Model contains inputs, we preprocess it with output saturation. This typically speeds up computations, in the case you want to turn this off, change `output_saturation` option"
         saturation_orders = propose_orders(ode)
         new_ode = saturate_outputs(ode, saturation_orders)
         @debug "Added $(length(new_ode.y_vars) - length(ode.y_vars)) new outputs"
