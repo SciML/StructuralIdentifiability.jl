@@ -27,6 +27,7 @@ This function takes the following optional arguments:
     By default, `StructuralIdentifiability.cmp_default(ode)` is used.
 - `seed`: The rng seed. Default value is `42`.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
+- `output_saturation` - if the output saturation should be applied to models with inputs (`true` by default)
 
 ## Example
 
@@ -56,6 +57,7 @@ function find_identifiable_functions(
         rational_interpolator = :VanDerHoevenLecerf,
         loglevel = Logging.Info,
         cmp = cmp_default(ode),
+        output_saturation = true,
     ) where {T <: MPolyRingElem{QQFieldElem}}
     restart_logging(loglevel = loglevel)
     reset_timings()
@@ -69,6 +71,7 @@ function find_identifiable_functions(
                 simplify = simplify,
                 rational_interpolator = rational_interpolator,
                 cmp = cmp,
+                output_saturation = output_saturation,
             )
         else
             id_funcs = _find_identifiable_functions_kic(
@@ -79,6 +82,7 @@ function find_identifiable_functions(
                 simplify = simplify,
                 rational_interpolator = rational_interpolator,
                 cmp = cmp,
+                output_saturation = output_saturation,
             )
             # renaming variables from `x(t)` to `x(0)`
             return replace_with_ic(ode, id_funcs)
@@ -94,6 +98,7 @@ function _find_identifiable_functions(
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
         cmp = cmp_default(ode),
+        output_saturation = true,
     ) where {T <: MPolyRingElem{QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
@@ -115,6 +120,7 @@ function _find_identifiable_functions(
         with_states = with_states,
         rational_interpolator = rational_interpolator,
         cmp = cmp,
+        output_saturation = output_saturation,
     )
     # If simplification is needed
     if simplify !== :absent

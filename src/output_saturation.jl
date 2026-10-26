@@ -57,7 +57,7 @@ function saturate_outputs(
         new_ys["y_aux_$idx(t)"] = new_y
         idx += 1
     end
-    @info new_ys
+    @debug new_ys
 
     return add_outputs(ode, new_ys)
 end
