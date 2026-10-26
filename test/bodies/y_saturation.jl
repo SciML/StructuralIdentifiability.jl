@@ -83,29 +83,29 @@ if GROUP == "All" || GROUP == "Core"
         @test count(x -> x == :nonidentifiable, values(tum_pil_results)) == 9
 
         weckel = @ODEmodel(
-            R1'(t) = koff * (-(1/KD) * u1(t) * R1(t) + LR1(t) + kr31_norm * LR3(t) + kr21_norm*LR2(t)),
-            LR1'(t) = koff * ((1/KD) * u1(t) * R1(t) - LR1(t)- klr12_norm * LR1(t)- klr13_norm* LR1(t)- kdes1_norm*LR1(t)),
-            LR2'(t) = koff * (klr12_norm * LR1(t)- kr23_norm * LR2(t)-kr21_norm*LR2(t)),
-            LR3'(t) = koff * (kr23_norm* LR2(t) - kr31_norm * LR3(t)- kdes3_norm *LR3(t) + klr13_norm * LR1(t)),
-            cAMP1'(t) = koff*kmoins_norm *(lambda_tot *lambda_1*(1-lambda_3) *LR1(t) - cAMP1(t)),
-            cAMP2'(t) = koff*kmoins_norm * (lambda_tot *(1-lambda_1)*(1-lambda_3)* LR2(t) - cAMP2(t)),
-            cAMP3'(t) = koff*kmoins_norm * (lambda_tot *lambda_3 * LR3(t) -  cAMP3(t)),
-            
-            R1p'(t) = -koff * ((1/KD) * u1(t) * R1p(t) + LR1p(t) + kr31_norm * LR3p(t) + kr21_norm*LR2p(t)),
-            LR1p'(t) = koff * ((1/KD) * u1(t) * R1p(t)- LR1p(t)-kdes1_norm*LR1p(t)- ps2 *klr12_norm * LR1p(t)-ps2*klr13_norm* LR1p(t)),
-            LR2p'(t) = koff * (ps2*klr12_norm * LR1p(t)-kr23_norm * LR2p(t)-kr21_norm*LR2p(t)),
-            LR3p'(t) = koff * (kr23_norm * LR2p(t) - kr31_norm * LR3p(t)- kdes3_norm *LR3p(t) +klr13_norm *ps2* LR1p(t)),
-            cAMP1p'(t) = koff*kmoins_norm*(lambda_tot *lambda_1*(1-lambda_3)*LR1p(t) - cAMP1p(t)),  
-            cAMP2p'(t) = koff*kmoins_norm * (lambda_tot *(1-lambda_1)*(1-lambda_3)* LR2p(t)- cAMP2p(t)),
-            cAMP3p'(t) = koff*kmoins_norm * (lambda_tot *lambda_3 * LR3p(t) - cAMP3p(t)),
-            
-            
-            y1(t) = cAMP1(t) + cAMP2(t)+cAMP3(t),
-            y2(t) = alpha_2*(R1(t)+LR1(t)-1),
-            y3(t) = alpha_3*LR3(t),
-            y4(t)  =  cAMP1p(t)+cAMP2p(t)+cAMP3p(t),
-            y5(t) = alpha_2*(R1p(t)+LR1p(t)-1),
-            y6(t) = alpha_3*LR3p(t),
+            R1'(t) = koff * (-(1 / KD) * u1(t) * R1(t) + LR1(t) + kr31_norm * LR3(t) + kr21_norm * LR2(t)),
+            LR1'(t) = koff * ((1 / KD) * u1(t) * R1(t) - LR1(t) - klr12_norm * LR1(t) - klr13_norm * LR1(t) - kdes1_norm * LR1(t)),
+            LR2'(t) = koff * (klr12_norm * LR1(t) - kr23_norm * LR2(t) - kr21_norm * LR2(t)),
+            LR3'(t) = koff * (kr23_norm * LR2(t) - kr31_norm * LR3(t) - kdes3_norm * LR3(t) + klr13_norm * LR1(t)),
+            cAMP1'(t) = koff * kmoins_norm * (lambda_tot * lambda_1 * (1 - lambda_3) * LR1(t) - cAMP1(t)),
+            cAMP2'(t) = koff * kmoins_norm * (lambda_tot * (1 - lambda_1) * (1 - lambda_3) * LR2(t) - cAMP2(t)),
+            cAMP3'(t) = koff * kmoins_norm * (lambda_tot * lambda_3 * LR3(t) - cAMP3(t)),
+
+            R1p'(t) = -koff * ((1 / KD) * u1(t) * R1p(t) + LR1p(t) + kr31_norm * LR3p(t) + kr21_norm * LR2p(t)),
+            LR1p'(t) = koff * ((1 / KD) * u1(t) * R1p(t) - LR1p(t) - kdes1_norm * LR1p(t) - ps2 * klr12_norm * LR1p(t) - ps2 * klr13_norm * LR1p(t)),
+            LR2p'(t) = koff * (ps2 * klr12_norm * LR1p(t) - kr23_norm * LR2p(t) - kr21_norm * LR2p(t)),
+            LR3p'(t) = koff * (kr23_norm * LR2p(t) - kr31_norm * LR3p(t) - kdes3_norm * LR3p(t) + klr13_norm * ps2 * LR1p(t)),
+            cAMP1p'(t) = koff * kmoins_norm * (lambda_tot * lambda_1 * (1 - lambda_3) * LR1p(t) - cAMP1p(t)),
+            cAMP2p'(t) = koff * kmoins_norm * (lambda_tot * (1 - lambda_1) * (1 - lambda_3) * LR2p(t) - cAMP2p(t)),
+            cAMP3p'(t) = koff * kmoins_norm * (lambda_tot * lambda_3 * LR3p(t) - cAMP3p(t)),
+
+
+            y1(t) = cAMP1(t) + cAMP2(t) + cAMP3(t),
+            y2(t) = alpha_2 * (R1(t) + LR1(t) - 1),
+            y3(t) = alpha_3 * LR3(t),
+            y4(t) = cAMP1p(t) + cAMP2p(t) + cAMP3p(t),
+            y5(t) = alpha_2 * (R1p(t) + LR1p(t) - 1),
+            y6(t) = alpha_3 * LR3p(t),
         )
         weckel_orders = propose_orders(weckel)
         new_weckel = saturate_outputs(weckel, weckel_orders)
