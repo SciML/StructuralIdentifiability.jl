@@ -1321,9 +1321,7 @@ benchmarks = Dict(
     ),
 )
 
-# the NFkB example
-
-ode = @ODEmodel(
+nfkb = @ODEmodel(
     x1'(t) = k_prod - k_deg * x1(t) - k1 * x1(t) * u(t),
     x2'(t) =
         -k3 * x2(t) - k_deg * x2(t) - a2 * x2(t) * x10(t) + t1 * x4(t) -
@@ -1355,8 +1353,8 @@ ode = @ODEmodel(
 
 QQ = StructuralIdentifiability.Nemo.QQ
 
-ode = set_parameter_values(
-    ode,
+nfkb_spec = set_parameter_values(
+    nfkb,
     Dict(
         a1 => QQ(1, 2),
         a2 => QQ(1, 5),
@@ -1377,9 +1375,16 @@ ode = set_parameter_values(
     ),
 )
 
-benchmarks[:NFkB] = Dict(
-    :name => "NFkB",
+benchmarks[:NFkB_full] = Dict(
+    :name => "NFkB full",
     :cite => "\\cite[Eq (9)-(23)]{Lipniacki2004}",
-    :ode => ode,
+    :ode => nfkb,
+    :skip => false
+)
+
+benchmarks[:NFkB_spec] = Dict(
+    :name => "NFkB full",
+    :cite => "\\cite[Eq (9)-(23)]{Lipniacki2004} with some parameters specialized to tabular values",
+    :ode => nfkb_spec,
     :skip => false
 )
