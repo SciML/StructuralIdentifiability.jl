@@ -38,7 +38,6 @@ if GROUP == "All" || GROUP == "Core"
         @test count(x -> x == :nonidentifiable, values(tum_pil_results)) == 9
 
         weckel = benchmarks[:Weckel][:ode]
-        
         weckel_orders = propose_orders(weckel)
         new_weckel = saturate_outputs(weckel, weckel_orders)
         @test length(new_weckel.y_vars) == 10
