@@ -79,6 +79,7 @@ This function takes the following optional arguments:
 - `with_states`: Also report the identifiabile functions in states. Default is
   `false`. If this is `true`, the identifiable functions involving parameters only
    will be simplified
+- `output_saturation` - if the output saturation should be applied to models with inputs (`true` by default)
 
 The function returns a tuple containing the following:
 - a list of identifiable functions (as pairs [num, denum])
@@ -92,7 +93,9 @@ The function returns a tuple containing the following:
         var_change_policy = :default,
         rational_interpolator = :VanDerHoevenLecerf,
         cmp = cmp_default(ode),
+        output_saturation = true,
     ) where {T}
+    ode = preprocess_ode(ode, output_saturation = output_saturation)
     @info "Computing IO-equations"
     ioeq_time = @elapsed io_equations =
         _find_ioequations(ode; var_change_policy = var_change_policy)
@@ -293,11 +296,6 @@ Checks global identifiability of functions of parameters specified in `funcs_to_
         prob_threshold::Float64 = 0.99;
         var_change = :default,
     ) where {P <: MPolyRingElem{QQFieldElem}}
-    submodels = find_submodels(ode)
-    if length(submodels) > 0
-        @info "Note: the input model has nontrivial submodels. If the computation for the full model will be too heavy, you may want to try to first analyze one of the submodels. They can be produced using function `find_submodels`"
-    end
-
     result = check_identifiability(
         ode,
         funcs_to_check,

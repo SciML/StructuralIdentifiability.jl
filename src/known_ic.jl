@@ -20,6 +20,7 @@ This functions takes the following optional arguments:
   is `0.99`.
 - `seed`: The rng seed. Default value is `42`.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
+- `output_saturation` - if the output saturation should be applied to models with inputs (`true` by default)
 
 **This is experimental functionality**
 
@@ -34,6 +35,7 @@ function _find_identifiable_functions_kic(
         simplify = :standard,
         rational_interpolator = :VanDerHoevenLecerf,
         cmp = cmp_default(ode),
+        output_saturation = true,
     ) where {T <: MPolyRingElem{Nemo.QQFieldElem}}
     Random.seed!(seed)
     @assert simplify in (:standard, :weak, :strong, :absent)
@@ -47,6 +49,7 @@ function _find_identifiable_functions_kic(
         rational_interpolator = rational_interpolator,
         seed = seed,
         cmp = cmp,
+        output_saturation = output_saturation,
     )
 
     id_funcs = vcat(id_funcs_general, [f // one(parent(ode)) for f in known_ic])
@@ -77,6 +80,7 @@ Input:
    and states are taken
 - `prob_threshold` - probability of correctness.
 - `loglevel` - the minimal level of log messages to display (`Logging.Info` by default)
+- `output_saturation` - if the output saturation should be applied to models with inputs (`true` by default)
 
 Assesses identifiability of parameters and initial conditions of a given ODE model. 
 The result is guaranteed to be correct with the probability at least `prob_threshold`.
@@ -88,6 +92,7 @@ function _assess_identifiability_kic(
         known_ic::Vector{<:ExtendedFraction{P}};
         funcs_to_check = Vector(),
         prob_threshold::Float64 = 0.99,
+        output_saturation = true,
     ) where {P <: MPolyRingElem{Nemo.QQFieldElem}}
     runtime_start = time_ns()
     if length(funcs_to_check) == 0
@@ -99,6 +104,7 @@ function _assess_identifiability_kic(
         known_ic,
         prob_threshold = half_p,
         simplify = :absent,
+        output_saturation = output_saturation,
     )
     #funcs_to_check = replace_with_ic(ode, funcs_to_check)
     result = OrderedDict(f => :globally for f in funcs_to_check)
