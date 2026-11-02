@@ -123,33 +123,7 @@ Output:
     projection_equation = proj_var
 
     if !isnothing(extra_projection)
-        extra_projection = parent_ring_change(extra_projection, ring)
-        point_generator =
-            generator_var_change(point_generator, proj_var, extra_projection, one(ring))
-        for y in vars(extra_projection)
-            coef = derivative(extra_projection, y)
-            y_name, ord =
-                decompose_derivative(var_to_str(y), [var_to_str(v) for v in ode.y_vars])
-            y0 = str_to_var(y_name * "_0", ring)
-            # basically a vector of Lie deriviatives of y encoded as equations
-            # on the derivtaives over x's, params, and derivatives of u's
-            y_ders = [(y0, y_equations[y0])]
-            for i in 1:ord
-                y_prev, eq_prev = y_ders[end]
-                eq_new = diff_poly(eq_prev, derivation)
-                for (x, xeq) in x_equations
-                    eq_new = eliminate_var(eq_new, xeq, derivation[x], point_generator)
-                end
-                for (y, y_eq) in y_ders
-                    eq_new = eliminate_var(eq_new, y_eq, y, point_generator)
-                end
-                y_new = diff_poly(y_prev, derivation)
-                push!(y_ders, (y_new, eq_new))
-            end
-            y, y_eq = y_ders[end]
-            projection_equation +=
-                coef * evaluate(y_eq, [y], [zero(ring)]) // derivative(y_eq, y)
-        end
+        projection_equation -= parent_ring_change(extra_projection, ring)
         projection_equation, _ = unpack_fraction(projection_equation)
         @debug "Extra projection equation $projection_equation"
     end
@@ -384,10 +358,21 @@ end
     sampling_range = 5
     while true
         @debug "There are several components of the highest dimension, trying to isolate one"
-        extra_projection = sum(rand(1:sampling_range) * v for v in keys(io_projections))
-        @debug "Extra projections: $extra_projection"
+        extra_projection_vars = [v for (v, ioeq) in io_projections if degree(ioeq, v) > 1]
+
+        orders = Dict()
+        for y in extra_projection_vars
+            y_name, ord =
+                decompose_derivative(var_to_str(y), [var_to_str(v) for v in ode.y_vars])
+            y0 = str_to_var(y_name * "_0", parent(ode))
+            orders[ode.y_equations[y0]] = ord
+        end
+        lie_ders = lie_derivatives_up_to(ode, orders)
+        projection_rhs = sum(rand(1:sampling_range) * e for e in lie_ders)
+        @debug "Extra projection: $projection_rhs"
+
         new_projections, _, projection_equation =
-            find_ioprojections(ode, auto_var_change, extra_projection)
+            find_ioprojections(ode, auto_var_change, projection_rhs)
         @debug "Check primality"
         if check_primality(io_projections, [projection_equation])
             @debug "Single component of highest dimension isolated, returning"
