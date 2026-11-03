@@ -1396,8 +1396,8 @@ benchmarks[:NFkB_full] = Dict(
     :skip => false
 )
 
-benchmarks[:NFkB_spec] = Dict(
-    :name => "NFkB full",
+benchmarks[:NFkB] = Dict(
+    :name => "NFkB specialized",
     :cite => "\\cite[Eq (9)-(23)]{Lipniacki2004} with some parameters specialized to tabular values",
     :ode => nfkb_spec,
     :skip => false
