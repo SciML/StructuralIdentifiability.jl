@@ -98,61 +98,19 @@ Finds the input-output projections of an ODE system
 Input:
 - `ode` - the ODE system
 - `auto_var_change` - whether to perform automatic variable change
-- `extra_projection` - a linear form in the derivatives of outputs (in any ring) to be
-  used for extra projection
 
 Output:
 - a dictionary from “leaders” to the corresponding input-output equations
 - generic point generator for the model (including the derivatives; mostly for testing)
-- an extra projection (if `extra_projection` was provided)
 """
 @timeit _to function find_ioprojections(
         ode::ODE{P},
         auto_var_change::Bool,
-        extra_projection = nothing,
     ) where {P <: MPolyRingElem{<:FieldElem}}
     # Initialization
     ring, derivation, x_equations, y_equations, point_generator =
         generate_io_equation_problem(ode)
     y_orders = Dict(y => 0 for y in keys(y_equations))
-
-    # producing an equation for random projection: assuming that `rand_proj_var`
-    # is equal to `extra_projection`, an equation for it over x's, params, and
-    # derivtaives of u's is derived
-    proj_var = str_to_var(PROJECTION_VARNAME, ring)
-    projection_equation = proj_var
-
-    if !isnothing(extra_projection)
-        extra_projection = parent_ring_change(extra_projection, ring)
-        point_generator =
-            generator_var_change(point_generator, proj_var, extra_projection, one(ring))
-        for y in vars(extra_projection)
-            coef = derivative(extra_projection, y)
-            y_name, ord =
-                decompose_derivative(var_to_str(y), [var_to_str(v) for v in ode.y_vars])
-            y0 = str_to_var(y_name * "_0", ring)
-            # basically a vector of Lie deriviatives of y encoded as equations
-            # on the derivtaives over x's, params, and derivatives of u's
-            y_ders = [(y0, y_equations[y0])]
-            for i in 1:ord
-                y_prev, eq_prev = y_ders[end]
-                eq_new = diff_poly(eq_prev, derivation)
-                for (x, xeq) in x_equations
-                    eq_new = eliminate_var(eq_new, xeq, derivation[x], point_generator)
-                end
-                for (y, y_eq) in y_ders
-                    eq_new = eliminate_var(eq_new, y_eq, y, point_generator)
-                end
-                y_new = diff_poly(y_prev, derivation)
-                push!(y_ders, (y_new, eq_new))
-            end
-            y, y_eq = y_ders[end]
-            projection_equation +=
-                coef * evaluate(y_eq, [y], [zero(ring)]) // derivative(y_eq, y)
-        end
-        projection_equation, _ = unpack_fraction(projection_equation)
-        @debug "Extra projection equation $projection_equation"
-    end
 
     while true
         var_degs = [
@@ -270,11 +228,6 @@ Output:
                                 point_generator,
                             )
                         end
-                        # change the projection
-                        @debug "Change of variables in the extra projection"
-                        projection_equation =
-                            make_substitution(projection_equation, x, A * x - B, A)
-                        @debug "Change of variables performed"
                         break
                     end
                 end
@@ -301,13 +254,6 @@ Output:
                 )
             end
         end
-        @debug "\t Elimination in the extra projection"
-        projection_equation = eliminate_var(
-            projection_equation,
-            y_equations[y_prolong],
-            var_elim,
-            point_generator,
-        )
         @debug "\t Elimination in the prolonged equation"
         y_equations[y_prolong] = eliminate_var(
             y_equations[y_prolong],
@@ -322,11 +268,7 @@ Output:
             (y, p) in y_equations
     )
 
-    if projection_equation != proj_var
-        projection_equation = evaluate(projection_equation, [proj_var], [extra_projection])
-    end
-
-    return io_projections, point_generator, projection_equation
+    return io_projections, point_generator
 end
 
 # ------------------------------------------------------------------------------
@@ -341,8 +283,8 @@ Input:
 - `loglevel` - logging level (default: Logging.Info)
 
 Output:
-- a dictionary from “leaders” to the corresponding input-output equations; if an extra projection is needed,
-  it will be the value corresponding to `rand_proj_var`
+- a dictionary from “leaders” to the corresponding input-output equations;
+- boolean value determining if the ideal is prime (if `true` definitely prime, if `false` may still be prime)
 """
 @timeit _to function find_ioequations(
         ode::ODE{P};
@@ -372,30 +314,15 @@ end
         return
     end
 
-    io_projections, _, _ = find_ioprojections(ode, auto_var_change, nothing)
+    io_projections, _ = find_ioprojections(ode, auto_var_change)
     ring = parent(first(values(io_projections)))
 
+    @debug "Sizes $(Dict(k => length(v) for (k, v) in io_projections))"
     @debug "Check whether the original projections are enough"
     if length(io_projections) == 1 || check_primality(io_projections)
-        @debug "The projections generate an ideal with a single components of highest dimension, returning"
-        return io_projections
+        @debug "The projections generate an ideal with a single components of highest dimension"
+        return io_projections, true
     end
-
-    sampling_range = 5
-    while true
-        @debug "There are several components of the highest dimension, trying to isolate one"
-        extra_projection = sum(rand(1:sampling_range) * v for v in keys(io_projections))
-        @debug "Extra projections: $extra_projection"
-        new_projections, _, projection_equation =
-            find_ioprojections(ode, auto_var_change, extra_projection)
-        @debug "Check primality"
-        if check_primality(io_projections, [projection_equation])
-            @debug "Single component of highest dimension isolated, returning"
-            io_projections[str_to_var(PROJECTION_VARNAME, parent(projection_equation))] =
-                projection_equation
-            break
-        end
-        sampling_range = 2 * sampling_range
-    end
-    return io_projections
+    @debug "The projections may generate a non-prime ideal"
+    return io_projections, false
 end

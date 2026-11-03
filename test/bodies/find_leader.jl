@@ -8,7 +8,7 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
         y1(t) = x1(t),
         y2(t) = x2(t) + u(t)
     )
-    ioeqs = find_ioequations(ode)
+    ioeqs = find_ioequations(ode)[1]
     println("IOEQS: ", ioeqs)
     pbr = PBRepresentation(ode, ioeqs)
 

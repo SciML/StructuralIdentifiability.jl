@@ -63,6 +63,7 @@ function check_primality(
 
     Rspec, vspec = Nemo.polynomial_ring(Nemo.QQ, [var_to_str(l) for l in leaders])
     leader_degrees = Dict(lead => Nemo.degree(poly, lead) for (lead, poly) in polys)
+    @debug "Leading degrees are $leader_degrees"
 
     local zerodim_ideal
     attempts = 0
