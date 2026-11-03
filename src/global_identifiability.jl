@@ -97,7 +97,7 @@ The function returns a tuple containing the following:
     ) where {T}
     ode = preprocess_ode(ode, output_saturation = output_saturation)
     @info "Computing IO-equations"
-    ioeq_time = @elapsed io_equations =
+    ioeq_time = @elapsed io_equations, is_prime =
         _find_ioequations(ode; var_change_policy = var_change_policy)
     @debug "Sizes: $(map(length, values(io_equations)))"
     @info "Computed IO-equations in $ioeq_time seconds"
@@ -133,8 +133,8 @@ The function returns a tuple containing the following:
         with_states,
     )
 
-    if with_states && !isempty(ode.parameters)
-        @debug "Generators of identifiable functions involve states, the parameter-only part is getting simplified"
+    if (with_states || !is_prime) && !isempty(ode.parameters)
+        @debug "Generators of identifiable functions involve states or the ideal of IO-projections is not prime, the parameter-only part is getting simplified"
         # NOTE: switching to a ring without states for a moment
         param_ring, _ = polynomial_ring(
             base_ring(bring),
@@ -162,7 +162,7 @@ The function returns a tuple containing the following:
         )
     end
 
-    if !with_states
+    if (!with_states && is_prime)
         return id_funcs[:no_states], bring
     end
     return vcat(id_funcs[:with_states], id_funcs[:no_states]), bring

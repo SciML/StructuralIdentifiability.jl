@@ -858,6 +858,7 @@ benchmarks = Dict(
             y1(t) = q7(t)
         ),
     ),
+    # Curious: a model where IO-projections generate a non-prime ideal
     :LeukaemiaLeon2021 => Dict(
         # https://github.com/Xabo-RB/Local-Global-Models/blob/main/Models/Immunology/LeukaemiaLeon2021.jl
         :name => "LeukaemiaLeon2021",
@@ -1319,6 +1320,19 @@ benchmarks = Dict(
             y6(t) = alpha_3 * LR3p(t),
         )
     ),
+    :LF => Dict(
+        :name => "LF, drug kinetics",
+        :cite => "https://github.com/SciML/StructuralIdentifiability.jl/issues/132",
+        :ode => @ODEmodel(
+	        Complex'(t) = 1/C*(((2*kon*free_receptor(t)*Drug(t)-koff*Complex(t))*C) - (ke_Complex*Complex(t)*C) - ((kon_2*free_receptor(t)*Complex(t)-2*koff*Complex_2(t))*C)),
+	        Complex_2'(t) = 1/C*(((kon_2*free_receptor(t)*Complex(t)-2*koff*Complex_2(t))*C) - (ke_Complex_2*Complex_2(t)*C)),
+            Drug'(t) = 1/C*(-(ke_Drug*Drug(t)*C) - ((2*kon*free_receptor(t)*Drug(t)-koff*Complex(t))*C) + (45/100*ka*Drug_SC(t))),
+            free_receptor'(t) = 1/C*(-((2*kon*free_receptor(t)*Drug(t)-koff*Complex(t))*C) + (66/2500*C) - (kdeg_free_receptor*free_receptor(t)*C) - ((kon_2*free_receptor(t)*Complex(t)-2*koff*Complex_2(t))*C)),
+	        Drug_SC'(t) = -(45/100*ka*Drug_SC(t)) - ((1-45/100)*ka*Drug_SC(t)) + u_SC(t),
+            y1(t) = Drug(t),                                   # output free Drug
+            y2(t) = free_receptor(t) + Complex(t) + 2*Complex_2(t)      # output total receptor
+        ),
+    )
 )
 
 nfkb = @ODEmodel(

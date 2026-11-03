@@ -1,6 +1,6 @@
 include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
 
-@testset "Checking io-equations: single output" begin
+@testset "Checking io-equations" begin
     test_cases = []
 
     # 2-compartiment model
@@ -17,7 +17,7 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
                 x1'(t) = a21 * x0(t) - a12 * x1(t),
                 y(t) = x0(t)
             ),
-            :correct => correct,
+            :correct => (Dict(y_2 => correct), true),
         ),
     )
 
@@ -115,7 +115,7 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
                 x2'(t) = c * x2(t) + 1 // 3 * x0(t) * x1(t),
                 y1(t) = x0(t)
             ),
-            :correct => correct,
+            :correct => (Dict(y1_3 => correct), true),
         ),
     )
 
@@ -136,7 +136,32 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
                 x1'(t) = -c * x1(t) + d * x0(t) * x1(t),
                 y1(t) = x0(t)
             ),
-            :correct => correct,
+            :correct => (Dict(y1_2 => correct), true),
+        ),
+    )
+
+    #---------------------------------------
+
+    # Example from remark 3 in https://arxiv.org/pdf/2111.00991.pdf
+    R, (y1_0, y1_1, y2_0, y2_1, b) =
+        polynomial_ring(QQ, ["y1(t)_0", "y1(t)_1", "y2(t)_0", "y2(t)_1", "b"])
+    correct = Dict(
+        y1_1 => b^2 * y1_0^2 + b^2 * y1_1^2 - 1,
+        y2_1 => -b^2 * y1_0^2 - y2_1^2 + 1,
+    )
+
+    ode = @ODEmodel(
+        x1'(t) = (1 + x1(t)^2) // 2,
+        x2'(t) = (1 - x1(t)^2) // (1 + x1(t)^2),
+        y1(t) = 2 * x1(t) // (b * (1 + x1(t)^2)),
+        y2(t) = x2(t)
+    )
+    
+    push!(
+        test_cases, 
+        Dict(
+            :ode => ode,
+            :correct => (correct, false)
         ),
     )
 
@@ -144,10 +169,15 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
 
     for case in test_cases
         ode = case[:ode]
-        io_eq = collect(values(find_ioequations(ode)))[1]
-        correct = parent_ring_change(case[:correct], parent(io_eq))
-        divisibility, remainder = divides(io_eq, correct)
-        @test divisibility
-        @test total_degree(remainder) == 0
+        ioeq_dict, is_prime = find_ioequations(ode)
+        ring = parent(first(values(case[:correct][1])))
+        for (lead, ioeq) in ioeq_dict
+            lead = parent_ring_change(lead, ring)
+            ioeq = parent_ring_change(ioeq, ring)
+            divisibility, remainder = divides(ioeq, case[:correct][1][lead])
+            @test divisibility
+            @test total_degree(remainder) == 0
+        end
+        @test case[:correct][2] == is_prime
     end
 end
