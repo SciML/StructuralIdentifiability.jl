@@ -158,7 +158,7 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
     )
     
     push!(
-        test_cases, 
+        test_cases,
         Dict(
             :ode => ode,
             :correct => (correct, false)
