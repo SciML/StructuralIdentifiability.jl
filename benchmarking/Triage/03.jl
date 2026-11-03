@@ -16,7 +16,8 @@ ode = @ODEmodel(
         y2(t) = x1(t)*x4(t)
     )
 
-assess_identifiability(ode)
+# Too hard
+# assess_identifiability(ode)
 
 #############################################
 # Values from Section 5.1
@@ -30,7 +31,7 @@ param_values = Dict(
 )
 
 ode_specialized = set_parameter_values(ode, param_values)
-assess_identifiability(ode_specialized)
+# assess_identifiability(ode_specialized)
 
 #############################################
 # Works when reduced with first integrals:
@@ -50,22 +51,7 @@ assess_identifiability(ode_reduced)
 #############################################
 # Works when calling simplification on y, L^1 y, L^2 y, ...
 
-using StructuralIdentifiability, RationalFunctionFields
-using StructuralIdentifiability: lie_derivatives_up_to
+include(joinpath(@__DIR__, "shared.jl"))
 
-function simplify_lie_field(ode, order; simplify = :weak)
-    orders = Dict(
-        ode.y_equations[y] => order
-        for y in ode.y_vars
-    )
-    generators = lie_derivatives_up_to(ode, orders)
-    simpler = simplified_generating_set(
-        RationalFunctionField(generators);
-        simplify = simplify,
-        prob_threshold = 0.99,
-    )
-    generators, simpler
-end
-
-gens, simple_gens = simplify_lie_field(ode, 4);
+gens, simple_gens = simplify_lie(ode, 4);
 println(simple_gens)
