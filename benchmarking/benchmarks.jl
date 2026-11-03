@@ -1330,7 +1330,7 @@ benchmarks = Dict(
             free_receptor'(t) = 1 / C * (-((2 * kon * free_receptor(t) * Drug(t) - koff * Complex(t)) * C) + (66 / 2500 * C) - (kdeg_free_receptor * free_receptor(t) * C) - ((kon_2 * free_receptor(t) * Complex(t) - 2 * koff * Complex_2(t)) * C)),
             Drug_SC'(t) = -(45 / 100 * ka * Drug_SC(t)) - ((1 - 45 / 100) * ka * Drug_SC(t)) + u_SC(t),
             y1(t) = Drug(t),                                   # output free Drug
-            y2(t) = free_receptor(t) + Complex(t) + 2*Complex_2(t)      # output total receptor
+            y2(t) = free_receptor(t) + Complex(t) + 2 * Complex_2(t)      # output total receptor
         ),
     )
 )
