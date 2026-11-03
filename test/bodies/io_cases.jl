@@ -156,7 +156,6 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
         y1(t) = 2 * x1(t) // (b * (1 + x1(t)^2)),
         y2(t) = x2(t)
     )
-    
     push!(
         test_cases,
         Dict(
