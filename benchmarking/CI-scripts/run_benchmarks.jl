@@ -8,14 +8,15 @@ stopwatch = time_ns()
 # TTFX
 t1 = @timed using StructuralIdentifiability
 
-include("../benchmarks.jl")
-
 suite = []
 
 push!(
     suite,
     (problem_name = "using StructuralIdentifiability", type = :time, result = [t1.time]),
 )
+
+# Record the load time before @ODEmodel introduces model parameters such as t1.
+include("../benchmarks.jl")
 
 # Allocations
 # Coming soon
@@ -54,8 +55,8 @@ function perform_operation(
 end
 
 fun_name = "assess_identifiability"
-perform_operation(benchmarks[:LV_simple][:ode])
-for m in [:SIWR, :LV_simple, :Pharm]
+perform_operation(benchmarks[:LV][:ode])
+for m in [:SIWR_orig, :LV, :Pharm]
     push!(
         suite,
         (
@@ -68,10 +69,10 @@ end
 
 fun_name = "assess_local_identifiability"
 perform_operation(
-    benchmarks[:LV_simple][:ode],
+    benchmarks[:LV][:ode],
     StructuralIdentifiability.assess_local_identifiability,
 )
-for m in [:SIWR, :Pharm, :MAPK5, :MAPK5bis, :Goodwin]
+for m in [:SIWR_orig, :Pharm, :MAPK_5out, :MAPK_5out_bis, :Goodwin]
     push!(
         suite,
         (
@@ -87,10 +88,10 @@ end
 
 fun_name = "find_identifiable_functions"
 perform_operation(
-    benchmarks[:LV_simple][:ode],
+    benchmarks[:LV][:ode],
     StructuralIdentifiability.find_identifiable_functions,
 )
-for m in [:Goodwin, :SEAIJRC, :Sntg, :LLW, :Bilirubin]
+for m in [:Goodwin, :SEAIJRC, :St, :LLW, :Bilirubin]
     push!(
         suite,
         (
@@ -106,7 +107,7 @@ end
 
 fun_name = "reparametrize_global"
 perform_operation(
-    benchmarks[:LV_simple][:ode],
+    benchmarks[:LV][:ode],
     StructuralIdentifiability.reparametrize_global,
 )
 for m in [:Goodwin, :SEAIJRC, :SEUIR]

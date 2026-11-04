@@ -181,7 +181,7 @@ function post(fail, table)
         println(io, "No regressions detected✅")
     end
     table_header = ["Problem", "Master", "This commit", "Result"]
-    pretty_table(io, table, header = table_header, alignment = [:l, :r, :r, :r])
+    pretty_table(io, table, column_labels = table_header, alignment = [:l, :r, :r, :r])
     comment_str = String(take!(io))
     return println(comment_str)
 end
