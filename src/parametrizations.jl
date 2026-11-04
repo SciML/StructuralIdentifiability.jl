@@ -38,7 +38,6 @@ function suggest_variable_names(ode, new_states, new_params)
             name == nothing && (name = tildify(name_orig))
             # resolve collision a*x -> x̃ and b*x -> x̃
             j = 1
-            @info "" name
             while name in names
                 name = chopsuffix(chopsuffix(name, "(t)"), string(j-1))
                 name = string(name, j, "(t)")
