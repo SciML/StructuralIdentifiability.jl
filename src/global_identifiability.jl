@@ -130,7 +130,7 @@ The function returns a tuple containing the following:
         io_equations,
         ode,
         empty(ode.parameters),
-        with_states,
+        with_states || !is_prime,
     )
 
     if (with_states || !is_prime) && !isempty(ode.parameters)
