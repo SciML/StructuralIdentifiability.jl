@@ -56,13 +56,17 @@ end
 
 fun_name = "assess_identifiability"
 perform_operation(benchmarks[:LV][:ode])
-for m in [:SIWR_orig, :LV, :Pharm]
+for (m, trials) in [(:SIWR_orig, 3), (:LV, 30), (:Pharm, 3)]
     push!(
         suite,
         (
             problem_name = benchmarks[m][:name] * " " * fun_name,
             type = :time,
-            result = perform_operation(benchmarks[m][:ode]),
+            result = perform_operation(
+                benchmarks[m][:ode],
+                StructuralIdentifiability.assess_identifiability,
+                trials,
+            ),
         ),
     )
 end
@@ -72,7 +76,9 @@ perform_operation(
     benchmarks[:LV][:ode],
     StructuralIdentifiability.assess_local_identifiability,
 )
-for m in [:SIWR_orig, :Pharm, :MAPK_5out, :MAPK_5out_bis, :Goodwin]
+for (m, trials) in [
+        (:SIWR_orig, 30), (:Pharm, 30), (:MAPK_5out, 3), (:MAPK_5out_bis, 3), (:Goodwin, 30),
+    ]
     push!(
         suite,
         (
@@ -81,6 +87,7 @@ for m in [:SIWR_orig, :Pharm, :MAPK_5out, :MAPK_5out_bis, :Goodwin]
             result = perform_operation(
                 benchmarks[m][:ode],
                 StructuralIdentifiability.assess_local_identifiability,
+                trials,
             ),
         ),
     )
@@ -91,7 +98,9 @@ perform_operation(
     benchmarks[:LV][:ode],
     StructuralIdentifiability.find_identifiable_functions,
 )
-for m in [:Goodwin, :SEAIJRC, :St, :LLW, :Bilirubin]
+for (m, trials) in [
+        (:Goodwin, 30), (:SEAIJRC, 3), (:St, 3), (:LLW, 30), (:Bilirubin, 30),
+    ]
     push!(
         suite,
         (
@@ -100,6 +109,7 @@ for m in [:Goodwin, :SEAIJRC, :St, :LLW, :Bilirubin]
             result = perform_operation(
                 benchmarks[m][:ode],
                 StructuralIdentifiability.find_identifiable_functions,
+                trials,
             ),
         ),
     )
@@ -110,7 +120,7 @@ perform_operation(
     benchmarks[:LV][:ode],
     StructuralIdentifiability.reparametrize_global,
 )
-for m in [:Goodwin, :SEAIJRC, :SEUIR]
+for (m, trials) in [(:Goodwin, 30), (:SEAIJRC, 3), (:SEUIR, 30)]
     push!(
         suite,
         (
@@ -119,6 +129,7 @@ for m in [:Goodwin, :SEAIJRC, :SEUIR]
             result = perform_operation(
                 benchmarks[m][:ode],
                 StructuralIdentifiability.reparametrize_global,
+                trials,
             ),
         ),
     )
