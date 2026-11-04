@@ -16,6 +16,62 @@ function vector_field_along(derivation::Dict{T, U}, directions::AbstractVector) 
     return new_vector_field
 end
 
+function suggest_variable_names(ode, new_states, new_params)
+    @assert allunique(map(string, gens(parent(ode))))
+    names = String[]
+
+    for (i, def) in enumerate(new_states)
+        num, den = unpack_fraction(def)
+        name = nothing
+        
+        # x --> x
+        if def in ode.x_vars
+            name == nothing && (name = var_to_str(num))
+        end
+
+        # a*x+b --> x̃
+        tildify(c::Char) = string(c, '\u0303')
+        tildify(s) = tildify(first(s)) * s[nextind(s, firstindex(s)):end]
+        states = intersect(vars(def), ode.x_vars)
+        if length(states) == 1
+            name_orig = var_to_str(states[1])
+            name == nothing && (name = tildify(name_orig))
+            # resolve collision a*x -> x̃ and b*x -> x̃
+            j = 1
+            @info "" name
+            while name in names
+                name = chopsuffix(chopsuffix(name, "(t)"), string(j-1))
+                name = string(name, j, "(t)")
+                j += 1
+            end
+        end
+
+        # f(x1,...,xn) --> X_i
+        name == nothing && (name = "X$i(t)")
+
+        push!(names, name)
+    end
+
+    for (i, def) in enumerate(new_params)
+        num, den = unpack_fraction(def)
+        name = nothing
+
+        # x --> x
+        if def in ode.parameters
+            name == nothing && (name = var_to_str(num))
+        end
+
+        # f(x) --> ai
+        name == nothing && (name = "a$i")
+
+        push!(names, name)
+    end
+
+    append!(names, string.(ode.u_vars), string.(ode.y_vars))
+
+    names
+end
+
 """
     reparametrize_with_respect_to(ode, new_vars)
 
@@ -31,15 +87,15 @@ function reparametrize_with_respect_to(ode, new_vars)
     contains_states(func) = contains_states(numerator(func)) || contains_states(denominator(func))
     new_vars_contains_states = filter(contains_states, new_vars)
     @info """
-    Original states: $(ode.x_vars)
-    Original params: $(ode.parameters)
-    New variables that contain states: $(new_vars_contains_states)"""
+    Original variables:
+    States: $(join(map(string, ode.x_vars), ", "))
+    Params: $(join(map(string, ode.parameters), ", "))"""
     new_states = new_vars_contains_states
     new_params = setdiff(new_vars, new_vars_contains_states)
     @info """
     Reparametrizing with respect to:
-    New states: $new_states
-    New params: $new_params"""
+    New states: $(join(map(string, new_states), ", "))
+    New params: $(join(map(string, new_params), ", "))"""
     return reparametrize_with_respect_to(ode, new_states, new_params)
 end
 
@@ -57,6 +113,9 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     new_vector_field = vector_field_along(ode.x_equations, new_states)
     @debug "New vector field:\n$new_vector_field"
     new_states = collect(keys(new_vector_field))
+    # Order by the first original state occurring in each new state.
+    # TODO: might be too invasive if we do this here instead of the outer function
+    sort!(new_states, by = f -> something(findfirst(in(vars(f)), ode.x_vars), length(ode.x_vars) + 1))
     new_dynamics = [new_vector_field[new_state] for new_state in new_states]
     # Express the new dynamics in terms of new states and new parameters.
     outputs = [ode.y_equations[output] for output in ode.y_vars]
@@ -74,7 +133,7 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
         gen_tag_names(length(ode.u_vars), "Input"),
         gen_tag_names(length(ode.y_vars), "Output"),
     )
-    @info """
+    @debug """
     Tag names: 
     $tag_names
     Generating functions:
@@ -82,12 +141,14 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     Functions to be reduced:
     $to_be_reduced_funcs
     """
-    membership, new_dynamics_all, implicit_relations, new_vars =
+    @info "Constructing equations of new ODE"
+    mem_time = @elapsed membership, new_dynamics_all, implicit_relations, new_vars =
         check_constructive_field_membership(
         RationalFunctionField(generating_funcs),
         to_be_reduced_funcs;
         tag_names = tag_names,
     )
+    @info "Constructed equations of new ODE in $mem_time seconds"
     @assert all(membership)
     ring_of_tags = parent(first(keys(new_vars)))
     tags = gens(ring_of_tags)
@@ -103,7 +164,7 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
     if !isempty(ode.u_vars)
         new_inputs = tag_inputs
     end
-    @info """
+    @debug """
     New state dynamics:
     $new_dynamics_states
     New output dynamics:
@@ -117,19 +178,11 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
         new_vars_vector_field[state] = new_dynamics_states[i]
     end
     @info "Converting variable names to human-readable ones"
-    internal_variable_names = map(i -> "X$i(t)", 1:length(new_states))
-    parameter_variable_names = map(i -> "a$i", 1:length(new_params))
-    input_variable_names = map(i -> "u$i(t)", 1:length(tag_inputs))
-    output_variable_names = map(i -> "y$i(t)", 1:length(tag_outputs))
-    all_variable_names = vcat(
-        internal_variable_names,
-        parameter_variable_names,
-        input_variable_names,
-        output_variable_names,
-    )
+    new_names = suggest_variable_names(ode, new_states, new_params)
+    @assert allunique(new_names)
     ring_output, _ = polynomial_ring(
         base_ring(ring_of_tags),
-        all_variable_names,
+        new_names,
         internal_ordering = Nemo.internal_ordering(ring_of_tags),
     )
     new_vars_vector_field = Dict(
@@ -146,9 +199,9 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
             parent_ring_change(var_expr, ring_output, matching = :byindex) for
             (var_old, var_expr) in new_outputs
     )
-    new_vars = Dict(
-        parent_ring_change(var_old, ring_output, matching = :byindex) => var_expr for
-            (var_old, var_expr) in new_vars
+    new_vars = OrderedDict(
+        parent_ring_change(var_old, ring_output, matching = :byindex) => new_vars[var_old] for
+            var_old in gens(ring_of_tags)
     )
     implicit_relations = map(
         var_old -> parent_ring_change(var_old, ring_output, matching = :byindex),
@@ -161,6 +214,28 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
         parent(first(keys(new_vars)))
     @assert base_ring(parent(first(values(new_vars)))) == parent(ode)
     return new_vars_vector_field, new_inputs, new_outputs, new_vars, implicit_relations
+end
+
+function show_reparametrization(out, reparam)
+    # eval(ode_repr(ode)) ≈ ode
+    ode_repr(ode) = begin
+        s = sprint(show, reparam.new_ode)
+        s = join(map(line -> string(" "^2, line), split(rstrip(s, '\n'), "\n")), ",\n")
+        string("ode = @ODEmodel(\n", s, "\n)")
+    end
+
+    println(out, "\n", "• Reparametrized ODE:\n")
+    println(out, ode_repr(reparam.new_ode), "\n")
+
+    println(out, "• Definitions:", "\n")
+    println(out, join(map(p -> replace(string(" "^2, p), "=>" => ":="), collect(reparam.new_vars)), "\n"), "\n")
+
+    if !isempty(reparam.implicit_relations)
+        participants = mapreduce(vars, union, reparam.implicit_relations)
+        println(out, "• These variables are not independent: $(join(map(string, participants), ", "))", "\n")
+    end
+
+    println(out, "• For more info, run\n\njulia> @doc reparametrize_global\n")
 end
 
 """
@@ -211,18 +286,18 @@ Then, we have the following:
 
 ```
 # new_ode
-X2'(t) = X1(t)*X2(t)*a2 - X2(t)*a1
-X1'(t) = -X1(t)*X2(t) + X1(t)*a3
-y1(t) = X1(t)
+x1'(t) = a*x1(t) - x1(t)*x̃2(t)
+x̃2'(t) = d*x1(t)*x̃2(t) - c*x̃2(t)
+y(t) = x1(t)
 
 # new_vars
 Dict{Nemo.QQMPolyRingElem, AbstractAlgebra.Generic.FracFieldElem{Nemo.QQMPolyRingElem}} with 6 entries:
-  X2 => b*x2
-  y1 => y
-  X1 => x1
-  a2 => d
-  a3 => a
-  a1 => c
+  x1(t) => x1(t)
+  x̃2(t) => b*x2(t)
+  y(t)  => y(t)
+  d     => d
+  a     => a
+  c     => c
 ```
 
 Notice that the `new_ode` is fully identifiabile, and has `1` less parameter
@@ -256,6 +331,11 @@ function _reparametrize_global(ode::ODE{P}; prob_threshold = 0.99, seed = 42, cm
     new_vector_field, new_inputs, new_outputs, new_vars, implicit_relations =
         reparametrize_with_respect_to(ode, id_funcs)
     new_ring = parent(first(keys(new_vector_field)))
-    new_ode = ODE{P}(new_vector_field, new_outputs, new_inputs)
-    return (new_ode = new_ode, new_vars = new_vars, implicit_relations = implicit_relations)
+    # Fix the order of variables in the new ODE
+    new_x_vars = filter(v -> haskey(new_vector_field, v), gens(new_ring))
+    new_y_vars = filter(v -> haskey(new_outputs, v), gens(new_ring))
+    new_ode = ODE{P}(new_x_vars, new_y_vars, new_vector_field, new_outputs, new_inputs)
+    reparam = (new_ode = new_ode, new_vars = new_vars, implicit_relations = implicit_relations)
+    show_reparametrization(stdout, reparam)
+    reparam
 end
