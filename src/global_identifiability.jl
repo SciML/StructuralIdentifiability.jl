@@ -104,6 +104,7 @@ The function returns a tuple containing the following:
         _find_ioequations(ode; var_change_policy = var_change_policy)
     if !is_prime && with_states == :no
         @warn "Identifiable functions with parameters only requested explicitly, computing an extra projection. Note that computing the whole observation field (i.e. identifiable functions in parameters and states) may be faster"
+        @info "Computing extra projection"
         io_equations = find_extra_projection(ode, io_equations)
     end
     @debug "Sizes: $(map(length, values(io_equations)))"
