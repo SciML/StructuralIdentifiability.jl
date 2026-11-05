@@ -77,8 +77,10 @@ These are presented by the coefficients of the IO-equations.
 This function takes the following optional arguments:
 - `prob_threshold`: probability of correctness
 - `with_states`: Also report the identifiabile functions in states. Default is
-  `false`. If this is `true`, the identifiable functions involving parameters only
-   will be simplified
+  `maybe` meaning that the states may be added if necessary. 
+  Other options are `yes` and `no`.
+  If the states are added, the identifiable functions involving parameters only
+  will be simplified
 - `output_saturation` - if the output saturation should be applied to models with inputs (`true` by default)
 
 The function returns a tuple containing the following:
@@ -89,16 +91,21 @@ The function returns a tuple containing the following:
         ode::ODE{T};
         prob_threshold::Float64,
         known::Array{T, 1} = Array{T, 1}(),
-        with_states::Bool = false,
+        with_states = :maybe,
         var_change_policy = :default,
         rational_interpolator = :VanDerHoevenLecerf,
         cmp = cmp_default(ode),
         output_saturation = true,
     ) where {T}
+    @assert with_states in (:no, :yes, :maybe)
     ode = preprocess_ode(ode, output_saturation = output_saturation)
     @info "Computing IO-equations"
     ioeq_time = @elapsed io_equations, is_prime =
         _find_ioequations(ode; var_change_policy = var_change_policy)
+    if !is_prime && with_states == :no
+        @warn "Identifiable functions with parameters only requested explicitly, computing an extra projection. Note that computing the whole observation field (i.e. identifiable functions in parameters and states) may be faster"
+        io_equations = find_extra_projection(ode, io_equations)
+    end
     @debug "Sizes: $(map(length, values(io_equations)))"
     @info "Computed IO-equations in $ioeq_time seconds"
     _runtime_logger[:id_io_time] = ioeq_time
@@ -126,14 +133,16 @@ The function returns a tuple containing the following:
         end
     end
 
+    add_states = (with_states == :yes) || (with_states == :maybe && !is_prime)
+
     id_funcs, bring = extract_identifiable_functions_raw(
         io_equations,
         ode,
         empty(ode.parameters),
-        with_states || !is_prime,
+        add_states,
     )
 
-    if (with_states || !is_prime) && !isempty(ode.parameters)
+    if add_states && !isempty(ode.parameters)
         @debug "Generators of identifiable functions involve states or the ideal of IO-projections is not prime, the parameter-only part is getting simplified"
         # NOTE: switching to a ring without states for a moment
         param_ring, _ = polynomial_ring(
@@ -162,7 +171,7 @@ The function returns a tuple containing the following:
         )
     end
 
-    if (!with_states && is_prime)
+    if !add_states
         return id_funcs[:no_states], bring
     end
     return vcat(id_funcs[:with_states], id_funcs[:no_states]), bring
@@ -207,7 +216,7 @@ Output: a list L of booleans with L[i] being the identifiability status of the i
         known = known,
         prob_threshold = half_p,
         var_change_policy = var_change_policy,
-        with_states = states_needed,
+        with_states = states_needed ? :yes : :maybe,
     )
 
     funcs_to_check = Vector{Generic.FracFieldElem{P}}(

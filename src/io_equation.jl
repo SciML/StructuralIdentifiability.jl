@@ -1,7 +1,3 @@
-const PROJECTION_VARNAME = "rand_proj_var"
-
-# ------------------------------------------------------------------------------
-
 function generator_var_change(
         generator,
         var::P,
@@ -43,7 +39,6 @@ function generate_io_equation_problem(ode::ODE{P}) where {P <: MPolyRingElem{<:F
         [var_to_str(x) * "_dot" for x in ode.x_vars],
         [var_to_str(y) * "_$i" for i in 0:dim_x for y in ode.y_vars],
         [var_to_str(u) * "_$i" for i in 0:dim_x for u in ode.u_vars],
-        [PROJECTION_VARNAME],
     )
     ring, ring_vars = Nemo.polynomial_ring(base_ring(ode.poly_ring), var_names)
 
@@ -92,7 +87,7 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    find_ioprojections(ode, auto_var_change, extra_projection)
+    find_ioprojections(ode, auto_var_change)
 
 Finds the input-output projections of an ODE system
 Input:

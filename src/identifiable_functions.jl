@@ -117,7 +117,7 @@ function _find_identifiable_functions(
     id_funcs, bring = initial_identifiable_functions(
         ode,
         prob_threshold = half_p,
-        with_states = with_states,
+        with_states = with_states ? :yes : :no,
         rational_interpolator = rational_interpolator,
         cmp = cmp,
         output_saturation = output_saturation,
