@@ -14,7 +14,7 @@ import Groebner
         y(t) = k * I(t)
     )
 
-    io_eqs = StructuralIdentifiability.find_ioequations(ode)[1]
+    io_eqs = StructuralIdentifiability.find_ioequations(ode)
     id_funcs, bring = StructuralIdentifiability.extract_identifiable_functions_raw(
         io_eqs,
         ode,
