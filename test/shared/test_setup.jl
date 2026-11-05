@@ -31,6 +31,7 @@ using StructuralIdentifiability:
     truncate_matrix,
     find_extra_projection,
     find_ioequations,
+    _find_ioequations,
     assess_global_identifiability,
     differentiate_output,
     switch_ring,
