@@ -289,7 +289,7 @@ Output: a dictionary from “leaders” to the corresponding input-output equati
     with_logger(_si_logger[]) do
         ioeqs, is_prime = _find_ioequations(ode, var_change_policy = var_change_policy)
         if !is_prime
-            @warn "The computed set of IO-projections may not define a prime ideal (in particular, the coefficients may not generate all identifiable functions)"
+            @warn "The computed set of IO-projections may not define a prime ideal (in particular, the coefficients may not generate all identifiable functions). You can get an extra projection with `find_extra_projection` function"
         end
         return ioeqs
     end
