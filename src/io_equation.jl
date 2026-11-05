@@ -282,7 +282,9 @@ Input:
 - `var_change_policy` - whether to perform automatic variable change, can be one of `:default`, `:yes`, `:no`
 - `loglevel` - logging level (default: Logging.Info)
 
-Output: a dictionary from “leaders” to the corresponding input-output equations
+Output:
+- a dictionary from “leaders” to the corresponding input-output equations;
+- boolean value determining if the ideal is prime (if `true` definitely prime, if `false` may still be prime)
 """
 @timeit _to function find_ioequations(
         ode::ODE{P};
@@ -292,11 +294,7 @@ Output: a dictionary from “leaders” to the corresponding input-output equati
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
-        ioeqs, is_prime = _find_ioequations(ode, var_change_policy = var_change_policy)
-        if !is_prime
-            @warn "The computed set of IO-projections may not define a prime ideal (in particular, the coefficients may not generate all identifiable functions)"
-        end
-        return ioeqs
+        return _find_ioequations(ode, var_change_policy = var_change_policy)
     end
 end
 
