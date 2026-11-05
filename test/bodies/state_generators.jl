@@ -7,7 +7,7 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
         y(t) = x1(t)
     )
 
-    sg = states_generators(ode, find_ioequations(ode)[1])
+    sg = states_generators(ode, find_ioequations(ode))
     @test sg == [
         x1 // 1,
         (a * x1 - b * x1 * x2) // 1,
@@ -21,7 +21,7 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
         x4'(t) = 1 // x2(t),
         y(t) = x1(t)
     )
-    sg = states_generators(ode, find_ioequations(ode)[1])
+    sg = states_generators(ode, find_ioequations(ode))
     @test sg == [x1 // 1, x2 // 1, x3 // 1, x4 // 1, x2 // 1]
 
     ode = @ODEmodel(

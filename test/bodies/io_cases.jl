@@ -168,7 +168,7 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
 
     for case in test_cases
         ode = case[:ode]
-        ioeq_dict, is_prime = find_ioequations(ode)
+        ioeq_dict, is_prime = _find_ioequations(ode)
         ring = parent(first(values(case[:correct][1])))
         for (lead, ioeq) in ioeq_dict
             lead = parent_ring_change(lead, ring)
