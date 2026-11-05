@@ -29,6 +29,7 @@ using StructuralIdentifiability:
     ODE,
     @ODEmodel,
     truncate_matrix,
+    find_extra_projection,
     find_ioequations,
     assess_global_identifiability,
     differentiate_output,
