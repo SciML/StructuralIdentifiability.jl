@@ -128,13 +128,11 @@ function compare()
             master = 1.0e9 .* master
             nightly = 1.0e9 .* nightly
             f, unit = best_unit(maximum(master))
-            m1 = round(mean(master) / f, digits = 2)
-            d1 = round(std(master) / f, digits = 2)
-            label_master = "$m1 ± $d1 $unit"
-            m2 = round(mean(nightly) / f, digits = 2)
-            d2 = round(std(nightly) / f, digits = 2)
-            label_nightly = "$m2 ± $d2 $unit"
-            indicator = if mean(master) < 1.0e9 * IGNORE_SMALL
+            m1 = median(master)
+            label_master = "$(round(m1 / f, digits = 2)) $unit"
+            m2 = median(nightly)
+            label_nightly = "$(round(m2 / f, digits = 2)) $unit"
+            indicator = if m1 < 1.0e9 * IGNORE_SMALL
                 0, "insignificant"
             elseif (1 + MAX_DEVIATION) * m1 < m2
                 fail = true
@@ -169,6 +167,8 @@ end
 function post(fail, table)
     comment_header = """
     ## Running times benchmark
+
+    Reported times are medians across all measurements.
 
     Note, that these numbers may fluctuate on the CI servers, so take them with a grain of salt.
 
