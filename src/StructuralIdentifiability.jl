@@ -226,6 +226,9 @@ function _assess_identifiability(
     end
 
     @info "Assessing global identifiability"
+    if all([is_parametric(f, ode) for f in locally_identifiable])
+        trbasis = [v for v in trbasis if is_parametric(v, ode)]
+    end
     runtime = @elapsed global_result =
         assess_global_identifiability(ode, locally_identifiable, trbasis, p_glob)
     @info "Global identifiability assessed in $runtime seconds"

@@ -114,7 +114,7 @@ function _find_identifiable_functions(
         return id_funcs
     end
     half_p = 0.5 + prob_threshold / 2
-    id_funcs, bring = initial_identifiable_functions(
+    id_funcs = initial_identifiable_functions(
         ode,
         prob_threshold = half_p,
         with_states = with_states ? :yes : :no,
@@ -122,13 +122,16 @@ function _find_identifiable_functions(
         cmp = cmp,
         output_saturation = output_saturation,
     )
+    
+    bring = parent(ode) 
+    id_funcs = [parent_ring_change(f, bring) for f in id_funcs]
+
     # If simplification is needed
     if simplify !== :absent
         if isempty(id_funcs)
-            bring = parent(ode)
             id_funcs = [one(bring)]
         end
-        id_funcs_fracs = simplified_generating_set(
+        id_funcs = simplified_generating_set(
             RationalFunctionField(id_funcs),
             prob_threshold = half_p,
             seed = seed,
@@ -136,13 +139,10 @@ function _find_identifiable_functions(
             rational_interpolator = rational_interpolator,
             cmp = cmp,
         )
-    else
-        id_funcs_fracs = RationalFunctionFields.dennums_to_fractions(id_funcs)
     end
-    id_funcs_fracs = [parent_ring_change(f, parent(ode)) for f in id_funcs_fracs]
     _runtime_logger[:id_total] = (time_ns() - runtime_start) / 1.0e9
-    _runtime_logger[:are_id_funcs_polynomial] = all(isone ∘ denominator, id_funcs_fracs)
+    _runtime_logger[:are_id_funcs_polynomial] = all(isone ∘ denominator, id_funcs)
     @info "The search for identifiable functions concluded in $(_runtime_logger[:id_total]) seconds"
 
-    return id_funcs_fracs
+    return id_funcs
 end

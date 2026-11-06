@@ -1,67 +1,52 @@
 """
-    extract_identifiable_functions_raw(io_equations, ode, known, with_states)
+    extract_identifiable_parameters(io_equations, ode)
 
-Takes as input input-output equations, the corresponding ode, a list of functions assumed to be known
-and a flag `with_states`.
-Extracts generators of the field of identifiable functions (with or without states) without
-any simplifications.
+    Takes as input input-output equations and the corresponding ode.
+    Performs the Wronskian check and extract the coefficients.
 
-Returns a tuple consisting of
-- a dictionary with at most two keys: `:no_states` and `:with_states`. The respective values
-are identifiable functions containing or not the state variables
-- a polynomial ring containing all returned identifiable functions
-(parameters or parameters + states)
+    Returns a list of the coefficients of the io_equations
 """
-@timeit _to function extract_identifiable_functions_raw(
+@timeit _to function extract_identifiable_parameters(
         io_equations::Dict{P, P},
         ode::ODE{P},
-        known::Array{P, 1},
-        with_states::Bool,
     ) where {P <: MPolyRingElem{QQFieldElem}}
-    coeff_lists =
-        Dict(:with_states => Array{Array{P, 1}, 1}(), :no_states => Array{Array{P, 1}, 1}())
-    varnames = [var_to_str(p) for p in ode.parameters]
-    if with_states
-        varnames = vcat(map(var_to_str, ode.x_vars), varnames)
-    end
-    bring, _ = Nemo.polynomial_ring(base_ring(ode.poly_ring), varnames)
 
-    if with_states
-        @debug "Computing Lie derivatives"
-        for f in states_generators(ode, io_equations)
-            num, den = unpack_fraction(parent_ring_change(f, bring))
-            push!(coeff_lists[:with_states], [den, num])
-        end
+    result = []
+
+    if isempty(ode.parameters)
+        return result
+    end
+
+    @info "Computing Wronskians"
+    wrnsk_time = @elapsed wrnsk = wronskian(io_equations, ode)
+    @info "Computed Wronskians in $wrnsk_time seconds"
+    _runtime_logger[:wrnsk_time] = wrnsk_time
+
+    dims = map(ncols, wrnsk)
+    @info "Dimensions of the Wronskians $dims"
+
+    rank_times = @elapsed wranks = map(rank, wrnsk)
+    @debug "Dimensions of the Wronskians $dims"
+    @debug "Ranks of the Wronskians $wranks"
+    @info "Ranks of the Wronskians computed in $rank_times seconds"
+    _runtime_logger[:rank_time] = rank_times
+
+    if any([dim != rk + 1 for (dim, rk) in zip(dims, wranks)])
+        @warn "One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia) or transforming all the parameters to states with zero derivative"
     end
 
     @debug "Extracting coefficients"
-    if !isempty(ode.parameters)
-        nonparameters = filter(
-            v -> !(var_to_str(v) in map(var_to_str, ode.parameters)),
-            gens(parent(first(values(io_equations)))),
-        )
-        for eq in values(io_equations)
-            eq_coefs = collect(values(extract_coefficients(eq, nonparameters)))
-            eq_coefs = [parent_ring_change(c, bring) for c in eq_coefs]
-            sort!(eq_coefs, by = (p -> (total_degree(p), length(p))))
-            push!(coeff_lists[:no_states], eq_coefs)
-        end
+    nonparameters = filter(
+        v -> !(var_to_str(v) in map(var_to_str, ode.parameters)),
+        gens(parent(first(values(io_equations)))),
+    )
+    for eq in values(io_equations)
+        eq_coefs = collect(values(extract_coefficients(eq, nonparameters)))
+        sort!(eq_coefs, by = (p -> (total_degree(p), length(p))))
+        append!(result, [c // eq_coefs[1] for c in eq_coefs[2:end]])
     end
 
-    for p in known
-        if all(in.(map(var_to_str, vars(p)), [map(var_to_str, gens(bring))]))
-            as_list = [one(bring), parent_ring_change(p, bring)]
-            if any(in.(map(var_to_str, vars(p)), [map(var_to_str, nonparameters)]))
-                push!(coeff_lists[:with_states], as_list)
-            else
-                push!(coeff_lists[:no_states], as_list)
-            end
-        else
-            @debug "Known quantity $p cannot be casted and is thus dropped"
-        end
-    end
-
-    return coeff_lists, bring
+    return result
 end
 
 # ------------------------------------------------------------------------------
@@ -83,14 +68,11 @@ This function takes the following optional arguments:
   will be simplified
 - `output_saturation` - if the output saturation should be applied to models with inputs (`true` by default)
 
-The function returns a tuple containing the following:
-- a list of identifiable functions (as pairs [num, denum])
-- the ring containing all these functuons (either parameters only of with states)
+The function returns a list of identifiable functions
 """
 @timeit _to function initial_identifiable_functions(
         ode::ODE{T};
         prob_threshold::Float64,
-        known::Array{T, 1} = Array{T, 1}(),
         with_states = :maybe,
         var_change_policy = :default,
         rational_interpolator = :VanDerHoevenLecerf,
@@ -99,6 +81,7 @@ The function returns a tuple containing the following:
     ) where {T}
     @assert with_states in (:no, :yes, :maybe)
     ode = preprocess_ode(ode, output_saturation = output_saturation)
+
     @info "Computing IO-equations"
     ioeq_time = @elapsed io_equations, is_prime =
         _find_ioequations(ode; var_change_policy = var_change_policy)
@@ -111,71 +94,35 @@ The function returns a tuple containing the following:
     @info "Computed IO-equations in $ioeq_time seconds"
     _runtime_logger[:id_io_time] = ioeq_time
 
-    if isempty(ode.parameters)
-        @info "No parameters, so Wronskian computation is not needed"
-    else
-        @info "Computing Wronskians"
-        flush(_si_logger[].stream)
-        wrnsk_time = @elapsed wrnsk = wronskian(io_equations, ode)
-        @info "Computed Wronskians in $wrnsk_time seconds"
-        _runtime_logger[:wrnsk_time] = wrnsk_time
-
-        dims = map(ncols, wrnsk)
-        @info "Dimensions of the Wronskians $dims"
-
-        rank_times = @elapsed wranks = map(rank, wrnsk)
-        @debug "Dimensions of the Wronskians $dims"
-        @debug "Ranks of the Wronskians $wranks"
-        @info "Ranks of the Wronskians computed in $rank_times seconds"
-        _runtime_logger[:rank_time] = rank_times
-
-        if any([dim != rk + 1 for (dim, rk) in zip(dims, wranks)])
-            @warn "One of the Wronskians has corank greater than one, so the results of the algorithm will be valid only for multiexperiment identifiability. If you still would like to assess single-experiment identifiability, we recommend using SIAN (https://github.com/alexeyovchinnikov/SIAN-Julia) or transforming all the parameters to states with zero derivative"
-        end
-    end
+    id_funcs = extract_identifiable_parameters(io_equations, ode)
 
     add_states = (with_states == :yes) || (with_states == :maybe && !is_prime)
 
-    id_funcs, bring = extract_identifiable_functions_raw(
-        io_equations,
-        ode,
-        empty(ode.parameters),
-        add_states,
-    )
-
     if add_states && !isempty(ode.parameters)
         @debug "Generators of identifiable functions involve states or the ideal of IO-projections is not prime, the parameter-only part is getting simplified"
-        # NOTE: switching to a ring without states for a moment
-        param_ring, _ = polynomial_ring(
-            base_ring(bring),
-            map(string, ode.parameters),
-            internal_ordering = Nemo.internal_ordering(bring),
-        )
-        id_funcs_no_states_param = map(
-            polys -> map(poly -> parent_ring_change(poly, param_ring), polys),
-            id_funcs[:no_states],
-        )
         _runtime_logger[:check_time] =
-            @elapsed no_states_simplified = simplified_generating_set(
-            RationalFunctionField(id_funcs_no_states_param),
+            @elapsed id_funcs = simplified_generating_set(
+            RationalFunctionField(id_funcs),
             prob_threshold = prob_threshold,
             seed = 42,
             simplify = :standard,
             rational_interpolator = rational_interpolator,
             cmp = cmp,
         )
-        dennums_simplified = fractions_to_dennums(no_states_simplified)
-        # switch back the ring
-        id_funcs[:no_states] = map(
-            polys -> map(poly -> parent_ring_change(poly, bring), polys),
-            dennums_simplified,
-        )
     end
 
-    if !add_states
-        return id_funcs[:no_states], bring
+    if add_states
+        @debug "Computing Lie derivatives"
+        append!(id_funcs, states_generators(ode, io_equations))
     end
-    return vcat(id_funcs[:with_states], id_funcs[:no_states]), bring
+
+    bring, _ = Nemo.polynomial_ring(
+        base_ring(ode.poly_ring),
+        [var_to_str(v) for v in vcat(ode.x_vars, ode.parameters)]
+    )
+    id_funcs = [parent_ring_change(f, bring) for f in id_funcs]
+
+    return id_funcs
 end
 
 # ------------------------------------------------------------------------------
@@ -198,35 +145,31 @@ Output: a list L of booleans with L[i] being the identifiability status of the i
         prob_threshold::Float64 = 0.99,
         var_change_policy = :default,
     ) where {P <: MPolyRingElem{QQFieldElem}}
-    states_needed = false
-    for f in funcs_to_check
-        num, den = unpack_fraction(f)
-        if !all(v -> v in ode.parameters, union(vars(num), vars(den)))
-            @info "Functions to check involve states"
-            states_needed = true
-            break
-        end
-    end
-    if !states_needed && isempty(ode.parameters)
-        return [true for _ in funcs_to_check]
-    end
+
+    states_needed = any([!is_parametric(f, ode) for f in vcat(funcs_to_check, known)])
+    states_needed && @debug "Functions to check or known functions involve states"
 
     half_p = 0.5 + prob_threshold / 2
-    identifiable_functions_raw, bring = initial_identifiable_functions(
+    identifiable_functions = initial_identifiable_functions(
         ode,
-        known = known,
         prob_threshold = half_p,
         var_change_policy = var_change_policy,
         with_states = states_needed ? :yes : :maybe,
     )
 
+    if isempty(identifiable_functions)
+        return [isempty(vars(f)) for f in funcs_to_check]
+    end
+
+    bring = parent(numerator(first(identifiable_functions)))
+    append!(identifiable_functions, [parent_ring_change(f, bring) // one(bring) for f in known])
     funcs_to_check = Vector{Generic.FracFieldElem{P}}(
         map(f -> parent_ring_change(f, bring) // one(bring), funcs_to_check),
     )
 
     _runtime_logger[:check_time] =
         get(_runtime_logger, :check_time, 0.0) + @elapsed result = field_contains(
-        RationalFunctionField(identifiable_functions_raw),
+        RationalFunctionField(identifiable_functions),
         funcs_to_check,
         half_p,
     )
