@@ -85,13 +85,14 @@ function reparametrize_with_respect_to(ode, new_vars)
     contains_states(poly::MPolyRingElem) = any(x -> degree(poly, x) > 0, ode.x_vars)
     contains_states(func) = contains_states(numerator(func)) || contains_states(denominator(func))
     new_vars_contains_states = filter(contains_states, new_vars)
-    @info """
-    Original variables:
+    @info "Original variables:  $(length(ode.x_vars)) states and $(length(ode.parameters)) parameters"
+    @debug """Original variables
     States: $(join(map(string, ode.x_vars), ", "))
     Params: $(join(map(string, ode.parameters), ", "))"""
     new_states = new_vars_contains_states
     new_params = setdiff(new_vars, new_vars_contains_states)
-    @info """
+    @info "New macro variables: $(length(new_states)) states and $(length(new_params)) parameters"
+    @debug """
     Reparametrizing with respect to:
     New states: $(join(map(string, new_states), ", "))
     New params: $(join(map(string, new_params), ", "))"""
@@ -226,7 +227,7 @@ function show_reparametrization(out, reparam)
     println(out, "\n", "• Reparametrized ODE:\n")
     println(out, ode_repr(reparam.new_ode), "\n")
 
-    println(out, "• Definitions:", "\n")
+    println(out, "• Definitions of new variables:", "\n")
     println(out, join(map(p -> replace(string(" "^2, p), "=>" => ":="), collect(reparam.new_vars)), "\n"), "\n")
 
     if !isempty(reparam.implicit_relations)
