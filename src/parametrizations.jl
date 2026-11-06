@@ -357,8 +357,6 @@ function _reparametrize_global(ode::ODE{P}; prob_threshold = 0.99, seed = 42, cm
     new_y_vars = filter(v -> haskey(new_outputs, v), gens(new_ring))
     new_ode = ODE{P}(new_x_vars, new_y_vars, new_vector_field, new_outputs, new_inputs)
     reparam = (new_ode = new_ode, new_vars = new_vars, implicit_relations = implicit_relations)
-    # if Logging.min_enabled_level(current_logger()) < Logging.Warn
-        @info (show_reparametrization(stdout, reparam); "Done!")
-    # end
+    @info (show_reparametrization(stdout, reparam); "Done!")
     reparam
 end
