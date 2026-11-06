@@ -122,8 +122,8 @@ function _find_identifiable_functions(
         cmp = cmp,
         output_saturation = output_saturation,
     )
-    
-    bring = parent(ode) 
+
+    bring = parent(ode)
     id_funcs = [parent_ring_change(f, bring) for f in id_funcs]
 
     # If simplification is needed
