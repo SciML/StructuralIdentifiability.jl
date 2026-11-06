@@ -49,7 +49,7 @@ function perform_operation(
     times = []
     for _ in 1:trials
         GC.gc()
-        time = @elapsed fun(ode; loglevel=Logging.Error, kws...)
+        time = @elapsed fun(ode; loglevel = Logging.Error, kws...)
         push!(times, time)
     end
     return times
