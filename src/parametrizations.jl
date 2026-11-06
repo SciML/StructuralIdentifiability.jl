@@ -39,7 +39,7 @@ function suggest_variable_names(ode, new_states, new_params)
             # resolve collision a*x -> x̃ and b*x -> x̃
             j = 1
             while name in names
-                name = chopsuffix(chopsuffix(name, "(t)"), string(j-1))
+                name = chopsuffix(chopsuffix(name, "(t)"), string(j - 1))
                 name = string(name, j, "(t)")
                 j += 1
             end
