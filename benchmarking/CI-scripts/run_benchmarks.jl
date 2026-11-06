@@ -24,6 +24,7 @@ include("../benchmarks.jl")
 # Runtime
 import Primes
 import Nemo
+using Logging
 
 function nemo_make_prime_finite_field(p)
     return if p < typemax(UInt)
@@ -48,7 +49,7 @@ function perform_operation(
     times = []
     for _ in 1:trials
         GC.gc()
-        time = @elapsed fun(ode; kws...)
+        time = @elapsed fun(ode; loglevel=Logging.Error, kws...)
         push!(times, time)
     end
     return times
