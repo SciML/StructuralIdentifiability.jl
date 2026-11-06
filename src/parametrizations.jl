@@ -16,9 +16,14 @@ function vector_field_along(derivation::Dict{T, U}, directions::AbstractVector) 
     return new_vector_field
 end
 
-function suggest_variable_names(ode, new_states, new_params)
-    @assert allunique(map(string, gens(parent(ode))))
+function suggest_names(ode, new_states, new_params)
+    unorm(s) = Unicode.normalize(s; chartransform = Unicode.julia_chartransform)
+    original_names = unorm.(string.(gens(parent(ode))))
+    
+    @assert allunique(original_names)
     names = String[]
+    tildify(c::Char) = string(c, '\u0303')
+    tildify(s) = tildify(first(s)) * s[nextind(s, firstindex(s)):end]
 
     for (i, def) in enumerate(new_states)
         num, den = unpack_fraction(def)
@@ -30,19 +35,10 @@ function suggest_variable_names(ode, new_states, new_params)
         end
 
         # a*x+b --> x̃
-        tildify(c::Char) = string(c, '\u0303')
-        tildify(s) = tildify(first(s)) * s[nextind(s, firstindex(s)):end]
         states = intersect(vars(def), ode.x_vars)
         if length(states) == 1
             name_orig = var_to_str(states[1])
             name == nothing && (name = tildify(name_orig))
-            # resolve collision a*x -> x̃ and b*x -> x̃
-            j = 1
-            while name in names
-                name = chopsuffix(chopsuffix(name, "(t)"), string(j-1))
-                name = string(name, j, "(t)")
-                j += 1
-            end
         end
 
         # f(x1,...,xn) --> X_i
@@ -60,6 +56,12 @@ function suggest_variable_names(ode, new_states, new_params)
             name == nothing && (name = var_to_str(num))
         end
 
+        # f(k) --> k̃
+        params = intersect(vars(def), ode.parameters)
+        if length(params) == 1
+            name == nothing && (name = tildify(var_to_str(params[1])))
+        end
+
         # f(x) --> ai
         name == nothing && (name = "a$i")
 
@@ -67,6 +69,19 @@ function suggest_variable_names(ode, new_states, new_params)
     end
 
     append!(names, string.(ode.u_vars), string.(ode.y_vars))
+
+    # Resolve collisions
+    reserved, used = Set(original_names), Set{String}()
+    for (i, def) in enumerate(vcat(new_states, new_params, ode.u_vars, ode.y_vars))
+        base = names[i]
+        suffix = endswith(base, "(t)") ? "(t)" : ""
+        j = 2
+        while unorm(names[i]) in used || (names[i] != string(def) && unorm(names[i]) in reserved)
+            names[i] = string(chopsuffix(base, suffix), "_", j, suffix)
+            j += 1
+        end
+        push!(used, unorm(names[i]))
+    end
 
     names
 end
@@ -178,7 +193,7 @@ function reparametrize_with_respect_to(ode, new_states, new_params)
         new_vars_vector_field[state] = new_dynamics_states[i]
     end
     @info "Converting variable names to human-readable ones"
-    new_names = suggest_variable_names(ode, new_states, new_params)
+    new_names = suggest_names(ode, new_states, new_params)
     @assert allunique(new_names)
     ring_output, _ = polynomial_ring(
         base_ring(ring_of_tags),
@@ -227,12 +242,18 @@ function show_reparametrization(out, reparam)
     println(out, "\n", "• Reparametrized ODE:\n")
     println(out, ode_repr(reparam.new_ode), "\n")
 
-    println(out, "• Definitions of new variables:", "\n")
-    println(out, join(map(p -> replace(string(" "^2, p), "=>" => ":="), collect(reparam.new_vars)), "\n"), "\n")
+    is_new = [string(v) != string(f) for (v, f) in reparam.new_vars]
+    println(out, "• Variable definitions ($(count(is_new)) new):\n")
+    for ((v, f), new) in zip(reparam.new_vars, is_new)
+        print(out, "  ", v, " := ", f)
+        new && printstyled(out, "  (new)"; color = :green)
+        println(out)
+    end
+    println(out)
 
     if !isempty(reparam.implicit_relations)
         participants = mapreduce(vars, union, reparam.implicit_relations)
-        println(out, "• These variables are not independent: $(join(map(string, participants), ", "))", "\n")
+        println(out, "• These variables are not independent:\n    $(join(map(string, participants), ", "))", "\n")
     end
 
     println(out, "• For more info, run\n\njulia> @doc reparametrize_global\n")
@@ -336,6 +357,8 @@ function _reparametrize_global(ode::ODE{P}; prob_threshold = 0.99, seed = 42, cm
     new_y_vars = filter(v -> haskey(new_outputs, v), gens(new_ring))
     new_ode = ODE{P}(new_x_vars, new_y_vars, new_vector_field, new_outputs, new_inputs)
     reparam = (new_ode = new_ode, new_vars = new_vars, implicit_relations = implicit_relations)
-    show_reparametrization(stdout, reparam)
+    # if Logging.min_enabled_level(current_logger()) < Logging.Warn
+        @info (show_reparametrization(stdout, reparam); "Done!")
+    # end
     reparam
 end
