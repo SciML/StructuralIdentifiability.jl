@@ -3,9 +3,8 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
 ≡(A, B) = A ⊆ B && B ⊆ A
 
 function test_reparametrization(old_ode, new_ode, var_mapping, implicit_relations)
-    # NOTE: should this be strengthened to == ?
-    # @test map(string, old_ode.u_vars) ≡ map(string, new_ode.u_vars)
-    # @test map(string, old_ode.y_vars) ≡ map(string, new_ode.y_vars)
+    @test map(var_to_str, old_ode.u_vars) ≡ map(var_to_str, new_ode.u_vars)
+    @test map(var_to_str, old_ode.y_vars) ≡ map(var_to_str, new_ode.y_vars)
     @test length(old_ode.y_vars) == length(new_ode.y_vars)
     @test length(old_ode.u_vars) == length(new_ode.u_vars)
     @test base_ring(parent(first(values(var_mapping)))) == parent(old_ode)
