@@ -276,6 +276,18 @@ function rename_variables(
 end
 
 #------------------------------------------------------------------------------
+"""
+    is_parametric(f, ODE)
+
+Checks if f is a function in ODEs parameters
+(matching them by name)
+"""
+function is_parametric(f, ode::ODE)
+    vars_f = [parent_ring_change(v, parent(ode)) for v in vars(f)]
+    return issubset(vars_f, ode.parameters)
+end
+
+#------------------------------------------------------------------------------
 
 function Base.show(io::IO, ode::ODE)
     for x in ode.x_vars
