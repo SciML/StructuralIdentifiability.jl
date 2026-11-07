@@ -1,6 +1,10 @@
 name: Performance Check
+
 on:
-  workflow_dispatch:
+  pull_request:
+    branches: [master]
+    paths-ignore: ['docs/**']
+
 jobs:
   build-and-benchmark:
     runs-on: ${{ matrix.os }}
