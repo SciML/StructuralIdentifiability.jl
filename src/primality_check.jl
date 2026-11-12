@@ -21,7 +21,7 @@ function check_primality_zerodim(J::Array{QQMPolyRingElem, 1})
     @debug "Generic multiplication matrix computed"
     @debug "Trying reductions over primed first"
     NUM_PRIMES = 10
-    p = 2^31 - 1
+    p = 2^30 + 3
     for _ in 1:NUM_PRIMES
         @debug "Prime is $p"
         F = Nemo.GF(p)

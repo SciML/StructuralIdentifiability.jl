@@ -79,7 +79,6 @@ using RationalFunctionFields:
     var_to_str,
     _reduce_mod_p,
     is_rational_func_const,
-    fractions_to_dennums,
     check_constructive_field_membership,
     rational_function_cmp
 
@@ -127,6 +126,7 @@ include("local_identifiability.jl")
 include("wronskian.jl")
 include("elimination.jl")
 include("primality_check.jl")
+include("extra_projection.jl")
 include("io_equation.jl")
 include("states.jl")
 include("global_identifiability.jl")
@@ -225,6 +225,9 @@ function _assess_identifiability(
     end
 
     @info "Assessing global identifiability"
+    if all([is_parametric(f, ode) for f in locally_identifiable])
+        trbasis = [v for v in trbasis if is_parametric(v, ode)]
+    end
     runtime = @elapsed global_result =
         assess_global_identifiability(ode, locally_identifiable, trbasis, p_glob)
     @info "Global identifiability assessed in $runtime seconds"

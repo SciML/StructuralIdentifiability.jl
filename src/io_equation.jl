@@ -1,7 +1,3 @@
-const PROJECTION_VARNAME = "rand_proj_var"
-
-# ------------------------------------------------------------------------------
-
 function generator_var_change(
         generator,
         var::P,
@@ -43,7 +39,6 @@ function generate_io_equation_problem(ode::ODE{P}) where {P <: MPolyRingElem{<:F
         [var_to_str(x) * "_dot" for x in ode.x_vars],
         [var_to_str(y) * "_$i" for i in 0:dim_x for y in ode.y_vars],
         [var_to_str(u) * "_$i" for i in 0:dim_x for u in ode.u_vars],
-        [PROJECTION_VARNAME],
     )
     ring, ring_vars = Nemo.polynomial_ring(base_ring(ode.poly_ring), var_names)
 
@@ -92,7 +87,7 @@ end
 # ------------------------------------------------------------------------------
 
 """
-    find_ioprojections(ode, auto_var_change, extra_projection)
+    find_ioprojections(ode, auto_var_change)
 
 Finds the input-output projections of an ODE system
 Input:
@@ -282,9 +277,7 @@ Input:
 - `var_change_policy` - whether to perform automatic variable change, can be one of `:default`, `:yes`, `:no`
 - `loglevel` - logging level (default: Logging.Info)
 
-Output:
-- a dictionary from “leaders” to the corresponding input-output equations;
-- boolean value determining if the ideal is prime (if `true` definitely prime, if `false` may still be prime)
+Output: a dictionary from “leaders” to the corresponding input-output equations
 """
 @timeit _to function find_ioequations(
         ode::ODE{P};
@@ -294,7 +287,11 @@ Output:
     restart_logging(loglevel = loglevel)
     reset_timings()
     with_logger(_si_logger[]) do
-        return _find_ioequations(ode, var_change_policy = var_change_policy)
+        ioeqs, is_prime = _find_ioequations(ode, var_change_policy = var_change_policy)
+        if !is_prime
+            @warn "The computed set of IO-projections may not define a prime ideal (in particular, the coefficients may not generate all identifiable functions). You can get an extra projection with `find_extra_projection` function"
+        end
+        return ioeqs
     end
 end
 
