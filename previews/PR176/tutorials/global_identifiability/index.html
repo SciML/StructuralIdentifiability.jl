@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Global Identifiability of Differential Models · StructuralIdentifiability.jl</title><script async src="https://www.googletagmanager.com/gtag/js?id=UA-90474609-3"></script><script>  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-90474609-3', {'page_path': location.pathname + location.search + location.hash});
+</script><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://docs.sciml.ai/StructuralIdentifiability/stable/tutorials/global_identifiability/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="StructuralIdentifiability.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">StructuralIdentifiability.jl</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Tutorials</span><ul><li><a class="tocitem" href="../local_identifiability/">Local Identifiability of Differential Models</a></li><li class="is-active"><a class="tocitem" href>Global Identifiability of Differential Models</a><ul class="internal"><li><a class="tocitem" href="#Input-System"><span>Input System</span></a></li><li><a class="tocitem" href="#Note-on-the-probability-of-correctness"><span>Note on the probability of correctness</span></a></li></ul></li><li><a class="tocitem" href="../using_modeling_toolkit/">Using ModelingToolkit.jl With StructuralIdentifiability.jl</a></li></ul></li><li><span class="tocitem">Basics</span><ul><li><a class="tocitem" href="../../input/input/">Parsing input ODE system</a></li><li><a class="tocitem" href="../../identifiability/identifiability/">ָFunctions to Assess Parameter Identifiability</a></li></ul></li><li><span class="tocitem">Library</span><ul><li><a class="tocitem" href="../../utils/local_identifiability/">Local Identifiability Tools</a></li><li><a class="tocitem" href="../../utils/global_identifiability/">Global Identifiability Tools</a></li><li><a class="tocitem" href="../../utils/elimination/">Elimination</a></li><li><a class="tocitem" href="../../utils/ode/">ODE Tools</a></li><li><a class="tocitem" href="../../utils/power_series_utils/">Power Series Tools</a></li><li><a class="tocitem" href="../../utils/primality/">Primality Checks</a></li><li><a class="tocitem" href="../../utils/wronskian/">Wronskian Tools</a></li><li><a class="tocitem" href="../../ioequations/ioequations/">Input-Output Equation tools</a></li><li><a class="tocitem" href="../../utils/util/">Other Utilities</a></li></ul></li><li><span class="tocitem">Export</span><ul><li><a class="tocitem" href="../../export/export/">Exporting to Other Systems</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Tutorials</a></li><li class="is-active"><a href>Global Identifiability of Differential Models</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Global Identifiability of Differential Models</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/StructuralIdentifiability.jl/blob/master/docs/src/tutorials/global_identifiability.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Global-Identifiability-of-Differential-Models"><a class="docs-heading-anchor" href="#Global-Identifiability-of-Differential-Models">Global Identifiability of Differential Models</a><a id="Global-Identifiability-of-Differential-Models-1"></a><a class="docs-heading-anchor-permalink" href="#Global-Identifiability-of-Differential-Models" title="Permalink"></a></h1><p>In this tutorial, let us cover an example problem of querying the ODE for globally identifiable parameters.</p><h2 id="Input-System"><a class="docs-heading-anchor" href="#Input-System">Input System</a><a id="Input-System-1"></a><a class="docs-heading-anchor-permalink" href="#Input-System" title="Permalink"></a></h2><p>Let us consider the following four-dimensional model with two outputs:</p><p class="math-container">\[\begin{cases}x&#39;(t) = lm - d \, x(t) - \beta \, x(t) \, v(t),\\
+y&#39;(t) = \beta \, x(t) \, v(t) - a \, y(t),\\
+v&#39;(t) = k \, y(t) - u \, v(t),\\
+w&#39;(t) = c \, x(t) \, y(t) \, w(t) - c \, q \, y(t) \, w(t) - b \, w(t),\\
+z&#39;(t) = c \, q \, y(t) \, w(t) - h \, z(t),\\
+y_1(t) = w(t),\\
+y_2(t) = z(t)\end{cases}\]</p><p>This model describes HIV dynamics<sup class="footnote-reference"><a id="citeref-1" href="#footnote-1">[1]</a></sup>. Let us run a global identifiability check on this model to get the result with probability of correctness being <code>p=0.99</code>. To do this, we will use <code>assess_identifiability(ode, p)</code> function.</p><p>Global identifiability needs information about local identifiability first, hence the function we chose here will take care of that extra step for us.</p><pre><code class="language-julia-repl hljs" style="display:block;">julia&gt; using StructuralIdentifiability</code><code class="nohighlight hljs ansi" style="display:block;"></code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; ode = @ODEmodel(
+           x&#39;(t) = lm - d * x(t) - beta * x(t) * v(t),
+           y&#39;(t) = beta * x(t) * v(t) - a * y(t),
+           v&#39;(t) = k * y(t) - u * v(t),
+           w&#39;(t) = c * x(t) * y(t) * w(t) - c * q * y(t) * w(t) - b * w(t),
+           z&#39;(t) = c * q * y(t) * w(t) - h * z(t),
+           y1(t) = w(t),
+           y2(t) = z(t)
+       )</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Summary of the model:
+[ Info: State variables: w, y, v, z, x
+[ Info: Parameters: b, c, h, lm, d, k, u, q, a, beta
+[ Info: Inputs: 
+[ Info: Outputs: y1, y2
+w&#39;(t) = -b*w(t) + c*w(t)*x(t)*y(t) - c*w(t)*q*y(t)
+v&#39;(t) = k*y(t) - v(t)*u
+x&#39;(t) = lm - x(t)*d - x(t)*v(t)*beta
+z&#39;(t) = c*w(t)*q*y(t) - h*z(t)
+y&#39;(t) = x(t)*v(t)*beta - a*y(t)
+y2(t) = z(t)
+y1(t) = w(t)</code><br/><code class="language-julia-repl hljs" style="display:block;">julia&gt; global_id = assess_identifiability(ode, 0.99)</code><code class="nohighlight hljs ansi" style="display:block;">[ Info: Assessing local identifiability
+[ Info: Local identifiability assessed in 5.410667386 seconds
+[ Info: Assessing global identifiability
+[ Info: Note: the input model has nontrivial submodels. If the computation for the full model will be too heavy, you may want to try to first analyze one of the submodels. They can be produced using function `find_submodels`
+[ Info: Computing IO-equations
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Selected tablesize 512
+[ Info: 1: selected lucky prime 2147483647
+[ Info: CRT modulo (1, 2147483647)
+[ Info: Reconstructing modulo 2147483647
+[ Info: Heuristic check failed.
+[ Info: 2: selected lucky prime 2147483659
+[ Info: CRT modulo (2147483647, 2147483659)
+[ Info: Reconstructing modulo 4611686039902224373
+[ Info: Heuristic check failed.
+[ Info: 3: selected lucky prime 2147483693
+[ Info: CRT modulo (4611686039902224373, 2147483693)
+[ Info: Reconstructing modulo 9903520567925774155444649489
+[ Info: Heuristic check failed.
+[ Info: 4: selected lucky prime 2147483713
+[ Info: CRT modulo (9903520567925774155444649489, 2147483713)
+[ Info: Reconstructing modulo 21267649120981110191733715050621272657
+[ Info: Heuristic check failed.
+[ Info: 5: selected lucky prime 2147483743
+[ Info: CRT modulo (21267649120981110191733715050621272657, 2147483743)
+[ Info: Reconstructing modulo 45671930739135174346839766056203605080877915151
+[ Info: Heuristic check failed.
+[ Info: 6: selected lucky prime 2147483777
+[ Info: CRT modulo (45671930739135174346839766056203605080877915151, 2147483777)
+[ Info: Reconstructing modulo 98079730326560405919904968824172512120100095704355005327
+[ Info: Heuristic check failed.
+[ Info: 7: selected lucky prime 2147483783
+[ Info: CRT modulo (98079730326560405919904968824172512120100095704355005327, 2147483783)
+[ Info: 8: selected lucky prime 2147483813
+[ Info: CRT modulo (210624630317301765882893117451031048172285903861850336414611112041, 2147483813)
+[ Info: Reconstructing modulo 452312984225514596069828623335196996110407213751397785678981819797976892333
+[ Info: Heuristic check passed!
+[ Info: Randomized check passed!
+[ Info: Success!
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.Lex() order, result is in Groebner.Lex() order
+[ Info: Using fglm: false
+┌ Info: Computed in 17.741331029 seconds
+│   :ioeq_time = :ioeq_time
+└   ioeq_time = 17.741331029
+[ Info: Computing Wronskians
+┌ Info: Computed in 2.644223803 seconds
+│   :wrnsk_time = :wrnsk_time
+└   wrnsk_time = 2.644223803
+[ Info: Dimensions of the Wronskians [40, 18]
+┌ Info: Ranks of the Wronskians computed in 0.019334455 seconds
+│   :rank_time = :rank_time
+└   rank_times = 0.019334455
+[ Info: Assessing global identifiability using the coefficients of the io-equations
+[ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
+[ Info: Using fglm: false
+[ Info: Selected tablesize 65536
+[ Info: 1: selected lucky prime 2147483647
+[ Info: CRT modulo (1, 2147483647)
+[ Info: Reconstructing modulo 2147483647
+[ Info: Heuristic check failed.
+[ Info: 2: selected lucky prime 2147483659
+[ Info: CRT modulo (2147483647, 2147483659)
+[ Info: Reconstructing modulo 4611686039902224373
+[ Info: 3: selected lucky prime 2147483693
+[ Info: CRT modulo (4611686039902224373, 2147483693)
+[ Info: Reconstructing modulo 9903520567925774155444649489
+[ Info: 4: selected lucky prime 2147483713
+[ Info: CRT modulo (9903520567925774155444649489, 2147483713)
+[ Info: Reconstructing modulo 21267649120981110191733715050621272657
+[ Info: Heuristic check failed.
+[ Info: 5: selected lucky prime 2147483743
+[ Info: CRT modulo (21267649120981110191733715050621272657, 2147483743)
+[ Info: Reconstructing modulo 45671930739135174346839766056203605080877915151
+[ Info: 6: selected lucky prime 2147483777
+[ Info: CRT modulo (45671930739135174346839766056203605080877915151, 2147483777)
+[ Info: Reconstructing modulo 98079730326560405919904968824172512120100095704355005327
+[ Info: Heuristic check failed.
+[ Info: 7: selected lucky prime 2147483783
+[ Info: CRT modulo (98079730326560405919904968824172512120100095704355005327, 2147483783)
+[ Info: 8: selected lucky prime 2147483813
+[ Info: CRT modulo (210624630317301765882893117451031048172285903861850336414611112041, 2147483813)
+[ Info: Reconstructing modulo 452312984225514596069828623335196996110407213751397785678981819797976892333
+[ Info: Heuristic check passed!
+[ Info: Randomized check passed!
+[ Info: Success!
+[ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
+[ Info: Using fglm: false
+[ Info: Computing in Groebner.DegRevLex() order, result is in Groebner.DegRevLex() order
+[ Info: Using fglm: false
+┌ Info: Computed in 7.254510683 seconds
+│   :check_time = :check_time
+└   check_time = 7.254510683
+[ Info: Global identifiability assessed in 28.11223014 seconds
+Dict{Any, Symbol} with 10 entries:
+  d    =&gt; :globally
+  lm   =&gt; :nonidentifiable
+  a    =&gt; :globally
+  c    =&gt; :nonidentifiable
+  k    =&gt; :nonidentifiable
+  q    =&gt; :nonidentifiable
+  h    =&gt; :globally
+  beta =&gt; :nonidentifiable
+  b    =&gt; :globally
+  u    =&gt; :globally</code></pre><p>We also note that it&#39;s usually inexpensive to obtain the result with higher probability of correctness. For example, taking <code>p=0.9999</code> in the system above will result only in a slight slowdown.</p><h2 id="Note-on-the-probability-of-correctness"><a class="docs-heading-anchor" href="#Note-on-the-probability-of-correctness">Note on the probability of correctness</a><a id="Note-on-the-probability-of-correctness-1"></a><a class="docs-heading-anchor-permalink" href="#Note-on-the-probability-of-correctness" title="Permalink"></a></h2><p>Currently, the probability of correctness does not include the probability of correctness of the modular reconstruction for Groebner bases. This probability is ensured by an additional check modulo a large prime, and can be neglected for practical purposes. However, in the future versions, we plan to eliminate this possible error.</p><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a><blockquote><p>D. Wodarz, M. Nowak, <a href="https://doi.org/10.1073/pnas.96.25.14464"><em>Specific therapy regimes could lead to long-term immunological control of HIV</em></a>, PNAS December 7, 1999 96 (25) 14464-14469;</p></blockquote></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../local_identifiability/">« Local Identifiability of Differential Models</a><a class="docs-footer-nextpage" href="../using_modeling_toolkit/">Using ModelingToolkit.jl With StructuralIdentifiability.jl »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.24 on <span class="colophon-date" title="Monday 29 May 2023 20:43">Monday 29 May 2023</span>. Using Julia version 1.9.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
