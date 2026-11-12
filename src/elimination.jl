@@ -387,6 +387,12 @@ Output:
             end
         end
         @debug "\t Matrix size: \n $M_size"
+
+        M_modp = reduce_to_bivariate(M_simp, 2^31 - 1)
+        resultant_modp = det_minor_expansion(M_modp)
+        modp_factors = Nemo.factor(resultant_modp)
+        @info [(total_degree(f[1]), length(f[1]), f[2]) for f in modp_factors]
+
         @debug "\t Computing determinant"
         flush(_si_logger[].stream)
         resultant = det_minor_expansion(M_simp)
@@ -411,4 +417,56 @@ Output:
         end
     end
     return res
+end
+
+# ------------------------------------------------------------------------------
+
+# Function for probing the determinants
+
+"""
+    reduce_to_bivariate(M, p)
+
+Given a matrix `M` of multivariate polynomials over QQ, reduce modulo the prime `p`
+and substitute x_i -> a[i]*u + b[i]*v + c[i], where a, b, c are random elements of GF(p).
+
+Returns `(Mbar, S, (a, b, c))`, where `S = GF(p)[u, v]`.
+"""
+function reduce_to_bivariate(M::MatElem, p::Integer)
+    R = base_ring(M)
+    n = length(gens(R))
+    F = Nemo.GF(p)
+    S, (u, v) = polynomial_ring(F, [:u, :v])
+
+    a = [rand(F) for _ in 1:n]
+    b = [rand(F) for _ in 1:n]
+    c = [rand(F) for _ in 1:n]
+
+    lin = [a[i]*u + b[i]*v + c[i] for i in 1:n]
+
+    # Cache of powers lin[i]^k, computed lazily
+    pw = [Dict{Int,typeof(u)}() for _ in 1:n]
+    getpow(i, k) = get!(() -> lin[i]^k, pw[i], k)
+
+    function reduce_poly(f)
+        res = zero(S)
+        for (co, ev) in zip(coefficients(f), exponent_vectors(f))
+            d = F(denominator(co))
+            iszero(d) && error("Prime $p divides a denominator; choose a different prime")
+            cF = F(numerator(co)) * inv(d)
+            iszero(cF) && continue
+            term = S(cF)
+            for i in 1:n
+                e = ev[i]
+                e > 0 && (term *= getpow(i, e))
+            end
+            res += term
+        end
+        return res
+    end
+
+    Mbar = Nemo.zero_matrix(S, nrows(M), ncols(M))
+    for i in 1:nrows(M), j in 1:ncols(M)
+        Mbar[i, j] = reduce_poly(M[i, j])
+    end
+    return Mbar
 end
