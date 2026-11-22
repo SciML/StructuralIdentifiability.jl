@@ -135,7 +135,7 @@ function simplify_matrix(M::MatElem{P}) where {P <: MPolyRingElem}
     function _simplify_range(coords::Array{Tuple{Int, Int}, 1})
         gcd_temp = M[coords[1]...]
         for c in coords[2:end]
-            gcd_temp = gcd(gcd_temp, M[c...])
+            gcd_temp = elimination_gcd(gcd_temp, M[c...])
         end
         if gcd_temp != 1
             for c in coords
@@ -164,6 +164,29 @@ function simplify_matrix(M::MatElem{P}) where {P <: MPolyRingElem}
     end
 
     return M, extra_factors
+end
+
+elimination_gcd(a, b) = gcd(a, b)
+
+@static if Sys.WORD_SIZE == 32
+    function elimination_gcd(a::QQMPolyRingElem, b::QQMPolyRingElem)
+        # FLINT can miss nonmonomial factors in multivariate GCDs on 32-bit builds.
+        if length(a) > length(b)
+            a, b = b, a
+        end
+        length(a) <= 1 && return gcd(a, b)
+
+        common = one(parent(a))
+        for (factor, multiplicity) in Nemo.factor(a)
+            for _ in 1:multiplicity
+                exact, quotient = divides(b, factor)
+                exact || break
+                b = quotient
+                common *= factor
+            end
+        end
+        return divexact(common, leading_coefficient(common))
+    end
 end
 
 # ------------------------------------------------------------------------------

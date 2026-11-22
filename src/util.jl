@@ -125,7 +125,7 @@ function uncertain_factorization(f::MPolyRingElem{QQFieldElem})
     mainvar_coeffs = [coeff(f, [main_var], [i]) for i in 0:d]
     gcd_coef = mainvar_coeffs[end]
     for i in d:-1:1
-        gcd_coef = gcd(gcd_coef, mainvar_coeffs[i])
+        gcd_coef = elimination_gcd(gcd_coef, mainvar_coeffs[i])
     end
     f = divexact(f, gcd_coef)
 
@@ -136,7 +136,7 @@ function uncertain_factorization(f::MPolyRingElem{QQFieldElem})
             uni_ring, T = Nemo.polynomial_ring(base_ring(f), "T")
             f_uni = sum([evaluate(mainvar_coeffs[i + 1], plugin) * T^i for i in 0:d])
             if !isone(gcd(f_uni, derivative(f_uni)))
-                factor_out = gcd(f, derivative(f, main_var))
+                factor_out = elimination_gcd(f, derivative(f, main_var))
                 if degree(factor_out, main_var) != degree(gcd(f_uni, derivative(f_uni)))
                     continue
                 end
