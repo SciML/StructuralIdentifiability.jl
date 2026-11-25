@@ -40,7 +40,7 @@ julia> ode = @ODEmodel(
            y(t) = x0(t)
        );
 
-julia> identifiable_functions = find_identifiable_functions(ode; loglevel = Logging.Error);
+julia> identifiable_functions = find_identifiable_functions(ode);
 
 julia> length(identifiable_functions)
 2

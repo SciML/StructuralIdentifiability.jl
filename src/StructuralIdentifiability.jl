@@ -15,6 +15,7 @@ import Primes
 import Random
 import TimerOutputs
 using TimerOutputs: @timeit, disable_timer!, enable_timer!
+import Unicode
 
 # Algebra packages
 import AbstractAlgebra

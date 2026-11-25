@@ -258,8 +258,8 @@ function rename_variables(
     for (i, old_name) in enumerate(new_varnames)
         if old_name in keys(transform)
             new_varnames[i] = transform[old_name]
-        elseif endswith(old_name, "(t)") && old_name[1:(end - 3)] in keys(transform)
-            new_varnames[i] = transform[old_name[1:(end - 3)]] * "(t)"
+        elseif endswith(old_name, "(t)") && chopsuffix(old_name, "(t)") in keys(transform)
+            new_varnames[i] = transform[chopsuffix(old_name, "(t)")] * "(t)"
         end
     end
 
