@@ -8,8 +8,6 @@ stopwatch = time_ns()
 # TTFX
 t1 = @timed using StructuralIdentifiability
 
-include("../benchmarks.jl")
-
 suite = []
 
 push!(
@@ -17,12 +15,16 @@ push!(
     (problem_name = "using StructuralIdentifiability", type = :time, result = [t1.time]),
 )
 
+# Record the load time before @ODEmodel introduces model parameters such as t1.
+include("../benchmarks.jl")
+
 # Allocations
 # Coming soon
 
 # Runtime
 import Primes
 import Nemo
+using Logging
 
 function nemo_make_prime_finite_field(p)
     return if p < typemax(UInt)
@@ -47,31 +49,37 @@ function perform_operation(
     times = []
     for _ in 1:trials
         GC.gc()
-        time = @elapsed fun(ode; kws...)
+        time = @elapsed fun(ode; loglevel = Logging.Error, kws...)
         push!(times, time)
     end
     return times
 end
 
 fun_name = "assess_identifiability"
-perform_operation(benchmarks[:LV_simple][:ode])
-for m in [:SIWR, :LV_simple, :Pharm]
+perform_operation(benchmarks[:LV][:ode])
+for (m, trials) in [(:SIWR_orig, 3), (:LV, 30), (:Pharm, 3)]
     push!(
         suite,
         (
             problem_name = benchmarks[m][:name] * " " * fun_name,
             type = :time,
-            result = perform_operation(benchmarks[m][:ode]),
+            result = perform_operation(
+                benchmarks[m][:ode],
+                StructuralIdentifiability.assess_identifiability,
+                trials,
+            ),
         ),
     )
 end
 
 fun_name = "assess_local_identifiability"
 perform_operation(
-    benchmarks[:LV_simple][:ode],
+    benchmarks[:LV][:ode],
     StructuralIdentifiability.assess_local_identifiability,
 )
-for m in [:SIWR, :Pharm, :MAPK5, :MAPK5bis, :Goodwin]
+for (m, trials) in [
+        (:SIWR_orig, 30), (:Pharm, 30), (:MAPK_5out, 3), (:MAPK_5out_bis, 3), (:Goodwin, 30),
+    ]
     push!(
         suite,
         (
@@ -80,6 +88,7 @@ for m in [:SIWR, :Pharm, :MAPK5, :MAPK5bis, :Goodwin]
             result = perform_operation(
                 benchmarks[m][:ode],
                 StructuralIdentifiability.assess_local_identifiability,
+                trials,
             ),
         ),
     )
@@ -87,10 +96,12 @@ end
 
 fun_name = "find_identifiable_functions"
 perform_operation(
-    benchmarks[:LV_simple][:ode],
+    benchmarks[:LV][:ode],
     StructuralIdentifiability.find_identifiable_functions,
 )
-for m in [:Goodwin, :SEAIJRC, :Sntg, :LLW, :Bilirubin]
+for (m, trials) in [
+        (:Goodwin, 30), (:SEAIJRC, 3), (:St, 3), (:LLW, 30), (:Bilirubin, 30),
+    ]
     push!(
         suite,
         (
@@ -99,6 +110,7 @@ for m in [:Goodwin, :SEAIJRC, :Sntg, :LLW, :Bilirubin]
             result = perform_operation(
                 benchmarks[m][:ode],
                 StructuralIdentifiability.find_identifiable_functions,
+                trials,
             ),
         ),
     )
@@ -106,10 +118,10 @@ end
 
 fun_name = "reparametrize_global"
 perform_operation(
-    benchmarks[:LV_simple][:ode],
+    benchmarks[:LV][:ode],
     StructuralIdentifiability.reparametrize_global,
 )
-for m in [:Goodwin, :SEAIJRC, :SEUIR]
+for (m, trials) in [(:Goodwin, 30), (:SEAIJRC, 3), (:SEUIR, 30)]
     push!(
         suite,
         (
@@ -118,6 +130,7 @@ for m in [:Goodwin, :SEAIJRC, :SEUIR]
             result = perform_operation(
                 benchmarks[m][:ode],
                 StructuralIdentifiability.reparametrize_global,
+                trials,
             ),
         ),
     )

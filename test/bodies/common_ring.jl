@@ -3,7 +3,7 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
 if GROUP == "All" || GROUP == "Core"
     @testset "Computing common ring for the PB-reduction" begin
         ode = @ODEmodel(x1'(t) = x2(t), x2'(t) = a * x1(t), y(t) = x1(t))
-        ioeqs = find_ioequations(ode)[1]
+        ioeqs = find_ioequations(ode)
         pbr = PBRepresentation(ode, ioeqs)
         R, (y_2, y_5, c) = Nemo.polynomial_ring(Nemo.QQ, ["y(t)_2", "y(t)_5", "c"])
         p = y_2^2 + c * y_5
@@ -18,7 +18,7 @@ if GROUP == "All" || GROUP == "Core"
             y1(t) = x1(t),
             y2(t) = x2(t) + u(t)
         )
-        ioeqs = find_ioequations(ode)[1]
+        ioeqs = find_ioequations(ode)
         pbr = PBRepresentation(ode, ioeqs)
         R, (y1_0, y2_3, u_3) =
             Nemo.polynomial_ring(Nemo.QQ, ["y1(t)_0", "y2(t)_3", "u(t)_3"])

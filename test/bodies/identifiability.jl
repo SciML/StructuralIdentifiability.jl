@@ -153,6 +153,25 @@ end
     #--------------------------------------------------------------------------
 
     ode = @ODEmodel(
+        x1'(t) = (1 + x1(t)^2) // 2,
+        x2'(t) = (1 - x1(t)^2) // (1 + x1(t)^2),
+        y1(t) = 2 * x1(t) // (b * (1 + x1(t)^2)),
+        y2(t) = x2(t)
+    )
+    funcs_to_test = [b]
+    correct = [:globally]
+    push!(
+        test_cases,
+        Dict(
+            :ode => ode,
+            :funcs => funcs_to_test,
+            :correct => OrderedDict(funcs_to_test .=> correct),
+        ),
+    )
+
+    #--------------------------------------------------------------------------
+
+    ode = @ODEmodel(
         x1'(t) = -a1 * x1(t) + a21 * x2(t),
         x2'(t) = -a2 * x2(t) - a21 * x2(t),
         y1(t) = x1(t)

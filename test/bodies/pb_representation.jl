@@ -2,7 +2,7 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
 
 @testset "PB-representation - creation" begin
     ode = @ODEmodel(x1'(t) = x2(t), x2'(t) = a * x1(t), y(t) = x1(t))
-    ioeqs = find_ioequations(ode)[1]
+    ioeqs = find_ioequations(ode)
     pbr = PBRepresentation(ode, ioeqs)
     @test pbr.profile == Dict("y(t)" => 2)
     @test pbr.u_names == Array{String, 1}()
@@ -10,7 +10,7 @@ include(joinpath(@__DIR__, "..", "shared", "test_setup.jl"))
     @test pbr.param_names == ["a"]
 
     ode = @ODEmodel(x1'(t) = x1(t), x2'(t) = a * x2(t), y(t) = x1(t), y2(t) = x2(t) + u(t))
-    ioeqs = find_ioequations(ode)[1]
+    ioeqs = find_ioequations(ode)
     pbr = PBRepresentation(ode, ioeqs)
     @test pbr.profile == Dict("y(t)" => 1, "y2(t)" => 1)
     @test pbr.u_names == ["u(t)"]

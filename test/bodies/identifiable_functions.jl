@@ -1148,6 +1148,15 @@ ident_funcs_states = [
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs, with_states = false))
 push!(test_cases, (ode = ode, ident_funcs = ident_funcs_states, with_states = true))
 
+# From Remark 3 in https://arxiv.org/pdf/2111.00991
+ode = @ODEmodel(
+    x1'(t) = (1 + x1(t)^2) // 2,
+    x2'(t) = (1 - x1(t)^2) // (1 + x1(t)^2),
+    y1(t) = 2 * x1(t) // (b * (1 + x1(t)^2)),
+    y2(t) = x2(t)
+)
+push!(test_cases, (ode = ode, ident_funcs = [b], with_states = false))
+
 @testset "Identifiable functions of parameters" begin
     p = 0.99
     for case in test_cases

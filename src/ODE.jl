@@ -232,7 +232,7 @@ function reduce_ode_mod_p(ode::ODE{<:MPolyRingElem{Nemo.QQFieldElem}}, p::Intege
     new_y = map(y -> switch_ring(y, new_ring), ode.y_vars)
     new_x_eqs = Dict{new_type, ExtendedFraction{new_type}}()
     new_y_eqs = Dict{new_type, ExtendedFraction{new_type}}()
-    for (old, new) in Dict(ode.x_equations => new_x_eqs, ode.y_equations => new_y_eqs)
+    for (old, new) in ((ode.x_equations, new_x_eqs), (ode.y_equations, new_y_eqs))
         for (v, f) in old
             new_v = switch_ring(v, new_ring)
             new[new_v] = _reduce_mod_p(f, p)
@@ -273,6 +273,18 @@ function rename_variables(
     new_y_eqs =
         Dict(renamer(k) => renamer(v) // one(new_ring) for (k, v) in ode.y_equations)
     return ODE{P}(new_x_vars, new_y_vars, new_x_eqs, new_y_eqs, new_inputs)
+end
+
+#------------------------------------------------------------------------------
+"""
+    is_parametric(f, ODE)
+
+Checks if f is a function in ODEs parameters
+(matching them by name)
+"""
+function is_parametric(f, ode::ODE)
+    vars_f = [parent_ring_change(v, parent(ode)) for v in vars(f)]
+    return issubset(vars_f, ode.parameters)
 end
 
 #------------------------------------------------------------------------------

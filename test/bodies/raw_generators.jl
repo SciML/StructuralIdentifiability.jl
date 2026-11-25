@@ -14,13 +14,12 @@ import Groebner
         y(t) = k * I(t)
     )
 
-    io_eqs = StructuralIdentifiability.find_ioequations(ode)[1]
-    id_funcs, bring = StructuralIdentifiability.extract_identifiable_functions_raw(
+    io_eqs = StructuralIdentifiability.find_ioequations(ode)
+    id_funcs = StructuralIdentifiability.extract_identifiable_parameters(
         io_eqs,
         ode,
-        empty(ode.parameters),
-        true,
     )
+    bring = parent(numerator(first(id_funcs)))
 
     param_ring, _ = polynomial_ring(
         base_ring(bring),
@@ -28,15 +27,7 @@ import Groebner
         internal_ordering = Nemo.internal_ordering(bring),
     )
 
-    id_funcs_no_states = map(
-        polys -> map(
-            poly -> StructuralIdentifiability.parent_ring_change(poly, param_ring),
-            polys,
-        ),
-        id_funcs[:no_states],
-    )
-
-    rff = RationalFunctionField(id_funcs_no_states)
+    rff = RationalFunctionField(id_funcs)
 
     # Part 1: mod p and specialized
     p = Nemo.Native.GF(2^62 + 135)
